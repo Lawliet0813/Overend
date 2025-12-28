@@ -1,0 +1,101 @@
+//
+//  AppTheme.swift
+//  OVEREND
+//
+//  主題系統 - 深色/淺色模式顏色定義
+//
+
+import SwiftUI
+import Combine
+
+/// 應用程式主題
+class AppTheme: ObservableObject {
+    @Published var isDarkMode: Bool = false
+    
+    // MARK: - 主色系
+    
+    /// 主色（綠色）
+    var accent: Color { Color(hex: "#00D97E") }
+    
+    /// 淺色主色（用於背景）
+    var accentLight: Color { accent.opacity(0.1) }
+    
+    // MARK: - 背景色
+    
+    var background: Color {
+        isDarkMode ? Color(hex: "#1e1e1e") : Color(hex: "#e5e5e5")
+    }
+    
+    var sidebar: Color {
+        isDarkMode ? Color(hex: "#252525").opacity(0.8) : Color(hex: "#f3f3f3").opacity(0.9)
+    }
+    
+    var toolbar: Color {
+        isDarkMode ? Color(hex: "#2a2a2a") : .white
+    }
+    
+    var page: Color {
+        isDarkMode ? Color(hex: "#2a2a2a") : .white
+    }
+    
+    var card: Color {
+        isDarkMode ? Color.white.opacity(0.05) : .white
+    }
+    
+    // MARK: - 文字色
+    
+    var textPrimary: Color {
+        isDarkMode ? Color(hex: "#ececec") : Color(hex: "#1a1a1a")
+    }
+    
+    var textMuted: Color {
+        isDarkMode ? Color.white.opacity(0.4) : Color.black.opacity(0.4)
+    }
+    
+    var textOnAccent: Color { .white }
+    
+    // MARK: - 邊框色
+    
+    var border: Color {
+        isDarkMode ? Color.white.opacity(0.05) : Color.black.opacity(0.1)
+    }
+    
+    // MARK: - 互動色
+    
+    var itemHover: Color {
+        isDarkMode ? Color.white.opacity(0.1) : Color.black.opacity(0.05)
+    }
+    
+    var tableRowHover: Color {
+        isDarkMode ? Color.white.opacity(0.02) : Color.black.opacity(0.02)
+    }
+}
+
+// MARK: - 預覽
+
+#Preview {
+    VStack(spacing: 20) {
+        let theme = AppTheme()
+        
+        HStack {
+            Circle().fill(theme.accent).frame(width: 40)
+            Text("主色 #00D97E")
+        }
+        
+        HStack {
+            RoundedRectangle(cornerRadius: 8)
+                .fill(theme.background)
+                .frame(width: 40, height: 40)
+            Text("背景色")
+        }
+        
+        HStack {
+            RoundedRectangle(cornerRadius: 8)
+                .fill(theme.sidebar)
+                .frame(width: 40, height: 40)
+            Text("側邊欄色")
+        }
+    }
+    .padding()
+}
+
