@@ -36,12 +36,21 @@ struct FloatingAIAssistant: View {
     @State private var currentEditingText: String = ""
     @State private var aiResult: String = ""
     @State private var suggestedActions: [SuggestedAction] = [
+        // 格式化
         SuggestedAction(title: "智慧排版（APA 格式）", icon: "doc.text.fill", color: .blue),
-        SuggestedAction(title: "修正引用格式", icon: "checkmark.circle.fill", color: .green),
-        SuggestedAction(title: "潤飾選取的文字", icon: "wand.and.stars", color: .purple),
-        SuggestedAction(title: "生成參考文獻列表", icon: "list.bullet.rectangle", color: .orange),
-        SuggestedAction(title: "生成目錄", icon: "list.number", color: .teal),
-        SuggestedAction(title: "調整段落間距", icon: "text.alignleft", color: .indigo)
+        SuggestedAction(title: "智慧排版（MLA 格式）", icon: "doc.text.fill", color: .cyan),
+        SuggestedAction(title: "智慧排版（Chicago 格式）", icon: "doc.text.fill", color: .teal),
+        
+        // 寫作輔助
+        SuggestedAction(title: "學術改寫", icon: "wand.and.stars", color: .purple),
+        SuggestedAction(title: "擴寫文字", icon: "arrow.up.left.and.arrow.down.right", color: .orange),
+        SuggestedAction(title: "精簡文字", icon: "arrow.down.right.and.arrow.up.left", color: .pink),
+        SuggestedAction(title: "校對與修正", icon: "checkmark.circle.fill", color: .green),
+        
+        // 生成
+        SuggestedAction(title: "生成參考文獻列表", icon: "list.bullet.rectangle", color: .indigo),
+        SuggestedAction(title: "生成摘要", icon: "doc.text.below.ecg", color: .mint),
+        SuggestedAction(title: "提取關鍵詞", icon: "tag.fill", color: .yellow)
     ]
 
     // 參考文獻生成
