@@ -30,11 +30,12 @@ struct NewContentView: View {
     
     var body: some View {
         NavigationSplitView {
-            // 側邊欄
+            // 側邊欄 - 使用 Liquid Glass 效果
             NewSidebarView(libraryVM: libraryVM)
                 .environmentObject(theme)
                 .environmentObject(viewState)
                 .navigationSplitViewColumnWidth(min: 220, ideal: 220, max: 260)
+                .scrollContentBackground(.hidden)
         } detail: {
             // 主內容區域
             VStack(spacing: 0) {
