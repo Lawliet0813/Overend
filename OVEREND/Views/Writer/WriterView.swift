@@ -12,6 +12,7 @@ import UniformTypeIdentifiers
 
 /// 文章寫作視圖
 struct WriterView: View {
+    @EnvironmentObject var theme: AppTheme
     @Environment(\.managedObjectContext) private var viewContext
     
     // 編輯的文檔
@@ -24,6 +25,10 @@ struct WriterView: View {
     @State private var wordCount: Int = 0
     @State private var isSaving: Bool = false
     @State private var lastSaved: Date?
+    
+    // AI 助手狀態
+    @State private var selectedText: String = ""
+    @State private var showAIAssistant: Bool = true
     
     // 彈出視窗狀態
     @State private var showCitationPicker: Bool = false
@@ -39,89 +44,71 @@ struct WriterView: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            // 編輯器
-            RichTextEditor(
-                attributedString: Binding(
-                    get: { attributedString },
-                    set: { newValue in
+        ZStack(alignment: .bottomTrailing) {
+            // 主要內容
+            VStack(spacing: 0) {
+                // 編輯器
+                RichTextEditor(
+                    attributedString: Binding(
+                        get: { attributedString },
+                        set: { newValue in
+                            attributedString = newValue
+                            updateWordCount(newValue)
+                            scheduleAutoSave()
+                        }
+                    ),
+                    onTextChange: { newValue in
                         attributedString = newValue
                         updateWordCount(newValue)
                         scheduleAutoSave()
+                    },
+                    onSelectionChange: { range, attributes in
+                        // 更新選取的文字給 AI 助手
+                        if range.length > 0 {
+                            let string = attributedString.string
+                            let start = string.index(string.startIndex, offsetBy: range.location)
+                            let end = string.index(start, offsetBy: min(range.length, string.count - range.location))
+                            selectedText = String(string[start..<end])
+                        } else {
+                            selectedText = ""
+                        }
                     }
-                ),
-                onTextChange: { newValue in
-                    attributedString = newValue
-                    updateWordCount(newValue)
-                    scheduleAutoSave()
-                }
-            )
-            .frame(minHeight: 400)
-            
-            Divider()
-            
-            // 狀態列（帶有額外功能按鈕）
-            HStack {
-                // 左側：字數和引用統計
-                HStack(spacing: 12) {
-                    Label("\(wordCount) 字", systemImage: "character.cursor.ibeam")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    
-                    Divider()
-                        .frame(height: 12)
-                    
-                    let citationCount = document.citationArray.count
-                    Label("\(citationCount) 筆引用", systemImage: "quote.bubble")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
+                )
+                .frame(minHeight: 400)
                 
-                Spacer()
+                Divider()
                 
-                // 中間：功能按鈕
-                HStack(spacing: 8) {
-                    Button(action: { showCitationPicker = true }) {
-                        Label("插入引用", systemImage: "book.pages")
-                            .font(.caption)
-                    }
-                    .buttonStyle(.bordered)
-                    
-                    Button(action: { showReferenceGenerator = true }) {
-                        Label("參考文獻", systemImage: "list.bullet.rectangle")
-                            .font(.caption)
-                    }
-                    .buttonStyle(.bordered)
-                    
-                    Button(action: { showExportOptions = true }) {
-                        Label("匯出", systemImage: "square.and.arrow.up")
-                            .font(.caption)
-                    }
-                    .buttonStyle(.bordered)
-                }
-                
-                Spacer()
-                
-                // 右側：儲存狀態
-                if isSaving {
-                    HStack(spacing: 4) {
-                        ProgressView()
-                            .scaleEffect(0.6)
-                        Text("儲存中...")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                } else if let saved = lastSaved {
-                    Label("已儲存於 \(saved.formatted(date: .omitted, time: .shortened))", systemImage: "checkmark.circle.fill")
-                        .font(.caption)
-                        .foregroundColor(.green)
-                }
+                // 狀態列
+                statusBar
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .background(Color(nsColor: .controlBackgroundColor))
+            
+            // AI 浮動助手面板（右下角）
+            if showAIAssistant {
+                FloatingAIAssistant(
+                    textView: $textView,
+                    selectedText: $selectedText,
+                    onReplaceText: { newText in
+                        replaceSelectedText(with: newText)
+                    },
+                    onInsertReferences: { references in
+                        insertReferences(references)
+                    }
+                )
+                .padding(16)
+            }
         }
         .navigationTitle(document.title)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button(action: { showAIAssistant.toggle() }) {
+                    Label(
+                        showAIAssistant ? "隱藏 AI" : "顯示 AI",
+                        systemImage: "apple.intelligence"
+                    )
+                }
+                .help("切換 AI 助手面板")
+            }
+        }
         .sheet(isPresented: $showCitationPicker) {
             CitationPicker { citation in
                 insertCitation(citation)
@@ -140,6 +127,93 @@ struct WriterView: View {
             saveDocument()
             autoSaveTimer?.invalidate()
         }
+    }
+    
+    // MARK: - 狀態列
+    
+    private var statusBar: some View {
+        HStack {
+            // 左側：字數和引用統計
+            HStack(spacing: 12) {
+                Label("\(wordCount) 字", systemImage: "character.cursor.ibeam")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                
+                Divider()
+                    .frame(height: 12)
+                
+                let citationCount = document.citationArray.count
+                Label("\(citationCount) 筆引用", systemImage: "quote.bubble")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+            
+            // 中間：功能按鈕
+            HStack(spacing: 8) {
+                Button(action: { showCitationPicker = true }) {
+                    Label("插入引用", systemImage: "book.pages")
+                        .font(.caption)
+                }
+                .buttonStyle(.bordered)
+                
+                Button(action: { showReferenceGenerator = true }) {
+                    Label("參考文獻", systemImage: "list.bullet.rectangle")
+                        .font(.caption)
+                }
+                .buttonStyle(.bordered)
+                
+                Button(action: { showExportOptions = true }) {
+                    Label("匯出", systemImage: "square.and.arrow.up")
+                        .font(.caption)
+                }
+                .buttonStyle(.bordered)
+            }
+            
+            Spacer()
+            
+            // 右側：儲存狀態
+            if isSaving {
+                HStack(spacing: 4) {
+                    ProgressView()
+                        .scaleEffect(0.6)
+                    Text("儲存中...")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            } else if let saved = lastSaved {
+                Label("已儲存於 \(saved.formatted(date: .omitted, time: .shortened))", systemImage: "checkmark.circle.fill")
+                    .font(.caption)
+                    .foregroundColor(.green)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(Color(nsColor: .controlBackgroundColor))
+    }
+    
+    // MARK: - AI 輔助方法
+    
+    private func replaceSelectedText(with newText: String) {
+        guard let tv = textView else { return }
+        
+        let range = tv.selectedRange()
+        if range.length > 0 {
+            tv.textStorage?.replaceCharacters(in: range, with: newText)
+            attributedString = tv.attributedString()
+            scheduleAutoSave()
+        }
+    }
+    
+    private func insertReferences(_ references: String) {
+        guard let tv = textView else { return }
+        
+        // 在文末插入參考文獻
+        let refAttr = NSAttributedString(string: "\n\n" + references)
+        tv.textStorage?.append(refAttr)
+        attributedString = tv.attributedString()
+        scheduleAutoSave()
     }
     
     // MARK: - 輔助方法
