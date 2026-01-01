@@ -43,11 +43,11 @@ struct CitationMentionPopover: View {
             // 標題列
             HStack {
                 Image(systemName: "at")
-                    .font(.system(size: 12, weight: .bold))
+                    .font(.system(size: 16, weight: .bold))
                     .foregroundColor(theme.accent)
                 
                 Text("快速引用")
-                    .font(.system(size: 11, weight: .bold))
+                    .font(.system(size: 15, weight: .bold))
                     .foregroundColor(theme.textMuted)
                 
                 Spacer()
@@ -71,7 +71,7 @@ struct CitationMentionPopover: View {
                         .foregroundColor(theme.textMuted.opacity(0.5))
                     
                     Text("找不到符合的文獻")
-                        .font(.system(size: 12))
+                        .font(.system(size: 14))
                         .foregroundColor(theme.textMuted)
                 }
                 .frame(maxWidth: .infinity)
@@ -153,7 +153,7 @@ struct MentionEntryRow: View {
             HStack(spacing: 10) {
                 // 圖示
                 Image(systemName: entryIcon)
-                    .font(.system(size: 12))
+                    .font(.system(size: 14))
                     .foregroundColor(isSelected ? .white : theme.accent)
                     .frame(width: 20)
                 
@@ -161,19 +161,19 @@ struct MentionEntryRow: View {
                 VStack(alignment: .leading, spacing: 2) {
                     // 標題
                     Text(entry.fields["title"] ?? "無標題")
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.system(size: 14, weight: .medium))
                         .foregroundColor(isSelected ? .white : theme.textPrimary)
                         .lineLimit(1)
                     
                     // 作者與年份
                     HStack(spacing: 4) {
                         Text(formatAuthor(entry.fields["author"] ?? ""))
-                            .font(.system(size: 10))
+                            .font(.system(size: 14))
                             .foregroundColor(isSelected ? .white.opacity(0.8) : theme.textMuted)
                         
                         if let year = entry.fields["year"], !year.isEmpty {
                             Text("(\(year))")
-                                .font(.system(size: 10, weight: .medium))
+                                .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(isSelected ? .white.opacity(0.9) : theme.accent)
                         }
                     }

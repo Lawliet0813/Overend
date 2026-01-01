@@ -37,7 +37,7 @@ struct AIAssistantView: View {
                         .foregroundColor(theme.accent)
                     
                     Text("AI 助手")
-                        .font(.system(size: 14, weight: .bold))
+                        .font(.system(size: 16, weight: .bold))
                         .foregroundColor(theme.textPrimary)
                 }
                 
@@ -50,7 +50,7 @@ struct AIAssistantView: View {
                             .fill(Color.green)
                             .frame(width: 6, height: 6)
                         Text("已就緒")
-                            .font(.system(size: 10))
+                            .font(.system(size: 14))
                             .foregroundColor(theme.textMuted)
                     }
                 } else {
@@ -59,7 +59,7 @@ struct AIAssistantView: View {
                             .fill(Color.red)
                             .frame(width: 6, height: 6)
                         Text("不可用")
-                            .font(.system(size: 10))
+                            .font(.system(size: 14))
                             .foregroundColor(theme.textMuted)
                     }
                 }
@@ -70,7 +70,7 @@ struct AIAssistantView: View {
                     dismiss()
                 }) {
                     Image(systemName: "xmark")
-                        .font(.system(size: 12))
+                        .font(.system(size: 14))
                         .foregroundColor(theme.textMuted)
                         .padding(4)
                         .background(Circle().fill(theme.itemHover))
@@ -87,7 +87,7 @@ struct AIAssistantView: View {
                 ForEach(AIAction.allCases, id: \.self) { action in
                     Button(action: { selectedAction = action }) {
                         Text(action.rawValue)
-                            .font(.system(size: 12, weight: .medium))
+                            .font(.system(size: 14, weight: .medium))
                             .foregroundColor(selectedAction == action ? .white : theme.textPrimary)
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)
@@ -124,7 +124,7 @@ struct AIAssistantView: View {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundColor(.orange)
                     Text(error)
-                        .font(.system(size: 11))
+                        .font(.system(size: 15))
                         .foregroundColor(theme.textMuted)
                 }
                 .padding(12)
@@ -140,7 +140,7 @@ struct AIAssistantView: View {
     private var summarySection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("文獻摘要")
-                .font(.system(size: 12, weight: .bold))
+                .font(.system(size: 16, weight: .bold))
                 .foregroundColor(theme.textMuted)
             
             if aiService.isProcessing {
@@ -148,14 +148,14 @@ struct AIAssistantView: View {
                     ProgressView()
                         .scaleEffect(0.8)
                     Text("正在生成...")
-                        .font(.system(size: 12))
+                        .font(.system(size: 14))
                         .foregroundColor(theme.textMuted)
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.vertical, 20)
             } else if !generatedSummary.isEmpty {
                 Text(generatedSummary)
-                    .font(.system(size: 13))
+                    .font(.system(size: 15))
                     .foregroundColor(theme.textPrimary)
                     .lineSpacing(4)
                     .textSelection(.enabled)
@@ -170,7 +170,7 @@ struct AIAssistantView: View {
                         Image(systemName: "doc.on.doc")
                         Text("複製摘要")
                     }
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.system(size: 15, weight: .medium))
                     .foregroundColor(theme.accent)
                 }
                 .buttonStyle(.plain)
@@ -180,7 +180,7 @@ struct AIAssistantView: View {
                         Image(systemName: "sparkles")
                         Text("生成摘要")
                     }
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
@@ -200,7 +200,7 @@ struct AIAssistantView: View {
     private var keywordsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("關鍵詞提取")
-                .font(.system(size: 12, weight: .bold))
+                .font(.system(size: 16, weight: .bold))
                 .foregroundColor(theme.textMuted)
             
             if aiService.isProcessing {
@@ -208,7 +208,7 @@ struct AIAssistantView: View {
                     ProgressView()
                         .scaleEffect(0.8)
                     Text("正在提取...")
-                        .font(.system(size: 12))
+                        .font(.system(size: 14))
                         .foregroundColor(theme.textMuted)
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
@@ -217,7 +217,7 @@ struct AIAssistantView: View {
                 FlowLayout(spacing: 8) {
                     ForEach(extractedKeywords, id: \.self) { keyword in
                         Text(keyword)
-                            .font(.system(size: 11, weight: .medium))
+                            .font(.system(size: 15, weight: .medium))
                             .foregroundColor(theme.accent)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 5)
@@ -233,7 +233,7 @@ struct AIAssistantView: View {
                         Image(systemName: "tag")
                         Text("提取關鍵詞")
                     }
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 10)
@@ -253,11 +253,11 @@ struct AIAssistantView: View {
     private var categorySection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("智慧分類建議")
-                .font(.system(size: 12, weight: .bold))
+                .font(.system(size: 16, weight: .bold))
                 .foregroundColor(theme.textMuted)
             
             Text("即將推出")
-                .font(.system(size: 12))
+                .font(.system(size: 14))
                 .foregroundColor(theme.textMuted)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.vertical, 20)

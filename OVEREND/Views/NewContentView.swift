@@ -126,7 +126,7 @@ struct NewContentView: View {
                     Image(systemName: "plus")
                     Text("建立文獻庫")
                 }
-                .font(.system(size: 13, weight: .bold))
+                .font(.system(size: 15, weight: .bold))
                 .foregroundColor(.white)
                 .padding(.horizontal, 20)
                 .padding(.vertical, 10)
@@ -319,11 +319,11 @@ struct ImportOptionCard: View {
                 }
                 
                 Text(title)
-                    .font(.system(size: 14, weight: .bold))
+                    .font(.system(size: 16, weight: .bold))
                     .foregroundColor(theme.textPrimary)
                 
                 Text(description)
-                    .font(.system(size: 11))
+                    .font(.system(size: 15))
                     .foregroundColor(theme.textMuted)
                     .multilineTextAlignment(.center)
             }

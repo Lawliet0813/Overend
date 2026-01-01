@@ -105,7 +105,7 @@ struct ToolbarButton: View {
                     .font(.system(size: 14, weight: .medium))
             } else if let label = label {
                 Text(label)
-                    .font(.system(size: 12, weight: .bold))
+                    .font(.system(size: 16, weight: .bold))
                     .frame(minWidth: 24)
             }
         }

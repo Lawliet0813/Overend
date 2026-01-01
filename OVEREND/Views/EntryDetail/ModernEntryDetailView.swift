@@ -30,14 +30,14 @@ struct ModernEntryDetailView: View {
             // 頂部工具列（含關閉按鈕）
             HStack {
                 Text("書目詳情")
-                    .font(.system(size: 13, weight: .bold))
+                    .font(.system(size: 15, weight: .bold))
                     .foregroundColor(theme.textPrimary)
                 
                 Spacer()
                 
                 Button(action: { onClose?() }) {
                     Image(systemName: "xmark")
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.system(size: 14, weight: .medium))
                         .foregroundColor(theme.textMuted)
                         .padding(6)
                         .background(
@@ -116,7 +116,7 @@ struct ModernEntryDetailView: View {
                 
                 if !aiService.isAvailable {
                     Text("需要 macOS 15+")
-                        .font(.system(size: 10))
+                        .font(.system(size: 14))
                         .foregroundColor(theme.textMuted)
                 }
             }
@@ -125,7 +125,7 @@ struct ModernEntryDetailView: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     Text("摘要")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.system(size: 15, weight: .medium))
                         .foregroundColor(theme.textMuted)
                     
                     Spacer()
@@ -137,7 +137,7 @@ struct ModernEntryDetailView: View {
                                     .scaleEffect(0.6)
                             } else {
                                 Label("生成", systemImage: "sparkles")
-                                    .font(.system(size: 10))
+                                    .font(.system(size: 14))
                             }
                         }
                         .buttonStyle(.bordered)
@@ -148,12 +148,12 @@ struct ModernEntryDetailView: View {
                 
                 if aiSummary.isEmpty {
                     Text("點擊「生成」讓 AI 自動摘要此文獻")
-                        .font(.system(size: 11))
+                        .font(.system(size: 15))
                         .foregroundColor(theme.textMuted)
                         .italic()
                 } else {
                     Text(aiSummary)
-                        .font(.system(size: 11))
+                        .font(.system(size: 15))
                         .foregroundColor(theme.textPrimary)
                         .textSelection(.enabled)
                 }
@@ -168,7 +168,7 @@ struct ModernEntryDetailView: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     Text("關鍵詞")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.system(size: 15, weight: .medium))
                         .foregroundColor(theme.textMuted)
                     
                     Spacer()
@@ -180,7 +180,7 @@ struct ModernEntryDetailView: View {
                                     .scaleEffect(0.6)
                             } else {
                                 Label("提取", systemImage: "tag")
-                                    .font(.system(size: 10))
+                                    .font(.system(size: 14))
                             }
                         }
                         .buttonStyle(.bordered)
@@ -191,14 +191,14 @@ struct ModernEntryDetailView: View {
                 
                 if aiKeywords.isEmpty {
                     Text("點擊「提取」讓 AI 自動識別關鍵詞")
-                        .font(.system(size: 11))
+                        .font(.system(size: 15))
                         .foregroundColor(theme.textMuted)
                         .italic()
                 } else {
                     FlowLayout(spacing: 6) {
                         ForEach(aiKeywords, id: \.self) { keyword in
                             Text(keyword)
-                                .font(.system(size: 10))
+                                .font(.system(size: 14))
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
                                 .background(
@@ -311,7 +311,7 @@ struct ModernEntryDetailView: View {
                     Image(systemName: "arrow.up.left.and.arrow.down.right")
                     Text("全螢幕開啟")
                 }
-                .font(.system(size: 12, weight: .medium))
+                .font(.system(size: 14, weight: .medium))
                 .foregroundColor(theme.accent)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 8)
@@ -330,7 +330,7 @@ struct ModernEntryDetailView: View {
         VStack(alignment: .leading, spacing: 12) {
             // 類型標籤
             Text(entry.entryType.uppercased())
-                .font(.system(size: 10, weight: .bold))
+                .font(.system(size: 16, weight: .bold))
                 .foregroundColor(theme.accent)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
@@ -417,7 +417,7 @@ struct ModernEntryDetailView: View {
                 
                 Button(action: importPDF) {
                     Image(systemName: "plus")
-                        .font(.system(size: 12))
+                        .font(.system(size: 14))
                         .foregroundColor(theme.accent)
                 }
                 .buttonStyle(.plain)
@@ -425,7 +425,7 @@ struct ModernEntryDetailView: View {
             
             if entry.attachmentArray.isEmpty {
                 Text("尚未添加附件")
-                    .font(.system(size: 12))
+                    .font(.system(size: 14))
                     .foregroundColor(theme.textMuted)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 20)
@@ -476,9 +476,9 @@ struct DetailSectionHeader: View {
     var body: some View {
         HStack(spacing: 6) {
             Image(systemName: icon)
-                .font(.system(size: 12))
+                .font(.system(size: 14))
             Text(title)
-                .font(.system(size: 12, weight: .bold))
+                .font(.system(size: 16, weight: .bold))
         }
         .foregroundColor(theme.textMuted)
     }
@@ -493,17 +493,17 @@ struct DetailMetadataRow: View {
     var body: some View {
         HStack(alignment: .top) {
             Text(label)
-                .font(.system(size: 12))
+                .font(.system(size: 14))
                 .foregroundColor(theme.textMuted)
                 .frame(width: 60, alignment: .leading)
             
             if isLink {
                 Link(value, destination: URL(string: "https://doi.org/\(value)") ?? URL(string: "https://doi.org")!)
-                    .font(.system(size: 12))
+                    .font(.system(size: 14))
                     .foregroundColor(theme.accent)
             } else {
                 Text(value)
-                    .font(.system(size: 12))
+                    .font(.system(size: 14))
                     .foregroundColor(theme.textPrimary)
             }
             
@@ -521,7 +521,7 @@ struct DetailCitationCard: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text(format)
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: 16, weight: .bold))
                     .foregroundColor(theme.accent)
                 
                 Spacer()
@@ -531,7 +531,7 @@ struct DetailCitationCard: View {
                     NSPasteboard.general.setString(citation, forType: .string)
                 }) {
                     Image(systemName: "doc.on.doc")
-                        .font(.system(size: 11))
+                        .font(.system(size: 15))
                         .foregroundColor(theme.textMuted)
                 }
                 .buttonStyle(.plain)
@@ -539,7 +539,7 @@ struct DetailCitationCard: View {
             }
             
             Text(citation)
-                .font(.system(size: 11))
+                .font(.system(size: 15))
                 .foregroundColor(theme.textPrimary)
                 .lineLimit(4)
                 .textSelection(.enabled)
@@ -580,17 +580,17 @@ struct DetailAttachmentCard: View {
                 // 資訊
                 VStack(alignment: .leading, spacing: 4) {
                     Text(attachment.fileName)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.system(size: 14, weight: .medium))
                         .foregroundColor(theme.textPrimary)
                         .lineLimit(1)
                     
                     HStack(spacing: 8) {
                         Text("\(attachment.pageCount) 頁")
-                            .font(.system(size: 10))
+                            .font(.system(size: 14))
                             .foregroundColor(theme.textMuted)
                         
                         Text(formatFileSize(attachment.fileSize))
-                            .font(.system(size: 10))
+                            .font(.system(size: 14))
                             .foregroundColor(theme.textMuted)
                     }
                 }
@@ -643,7 +643,7 @@ struct PDFViewerSheet: View {
             // 標題列
             HStack {
                 Text(attachment.fileName)
-                    .font(.system(size: 14, weight: .bold))
+                    .font(.system(size: 16, weight: .bold))
                 
                 Spacer()
                 

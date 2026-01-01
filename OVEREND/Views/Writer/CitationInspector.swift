@@ -38,7 +38,7 @@ struct CitationInspector: View {
         VStack(alignment: .leading, spacing: 0) {
             // 標題
             Text("文獻庫快速引用")
-                .font(.system(size: 10, weight: .bold))
+                .font(.system(size: 16, weight: .bold))
                 .foregroundColor(theme.textMuted)
                 .textCase(.uppercase)
                 .tracking(1)
@@ -49,11 +49,11 @@ struct CitationInspector: View {
             // 搜尋欄
             HStack(spacing: 6) {
                 Image(systemName: "magnifyingglass")
-                    .font(.system(size: 12))
+                    .font(.system(size: 14))
                     .foregroundColor(theme.textMuted)
                 
                 TextField("搜尋文獻...", text: $searchText)
-                    .font(.system(size: 11))
+                    .font(.system(size: 15))
                     .textFieldStyle(.plain)
             }
             .padding(.horizontal, 10)
@@ -93,7 +93,7 @@ struct CitationInspector: View {
             HStack(spacing: 4) {
                 Text("💡")
                 Text("AI 排版助手")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: 16, weight: .bold))
                     .foregroundColor(theme.accent)
             }
             
@@ -127,7 +127,7 @@ struct CitationCard: View {
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(entry.fields["title"] ?? "無標題")
-                    .font(.system(size: 11, weight: .bold))
+                    .font(.system(size: 15, weight: .bold))
                     .foregroundColor(theme.textPrimary)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
@@ -141,7 +141,7 @@ struct CitationCard: View {
                     
                     if isHovered {
                         Image(systemName: "plus")
-                            .font(.system(size: 12))
+                            .font(.system(size: 14))
                             .foregroundColor(theme.accent)
                     }
                 }

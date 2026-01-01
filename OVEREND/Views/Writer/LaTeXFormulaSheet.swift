@@ -74,7 +74,7 @@ struct LaTeXFormulaSheet: View {
                         HStack(spacing: 8) {
                             TextField("描述公式（例如：「畢氏定理」）", text: $aiDescription)
                                 .textFieldStyle(.roundedBorder)
-                                .font(.system(size: 13))
+                                .font(.system(size: 15))
 
                             Button(action: generateWithAI) {
                                 HStack(spacing: 4) {

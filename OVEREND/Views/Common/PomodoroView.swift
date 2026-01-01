@@ -23,7 +23,7 @@ struct PomodoroView: View {
                     Text("🍅")
                         .font(.system(size: 16))
                     Text("番茄鐘")
-                        .font(.system(size: 14, weight: .bold))
+                        .font(.system(size: 16, weight: .bold))
                         .foregroundColor(theme.textPrimary)
                 }
                 
@@ -31,14 +31,14 @@ struct PomodoroView: View {
                 
                 Button(action: { showSettings.toggle() }) {
                     Image(systemName: "gearshape")
-                        .font(.system(size: 12))
+                        .font(.system(size: 14))
                         .foregroundColor(theme.textMuted)
                 }
                 .buttonStyle(.plain)
                 
                 Button(action: { dismiss() }) {
                     Image(systemName: "xmark")
-                        .font(.system(size: 12))
+                        .font(.system(size: 14))
                         .foregroundColor(theme.textMuted)
                         .padding(4)
                         .background(Circle().fill(theme.itemHover))
@@ -71,7 +71,7 @@ struct PomodoroView: View {
                         .foregroundColor(theme.textPrimary)
                     
                     Text(timer.state.rawValue)
-                        .font(.system(size: 11))
+                        .font(.system(size: 15))
                         .foregroundColor(stateColor)
                 }
             }
@@ -85,7 +85,7 @@ struct PomodoroView: View {
                             Image(systemName: "play.fill")
                             Text("開始專注")
                         }
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
@@ -102,7 +102,7 @@ struct PomodoroView: View {
                             Image(systemName: "pause.fill")
                             Text("暫停")
                         }
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
@@ -115,7 +115,7 @@ struct PomodoroView: View {
                     
                     Button(action: { timer.stop() }) {
                         Image(systemName: "stop.fill")
-                            .font(.system(size: 12))
+                            .font(.system(size: 14))
                             .foregroundColor(theme.textMuted)
                             .padding(10)
                             .background(
@@ -131,7 +131,7 @@ struct PomodoroView: View {
                             Image(systemName: "play.fill")
                             Text("繼續")
                         }
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
@@ -144,7 +144,7 @@ struct PomodoroView: View {
                     
                     Button(action: { timer.stop() }) {
                         Image(systemName: "stop.fill")
-                            .font(.system(size: 12))
+                            .font(.system(size: 14))
                             .foregroundColor(theme.textMuted)
                             .padding(10)
                             .background(
@@ -160,7 +160,7 @@ struct PomodoroView: View {
                             Image(systemName: "forward.fill")
                             Text("跳過休息")
                         }
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
@@ -180,7 +180,7 @@ struct PomodoroView: View {
                         .font(.system(size: 18, weight: .bold))
                         .foregroundColor(theme.textPrimary)
                     Text("完成")
-                        .font(.system(size: 10))
+                        .font(.system(size: 14))
                         .foregroundColor(theme.textMuted)
                 }
                 
@@ -192,7 +192,7 @@ struct PomodoroView: View {
                         .font(.system(size: 18, weight: .bold))
                         .foregroundColor(theme.textPrimary)
                     Text("專注時間")
-                        .font(.system(size: 10))
+                        .font(.system(size: 14))
                         .foregroundColor(theme.textMuted)
                 }
             }
@@ -290,7 +290,7 @@ struct SettingRow: View {
     var body: some View {
         HStack {
             Text(label)
-                .font(.system(size: 13))
+                .font(.system(size: 15))
                 .foregroundColor(theme.textPrimary)
             
             Spacer()
@@ -300,7 +300,7 @@ struct SettingRow: View {
                     .frame(width: 100)
                 
                 Text("\(Int(value)) \(unit)")
-                    .font(.system(size: 12, design: .monospaced))
+                    .font(.system(size: 14, design: .monospaced))
                     .foregroundColor(theme.textMuted)
                     .frame(width: 70, alignment: .trailing)
             }
@@ -318,11 +318,11 @@ struct PomodoroToolbarButton: View {
         Button(action: { showPomodoro.toggle() }) {
             HStack(spacing: 4) {
                 Text("🍅")
-                    .font(.system(size: 12))
+                    .font(.system(size: 14))
                 
                 if timer.state == .working || timer.state == .shortBreak || timer.state == .longBreak {
                     Text(timer.formattedTime)
-                        .font(.system(size: 11, weight: .medium, design: .monospaced))
+                        .font(.system(size: 15, weight: .medium, design: .monospaced))
                         .foregroundColor(timerColor)
                 }
             }

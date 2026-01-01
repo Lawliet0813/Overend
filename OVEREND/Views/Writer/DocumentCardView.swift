@@ -32,14 +32,14 @@ struct DocumentCardView: View {
                 
                 // 標題
                 Text(document.title)
-                    .font(.system(size: 14, weight: .bold))
+                    .font(.system(size: 16, weight: .bold))
                     .foregroundColor(theme.textPrimary)
                     .lineLimit(2)
                     .padding(.bottom, 4)
                 
                 // 上次編輯
                 Text("上次編輯：\(formatDate(document.updatedAt))")
-                    .font(.system(size: 11))
+                    .font(.system(size: 15))
                     .foregroundColor(theme.textMuted)
                     .padding(.bottom, 16)
                 
@@ -48,13 +48,13 @@ struct DocumentCardView: View {
                 // 底部資訊
                 HStack {
                     Text("\(wordCount) 字")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(.system(size: 16, weight: .bold))
                         .foregroundColor(theme.textMuted)
                     
                     Spacer()
                     
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 12))
+                        .font(.system(size: 14))
                         .foregroundColor(theme.textMuted)
                 }
                 .padding(.top, 16)

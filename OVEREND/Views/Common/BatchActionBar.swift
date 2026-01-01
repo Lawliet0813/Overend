@@ -23,7 +23,7 @@ struct BatchActionBar: View {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundColor(theme.accent)
                 Text("已選取 \(selectedCount) 筆")
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.system(size: 15, weight: .medium))
                     .foregroundColor(theme.textPrimary)
             }
             
@@ -57,9 +57,9 @@ struct BatchActionBar: View {
             Button(action: onClearSelection) {
                 HStack(spacing: 4) {
                     Image(systemName: "xmark")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.system(size: 15, weight: .medium))
                     Text("取消選取")
-                        .font(.system(size: 12))
+                        .font(.system(size: 14))
                 }
                 .foregroundColor(theme.textMuted)
             }
@@ -105,9 +105,9 @@ struct BatchActionButton: View {
         Button(action: action) {
             HStack(spacing: 6) {
                 Image(systemName: icon)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.system(size: 14, weight: .medium))
                 Text(label)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.system(size: 14, weight: .medium))
             }
             .foregroundColor(isHovered ? .white : color)
             .padding(.horizontal, 12)

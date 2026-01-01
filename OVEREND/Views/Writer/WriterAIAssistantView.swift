@@ -67,7 +67,7 @@ struct WriterAIAssistantView: View {
                         .foregroundColor(theme.accent)
                     
                     Text("AI 寫作助手")
-                        .font(.system(size: 14, weight: .bold))
+                        .font(.system(size: 16, weight: .bold))
                         .foregroundColor(theme.textPrimary)
                 }
                 
@@ -80,14 +80,14 @@ struct WriterAIAssistantView: View {
                             .fill(Color.green)
                             .frame(width: 6, height: 6)
                         Text("已就緒")
-                            .font(.system(size: 10))
+                            .font(.system(size: 14))
                             .foregroundColor(theme.textMuted)
                     }
                 }
                 
                 Button(action: { dismiss() }) {
                     Image(systemName: "xmark")
-                        .font(.system(size: 12))
+                        .font(.system(size: 14))
                         .foregroundColor(theme.textMuted)
                         .padding(4)
                         .background(Circle().fill(theme.itemHover))
@@ -108,7 +108,7 @@ struct WriterAIAssistantView: View {
                                 Image(systemName: action.icon)
                                     .font(.system(size: 16))
                                 Text(action.rawValue)
-                                    .font(.system(size: 10, weight: .medium))
+                                    .font(.system(size: 14, weight: .medium))
                             }
                             .foregroundColor(selectedAction == action ? .white : theme.textPrimary)
                             .frame(width: 60, height: 50)
@@ -131,12 +131,12 @@ struct WriterAIAssistantView: View {
                     // 原文
                     VStack(alignment: .leading, spacing: 8) {
                         Text("選取的文字")
-                            .font(.system(size: 11, weight: .bold))
+                            .font(.system(size: 15, weight: .bold))
                             .foregroundColor(theme.textMuted)
                         
                         if selectedText.isEmpty {
                             Text("請先在編輯器中選取要處理的文字")
-                                .font(.system(size: 12))
+                                .font(.system(size: 14))
                                 .foregroundColor(theme.textMuted)
                                 .italic()
                                 .padding(12)
@@ -147,7 +147,7 @@ struct WriterAIAssistantView: View {
                                 )
                         } else {
                             Text(selectedText)
-                                .font(.system(size: 12))
+                                .font(.system(size: 14))
                                 .foregroundColor(theme.textPrimary)
                                 .lineSpacing(4)
                                 .padding(12)
@@ -167,12 +167,12 @@ struct WriterAIAssistantView: View {
                     if selectedAction == .custom {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("自訂指令")
-                                .font(.system(size: 11, weight: .bold))
+                                .font(.system(size: 15, weight: .bold))
                                 .foregroundColor(theme.textMuted)
                             
                             TextField("例如：改寫成更正式的語氣", text: $customPrompt)
                                 .textFieldStyle(.roundedBorder)
-                                .font(.system(size: 12))
+                                .font(.system(size: 14))
                         }
                     }
                     
@@ -188,7 +188,7 @@ struct WriterAIAssistantView: View {
                                 Text("AI \(selectedAction.rawValue)")
                             }
                         }
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
@@ -205,14 +205,14 @@ struct WriterAIAssistantView: View {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
                                 Text("AI 結果")
-                                    .font(.system(size: 11, weight: .bold))
+                                    .font(.system(size: 15, weight: .bold))
                                     .foregroundColor(theme.textMuted)
                                 
                                 Spacer()
                                 
                                 Button(action: copyResult) {
                                     Image(systemName: "doc.on.doc")
-                                        .font(.system(size: 11))
+                                        .font(.system(size: 15))
                                         .foregroundColor(theme.accent)
                                 }
                                 .buttonStyle(.plain)
@@ -220,7 +220,7 @@ struct WriterAIAssistantView: View {
                             }
                             
                             Text(result)
-                                .font(.system(size: 12))
+                                .font(.system(size: 14))
                                 .foregroundColor(theme.textPrimary)
                                 .lineSpacing(4)
                                 .textSelection(.enabled)
@@ -242,7 +242,7 @@ struct WriterAIAssistantView: View {
                                         Image(systemName: "arrow.turn.down.left")
                                         Text("取代原文")
                                     }
-                                    .font(.system(size: 11, weight: .medium))
+                                    .font(.system(size: 15, weight: .medium))
                                     .foregroundColor(.white)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 8)
@@ -258,7 +258,7 @@ struct WriterAIAssistantView: View {
                                         Image(systemName: "arrow.clockwise")
                                         Text("重新生成")
                                     }
-                                    .font(.system(size: 11, weight: .medium))
+                                    .font(.system(size: 15, weight: .medium))
                                     .foregroundColor(theme.textPrimary)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 8)

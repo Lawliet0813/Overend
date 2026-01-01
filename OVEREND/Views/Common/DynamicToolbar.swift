@@ -36,7 +36,7 @@ struct DynamicToolbar: View {
                 
                 // 標題
                 Text(toolbarTitle)
-                    .font(.system(size: 13, weight: .bold))
+                    .font(.system(size: 15, weight: .bold))
                     .foregroundColor(theme.textPrimary)
             }
             
@@ -60,11 +60,11 @@ struct DynamicToolbar: View {
                 // 搜尋欄
                 HStack(spacing: 6) {
                     Image(systemName: "magnifyingglass")
-                        .font(.system(size: 12))
+                        .font(.system(size: 14))
                         .foregroundColor(theme.textMuted)
                     
                     TextField("搜尋...", text: $searchText)
-                        .font(.system(size: 12))
+                        .font(.system(size: 14))
                         .textFieldStyle(.plain)
                 }
                 .padding(.horizontal, 10)
@@ -84,9 +84,9 @@ struct DynamicToolbar: View {
                 Button(action: onNewItem) {
                     HStack(spacing: 6) {
                         Image(systemName: "plus")
-                            .font(.system(size: 12, weight: .bold))
+                            .font(.system(size: 16, weight: .bold))
                         Text(newButtonTitle)
-                            .font(.system(size: 12, weight: .bold))
+                            .font(.system(size: 16, weight: .bold))
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal, 12)

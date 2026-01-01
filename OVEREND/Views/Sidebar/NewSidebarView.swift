@@ -66,7 +66,7 @@ struct NewSidebarView: View {
                             icon: library.isDefault ? "star.fill" : "folder",
                             title: library.name,
                             isSelected: viewState.selectedLibrary?.id == library.id,
-                            badge: nil
+                            badge: library.entryCount
                         ) {
                             viewState.selectedLibrary = library
                             viewState.showLibrary()
@@ -87,7 +87,7 @@ struct NewSidebarView: View {
     
     private func sectionHeader(_ title: String) -> some View {
         Text(title)
-            .font(.system(size: 10, weight: .bold))
+            .font(.system(size: 16, weight: .bold))
             .foregroundColor(theme.textMuted)
             .textCase(.uppercase)
             .tracking(0.5)
@@ -116,14 +116,14 @@ struct SidebarButton: View {
                     .frame(width: 18)
                 
                 Text(title)
-                    .font(.system(size: 13))
+                    .font(.system(size: 15))
                     .lineLimit(1)
                 
                 Spacer()
                 
                 if let badge = badge {
                     Text("\(badge)")
-                        .font(.system(size: 10, weight: .medium))
+                        .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.white)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)

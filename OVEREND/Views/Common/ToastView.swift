@@ -24,7 +24,7 @@ struct ToastView: View {
             
             // 訊息
             Text(toast.message)
-                .font(.system(size: 13, weight: .medium))
+                .font(.system(size: 15, weight: .medium))
                 .foregroundColor(theme.textPrimary)
                 .lineLimit(2)
             
@@ -33,7 +33,7 @@ struct ToastView: View {
             // 關閉按鈕
             Button(action: { manager.dismiss(toast) }) {
                 Image(systemName: "xmark")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: 16, weight: .bold))
                     .foregroundColor(theme.textMuted)
             }
             .buttonStyle(.plain)
@@ -80,7 +80,7 @@ struct LoadingIndicator: View {
                         .frame(width: 20, height: 20)
                     
                     Text("\(Int(progress * 100))%")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.system(size: 15, weight: .medium))
                         .foregroundColor(theme.textMuted)
                         .monospacedDigit()
                 } else {
@@ -93,7 +93,7 @@ struct LoadingIndicator: View {
                 
                 // 訊息
                 Text(manager.loadingMessage)
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.system(size: 15, weight: .medium))
                     .foregroundColor(theme.textPrimary)
                     .lineLimit(1)
             }

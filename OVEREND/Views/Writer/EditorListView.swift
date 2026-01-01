@@ -77,7 +77,7 @@ struct EditorListView: View {
                     Image(systemName: "plus")
                     Text("新建文稿")
                 }
-                .font(.system(size: 13, weight: .bold))
+                .font(.system(size: 15, weight: .bold))
                 .foregroundColor(.white)
                 .padding(.horizontal, 20)
                 .padding(.vertical, 10)

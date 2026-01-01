@@ -92,7 +92,7 @@ struct FloatingAIAssistant: View {
                     .foregroundColor(theme.accent)
 
                 Text("AI 助理助手")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(theme.textPrimary)
 
                 Spacer()
@@ -135,9 +135,9 @@ struct FloatingAIAssistant: View {
                         }) {
                             HStack(spacing: 4) {
                                 Image(systemName: "chevron.left")
-                                    .font(.system(size: 10))
+                                    .font(.system(size: 14))
                                 Text("返回主選單")
-                                    .font(.system(size: 11))
+                                    .font(.system(size: 15))
                             }
                             .foregroundColor(theme.accent)
                         }
@@ -176,7 +176,7 @@ struct FloatingAIAssistant: View {
                     .foregroundColor(.white)
 
                 Text("AI 助理助手")
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.system(size: 15, weight: .medium))
                     .foregroundColor(.white)
             }
             .padding(.horizontal, 12)
@@ -207,11 +207,11 @@ struct FloatingAIAssistant: View {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
                             Image(systemName: "text.cursor")
-                                .font(.system(size: 10))
+                                .font(.system(size: 14))
                                 .foregroundColor(theme.accent)
 
                             Text("選取的文字")
-                                .font(.system(size: 10, weight: .semibold))
+                                .font(.system(size: 14, weight: .semibold))
                                 .foregroundColor(theme.textMuted)
 
                             Spacer()
@@ -222,7 +222,7 @@ struct FloatingAIAssistant: View {
                         }
 
                         Text(selectedText)
-                            .font(.system(size: 10))
+                            .font(.system(size: 14))
                             .foregroundColor(theme.textPrimary)
                             .lineLimit(3)
                             .padding(8)
@@ -264,25 +264,25 @@ struct FloatingAIAssistant: View {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
                             Image(systemName: "sparkles")
-                                .font(.system(size: 10))
+                                .font(.system(size: 14))
                                 .foregroundColor(theme.accent)
 
                             Text("AI 建議")
-                                .font(.system(size: 10, weight: .semibold))
+                                .font(.system(size: 14, weight: .semibold))
                                 .foregroundColor(theme.textMuted)
 
                             Spacer()
 
                             Button(action: { aiResult = "" }) {
                                 Image(systemName: "xmark.circle.fill")
-                                    .font(.system(size: 12))
+                                    .font(.system(size: 14))
                                     .foregroundColor(theme.textMuted)
                             }
                             .buttonStyle(.plain)
                         }
 
                         Text(aiResult)
-                            .font(.system(size: 10))
+                            .font(.system(size: 14))
                             .foregroundColor(theme.textPrimary)
                             .padding(8)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -303,7 +303,7 @@ struct FloatingAIAssistant: View {
                                     Image(systemName: "arrow.triangle.2.circlepath")
                                         .font(.system(size: 9))
                                     Text("取代")
-                                        .font(.system(size: 10, weight: .medium))
+                                        .font(.system(size: 14, weight: .medium))
                                 }
                                 .foregroundColor(.white)
                                 .padding(.horizontal, 10)
@@ -320,7 +320,7 @@ struct FloatingAIAssistant: View {
                                     Image(systemName: "doc.on.doc")
                                         .font(.system(size: 9))
                                     Text("複製")
-                                        .font(.system(size: 10, weight: .medium))
+                                        .font(.system(size: 14, weight: .medium))
                                 }
                                 .foregroundColor(theme.textPrimary)
                                 .padding(.horizontal, 10)
@@ -337,7 +337,7 @@ struct FloatingAIAssistant: View {
                                     Image(systemName: "arrow.clockwise")
                                         .font(.system(size: 9))
                                     Text("重新生成")
-                                        .font(.system(size: 10, weight: .medium))
+                                        .font(.system(size: 14, weight: .medium))
                                 }
                                 .foregroundColor(theme.textPrimary)
                                 .padding(.horizontal, 10)
@@ -362,16 +362,16 @@ struct FloatingAIAssistant: View {
                     VStack(alignment: .leading, spacing: 6) {
                         HStack(spacing: 6) {
                             Image(systemName: "sparkles")
-                                .font(.system(size: 12))
+                                .font(.system(size: 14))
                                 .foregroundColor(theme.accent)
 
                             Text("我可以協助您")
-                                .font(.system(size: 11, weight: .semibold))
+                                .font(.system(size: 15, weight: .semibold))
                                 .foregroundColor(theme.textMuted)
                         }
 
                         Text("選取編輯器中的文字，我可以幫您潤飾、擴寫、精簡或校對。")
-                            .font(.system(size: 12))
+                            .font(.system(size: 14))
                             .foregroundColor(theme.textPrimary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -415,7 +415,7 @@ struct FloatingAIAssistant: View {
             // 輸入框
             TextField("問我任何問題...", text: $userInput)
                 .textFieldStyle(.plain)
-                .font(.system(size: 11))
+                .font(.system(size: 15))
                 .padding(.horizontal, 10)
                 .padding(.vertical, 7)
                 .background(theme.itemHover)
@@ -779,7 +779,7 @@ struct QuickActionButton: View {
         Button(action: action) {
             VStack(spacing: 3) {
                 Image(systemName: icon)
-                    .font(.system(size: 11))
+                    .font(.system(size: 15))
                     .foregroundColor(isHovered ? .white : color)
 
                 Text(title)
@@ -817,12 +817,12 @@ struct SuggestionButton: View {
         Button(action: onTap) {
             HStack(spacing: 8) {
                 Image(systemName: action.icon)
-                    .font(.system(size: 12))
+                    .font(.system(size: 14))
                     .foregroundColor(action.color)
                     .frame(width: 20)
 
                 Text(action.title)
-                    .font(.system(size: 11))
+                    .font(.system(size: 15))
                     .foregroundColor(theme.textPrimary)
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
@@ -830,7 +830,7 @@ struct SuggestionButton: View {
                 Spacer()
 
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 10))
+                    .font(.system(size: 14))
                     .foregroundColor(theme.textMuted)
             }
             .padding(.horizontal, 10)
@@ -865,7 +865,7 @@ struct MessageBubble: View {
 
             VStack(alignment: message.role == .user ? .trailing : .leading, spacing: 4) {
                 Text(message.content)
-                    .font(.system(size: 11))
+                    .font(.system(size: 15))
                     .foregroundColor(message.role == .user ? .white : theme.textPrimary)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 8)
@@ -926,7 +926,7 @@ struct LibrarySelectorSheet: View {
                     // 格式選擇器
                     VStack(alignment: .leading, spacing: 8) {
                         Text("引用格式")
-                            .font(.system(size: 11, weight: .bold))
+                            .font(.system(size: 15, weight: .bold))
                             .foregroundColor(theme.textMuted)
 
                         HStack(spacing: 8) {
@@ -936,10 +936,10 @@ struct LibrarySelectorSheet: View {
                                 }) {
                                     HStack(spacing: 6) {
                                         Image(systemName: "doc.text")
-                                            .font(.system(size: 12))
+                                            .font(.system(size: 14))
 
                                         Text(format)
-                                            .font(.system(size: 11, weight: .semibold))
+                                            .font(.system(size: 15, weight: .semibold))
                                     }
                                     .foregroundColor(selectedFormat == format ? .white : theme.textPrimary)
                                     .padding(.horizontal, 12)
@@ -962,7 +962,7 @@ struct LibrarySelectorSheet: View {
                     Divider()
 
                     Text("請選擇要生成參考文獻的文獻庫或分組")
-                        .font(.system(size: 12))
+                        .font(.system(size: 14))
                         .foregroundColor(theme.textMuted)
 
                     // 文獻庫列表
@@ -997,7 +997,7 @@ struct LibrarySelectorSheet: View {
                 if let library = selectedLibrary {
                     let count = selectedGroup?.entryCount ?? library.entryCount
                     Text("\(count) 筆文獻")
-                        .font(.system(size: 12))
+                        .font(.system(size: 14))
                         .foregroundColor(theme.textMuted)
                 }
 
@@ -1033,7 +1033,7 @@ struct ReferencesLibraryRow: View {
             Button(action: onSelect) {
                 HStack(spacing: 8) {
                     Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
-                        .font(.system(size: 10))
+                        .font(.system(size: 14))
                         .foregroundColor(theme.textMuted)
                         .onTapGesture {
                             isExpanded.toggle()
@@ -1044,13 +1044,13 @@ struct ReferencesLibraryRow: View {
                         .foregroundColor(theme.accent)
 
                     Text(library.name)
-                        .font(.system(size: 13, weight: isSelected ? .semibold : .regular))
+                        .font(.system(size: 15, weight: isSelected ? .semibold : .regular))
                         .foregroundColor(theme.textPrimary)
 
                     Spacer()
 
                     Text("\(library.entryCount)")
-                        .font(.system(size: 11))
+                        .font(.system(size: 15))
                         .foregroundColor(theme.textMuted)
 
                     if isSelected && selectedGroup == nil {
@@ -1100,22 +1100,22 @@ struct ReferencesGroupRow: View {
         Button(action: onSelect) {
             HStack(spacing: 8) {
                 Image(systemName: "folder")
-                    .font(.system(size: 12))
+                    .font(.system(size: 14))
                     .foregroundColor(theme.textMuted)
 
                 Text(group.name)
-                    .font(.system(size: 12))
+                    .font(.system(size: 14))
                     .foregroundColor(theme.textPrimary)
 
                 Spacer()
 
                 Text("\(group.entryCount)")
-                    .font(.system(size: 10))
+                    .font(.system(size: 14))
                     .foregroundColor(theme.textMuted)
 
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 12))
+                        .font(.system(size: 14))
                         .foregroundColor(theme.accent)
                 }
             }

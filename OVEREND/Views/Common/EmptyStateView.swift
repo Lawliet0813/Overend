@@ -165,7 +165,7 @@ struct LibraryEmptyState: View {
                     Image(systemName: "square.and.arrow.down")
                         .font(.system(size: 14, weight: .semibold))
                     Text("匯入文獻")
-                        .font(.system(size: 14, weight: .bold))
+                        .font(.system(size: 16, weight: .bold))
                 }
                 .foregroundColor(.white)
                 .padding(.horizontal, 28)
@@ -181,9 +181,9 @@ struct LibraryEmptyState: View {
             // 拖曳提示
             HStack(spacing: 6) {
                 Image(systemName: "arrow.down.doc")
-                    .font(.system(size: 11))
+                    .font(.system(size: 15))
                 Text("或拖曳檔案到此處")
-                    .font(.system(size: 12))
+                    .font(.system(size: 14))
             }
             .foregroundColor(theme.textMuted.opacity(0.8))
         }
@@ -245,7 +245,7 @@ struct DocumentsEmptyState: View {
                     Image(systemName: "plus")
                         .font(.system(size: 14, weight: .semibold))
                     Text("建立新文稿")
-                        .font(.system(size: 14, weight: .bold))
+                        .font(.system(size: 16, weight: .bold))
                 }
                 .foregroundColor(.white)
                 .padding(.horizontal, 28)

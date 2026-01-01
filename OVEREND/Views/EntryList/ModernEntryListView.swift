@@ -107,7 +107,7 @@ struct ModernEntryListView: View {
             Text("")
                 .frame(width: 40)
         }
-        .font(.system(size: 11, weight: .bold))
+        .font(.system(size: 15, weight: .bold))
         .foregroundColor(theme.textMuted)
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
@@ -162,7 +162,7 @@ struct ModernEntryListView: View {
                     .foregroundColor(theme.textPrimary)
                 
                 Text("匯入 PDF 或 BibTeX 開始管理您的文獻")
-                    .font(.system(size: 13))
+                    .font(.system(size: 15))
                     .foregroundColor(theme.textMuted)
             }
         }
@@ -188,14 +188,14 @@ struct EntryTableRow: View {
                 // 標題
                 VStack(alignment: .leading, spacing: 2) {
                     Text(entry.fields["title"] ?? "無標題")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(isSelected ? theme.accent : theme.textPrimary)
                         .lineLimit(1)
                     
                     // 期刊/來源
                     if let journal = entry.fields["journal"], !journal.isEmpty {
                         Text(journal)
-                            .font(.system(size: 10))
+                            .font(.system(size: 14))
                             .foregroundColor(theme.textMuted)
                             .lineLimit(1)
                     }
@@ -204,7 +204,7 @@ struct EntryTableRow: View {
                 
                 // 作者 / 年份
                 Text(authorYearText)
-                    .font(.system(size: 12))
+                    .font(.system(size: 14))
                     .foregroundColor(theme.textMuted)
                     .lineLimit(1)
                     .frame(width: 150, alignment: .leading)
@@ -213,9 +213,9 @@ struct EntryTableRow: View {
                 HStack(spacing: 4) {
                     if !entry.attachmentArray.isEmpty {
                         Image(systemName: "paperclip")
-                            .font(.system(size: 11))
+                            .font(.system(size: 15))
                         Text("\(entry.attachmentArray.count)")
-                            .font(.system(size: 11))
+                            .font(.system(size: 15))
                     }
                 }
                 .foregroundColor(theme.textMuted)
@@ -223,7 +223,7 @@ struct EntryTableRow: View {
                 
                 // 類型標籤
                 Text(entry.entryType)
-                    .font(.system(size: 10, weight: .medium))
+                    .font(.system(size: 14, weight: .medium))
                     .foregroundColor(theme.accent)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 3)
@@ -236,7 +236,7 @@ struct EntryTableRow: View {
                 // 刪除按鈕
                 Button(action: { showDeleteConfirm = true }) {
                     Image(systemName: "trash")
-                        .font(.system(size: 11))
+                        .font(.system(size: 15))
                         .foregroundColor(isHovered ? .red : theme.textMuted.opacity(0.5))
                 }
                 .buttonStyle(.plain)
@@ -314,7 +314,7 @@ struct ImpactBadge: View {
     
     var body: some View {
         Text(impact)
-            .font(.system(size: 10, weight: .bold))
+            .font(.system(size: 16, weight: .bold))
             .foregroundColor(theme.accent)
             .padding(.horizontal, 8)
             .padding(.vertical, 2)

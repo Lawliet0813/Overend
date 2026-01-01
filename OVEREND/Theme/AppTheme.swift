@@ -69,6 +69,43 @@ class AppTheme: ObservableObject {
     var tableRowHover: Color {
         isDarkMode ? Color.white.opacity(0.02) : Color.black.opacity(0.02)
     }
+    
+    // MARK: - 字體尺寸系統（整體加大）
+    
+    /// 特大標題（28pt）
+    var fontXLarge: CGFloat { 28 }
+    
+    /// 大標題（22pt）
+    var fontLarge: CGFloat { 22 }
+    
+    /// 中標題（18pt）
+    var fontMedium: CGFloat { 18 }
+    
+    /// 正文（15pt）- 比預設 13pt 大
+    var fontBody: CGFloat { 15 }
+    
+    /// 說明文字（13pt）
+    var fontCaption: CGFloat { 13 }
+    
+    /// 小字（11pt）
+    var fontMini: CGFloat { 11 }
+    
+    // MARK: - 字體樣式
+    
+    /// 標題字體
+    func titleFont(size: CGFloat = 18) -> Font {
+        .system(size: size, weight: .bold)
+    }
+    
+    /// 正文字體
+    func bodyFont(size: CGFloat = 15) -> Font {
+        .system(size: size, weight: .regular)
+    }
+    
+    /// 說明文字字體
+    func captionFont(size: CGFloat = 13) -> Font {
+        .system(size: size, weight: .regular)
+    }
 }
 
 // MARK: - 預覽

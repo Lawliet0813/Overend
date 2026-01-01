@@ -63,9 +63,9 @@ struct ProfessionalEditorView: View {
             // 字體選擇
             HStack(spacing: 4) {
                 Text("新細明體")
-                    .font(.system(size: 11))
+                    .font(.system(size: 15))
                 Image(systemName: "chevron.down")
-                    .font(.system(size: 10))
+                    .font(.system(size: 14))
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
@@ -75,9 +75,9 @@ struct ProfessionalEditorView: View {
             // 字體大小
             HStack(spacing: 4) {
                 Text("12")
-                    .font(.system(size: 11))
+                    .font(.system(size: 15))
                 Image(systemName: "chevron.down")
-                    .font(.system(size: 10))
+                    .font(.system(size: 14))
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
@@ -115,7 +115,7 @@ struct ProfessionalEditorView: View {
                     Image(systemName: "book.pages")
                         .font(.system(size: 14))
                     Text("引用文獻")
-                        .font(.system(size: 11, weight: .bold))
+                        .font(.system(size: 15, weight: .bold))
                 }
                 .foregroundColor(theme.accent)
             }
@@ -129,16 +129,16 @@ struct ProfessionalEditorView: View {
                     ProgressView()
                         .scaleEffect(0.5)
                     Text("儲存中...")
-                        .font(.system(size: 10))
+                        .font(.system(size: 14))
                         .foregroundColor(theme.textMuted)
                 }
             } else if let saved = lastSaved {
                 HStack(spacing: 4) {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 10))
+                        .font(.system(size: 14))
                         .foregroundColor(.green)
                     Text("已儲存")
-                        .font(.system(size: 10))
+                        .font(.system(size: 14))
                         .foregroundColor(theme.textMuted)
                 }
             }
