@@ -79,6 +79,7 @@ struct NewContentView: View {
         }
         .environmentObject(theme)
         .environmentObject(viewState)
+        .withToast()
         .onAppear {
             if viewState.selectedLibrary == nil && !libraryVM.libraries.isEmpty {
                 viewState.selectedLibrary = libraryVM.libraries.first
@@ -95,6 +96,67 @@ struct NewContentView: View {
             Button("確定", role: .cancel) {}
         } message: { message in
             Text(message)
+        }
+        // 拖曳 PDF 匯入
+        .onDrop(of: [.pdf, .fileURL], isTargeted: nil) { providers in
+            handleDrop(providers: providers)
+            return true
+        }
+    }
+    
+    // MARK: - 拖曳 PDF 匯入
+    
+    private func handleDrop(providers: [NSItemProvider]) -> Bool {
+        guard let library = viewState.selectedLibrary ?? libraryVM.libraries.first else {
+            ToastManager.shared.showError("請先選擇文獻庫")
+            return false
+        }
+        
+        var importedCount = 0
+        let group = DispatchGroup()
+        
+        for provider in providers {
+            if provider.canLoadObject(ofClass: URL.self) {
+                group.enter()
+                _ = provider.loadObject(ofClass: URL.self) { url, error in
+                    defer { group.leave() }
+                    guard let url = url, url.pathExtension.lowercased() == "pdf" else { return }
+                    
+                    DispatchQueue.main.async {
+                        self.importDroppedPDF(url: url, library: library)
+                        importedCount += 1
+                    }
+                }
+            }
+        }
+        
+        group.notify(queue: .main) {
+            if importedCount > 0 {
+                ToastManager.shared.showSuccess("已匯入 \(importedCount) 個 PDF")
+            }
+        }
+        
+        return true
+    }
+    
+    private func importDroppedPDF(url: URL, library: Library) {
+        let entry = Entry(context: viewContext)
+        entry.id = UUID()
+        entry.entryType = "misc"
+        let title = url.deletingPathExtension().lastPathComponent
+            .replacingOccurrences(of: "_", with: " ")
+            .replacingOccurrences(of: "-", with: " ")
+        entry.citationKey = generateCitationKey(from: url)
+        entry.fields = ["title": title]
+        entry.bibtexRaw = "@misc{\(entry.citationKey),\n  title = {\(title)}\n}"
+        entry.createdAt = Date()
+        entry.updatedAt = Date()
+        entry.library = library
+        
+        do {
+            try PDFService.addPDFAttachment(from: url, to: entry, context: viewContext)
+        } catch {
+            print("附加 PDF 失敗：\(error)")
         }
     }
     
