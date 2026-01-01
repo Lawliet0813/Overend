@@ -70,12 +70,29 @@ struct OVERENDApp: App {
     @FocusedValue(\.selectedLibrary) var selectedLibrary
     @FocusedValue(\.importBibTeXAction) var importBibTeXAction
     @FocusedValue(\.importPDFAction) var importPDFAction
+    
+    // Splash Screen 狀態
+    @State private var showSplash = true
 
     var body: some Scene {
         WindowGroup {
-            NewContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
-                .frame(minWidth: 1200, minHeight: 800)
+            ZStack {
+                // 主內容
+                NewContentView()
+                    .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                    .opacity(showSplash ? 0 : 1)
+                
+                // Splash Screen
+                if showSplash {
+                    SplashScreenView {
+                        withAnimation(.easeInOut(duration: 0.5)) {
+                            showSplash = false
+                        }
+                    }
+                    .transition(.opacity)
+                }
+            }
+            .frame(minWidth: 1200, minHeight: 800)
         }
         .commands {
             // 自定義菜單命令

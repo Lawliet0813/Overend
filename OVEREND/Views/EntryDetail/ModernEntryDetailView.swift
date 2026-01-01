@@ -18,6 +18,13 @@ struct ModernEntryDetailView: View {
     @State private var showPDFViewer = false
     @State private var selectedAttachment: Attachment?
     
+    // AI 功能狀態
+    @StateObject private var aiService = AppleAIService.shared
+    @State private var aiSummary: String = ""
+    @State private var aiKeywords: [String] = []
+    @State private var isGeneratingSummary = false
+    @State private var isExtractingKeywords = false
+    
     var body: some View {
         VStack(spacing: 0) {
             // 頂部工具列（含關閉按鈕）
@@ -57,6 +64,11 @@ struct ModernEntryDetailView: View {
                     
                     Divider()
                     
+                    // AI 智慧分析（新增）
+                    aiSection
+                    
+                    Divider()
+                    
                     // 書目資訊
                     metadataSection
                     
@@ -80,6 +92,190 @@ struct ModernEntryDetailView: View {
             if let attachment = selectedAttachment {
                 PDFViewerSheet(attachment: attachment)
                     .environmentObject(theme)
+            }
+        }
+        .onAppear {
+            // 載入已儲存的摘要
+            if let saved = entry.fields["ai_summary"] {
+                aiSummary = saved
+            }
+            if let keywordsStr = entry.fields["ai_keywords"] {
+                aiKeywords = keywordsStr.components(separatedBy: ", ")
+            }
+        }
+    }
+    
+    // MARK: - AI 智慧分析區
+    
+    private var aiSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                DetailSectionHeader(title: "AI 智慧分析", icon: "apple.intelligence")
+                
+                Spacer()
+                
+                if !aiService.isAvailable {
+                    Text("需要 macOS 15+")
+                        .font(.system(size: 10))
+                        .foregroundColor(theme.textMuted)
+                }
+            }
+            
+            // AI 摘要
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text("摘要")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(theme.textMuted)
+                    
+                    Spacer()
+                    
+                    if aiService.isAvailable {
+                        Button(action: generateSummary) {
+                            if isGeneratingSummary {
+                                ProgressView()
+                                    .scaleEffect(0.6)
+                            } else {
+                                Label("生成", systemImage: "sparkles")
+                                    .font(.system(size: 10))
+                            }
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.mini)
+                        .disabled(isGeneratingSummary)
+                    }
+                }
+                
+                if aiSummary.isEmpty {
+                    Text("點擊「生成」讓 AI 自動摘要此文獻")
+                        .font(.system(size: 11))
+                        .foregroundColor(theme.textMuted)
+                        .italic()
+                } else {
+                    Text(aiSummary)
+                        .font(.system(size: 11))
+                        .foregroundColor(theme.textPrimary)
+                        .textSelection(.enabled)
+                }
+            }
+            .padding(12)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(theme.accentLight.opacity(0.5))
+            )
+            
+            // AI 關鍵詞
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text("關鍵詞")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(theme.textMuted)
+                    
+                    Spacer()
+                    
+                    if aiService.isAvailable {
+                        Button(action: extractKeywords) {
+                            if isExtractingKeywords {
+                                ProgressView()
+                                    .scaleEffect(0.6)
+                            } else {
+                                Label("提取", systemImage: "tag")
+                                    .font(.system(size: 10))
+                            }
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.mini)
+                        .disabled(isExtractingKeywords)
+                    }
+                }
+                
+                if aiKeywords.isEmpty {
+                    Text("點擊「提取」讓 AI 自動識別關鍵詞")
+                        .font(.system(size: 11))
+                        .foregroundColor(theme.textMuted)
+                        .italic()
+                } else {
+                    FlowLayout(spacing: 6) {
+                        ForEach(aiKeywords, id: \.self) { keyword in
+                            Text(keyword)
+                                .font(.system(size: 10))
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(theme.accent.opacity(0.2))
+                                )
+                                .foregroundColor(theme.accent)
+                        }
+                    }
+                }
+            }
+            .padding(12)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(theme.accentLight.opacity(0.5))
+            )
+        }
+    }
+    
+    // MARK: - AI 方法
+    
+    private func generateSummary() {
+        isGeneratingSummary = true
+        
+        Task {
+            do {
+                let abstract = entry.fields["abstract"] ?? ""
+                let content = entry.fields["note"] ?? ""
+                
+                let summary = try await aiService.generateSummary(
+                    title: entry.title,
+                    abstract: abstract,
+                    content: content
+                )
+                
+                await MainActor.run {
+                    aiSummary = summary
+                    // 儲存到 entry
+                    entry.fields["ai_summary"] = summary
+                    try? viewContext.save()
+                    isGeneratingSummary = false
+                    ToastManager.shared.showSuccess("摘要生成完成")
+                }
+            } catch {
+                await MainActor.run {
+                    isGeneratingSummary = false
+                    ToastManager.shared.showError("生成失敗：\(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    private func extractKeywords() {
+        isExtractingKeywords = true
+        
+        Task {
+            do {
+                let abstract = entry.fields["abstract"] ?? entry.title
+                
+                let keywords = try await aiService.extractKeywords(
+                    title: entry.title,
+                    abstract: abstract
+                )
+                
+                await MainActor.run {
+                    aiKeywords = keywords
+                    // 儲存到 entry
+                    entry.fields["ai_keywords"] = keywords.joined(separator: ", ")
+                    try? viewContext.save()
+                    isExtractingKeywords = false
+                    ToastManager.shared.showSuccess("已提取 \(keywords.count) 個關鍵詞")
+                }
+            } catch {
+                await MainActor.run {
+                    isExtractingKeywords = false
+                    ToastManager.shared.showError("提取失敗：\(error.localizedDescription)")
+                }
             }
         }
     }
