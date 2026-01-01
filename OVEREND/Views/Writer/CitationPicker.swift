@@ -236,8 +236,9 @@ struct CitationEntryRow: View {
     }
 }
 
-#Preview {
-    CitationPicker { citation in
-        print("Inserted: \(citation)")
-    }
-}
+// Preview temporarily disabled to resolve build conflicts
+// #Preview("Citation Picker") {
+//     CitationPicker { citation in
+//         print("Inserted: \(citation)")
+//     }
+// }

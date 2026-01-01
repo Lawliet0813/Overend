@@ -21,19 +21,19 @@ struct WriterToolbar: View {
             SwiftUI.Group {
                 ToolbarButton(icon: "bold", tooltip: "粗體 (⌘B)") {
                     if let tv = textView {
-                        RichTextEditor.applyBold(to: tv)
+                        RichTextEditor.toggleBold(in: tv)
                     }
                 }
                 
                 ToolbarButton(icon: "italic", tooltip: "斜體 (⌘I)") {
                     if let tv = textView {
-                        RichTextEditor.applyItalic(to: tv)
+                        RichTextEditor.toggleItalic(in: tv)
                     }
                 }
                 
                 ToolbarButton(icon: "underline", tooltip: "底線 (⌘U)") {
                     if let tv = textView {
-                        RichTextEditor.applyUnderline(to: tv)
+                        RichTextEditor.toggleUnderline(in: tv)
                     }
                 }
             }

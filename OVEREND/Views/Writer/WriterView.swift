@@ -20,6 +20,7 @@ struct WriterView: View {
     // 編輯器狀態
     @State private var attributedString: NSAttributedString
     @State private var textView: NSTextView?
+    @State private var totalPages: Int = 1
     @State private var wordCount: Int = 0
     @State private var isSaving: Bool = false
     @State private var lastSaved: Date?
@@ -39,33 +40,86 @@ struct WriterView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // 工具列
-            WriterToolbar(
-                textView: $textView,
-                onCitationRequest: { showCitationPicker = true },
-                onGenerateReferences: { showReferenceGenerator = true },
-                onExport: { showExportOptions = true }
-            )
-            
-            Divider()
-            
-            // 編輯區域
+            // 編輯器
             RichTextEditor(
-                attributedString: $attributedString,
+                attributedString: Binding(
+                    get: { attributedString },
+                    set: { newValue in
+                        attributedString = newValue
+                        updateWordCount(newValue)
+                        scheduleAutoSave()
+                    }
+                ),
                 onTextChange: { newValue in
+                    attributedString = newValue
                     updateWordCount(newValue)
                     scheduleAutoSave()
                 }
             )
-            .background(
-                // 取得 NSTextView 參考
-                RichTextViewExtractor(textView: $textView)
-            )
+            .frame(minHeight: 400)
             
             Divider()
             
-            // 狀態列
-            statusBar
+            // 狀態列（帶有額外功能按鈕）
+            HStack {
+                // 左側：字數和引用統計
+                HStack(spacing: 12) {
+                    Label("\(wordCount) 字", systemImage: "character.cursor.ibeam")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    Divider()
+                        .frame(height: 12)
+                    
+                    let citationCount = document.citationArray.count
+                    Label("\(citationCount) 筆引用", systemImage: "quote.bubble")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                Spacer()
+                
+                // 中間：功能按鈕
+                HStack(spacing: 8) {
+                    Button(action: { showCitationPicker = true }) {
+                        Label("插入引用", systemImage: "book.pages")
+                            .font(.caption)
+                    }
+                    .buttonStyle(.bordered)
+                    
+                    Button(action: { showReferenceGenerator = true }) {
+                        Label("參考文獻", systemImage: "list.bullet.rectangle")
+                            .font(.caption)
+                    }
+                    .buttonStyle(.bordered)
+                    
+                    Button(action: { showExportOptions = true }) {
+                        Label("匯出", systemImage: "square.and.arrow.up")
+                            .font(.caption)
+                    }
+                    .buttonStyle(.bordered)
+                }
+                
+                Spacer()
+                
+                // 右側：儲存狀態
+                if isSaving {
+                    HStack(spacing: 4) {
+                        ProgressView()
+                            .scaleEffect(0.6)
+                        Text("儲存中...")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                } else if let saved = lastSaved {
+                    Label("已儲存於 \(saved.formatted(date: .omitted, time: .shortened))", systemImage: "checkmark.circle.fill")
+                        .font(.caption)
+                        .foregroundColor(.green)
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(Color(nsColor: .controlBackgroundColor))
         }
         .navigationTitle(document.title)
         .sheet(isPresented: $showCitationPicker) {
@@ -88,44 +142,6 @@ struct WriterView: View {
         }
     }
     
-    // MARK: - 狀態列
-    
-    private var statusBar: some View {
-        HStack {
-            // 字數統計
-            Label("\(wordCount) 字", systemImage: "character.cursor.ibeam")
-                .font(.caption)
-                .foregroundColor(.secondary)
-            
-            Divider()
-                .frame(height: 12)
-            
-            // 引用數量
-            let citationCount = document.citationArray.count
-            Label("\(citationCount) 筆引用", systemImage: "quote.bubble")
-                .font(.caption)
-                .foregroundColor(.secondary)
-            
-            Spacer()
-            
-            // 儲存狀態
-            if isSaving {
-                ProgressView()
-                    .scaleEffect(0.6)
-                Text("儲存中...")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            } else if let saved = lastSaved {
-                Label("已儲存於 \(saved.formatted(date: .omitted, time: .shortened))", systemImage: "checkmark.circle.fill")
-                    .font(.caption)
-                    .foregroundColor(.green)
-            }
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-        .background(Color(nsColor: .controlBackgroundColor))
-    }
-    
     // MARK: - 輔助方法
     
     private func updateWordCount(_ text: NSAttributedString) {
@@ -146,11 +162,19 @@ struct WriterView: View {
     }
     
     private func insertCitation(_ citation: String) {
-        guard let tv = textView else { return }
-        RichTextEditor.insertCitation(citation, at: tv)
+        // 創建引用屬性字符串
+        let citationAttr = NSMutableAttributedString(string: "[\(citation)]")
+        citationAttr.addAttributes([
+            .foregroundColor: NSColor.systemBlue,
+            .link: "citation://\(citation)"
+        ], range: NSRange(location: 0, length: citationAttr.length))
         
-        // 更新 attributedString
-        attributedString = tv.attributedString()
+        // 將引用插入到當前位置
+        let mutableText = NSMutableAttributedString(attributedString: attributedString)
+        // 簡單地附加到末尾（實際使用時可以改進為插入到游標位置）
+        mutableText.append(citationAttr)
+        
+        attributedString = mutableText
         scheduleAutoSave()
     }
     
@@ -175,41 +199,6 @@ struct WriterView: View {
         }
         
         isSaving = false
-    }
-}
-
-// MARK: - NSTextView 提取器
-
-/// 用於從 RichTextEditor 中取得 NSTextView 參考
-struct RichTextViewExtractor: NSViewRepresentable {
-    @Binding var textView: NSTextView?
-    
-    func makeNSView(context: Context) -> NSView {
-        let view = NSView()
-        DispatchQueue.main.async {
-            findTextView(in: view.window?.contentView)
-        }
-        return view
-    }
-    
-    func updateNSView(_ nsView: NSView, context: Context) {
-        DispatchQueue.main.async {
-            findTextView(in: nsView.window?.contentView)
-        }
-    }
-    
-    private func findTextView(in view: NSView?) {
-        guard let view = view else { return }
-        
-        if let scrollView = view as? NSScrollView,
-           let tv = scrollView.documentView as? NSTextView {
-            textView = tv
-            return
-        }
-        
-        for subview in view.subviews {
-            findTextView(in: subview)
-        }
     }
 }
 

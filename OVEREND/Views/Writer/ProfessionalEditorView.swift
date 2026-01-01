@@ -91,13 +91,13 @@ struct ProfessionalEditorView: View {
             HStack(spacing: 8) {
                 FormatButton(icon: "bold") {
                     if let tv = textView {
-                        RichTextEditor.applyBold(to: tv)
+                        RichTextEditor.toggleBold(in: tv)
                     }
                 }
                 
                 FormatButton(icon: "italic") {
                     if let tv = textView {
-                        RichTextEditor.applyItalic(to: tv)
+                        RichTextEditor.toggleItalic(in: tv)
                     }
                 }
                 
@@ -166,9 +166,6 @@ struct ProfessionalEditorView: View {
                             updateWordCount()
                             scheduleAutoSave()
                         }
-                    )
-                    .background(
-                        RichTextViewExtractor(textView: $textView)
                     )
                 }
                 .frame(width: 700, height: 990)
