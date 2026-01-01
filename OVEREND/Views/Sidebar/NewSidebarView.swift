@@ -80,7 +80,7 @@ struct NewSidebarView: View {
             Spacer()
         }
         .frame(minWidth: 220, maxWidth: 220)
-        .background(theme.sidebar)
+        .liquidGlassSidebar()
     }
     
     // MARK: - 子視圖

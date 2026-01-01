@@ -106,6 +106,59 @@ class AppTheme: ObservableObject {
     func captionFont(size: CGFloat = 13) -> Font {
         .system(size: size, weight: .regular)
     }
+    
+    // MARK: - macOS 26 液態玻璃效果
+    
+    /// 玻璃材質背景
+    var glassMaterial: Material {
+        isDarkMode ? .ultraThinMaterial : .thinMaterial
+    }
+    
+    /// 側邊欄玻璃
+    var sidebarGlass: Color {
+        isDarkMode 
+            ? Color.white.opacity(0.05) 
+            : Color.white.opacity(0.7)
+    }
+    
+    /// 卡片玻璃
+    var cardGlass: Color {
+        isDarkMode 
+            ? Color.white.opacity(0.08) 
+            : Color.white.opacity(0.85)
+    }
+    
+    /// 工具列玻璃
+    var toolbarGlass: Color {
+        isDarkMode 
+            ? Color.white.opacity(0.06) 
+            : Color.white.opacity(0.9)
+    }
+    
+    /// 光暈顏色
+    var glowColor: Color {
+        accent.opacity(0.3)
+    }
+    
+    /// 玻璃邊框
+    var glassBorder: Color {
+        isDarkMode 
+            ? Color.white.opacity(0.15) 
+            : Color.white.opacity(0.8)
+    }
+    
+    /// 液態漸層
+    var liquidGradient: LinearGradient {
+        LinearGradient(
+            colors: [
+                accent.opacity(0.15),
+                Color.blue.opacity(0.1),
+                Color.purple.opacity(0.08)
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
 }
 
 // MARK: - 預覽
