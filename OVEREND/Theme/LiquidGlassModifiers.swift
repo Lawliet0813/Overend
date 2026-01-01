@@ -63,23 +63,18 @@ struct LiquidGlassSidebar: ViewModifier {
     
     func body(content: Content) -> some View {
         content
+            .background(.ultraThinMaterial)
             .background(
-                ZStack {
-                    // 毛玻璃
-                    theme.sidebarGlass
-                        .background(theme.glassMaterial)
-                    
-                    // 微妙漸層
-                    LinearGradient(
-                        colors: [
-                            theme.accent.opacity(0.03),
-                            Color.clear,
-                            Color.blue.opacity(0.02)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                }
+                // 微妙漸層底色
+                LinearGradient(
+                    colors: [
+                        theme.accent.opacity(0.02),
+                        Color.clear,
+                        Color.blue.opacity(0.01)
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
             )
     }
 }
