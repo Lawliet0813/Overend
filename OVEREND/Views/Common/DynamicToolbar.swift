@@ -101,11 +101,24 @@ struct DynamicToolbar: View {
         }
         .padding(.horizontal, 20)
         .frame(height: 52)
-        .background(theme.toolbar)
+        // Apple HIG: Liquid Glass 統一工具列樣式
+        .background(.ultraThinMaterial)
+        .background(
+            // 微妙漸層提供層次感
+            LinearGradient(
+                colors: [
+                    theme.accent.opacity(0.02),
+                    Color.clear
+                ],
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+        )
         .overlay(alignment: .bottom) {
+            // 底部分隔線
             Rectangle()
-                .fill(theme.border)
-                .frame(height: 1)
+                .fill(theme.glassBorder.opacity(0.5))
+                .frame(height: 0.5)
         }
     }
     
