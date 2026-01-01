@@ -154,7 +154,7 @@ struct ToastContainer: View {
 
 /// Toast 修飾器 - 方便在任意視圖上添加 Toast
 struct ToastModifier: ViewModifier {
-    @EnvironmentObject var theme: AppTheme
+    @StateObject private var theme = AppTheme()
     
     func body(content: Content) -> some View {
         content
