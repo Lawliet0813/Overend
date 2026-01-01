@@ -51,18 +51,51 @@ struct EntryListView: View {
                 EntryRow(entry: entry)
                     .tag(entry.id)
                     .contextMenu {
-                        Button("編輯") {
-                            editingEntry = entry
+                        // 引用操作
+                        Button(action: { copyCitation(entry, format: "APA") }) {
+                            Label("複製 APA 引用", systemImage: "doc.on.doc")
                         }
                         
-                        Button("導出 BibTeX") {
-                            exportEntry(entry)
+                        Button(action: { copyCitation(entry, format: "MLA") }) {
+                            Label("複製 MLA 引用", systemImage: "doc.on.doc")
                         }
                         
                         Divider()
                         
-                        Button("刪除", role: .destructive) {
-                            deleteEntry(entry)
+                        // PDF 操作
+                        if entry.hasPDF {
+                            Button(action: { openPDF(entry) }) {
+                                Label("開啟附件 PDF", systemImage: "doc.richtext")
+                            }
+                            
+                            Button(action: { revealInFinder(entry) }) {
+                                Label("在 Finder 中顯示", systemImage: "folder")
+                            }
+                            
+                            Divider()
+                        }
+                        
+                        // 編輯操作
+                        Button(action: { editingEntry = entry }) {
+                            Label("編輯書目", systemImage: "pencil")
+                        }
+                        
+                        Button(action: { exportEntry(entry) }) {
+                            Label("導出 BibTeX", systemImage: "square.and.arrow.up")
+                        }
+                        
+                        Divider()
+                        
+                        // AI 功能
+                        Button(action: { generateAIBibliography(entry) }) {
+                            Label("✨ AI 生成摘要", systemImage: "apple.intelligence")
+                        }
+                        
+                        Divider()
+                        
+                        // 刪除
+                        Button(role: .destructive, action: { deleteEntry(entry) }) {
+                            Label("刪除", systemImage: "trash")
                         }
                     }
                     .onTapGesture {
@@ -153,7 +186,62 @@ struct EntryListView: View {
         }
     }
     
-    // MARK: - Actions
+    // MARK: - 右鍵選單 Actions
+    
+    private func copyCitation(_ entry: Entry, format: String) {
+        let citation: String
+        switch format {
+        case "APA":
+            citation = CitationService.generateAPA(entry: entry)
+        case "MLA":
+            citation = CitationService.generateMLA(entry: entry)
+        default:
+            citation = CitationService.generateAPA(entry: entry)
+        }
+        
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(citation, forType: .string)
+        ToastManager.shared.showSuccess("已複製\(format)引用")
+    }
+    
+    private func openPDF(_ entry: Entry) {
+        guard let attachment = entry.attachments?.first else { return }
+        let url = URL(fileURLWithPath: attachment.filePath)
+        NSWorkspace.shared.open(url)
+    }
+    
+    private func revealInFinder(_ entry: Entry) {
+        guard let attachment = entry.attachments?.first else { return }
+        let url = URL(fileURLWithPath: attachment.filePath)
+        NSWorkspace.shared.activateFileViewerSelecting([url])
+    }
+    
+    // MARK: - AI 生成書目
+    
+    private func generateAIBibliography(_ entry: Entry) {
+        Task {
+            do {
+                let aiService = AppleAIService.shared
+                let summary = try await aiService.generateSummary(
+                    title: entry.title,
+                    abstract: entry.fields["abstract"] ?? "",
+                    content: entry.fields["note"] ?? ""
+                )
+                
+                await MainActor.run {
+                    entry.fields["ai_summary"] = summary
+                    try? viewContext.save()
+                    ToastManager.shared.showSuccess("AI 摘要已生成")
+                }
+            } catch {
+                await MainActor.run {
+                    ToastManager.shared.showError("AI 生成失敗：\(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    // MARK: - 刪除 Actions
     
     private func deleteEntry(_ entry: Entry) {
         // 先保存資訊用於日誌（避免存取已刪除物件）

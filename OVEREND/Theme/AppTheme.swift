@@ -49,7 +49,7 @@ class AppTheme: ObservableObject {
     }
     
     var textMuted: Color {
-        isDarkMode ? Color.white.opacity(0.4) : Color.black.opacity(0.4)
+        isDarkMode ? Color.white.opacity(0.5) : Color.black.opacity(0.65)
     }
     
     var textOnAccent: Color { .white }
