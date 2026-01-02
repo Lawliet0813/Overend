@@ -329,6 +329,58 @@ struct EntryTableRow: View {
                 isHovered = hovering
             }
         }
+        .contextMenu {
+            // 複製引用鍵
+            Button(action: {
+                NSPasteboard.general.clearContents()
+                NSPasteboard.general.setString(entry.citationKey, forType: .string)
+                ToastManager.shared.showSuccess("已複製引用鍵")
+            }) {
+                Label("複製引用鍵", systemImage: "doc.on.doc")
+            }
+
+            // 複製 BibTeX
+            Button(action: {
+                let bibtex = entry.generateBibTeX()
+                NSPasteboard.general.clearContents()
+                NSPasteboard.general.setString(bibtex, forType: .string)
+                ToastManager.shared.showSuccess("已複製 BibTeX")
+            }) {
+                Label("複製 BibTeX", systemImage: "doc.text")
+            }
+
+            Divider()
+
+            // 開啟附件
+            if !entry.attachmentArray.isEmpty {
+                Menu("開啟附件") {
+                    ForEach(Array(entry.attachmentArray.enumerated()), id: \.element.id) { index, attachment in
+                        Button(action: {
+                            NSWorkspace.shared.open(attachment.fileURL)
+                        }) {
+                            Text(attachment.fileName)
+                        }
+                    }
+                }
+
+                Divider()
+            }
+
+            // 編輯
+            Button(action: {
+                // TODO: 開啟編輯面板
+                ToastManager.shared.showInfo("編輯功能開發中")
+            }) {
+                Label("編輯", systemImage: "pencil")
+            }
+
+            // 刪除
+            Button(role: .destructive, action: {
+                showDeleteConfirm = true
+            }) {
+                Label("刪除", systemImage: "trash")
+            }
+        }
         .alert("確定刪除？", isPresented: $showDeleteConfirm) {
             Button("取消", role: .cancel) {}
             Button("刪除", role: .destructive) {
