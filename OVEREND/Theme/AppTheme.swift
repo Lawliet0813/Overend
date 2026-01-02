@@ -11,11 +11,62 @@ import Combine
 /// 應用程式主題
 class AppTheme: ObservableObject {
     @Published var isDarkMode: Bool = false
+    @Published var accentHex: String = "#007AFF" {
+        didSet {
+            UserDefaults.standard.set(accentHex, forKey: "appAccentColor")
+        }
+    }
+    
+    /// 預設主題色選項
+    static let presetColors: [(name: String, hex: String, isGradient: Bool)] = [
+        ("Apple 藍", "#007AFF", false),
+        ("翠綠色", "#00D97E", false),
+        ("紫羅蘭", "#AF52DE", false),
+        ("珊瑚紅", "#FF6B6B", false),
+        ("琥珀橙", "#FF9500", false),
+        ("靛青藍", "#5856D6", false),
+        ("湖水綠", "#34C759", false),
+        ("玫瑰粉", "#FF2D55", false),
+        ("青檸色", "#A8E063", false),
+        ("深海藍", "#1E3A5F", false),
+        ("🏳️‍🌈 彩虹驕傲", "#E40303", true)  // 使用紅色作為代表色，UI 會顯示漸層
+    ]
+    
+    /// Pride 漸層顏色
+    static let prideGradientColors: [Color] = [
+        Color(hex: "#E40303"),  // 紅
+        Color(hex: "#FF8C00"),  // 橙
+        Color(hex: "#FFED00"),  // 黃
+        Color(hex: "#008026"),  // 綠
+        Color(hex: "#24408E"),  // 藍
+        Color(hex: "#732982")   // 紫
+    ]
+    
+    /// 是否使用彩虹驕傲模式
+    var isPrideMode: Bool {
+        accentHex == "#E40303"
+    }
+    
+    /// Pride 漸層
+    var prideGradient: LinearGradient {
+        LinearGradient(
+            colors: Self.prideGradientColors,
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+    }
+    
+    init() {
+        // 從 UserDefaults 載入自訂顏色
+        if let savedColor = UserDefaults.standard.string(forKey: "appAccentColor") {
+            self.accentHex = savedColor
+        }
+    }
     
     // MARK: - 主色系
     
-    /// 主色（藍色 - 類似啟動動畫背景）
-    var accent: Color { Color(hex: "#007AFF") }
+    /// 主色（可自訂）
+    var accent: Color { Color(hex: accentHex) }
     
     /// 淺色主色（用於背景）
     var accentLight: Color { accent.opacity(0.1) }

@@ -14,6 +14,7 @@ struct NewSidebarView: View {
     @ObservedObject var libraryVM: LibraryViewModel
     
     @State private var showNewLibrarySheet = false
+    @State private var showThemeSettings = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -106,9 +107,49 @@ struct NewSidebarView: View {
             }
             
             Spacer()
+            
+            // 底部設定區域
+            VStack(spacing: 8) {
+                Divider()
+                    .padding(.horizontal, DesignTokens.Spacing.md)
+                
+                // 主題色設定按鈕
+                Button(action: { showThemeSettings = true }) {
+                    HStack(spacing: 8) {
+                        // 主題色預覽圓點
+                        if theme.isPrideMode {
+                            Circle()
+                                .fill(theme.prideGradient)
+                                .frame(width: 14, height: 14)
+                        } else {
+                            Circle()
+                                .fill(theme.accent)
+                                .frame(width: 14, height: 14)
+                        }
+                        
+                        Text("主題色設定")
+                            .font(.system(size: 13))
+                            .foregroundColor(theme.textPrimary)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 10))
+                            .foregroundColor(theme.textMuted)
+                    }
+                    .padding(.horizontal, DesignTokens.Spacing.md)
+                    .padding(.vertical, 10)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.bottom, DesignTokens.Spacing.sm)
         }
         .frame(minWidth: 220, maxWidth: 220)
         .background(.regularMaterial)
+        .sheet(isPresented: $showThemeSettings) {
+            ThemeSettingsView()
+                .environmentObject(theme)
+        }
         .sheet(isPresented: $showNewLibrarySheet) {
             NewLibrarySheet(libraryVM: libraryVM)
                 .environmentObject(theme)
