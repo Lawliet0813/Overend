@@ -68,7 +68,7 @@ struct EditorSidebarView: View {
                 .padding(.vertical, 8)
             }
         }
-        .frame(width: 240)
+        .frame(minWidth: 200, idealWidth: 240, maxWidth: 280)
         .background(theme.sidebar)
     }
     

@@ -82,7 +82,7 @@ struct CitationInspector: View {
             // AI 助手提示
             aiAssistantTip
         }
-        .frame(width: 260)
+        .frame(minWidth: 240, idealWidth: 280, maxWidth: 320)
         .background(theme.sidebar)
     }
     
