@@ -10,16 +10,14 @@ import CoreData
 
 /// 編輯器側邊欄區塊類型
 enum EditorSidebarSection: String, CaseIterable {
-    case projects = "Projects"
-    case recent = "Recent"
-    case bibliography = "Bibliography"
-    case aiAssistant = "AI Assistant"
+    case projects = "專案"
+    case recent = "最近編輯"
+    case aiAssistant = "AI 助手"
     
     var icon: String {
         switch self {
         case .projects: return "folder.fill"
         case .recent: return "clock.fill"
-        case .bibliography: return "books.vertical.fill"
         case .aiAssistant: return "apple.intelligence"
         }
     }
@@ -45,7 +43,7 @@ struct EditorSidebarView: View {
     private var entries: FetchedResults<Entry>
     
     // 側邊欄狀態
-    @State private var expandedSections: Set<EditorSidebarSection> = [.projects, .bibliography]
+    @State private var expandedSections: Set<EditorSidebarSection> = [.projects]
     @State private var searchText = ""
     
     // 回調
@@ -132,8 +130,6 @@ struct EditorSidebarView: View {
             projectsContent
         case .recent:
             recentContent
-        case .bibliography:
-            bibliographyContent
         case .aiAssistant:
             aiAssistantContent
         }

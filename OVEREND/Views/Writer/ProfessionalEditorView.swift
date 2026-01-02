@@ -24,6 +24,7 @@ struct ProfessionalEditorView: View {
     // 編輯器模式與狀態
     @State private var editorMode: EditorMode = .physicalCanvas
     @State private var showEditorSidebar = true  // 左側邊欄
+    @State private var showCitationPanel = true  // 右側參考文獻面板
     @State private var showAICommandPalette = false
     @State private var showFormatTemplateSheet = false
     @State private var showExportMenu = false
@@ -67,6 +68,47 @@ struct ProfessionalEditorView: View {
 
                 // 底部狀態列
                 statusBar
+            }
+            
+            // 右側參考文獻面板
+            if showCitationPanel {
+                Divider()
+                
+                VStack(spacing: 0) {
+                    // 面板標題
+                    HStack {
+                        Text("參考文獻")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(theme.textPrimary)
+
+                        Spacer()
+
+                        Button(action: {
+                            withAnimation(AnimationSystem.Easing.quick) {
+                                showCitationPanel = false
+                            }
+                        }) {
+                            Image(systemName: "xmark")
+                                .font(.system(size: 12))
+                                .foregroundColor(theme.textMuted)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(12)
+                    .background(theme.toolbar)
+                    .overlay(alignment: .bottom) {
+                        Rectangle()
+                            .fill(theme.border)
+                            .frame(height: 1)
+                    }
+
+                    // 引用面板
+                    CitationInspector { entry in
+                        insertCitation(from: entry)
+                    }
+                }
+                .frame(width: 280)
+                .transition(.move(edge: .trailing))
             }
         }
         .background(theme.background)
