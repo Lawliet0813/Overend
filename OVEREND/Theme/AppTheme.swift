@@ -74,34 +74,43 @@ class AppTheme: ObservableObject {
     
     // MARK: - 背景色
     
+    // MARK: - 背景色
+    
     var background: Color {
-        isDarkMode ? Color(hex: "#1e1e1e") : Color(hex: "#e5e5e5")
+        // Dark Slate Blue #252F3F
+        isDarkMode ? Color(hex: "#252F3F") : Color(hex: "#F5F7FA")
     }
     
     var sidebar: Color {
-        isDarkMode ? Color(hex: "#252525").opacity(0.8) : Color(hex: "#f3f3f3").opacity(0.9)
+        // Slightly darker/transparent for sidebar
+        isDarkMode ? Color(hex: "#1F2937").opacity(0.9) : Color(hex: "#E5E7EB").opacity(0.9)
     }
     
     var toolbar: Color {
-        isDarkMode ? Color(hex: "#2a2a2a") : .white
+        // Matches background but with transparency for glass effect
+        isDarkMode ? Color(hex: "#252F3F").opacity(0.8) : Color.white.opacity(0.9)
     }
     
     var page: Color {
-        isDarkMode ? Color(hex: "#2a2a2a") : .white
+        // Page background
+        isDarkMode ? Color(hex: "#252F3F") : .white
     }
     
     var card: Color {
-        isDarkMode ? Color.white.opacity(0.08) : .white
+        // Lighter than background for cards
+        isDarkMode ? Color(hex: "#374151").opacity(0.5) : .white
     }
     
     // MARK: - 文字色
     
     var textPrimary: Color {
-        isDarkMode ? Color(hex: "#ececec") : Color(hex: "#1a1a1a")
+        // Softer white for dark mode
+        isDarkMode ? Color(hex: "#F3F4F6") : Color(hex: "#111827")
     }
     
     var textMuted: Color {
-        isDarkMode ? Color.white.opacity(0.5) : Color.black.opacity(0.65)
+        // Muted slate for dark mode
+        isDarkMode ? Color(hex: "#9CA3AF") : Color(hex: "#6B7280")
     }
     
     var textOnAccent: Color { .white }
@@ -109,7 +118,7 @@ class AppTheme: ObservableObject {
     // MARK: - 邊框色
     
     var border: Color {
-        isDarkMode ? Color.white.opacity(0.05) : Color.black.opacity(0.1)
+        isDarkMode ? Color.white.opacity(0.1) : Color.black.opacity(0.1)
     }
     
     // MARK: - 互動色
@@ -119,7 +128,7 @@ class AppTheme: ObservableObject {
     }
 
     var tableRowHover: Color {
-        isDarkMode ? Color.white.opacity(0.02) : Color.black.opacity(0.02)
+        isDarkMode ? Color(hex: "#374151").opacity(0.3) : Color.black.opacity(0.02)
     }
 
     // MARK: - 語義化顏色
@@ -228,27 +237,27 @@ class AppTheme: ObservableObject {
     
     /// 玻璃材質背景
     var glassMaterial: Material {
-        isDarkMode ? .ultraThinMaterial : .thinMaterial
+        isDarkMode ? .regular : .thin // Use correct Material cases
     }
     
     /// 側邊欄玻璃
     var sidebarGlass: Color {
         isDarkMode 
-            ? Color.white.opacity(0.05) 
+            ? Color(hex: "#1F2937").opacity(0.6) 
             : Color.white.opacity(0.7)
     }
     
     /// 卡片玻璃
     var cardGlass: Color {
         isDarkMode 
-            ? Color.white.opacity(0.08) 
+            ? Color(hex: "#374151").opacity(0.4) 
             : Color.white.opacity(0.85)
     }
     
     /// 工具列玻璃
     var toolbarGlass: Color {
         isDarkMode 
-            ? Color.white.opacity(0.06) 
+            ? Color(hex: "#252F3F").opacity(0.7) 
             : Color.white.opacity(0.9)
     }
     
@@ -260,7 +269,7 @@ class AppTheme: ObservableObject {
     /// 玻璃邊框
     var glassBorder: Color {
         isDarkMode 
-            ? Color.white.opacity(0.15) 
+            ? Color.white.opacity(0.1) 
             : Color.white.opacity(0.8)
     }
     

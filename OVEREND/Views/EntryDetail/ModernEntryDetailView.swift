@@ -8,6 +8,7 @@
 import SwiftUI
 import PDFKit
 import Vision
+import CoreData
 
 /// 現代化書目詳情視圖
 @available(macOS 26.0, *)
@@ -118,8 +119,14 @@ struct ModernEntryDetailView: View {
                     Divider()
                     
                     // AI 智慧分析（新增）
+                    // AI 智慧分析（新增）
                     aiSection
                     
+                    Divider()
+
+                    // 標籤管理（新增）
+                    tagsSection
+
                     Divider()
                     
                     // 書目資訊
@@ -286,8 +293,154 @@ struct ModernEntryDetailView: View {
             )
         }
     }
-    
-    // MARK: - AI 方法
+
+    // MARK: - 標籤管理區
+
+    @State private var isAddingTag = false
+    @State private var newTagSearchText = ""
+
+    private var tagsSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                DetailSectionHeader(title: "標籤", icon: "tag")
+                
+                Spacer()
+                
+                Button(action: { isAddingTag = true }) {
+                    Image(systemName: "plus")
+                        .font(.system(size: 14))
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.mini)
+                .popover(isPresented: $isAddingTag) {
+                    VStack(spacing: 12) {
+                        TextField("搜尋或建立標籤", text: $newTagSearchText)
+                            .textFieldStyle(.roundedBorder)
+                            .frame(width: 200)
+                        
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 4) {
+                                // 顯示現有標籤（過濾後）
+                                let allTags = (entry.library?.tags as? Set<Tag> ?? [])
+                                    .sorted { $0.name < $1.name }
+                                    .filter { tag in
+                                        newTagSearchText.isEmpty || tag.name.localizedCaseInsensitiveContains(newTagSearchText)
+                                    }
+                                
+                                ForEach(allTags) { tag in
+                                    Button(action: {
+                                        toggleTag(tag)
+                                    }) {
+                                        HStack {
+                                            Circle()
+                                                .fill(tag.color)
+                                                .frame(width: 8, height: 8)
+                                            Text(tag.name)
+                                            Spacer()
+                                            if (entry.tags as? Set<Tag>)?.contains(tag) == true {
+                                                Image(systemName: "checkmark")
+                                            }
+                                        }
+                                        .padding(.vertical, 4)
+                                        .padding(.horizontal, 8)
+                                        .contentShape(Rectangle())
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                                
+                                // 如果搜尋文字不為空且沒有完全匹配的標籤，顯示建立選項
+                                if !newTagSearchText.isEmpty && !allTags.contains(where: { $0.name.caseInsensitiveCompare(newTagSearchText) == .orderedSame }) {
+                                    Divider()
+                                    Button(action: {
+                                        createNewTag(name: newTagSearchText)
+                                    }) {
+                                        Label("建立 \"\(newTagSearchText)\"", systemImage: "plus.circle")
+                                            .padding(.vertical, 4)
+                                            .padding(.horizontal, 8)
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                        }
+                        .frame(height: 150)
+                    }
+                    .padding()
+                }
+            }
+            
+            if let tags = entry.tags as? Set<Tag>, !tags.isEmpty {
+                FlowLayout(spacing: 6) {
+                    ForEach(Array(tags).sorted(by: { $0.name < $1.name })) { tag in
+                        HStack(spacing: 4) {
+                            Text(tag.name)
+                                .font(.system(size: 13))
+                                .foregroundColor(.white)
+                            
+                            Button(action: {
+                                removeTag(tag)
+                            }) {
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 10, weight: .bold))
+                                    .foregroundColor(.white.opacity(0.8))
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(tag.color)
+                        .cornerRadius(4)
+                    }
+                }
+            } else {
+                Text("尚無標籤")
+                    .font(.system(size: 14))
+                    .foregroundColor(theme.textMuted)
+                    .italic()
+            }
+        }
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(theme.sidebar.opacity(0.5)) // Slightly different background
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(theme.border.opacity(0.5), lineWidth: 1)
+                )
+        )
+    }
+
+    private func toggleTag(_ tag: Tag) {
+        var currentTags = entry.tags as? Set<Tag> ?? []
+        if currentTags.contains(tag) {
+            currentTags.remove(tag)
+        } else {
+            currentTags.insert(tag)
+        }
+        entry.tags = currentTags
+        try? viewContext.save()
+    }
+
+    private func removeTag(_ tag: Tag) {
+        var currentTags = entry.tags as? Set<Tag> ?? []
+        currentTags.remove(tag)
+        entry.tags = currentTags
+        try? viewContext.save()
+    }
+
+    private func createNewTag(name: String) {
+        guard let library = entry.library else { return }
+        let newTag = Tag(context: viewContext, name: name, library: library)
+        // Random color
+        let colors = ["#FF3B30", "#FF9500", "#FFCC00", "#4CD964", "#5AC8FA", "#007AFF", "#5856D6", "#FF2D55"]
+        newTag.colorHex = colors.randomElement() ?? "#007AFF"
+        
+        var currentTags = entry.tags as? Set<Tag> ?? []
+        currentTags.insert(newTag)
+        entry.tags = currentTags
+        
+        try? viewContext.save()
+        newTagSearchText = ""
+    }
     
     private func generateSummary() {
         isGeneratingSummary = true

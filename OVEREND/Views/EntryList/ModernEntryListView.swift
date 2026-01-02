@@ -263,6 +263,22 @@ struct EntryTableRow: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
 
+                    // Tags
+                    if let tags = entry.tags as? Set<Tag>, !tags.isEmpty {
+                        HStack(spacing: 4) {
+                            ForEach(Array(tags).sorted(by: { $0.name < $1.name })) { tag in
+                                Text(tag.name)
+                                    .font(.system(size: 10, weight: .medium))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(tag.color)
+                                    .cornerRadius(4)
+                            }
+                        }
+                        .padding(.trailing, 8)
+                    }
+
                     // 作者 / 年份
                     Text(authorYearText)
                         .font(.system(size: DesignTokens.Typography.body))

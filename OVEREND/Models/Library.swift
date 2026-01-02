@@ -20,6 +20,7 @@ public class Library: NSManagedObject, Identifiable {
     // 關聯
     @NSManaged public var entries: Set<Entry>?
     @NSManaged public var groups: Set<Group>?
+    @NSManaged public var tags: Set<Tag>?
 
     // MARK: - 便利初始化
 
