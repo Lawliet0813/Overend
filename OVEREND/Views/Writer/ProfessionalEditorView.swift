@@ -18,10 +18,14 @@ struct ProfessionalEditorView: View {
 
     // Physical Canvas ViewModel
     @StateObject private var canvasViewModel = PhysicalDocumentViewModel()
+    @StateObject private var aiExecutor = AICommandExecutor()
 
-    // 編輯器模式
+    // 編輯器模式與狀態
     @State private var editorMode: EditorMode = .physicalCanvas
     @State private var showCitationPanel = true
+    @State private var showAICommandPalette = false
+    @State private var showFormatTemplateSheet = false
+    @State private var selectedTemplate: FormatTemplate = .nccu
     @State private var wordCount: Int = 0
     @State private var isSaving: Bool = false
     @State private var lastSaved: Date?
@@ -100,6 +104,21 @@ struct ProfessionalEditorView: View {
             saveDocument()
             autoSaveTimer?.invalidate()
         }
+        .sheet(isPresented: $showAICommandPalette) {
+            // TODO: 整合實際的 NSTextView 和 ThesisMetadata
+            // 目前使用臨時實作
+            Text("AI 指令面板（整合中）")
+                .font(.system(size: 16))
+                .foregroundColor(theme.textMuted)
+                .frame(width: 600, height: 400)
+                .background(theme.card)
+        }
+        .sheet(isPresented: $showFormatTemplateSheet) {
+            formatTemplateSheet
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ShowAICommandPalette"))) { _ in
+            showAICommandPalette = true
+        }
     }
     
     // MARK: - 子視圖
@@ -136,6 +155,221 @@ struct ProfessionalEditorView: View {
 
             Divider()
                 .frame(height: 16)
+
+            // 格式模板選擇器
+            Menu {
+                Button(action: {
+                    selectedTemplate = .nccu
+                    applyTemplate(.nccu)
+                }) {
+                    HStack {
+                        Text("政大論文格式")
+                        if selectedTemplate.name == FormatTemplate.nccu.name {
+                            Image(systemName: "checkmark")
+                        }
+                    }
+                }
+
+                Button(action: {
+                    selectedTemplate = .apa
+                    applyTemplate(.apa)
+                }) {
+                    HStack {
+                        Text("APA 格式")
+                        if selectedTemplate.name == FormatTemplate.apa.name {
+                            Image(systemName: "checkmark")
+                        }
+                    }
+                }
+
+                Divider()
+
+                Button(action: { showFormatTemplateSheet = true }) {
+                    Label("自訂格式...", systemImage: "gearshape")
+                }
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "doc.badge.gearshape")
+                        .font(.system(size: 14))
+                    Text(selectedTemplate.name)
+                        .font(.system(size: 14))
+                        .lineLimit(1)
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 12))
+                }
+                .foregroundColor(theme.textPrimary)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(theme.itemHover)
+                )
+            }
+            .buttonStyle(.plain)
+
+            // AI 指令按鈕
+            Button(action: {
+                showAICommandPalette = true
+            }) {
+                HStack(spacing: 4) {
+                    Image(systemName: "apple.intelligence")
+                        .font(.system(size: 14))
+                    Text("AI 助手")
+                        .font(.system(size: 14, weight: .medium))
+                }
+                .foregroundColor(theme.accent)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(theme.accentLight)
+                )
+            }
+            .buttonStyle(.plain)
+            .help("快捷鍵：⌘K")
+
+            Divider()
+                .frame(height: 16)
+
+            // 字體選擇器
+            Menu {
+                Button("新細明體") { /* TODO */ }
+                Button("標楷體") { /* TODO */ }
+                Button("Times New Roman") { /* TODO */ }
+                Button("Arial") { /* TODO */ }
+            } label: {
+                HStack(spacing: 4) {
+                    Text("新細明體")
+                        .font(.system(size: 13))
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 10))
+                }
+                .foregroundColor(theme.textPrimary)
+                .padding(.horizontal, 8)
+                .padding(.vertical  , 4)
+                .background(
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(theme.itemHover)
+                )
+            }
+            .buttonStyle(.plain)
+            .frame(width: 100)
+
+            // 字體大小
+            Menu {
+                ForEach([10, 11, 12, 14, 16, 18, 20, 24], id: \.self) { size in
+                    Button("\(size)") { /* TODO */ }
+                }
+            } label: {
+                HStack(spacing: 4) {
+                    Text("12")
+                        .font(.system(size: 13))
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 10))
+                }
+                .foregroundColor(theme.textPrimary)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(theme.itemHover)
+                )
+            }
+            .buttonStyle(.plain)
+            .frame(width: 60)
+
+            Divider()
+                .frame(height: 16)
+
+            // 格式按鈕組
+            HStack(spacing: 6) {
+                FormatButton(icon: "bold", tooltip: "粗體 (⌘B)") {
+                    // TODO: 套用粗體
+                }
+                .environmentObject(theme)
+
+                FormatButton(icon: "italic", tooltip: "斜體 (⌘I)") {
+                    // TODO: 套用斜體
+                }
+                .environmentObject(theme)
+
+                FormatButton(icon: "underline", tooltip: "底線 (⌘U)") {
+                    // TODO: 套用底線
+                }
+                .environmentObject(theme)
+            }
+
+            Divider()
+                .frame(height: 16)
+
+            // 對齊按鈕組
+            HStack(spacing: 6) {
+                FormatButton(icon: "text.alignleft", tooltip: "靠左對齊") {
+                    // TODO: 靠左對齊
+                }
+                .environmentObject(theme)
+
+                FormatButton(icon: "text.aligncenter", tooltip: "置中對齊") {
+                    // TODO: 置中對齊
+                }
+                .environmentObject(theme)
+
+                FormatButton(icon: "text.alignright", tooltip: "靠右對齊") {
+                    // TODO: 靠右對齊
+                }
+                .environmentObject(theme)
+
+                FormatButton(icon: "text.justify", tooltip: "左右對齊") {
+                    // TODO: 左右對齊
+                }
+                .environmentObject(theme)
+            }
+
+            Divider()
+                .frame(height: 16)
+
+            // 行距選擇器
+            Menu {
+                Button("單行間距") { /* TODO */ }
+                Button("1.15 倍行距") { /* TODO */ }
+                Button("1.5 倍行距") { /* TODO */ }
+                Button("2 倍行距") { /* TODO */ }
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "text.line.spacing")
+                        .font(.system(size: 13))
+                    Text("2.0")
+                        .font(.system(size: 13))
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 10))
+                }
+                .foregroundColor(theme.textPrimary)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(theme.itemHover)
+                )
+            }
+            .buttonStyle(.plain)
+
+            Divider()
+                .frame(height: 16)
+
+            // 項目符號與編號
+            HStack(spacing: 6) {
+                FormatButton(icon: "list.bullet", tooltip: "項目符號") {
+                    // TODO: 項目符號
+                }
+                .environmentObject(theme)
+
+                FormatButton(icon: "list.number", tooltip: "編號列表") {
+                    // TODO: 編號列表
+                }
+                .environmentObject(theme)
+            }
+
+            Spacer()
 
             // 字數統計
             HStack(spacing: 4) {
@@ -251,6 +485,120 @@ struct ProfessionalEditorView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(theme.background)
     }
+
+    // MARK: - 格式模板表單
+
+    private var formatTemplateSheet: some View {
+        VStack(spacing: 24) {
+            // 標題
+            HStack {
+                Text("格式模板")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundColor(theme.textPrimary)
+
+                Spacer()
+
+                Button(action: { showFormatTemplateSheet = false }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 24))
+                        .foregroundColor(theme.textMuted)
+                }
+                .buttonStyle(.plain)
+            }
+
+            Divider()
+
+            // 預設模板列表
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    templateCard(
+                        template: .nccu,
+                        icon: "graduationcap",
+                        description: "國立政治大學行政管理碩士學程論文格式規範"
+                    )
+
+                    templateCard(
+                        template: .apa,
+                        icon: "doc.text",
+                        description: "美國心理學會 (APA) 第七版格式規範"
+                    )
+                }
+                .padding(.vertical, 8)
+            }
+
+            Spacer()
+
+            // 按鈕
+            Button("關閉") {
+                showFormatTemplateSheet = false
+            }
+            .keyboardShortcut(.escape)
+            .font(.system(size: 15))
+            .foregroundColor(theme.textMuted)
+            .padding(.horizontal, 24)
+            .padding(.vertical, 10)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(theme.itemHover)
+            )
+        }
+        .padding(24)
+        .frame(width: 600, height: 500)
+        .background(theme.card)
+    }
+
+    private func templateCard(template: FormatTemplate, icon: String, description: String) -> some View {
+        Button(action: {
+            selectedTemplate = template
+            applyTemplate(template)
+            showFormatTemplateSheet = false
+        }) {
+            HStack(spacing: 16) {
+                // 圖標
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(theme.accentLight)
+                        .frame(width: 56, height: 56)
+
+                    Image(systemName: icon)
+                        .font(.system(size: 24))
+                        .foregroundColor(theme.accent)
+                }
+
+                // 內容
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text(template.name)
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(theme.textPrimary)
+
+                        if selectedTemplate.name == template.name {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.system(size: 16))
+                                .foregroundColor(theme.accent)
+                        }
+                    }
+
+                    Text(description)
+                        .font(.system(size: 13))
+                        .foregroundColor(theme.textMuted)
+                        .lineLimit(2)
+                }
+
+                Spacer()
+            }
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(selectedTemplate.name == template.name ? theme.accentLight.opacity(0.3) : theme.itemHover)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(selectedTemplate.name == template.name ? theme.accent : .clear, lineWidth: 2)
+            )
+        }
+        .buttonStyle(.plain)
+    }
     
     // MARK: - 方法
 
@@ -259,6 +607,14 @@ struct ProfessionalEditorView: View {
         // TODO: 從 document.rtfData 載入到 canvasViewModel
         // 目前先使用空白文稿
         canvasViewModel.documentTitle = document.title
+    }
+
+    /// 套用格式模板
+    private func applyTemplate(_ template: FormatTemplate) {
+        // TODO: 將格式模板套用到 canvasViewModel
+        // 包含：頁面設定、邊距、字體、行距等
+        ToastManager.shared.showSuccess("已套用「\(template.name)」格式")
+        scheduleAutoSave()
     }
 
     /// 更新字數統計
@@ -329,20 +685,28 @@ struct ProfessionalEditorView: View {
 struct FormatButton: View {
     @EnvironmentObject var theme: AppTheme
     let icon: String
+    var tooltip: String = ""
     let action: () -> Void
-    
+
     @State private var isHovered = false
-    
+
     var body: some View {
         Button(action: action) {
             Image(systemName: icon)
                 .font(.system(size: 14))
                 .foregroundColor(isHovered ? theme.accent : theme.textMuted)
-                .frame(width: 24, height: 24)
+                .frame(width: 28, height: 28)
+                .background(
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(isHovered ? theme.accentLight.opacity(0.3) : .clear)
+                )
         }
         .buttonStyle(.plain)
+        .help(tooltip)
         .onHover { hovering in
-            isHovered = hovering
+            withAnimation(.easeInOut(duration: 0.15)) {
+                isHovered = hovering
+            }
         }
     }
 }
