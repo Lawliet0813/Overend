@@ -232,30 +232,36 @@ class AppleAIService: ObservableObject {
 
         請以 JSON 格式回覆（不要包含 markdown 程式碼區塊符號```）：
         {
-          "title": "完整標題",
-          "authors": ["作者1", "作者2", "作者3"],
-          "year": "YYYY",
-          "journal": "期刊或會議名稱",
-          "doi": "10.xxxx/xxxxx",
+          "title": null,
+          "authors": [],
+          "year": null,
+          "journal": null,
+          "doi": null,
           "type": "article"
         }
 
-        重要提示：
-        - 標題：通常在第一頁頂部，字體較大，是完整的論文標題
-        - 作者：通常在標題下方，是作者姓名列表
-        - 年份：4位數字，範圍 1990-2025
-        - 期刊：期刊、會議或出版社名稱
-        - DOI：格式為 10.xxxx/xxxxx，如果有的話
-        - type：必須是以下之一
-          * article - 期刊論文
-          * book - 書籍
-          * inproceedings - 會議論文
-          * thesis - 碩博士論文
-          * techreport - 技術報告
-          * misc - 其他
-        - 如果找不到某欄位，請設為 null（不要用字串 "null"）
+        📋 欄位說明：
+        1. title: 從 PDF 第一頁頂部提取的真實完整標題（通常字體最大）
+        2. authors: 真實作者姓名的陣列，按出現順序
+        3. year: 出版年份（四位數字，範圍 1990-2025）
+        4. journal: 期刊、會議或出版社的真實完整名稱
+        5. doi: 只有在 PDF 中明確看到 DOI 時才填寫（格式必須是 10.開頭的數字，例如 10.1234/abcd）
+        6. type: 文獻類型
+           - article: 期刊論文
+           - book: 書籍
+           - inproceedings: 會議論文
+           - thesis: 碩博士論文
+           - techreport: 技術報告
+           - misc: 其他
 
-        只回覆 JSON 格式，不要其他說明文字。
+        🚫 絕對禁止：
+        1. 不可填入任何說明文字（如「論文標題」、「真實作者」、「實際的 DOI（格式...）」等）
+        2. 不可編造 DOI（如 10.1234/xxx）
+        3. 不可使用範例值
+        4. 如果 PDF 中找不到 DOI，必須設為 null（JSON 的 null，不是字串）
+        5. 所有資料必須是 PDF 中實際出現的內容
+
+        只回覆 JSON，不要其他文字。
         """
         
         do {
@@ -273,7 +279,23 @@ class AppleAIService: ObservableObject {
         // 先嘗試解析 JSON 格式
         if let jsonMetadata = parseJSONFormat(response) {
             print("✅ 成功解析 JSON 格式")
-            return jsonMetadata
+            
+            // 檢查是否有有效資料
+            if jsonMetadata.hasData {
+                // 檢查是否所有欄位都是範例值（表示 AI 完全失敗）
+                let hasRealData = (jsonMetadata.title != nil && !jsonMetadata.title!.isEmpty) ||
+                                  !jsonMetadata.authors.isEmpty ||
+                                  jsonMetadata.year != nil ||
+                                  jsonMetadata.journal != nil
+                
+                if hasRealData {
+                    return jsonMetadata
+                } else {
+                    print("⚠️ JSON 解析成功但所有欄位都被過濾（可能是範例值）")
+                }
+            } else {
+                print("⚠️ JSON 解析成功但沒有有效資料")
+            }
         }
         
         // 降級：嘗試解析舊的文字格式
@@ -298,27 +320,48 @@ class AppleAIService: ObservableObject {
         // 嘗試解析 JSON
         guard let data = cleanedResponse.data(using: .utf8),
               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            print("❌ JSON 解析失敗")
+            print("原始回應: \(response.prefix(200))...")
             return nil
         }
         
         var metadata = ExtractedMetadata()
+        var filteredCount = 0  // 統計被過濾的欄位數量
         
-        // 提取標題
+        // 提取標題（過濾範例值）
         if let title = json["title"] as? String, 
            !title.isEmpty, 
            title.lowercased() != "null" {
-            metadata.title = title
+            if !isExampleValue(title, field: "title") {
+                metadata.title = title
+            } else {
+                print("⚠️ 過濾範例標題: \(title)")
+                filteredCount += 1
+            }
         }
         
         // 提取作者
         if let authors = json["authors"] as? [String] {
-            metadata.authors = authors.filter { !$0.isEmpty && $0.lowercased() != "null" }
+            let validAuthors = authors.filter { 
+                !$0.isEmpty && 
+                $0.lowercased() != "null" && 
+                !isExampleValue($0, field: "author") 
+            }
+            if validAuthors.count < authors.count {
+                print("⚠️ 過濾了 \(authors.count - validAuthors.count) 個範例作者")
+                filteredCount += 1
+            }
+            metadata.authors = validAuthors
         } else if let authorsString = json["authors"] as? String {
             // 處理 AI 返回字串而非陣列的情況
             metadata.authors = authorsString
                 .components(separatedBy: CharacterSet(charactersIn: ";,，"))
                 .map { $0.trimmingCharacters(in: .whitespaces) }
-                .filter { !$0.isEmpty && $0.lowercased() != "null" }
+                .filter { 
+                    !$0.isEmpty && 
+                    $0.lowercased() != "null" && 
+                    !isExampleValue($0, field: "author") 
+                }
         }
         
         // 提取年份
@@ -328,18 +371,28 @@ class AppleAIService: ObservableObject {
             metadata.year = String(yearInt)
         }
         
-        // 提取期刊
+        // 提取期刊（過濾範例值）
         if let journal = json["journal"] as? String, 
            !journal.isEmpty, 
            journal.lowercased() != "null" {
-            metadata.journal = journal
+            if !isExampleValue(journal, field: "journal") {
+                metadata.journal = journal
+            } else {
+                print("⚠️ 過濾範例期刊: \(journal)")
+                filteredCount += 1
+            }
         }
         
-        // 提取 DOI
+        // 提取 DOI（過濾範例值）
         if let doi = json["doi"] as? String, 
            !doi.isEmpty, 
            doi.lowercased() != "null" {
-            metadata.doi = doi
+            if !isExampleValue(doi, field: "doi") {
+                metadata.doi = doi
+            } else {
+                print("⚠️ 過濾範例 DOI: \(doi)")
+                filteredCount += 1
+            }
         }
         
         // 提取類型
@@ -348,7 +401,50 @@ class AppleAIService: ObservableObject {
             metadata.entryType = validTypes.contains(type.lowercased()) ? type.lowercased() : "misc"
         }
         
+        // 如果過濾了太多欄位，顯示警告
+        if filteredCount >= 3 {
+            print("⚠️ 警告：過濾了 \(filteredCount) 個範例值，AI 可能返回了 prompt 範例")
+            print("   建議：檢查 PDF 前 3 頁是否包含完整資訊")
+        }
+        
         return metadata
+    }
+    
+    /// 檢查是否為範例值（防止 AI 返回 prompt 中的範例）
+    private func isExampleValue(_ value: String, field: String) -> Bool {
+        let normalizedValue = value.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        switch field {
+        case "title":
+            // 檢查常見的範例標題
+            let exampleTitles = ["完整標題", "論文標題", "標題", "complete title", "title"]
+            return exampleTitles.contains(normalizedValue)
+            
+        case "author":
+            // 檢查常見的範例作者
+            let exampleAuthors = ["作者1", "作者2", "作者3", "作者", "author1", "author2", "author"]
+            return exampleAuthors.contains(normalizedValue)
+            
+        case "journal":
+            // 檢查常見的範例期刊名
+            let exampleJournals = ["期刊名稱", "期刊或會議名稱", "會議名稱", "journal name", "conference"]
+            return exampleJournals.contains(normalizedValue)
+            
+        case "doi":
+            // 檢查範例 DOI 格式
+            let exampleDOIs = ["10.xxxx/xxxxx", "10.xxxx/xxxx", "10.1234/5678"]
+            if exampleDOIs.contains(normalizedValue) {
+                return true
+            }
+            // 檢查是否包含 "xxxx" 字樣（明顯的範例值）
+            if normalizedValue.contains("xxxx") || normalizedValue.contains("x") && normalizedValue.count < 15 {
+                return true
+            }
+            return false
+            
+        default:
+            return false
+        }
     }
     
     /// 解析文字格式的回應（降級方案）
