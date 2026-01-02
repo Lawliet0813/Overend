@@ -9,6 +9,7 @@ import SwiftUI
 import FoundationModels
 
 /// 浮動 AI 助手面板（右下角）
+@available(macOS 26.0, *)
 struct FloatingAIAssistant: View {
     @EnvironmentObject var theme: AppTheme
     @StateObject private var aiService = AppleAIService.shared
@@ -1140,12 +1141,16 @@ struct ReferencesGroupRow: View {
 }
 
 #Preview {
-    FloatingAIAssistant(
-        textView: .constant(nil),
-        selectedText: .constant("這是一段測試文字，用來測試 AI 編輯功能。"),
-        onReplaceText: { _ in }
-    )
-    .environmentObject(AppTheme())
-    .padding()
-    .frame(width: 400, height: 600)
+    if #available(macOS 26.0, *) {
+        FloatingAIAssistant(
+            textView: .constant(nil),
+            selectedText: .constant("這是一段測試文字，用來測試 AI 編輯功能。"),
+            onReplaceText: { _ in }
+        )
+        .environmentObject(AppTheme())
+        .padding()
+        .frame(width: 400, height: 600)
+    } else {
+        // Fallback on earlier versions
+    }
 }

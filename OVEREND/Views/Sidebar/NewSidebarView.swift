@@ -55,6 +55,14 @@ struct NewSidebarView: View {
                         viewState.showWritingCenter()
                     }
 
+                    SidebarButton(
+                        icon: "apple.intelligence",
+                        title: "AI 智慧中心",
+                        isSelected: viewState.activeSidebarItem == .aiCenter
+                    ) {
+                        viewState.showAICenter()
+                    }
+
                     // 智能過濾區塊
                     sectionHeader("智能過濾")
                         .padding(.top, DesignTokens.Spacing.md)
@@ -190,13 +198,39 @@ struct SidebarButton: View {
                 .padding(.horizontal, DesignTokens.Spacing.sm)
                 .padding(.vertical, DesignTokens.Spacing.xs)
                 .background(
-                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.small)
-                        .fill(backgroundColor)
+                    ZStack {
+                        // 基礎背景
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.small)
+                            .fill(backgroundColor)
+                        
+                        // 添加微妙漸變增加深度
+                        if isSelected || isHovered {
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.small)
+                                .fill(
+                                    LinearGradient(
+                                        colors: [
+                                            Color.white.opacity(isSelected ? 0.1 : 0.05),
+                                            Color.clear
+                                        ],
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
+                                )
+                        }
+                    }
                 )
                 .foregroundColor(isSelected ? .white : theme.textPrimary)
+                // 懸停時添加陰影
+                .shadow(
+                    color: isHovered && !isSelected ? Color.black.opacity(0.1) : .clear,
+                    radius: isHovered ? 8 : 0,
+                    x: 0,
+                    y: isHovered ? 4 : 0
+                )
             }
         }
         .buttonStyle(.plain)
+        .scaleEffect(isHovered && !isSelected ? 1.02 : 1.0)
         .animation(AnimationSystem.Easing.spring, value: isSelected)
         .animation(AnimationSystem.Easing.quick, value: isHovered)
         .onHover { hovering in

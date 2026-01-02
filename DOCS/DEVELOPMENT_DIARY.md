@@ -1,7 +1,7 @@
 # OVEREND 開發日記
 
 > **整合自 DOCS 資料夾所有開發文件**  
-> **最後更新：** 2026-01-02  
+> **最後更新：** 2026-01-02 (09:00)  
 > **專案進度：** 約 98%
 
 ---
@@ -179,6 +179,40 @@ OVEREND = 文字編輯器 + 文獻管理 + AI 輔助
 
 - 問題：匯出的 PDF 顯示亂碼（雙重轉換導致）
 - 解決：直接使用已儲存的 HTML 匯出，避免 htmlData → NSAttributedString → HTML 的雙重轉換
+
+---
+
+### 2026-01-02：UI 立體感增強與批次匯入
+
+**UI 立體感全面升級：**
+
+- ✅ 陰影系統升級（強度提升 50%，新增 Level 5）
+- ✅ 卡片和按鈕添加漸變光澤（LinearGradient）
+- ✅ 懸停浮起效果（動態陰影 + 1.02x 縮放）
+- ✅ 漸變邊框增加深度感
+
+**批次 PDF 匯入功能：**
+
+- ✅ 啟用多文件選擇（`allowsMultipleSelection = true`）
+- ✅ 單選：AI 預覽流程（現有體驗）
+- ✅ 多選：批次自動匯入（每 5 個更新進度）
+- ✅ `savePDFEntry()` 方法實現
+
+**AI 智慧中心：**
+
+- ✅ 新增 AI 智慧中心側邊欄按鈕
+- ✅ `AICenterView` 視圖整合
+
+**修改檔案：**
+
+| 檔案 | 修改內容 |
+|------|----------|
+| `DesignTokens.swift` | 陰影系統升級（5 級 + 發光效果） |
+| `NewSidebarView.swift` | AI 中心按鈕、按鈕漸變、陰影、縮放 |
+| `DocumentCardView.swift` | 卡片漸變光澤、動態陰影 |
+| `ModernEntryListView.swift` | 表格漸變背景、邊框、陰影 |
+| `NewContentView.swift` | 批次 PDF 匯入、savePDFEntry 方法 |
+| `AILatexGenerator.swift` | 添加 @available(macOS 26.0, *) |
 
 ---
 
@@ -385,7 +419,7 @@ if let htmlData = htmlData,
 
 ## 編譯狀態
 
-✅ **BUILD SUCCEEDED** (2026-01-01 16:00)
+✅ **BUILD SUCCEEDED** (2026-01-02 09:00)
 
 ---
 

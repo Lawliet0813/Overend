@@ -17,6 +17,7 @@ import Combine
 import FoundationModels
 
 /// Apple AI 服務 - 使用 Foundation Models 框架
+@available(macOS 26.0, *)
 @MainActor
 class AppleAIService: ObservableObject {
     
@@ -38,7 +39,7 @@ class AppleAIService: ObservableObject {
         Task {
             do {
                 // 嘗試建立 session 來檢查可用性
-                let session = LanguageModelSession()
+                _ = LanguageModelSession()
                 // 如果能成功建立，表示可用
                 isAvailable = true
                 print("✅ Apple Intelligence 可用")
@@ -205,8 +206,6 @@ class AppleAIService: ObservableObject {
         }
     }
     
-    // MARK: - 文獻元數據識別
-    
     /// 從 PDF 提取的文字中識別文獻元數據
     /// - Parameter text: PDF 提取的文字內容（通常是前幾頁）
     /// - Returns: 識別出的元數據
@@ -237,6 +236,13 @@ class AppleAIService: ObservableObject {
         3. 年份（Year）：發表年份（4位數字）
         4. 期刊/來源（Journal）：期刊名稱或出版來源
         5. DOI：如果有的話
+        6. 文獻類型（Type）：請判斷是以下哪種類型：
+           - article（期刊論文）
+           - book（書籍）
+           - inproceedings（會議論文）
+           - thesis（碩博士論文）
+           - techreport（技術報告）
+           - misc（其他）
 
         請以下列格式回覆，每行一個欄位：
         標題: [標題內容]
@@ -244,6 +250,7 @@ class AppleAIService: ObservableObject {
         年份: [YYYY]
         期刊: [期刊名稱]
         DOI: [DOI]
+        類型: [article/book/inproceedings/thesis/techreport/misc]
         
         只回覆上述格式，不要其他說明文字。如果某欄位無法識別，請寫「未知」。
         """
@@ -297,6 +304,17 @@ class AppleAIService: ObservableObject {
                 if value != "未知" && !value.isEmpty {
                     metadata.doi = value
                 }
+            } else if trimmedLine.hasPrefix("類型:") || trimmedLine.hasPrefix("類型：") {
+                let value = extractValue(from: trimmedLine).lowercased()
+                if value != "未知" && !value.isEmpty {
+                    // 驗證是否為有效的文獻類型
+                    let validTypes = ["article", "book", "inproceedings", "thesis", "techreport", "misc"]
+                    if validTypes.contains(value) {
+                        metadata.entryType = value
+                    } else {
+                        metadata.entryType = "misc"
+                    }
+                }
             }
         }
         
@@ -322,15 +340,29 @@ struct ExtractedMetadata {
     var year: String?
     var journal: String?
     var doi: String?
+    var entryType: String?  // 文獻類型
     
     /// 是否有任何有效資料
     var hasData: Bool {
-        title != nil || !authors.isEmpty || year != nil || journal != nil || doi != nil
+        title != nil || !authors.isEmpty || year != nil || journal != nil || doi != nil || entryType != nil
     }
     
     /// 格式化作者為 BibTeX 格式（用 " and " 分隔）
     var authorsBibTeX: String {
         authors.joined(separator: " and ")
+    }
+    
+    /// 文獻類型的中文名稱
+    var entryTypeDisplayName: String {
+        switch entryType {
+        case "article": return "期刊論文"
+        case "book": return "書籍"
+        case "inproceedings": return "會議論文"
+        case "thesis": return "碩博士論文"
+        case "techreport": return "技術報告"
+        case "misc": return "其他"
+        default: return "未知"
+        }
     }
 }
 

@@ -488,29 +488,6 @@ struct NewContentView: View {
         return key.isEmpty ? "entry\(Int(Date().timeIntervalSince1970))" : key
     }
     
-    /// 保存 PDF Entry（用於批次匯入）
-    private func savePDFEntry(metadata: PDFMetadata, pdfURL: URL, library: Library) throws {
-        let entry = Entry(context: viewContext)
-        entry.id = UUID()
-        entry.entryType = metadata.entryType
-        let citationKey = generateCitationKey(from: metadata)
-        entry.citationKey = citationKey
-        entry.createdAt = Date()
-        entry.updatedAt = Date()
-        entry.library = library
-        
-        var fields: [String: String] = ["title": metadata.title]
-        if !metadata.authors.isEmpty { fields["author"] = metadata.authors.joined(separator: " and ") }
-        if let year = metadata.year { fields["year"] = year }
-        if let doi = metadata.doi { fields["doi"] = doi }
-        if let journal = metadata.journal { fields["journal"] = journal }
-        if let abstract = metadata.abstract { fields["abstract"] = abstract }
-        
-        entry.fields = fields
-        entry.bibtexRaw = PDFMetadataExtractor.generateBibTeX(from: metadata, citationKey: citationKey)
-        try PDFService.addPDFAttachment(from: pdfURL, to: entry, context: viewContext)
-    }
-    
     private func generateCitationKey(from url: URL) -> String {
         let name = url.deletingPathExtension().lastPathComponent
         let sanitized = name.components(separatedBy: CharacterSet.alphanumerics.inverted).joined()
@@ -625,4 +602,29 @@ struct ImportOptionCard: View {
     NewContentView()
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
         .frame(width: 1200, height: 800)
+}
+
+
+    /// 保存 PDF Entry（用於批次匯入）
+    private func savePDFEntry(metadata: PDFMetadata, pdfURL: URL, library: Library) throws {
+        let entry = Entry(context: viewContext)
+        entry.id = UUID()
+        entry.entryType = metadata.entryType
+        let citationKey = generateCitationKey(from: metadata)
+        entry.citationKey = citationKey
+        entry.createdAt = Date()
+        entry.updatedAt = Date()
+        entry.library = library
+        
+        var fields: [String: String] = ["title": metadata.title]
+        if !metadata.authors.isEmpty { fields["author"] = metadata.authors.joined(separator: " and ") }
+        if let year = metadata.year { fields["year"] = year }
+        if let doi = metadata.doi { fields["doi"] = doi }
+        if let journal = metadata.journal { fields["journal"] = journal }
+        if let abstract = metadata.abstract { fields["abstract"] = abstract }
+        
+        entry.fields = fields
+        entry.bibtexRaw = PDFMetadataExtractor.generateBibTeX(from: metadata, citationKey: citationKey)
+        try PDFService.addPDFAttachment(from: pdfURL, to: entry, context: viewContext)
+    }
 }

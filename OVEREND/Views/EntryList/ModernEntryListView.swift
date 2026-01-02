@@ -67,13 +67,48 @@ struct ModernEntryListView: View {
                             }
                         }
                     }
-                    .background(theme.card)
+                    .background(
+                        ZStack {
+                            // 基礎卡片背景
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.medium)
+                                .fill(theme.card)
+                            
+                            // 添加微妙漸變光澤
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.medium)
+                                .fill(
+                                    LinearGradient(
+                                        colors: [
+                                            Color.white.opacity(theme.isDarkMode ? 0.03 : 0.2),
+                                            Color.clear
+                                        ],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                        }
+                    )
                     .cornerRadius(DesignTokens.CornerRadius.medium)
                     .overlay(
                         RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.medium)
-                            .stroke(theme.border, lineWidth: 1)
+                            .stroke(
+                                LinearGradient(
+                                    colors: [
+                                        theme.border,
+                                        theme.border.opacity(0.5)
+                                    ],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 1
+                            )
                     )
-                    .applyShadow(level: 2)
+                    // 增強陰影效果
+                    .shadow(
+                        color: Color.black.opacity(theme.isDarkMode ? 0.2 : 0.12),
+                        radius: 15,
+                        x: 0,
+                        y: 6
+                    )
                     .padding(DesignTokens.Spacing.lg)
                 }
             }

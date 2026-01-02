@@ -30,52 +30,61 @@ struct DesignTokens {
 
     // MARK: - 陰影系統
 
-    /// 陰影樣式（參考 Material Design Elevation）
+    /// 陰影樣式（增強立體感版本）
     enum Shadow {
         /// 高度 1 - 懸停效果
         /// 用於：按鈕懸停狀態
         static let level1 = ShadowStyle(
-            color: Color.black.opacity(0.08),
-            radius: 4,
+            color: Color.black.opacity(0.12),
+            radius: 6,
             x: 0,
-            y: 2
+            y: 3
         )
 
         /// 高度 2 - 卡片
         /// 用於：一般卡片、文獻列表項
         static let level2 = ShadowStyle(
-            color: Color.black.opacity(0.10),
-            radius: 8,
+            color: Color.black.opacity(0.15),
+            radius: 12,
             x: 0,
-            y: 4
+            y: 6
         )
 
         /// 高度 3 - 浮動面板
         /// 用於：Toast、浮動工具列
         static let level3 = ShadowStyle(
-            color: Color.black.opacity(0.12),
-            radius: 16,
+            color: Color.black.opacity(0.18),
+            radius: 20,
             x: 0,
-            y: 8
+            y: 10
         )
 
         /// 高度 4 - Modal
         /// 用於：對話框、Sheet
         static let level4 = ShadowStyle(
-            color: Color.black.opacity(0.15),
-            radius: 24,
+            color: Color.black.opacity(0.22),
+            radius: 30,
             x: 0,
-            y: 12
+            y: 15
+        )
+        
+        /// 高度 5 - 深層浮動（新增）
+        /// 用於：彈出菜單、下拉選單
+        static let level5 = ShadowStyle(
+            color: Color.black.opacity(0.25),
+            radius: 40,
+            x: 0,
+            y: 20
         )
 
         /// 發光效果 - 用於主色強調
         /// 用於：主要按鈕、重要操作
         static func glow(color: Color) -> ShadowStyle {
             ShadowStyle(
-                color: color.opacity(0.4),
-                radius: 12,
+                color: color.opacity(0.5),
+                radius: 16,
                 x: 0,
-                y: 6
+                y: 8
             )
         }
     }

@@ -104,6 +104,8 @@ struct DynamicToolbar: View {
             return "寫作中心"
         case .editorFull(let doc):
             return "正在編輯：\(doc.title)"
+        case .aiCenter:
+            return "AI 智慧中心"
         }
     }
     
@@ -113,6 +115,8 @@ struct DynamicToolbar: View {
             return "匯入文獻"
         case .editorList, .editorFull:
             return "新建文稿"
+        case .aiCenter:
+            return "新功能"
         }
     }
 }

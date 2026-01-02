@@ -10,6 +10,7 @@ import AppKit
 import FoundationModels
 
 /// AI 智慧排版服務
+@available(macOS 26.0, *)
 class AILayoutFormatter {
 
     /// 排版類型
@@ -45,8 +46,19 @@ class AILayoutFormatter {
         // 根據類型建構提示詞
         let prompt = buildPrompt(for: type, with: plainText)
 
-        // 呼叫 AI 進行排版分析與建議
-        let session = LanguageModelSession()
+        let session: LanguageModelSession?
+        if #available(macOS 26.0, *) {
+            session = LanguageModelSession()
+        } else {
+            session = nil
+        }
+
+        guard let session else {
+            throw NSError(domain: "AILayoutFormatter", code: -2, userInfo: [
+                NSLocalizedDescriptionKey: "需要 macOS 26 或更新版本才能使用 Apple Intelligence 排版"
+            ])
+        }
+
         let response = try await session.respond(to: prompt)
         let responseText = response.content
 
@@ -89,7 +101,19 @@ class AILayoutFormatter {
         請保持原文其他內容不變，只修正引用格式。
         """
 
-        let session = LanguageModelSession()
+        let session: LanguageModelSession?
+        if #available(macOS 26.0, *) {
+            session = LanguageModelSession()
+        } else {
+            session = nil
+        }
+
+        guard let session else {
+            throw NSError(domain: "AILayoutFormatter", code: -2, userInfo: [
+                NSLocalizedDescriptionKey: "需要 macOS 26 或更新版本才能使用 Apple Intelligence 修正引用格式"
+            ])
+        }
+
         let response = try await session.respond(to: prompt)
         let responseText = response.content
 
@@ -152,7 +176,19 @@ class AILayoutFormatter {
         請回傳調整建議。
         """
 
-        let session = LanguageModelSession()
+        let session: LanguageModelSession?
+        if #available(macOS 26.0, *) {
+            session = LanguageModelSession()
+        } else {
+            session = nil
+        }
+
+        guard let session else {
+            throw NSError(domain: "AILayoutFormatter", code: -2, userInfo: [
+                NSLocalizedDescriptionKey: "需要 macOS 26 或更新版本才能使用 Apple Intelligence 調整標題層級"
+            ])
+        }
+
         let response = try await session.respond(to: prompt)
         let responseText = response.content
 
@@ -345,3 +381,4 @@ enum ParagraphStyle {
     case compact   // 緊湊樣式
     case loose     // 鬆散樣式
 }
+

@@ -8,6 +8,7 @@
 import SwiftUI
 
 /// AI 助手面板
+@available(macOS 26.0, *)
 struct AIAssistantView: View {
     @EnvironmentObject var theme: AppTheme
     @Environment(\.dismiss) private var dismiss
@@ -365,7 +366,11 @@ struct FlowLayout: Layout {
         "year": "2024"
     ]
     
-    return AIAssistantView(entry: entry)
-        .environmentObject(AppTheme())
-        .frame(height: 500)
+    if #available(macOS 26.0, *) {
+        return AIAssistantView(entry: entry)
+            .environmentObject(AppTheme())
+            .frame(height: 500)
+    } else {
+        // Fallback on earlier versions
+    }
 }

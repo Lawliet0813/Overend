@@ -9,6 +9,7 @@ import Foundation
 import FoundationModels
 
 /// AI LaTeX 公式生成器
+@available(macOS 26.0, *)
 class AILatexGenerator {
 
     /// 使用 Apple Intelligence 將自然語言轉換為 LaTeX 公式

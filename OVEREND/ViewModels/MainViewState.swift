@@ -13,6 +13,7 @@ enum MainViewMode: Equatable {
     case library                    // 文獻管理視圖
     case editorList                 // 文稿列表視圖
     case editorFull(Document)       // 專業編輯器視圖
+    case aiCenter                   // AI 智慧中心視圖
     
     static func == (lhs: MainViewMode, rhs: MainViewMode) -> Bool {
         switch (lhs, rhs) {
@@ -22,6 +23,8 @@ enum MainViewMode: Equatable {
             return true
         case (.editorFull(let doc1), .editorFull(let doc2)):
             return doc1.id == doc2.id
+        case (.aiCenter, .aiCenter):
+            return true
         default:
             return false
         }
@@ -32,6 +35,7 @@ enum MainViewMode: Equatable {
 enum SidebarItem: String, CaseIterable {
     case allEntries = "全部文獻"
     case writingCenter = "寫作中心"
+    case aiCenter = "AI 智慧中心"
     case recentlyViewed = "最近閱覽"
     case bookmarked = "待讀標註"
     
@@ -39,6 +43,7 @@ enum SidebarItem: String, CaseIterable {
         switch self {
         case .allEntries: return "books.vertical"
         case .writingCenter: return "pencil.line"
+        case .aiCenter: return "apple.intelligence"
         case .recentlyViewed: return "clock"
         case .bookmarked: return "bookmark.fill"
         }
@@ -46,7 +51,7 @@ enum SidebarItem: String, CaseIterable {
     
     var section: SidebarSection {
         switch self {
-        case .allEntries, .writingCenter:
+        case .allEntries, .writingCenter, .aiCenter:
             return .resourceManagement
         case .recentlyViewed, .bookmarked:
             return .smartFilters
@@ -79,6 +84,12 @@ class MainViewState: ObservableObject {
     func showWritingCenter() {
         mode = .editorList
         activeSidebarItem = .writingCenter
+    }
+    
+    /// 切換到 AI 智慧中心
+    func showAICenter() {
+        mode = .aiCenter
+        activeSidebarItem = .aiCenter
     }
     
     /// 打開文稿編輯器

@@ -71,14 +71,36 @@ struct DocumentCardView: View {
                 .padding(24)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(theme.card)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(isHovered ? theme.accent : theme.border, lineWidth: 1)
-                        )
+                    ZStack {
+                        // 基礎卡片背景
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(theme.card)
+                        
+                        // 添加微妙漸變光澤
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        Color.white.opacity(theme.isDarkMode ? 0.05 : 0.4),
+                                        Color.clear
+                                    ],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                        
+                        // 邊框
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(isHovered ? theme.accent : theme.border, lineWidth: 1)
+                    }
                 )
-                .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 4)
+                // 增強陰影效果
+                .shadow(
+                    color: Color.black.opacity(isHovered ? 0.15 : 0.08),
+                    radius: isHovered ? 20 : 10,
+                    x: 0,
+                    y: isHovered ? 8 : 4
+                )
             }
             .buttonStyle(.plain)
             .onHover { hovering in

@@ -274,16 +274,44 @@ struct RecommendationCard: View {
             HStack(spacing: DesignTokens.Spacing.sm) {
                 Spacer()
                 
-                SmallButton("查看詳情", icon: "doc.text") {
+                Button(action: {
                     // TODO: 跳轉到文獻詳情
+                }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "doc.text")
+                            .font(.system(size: 12))
+                        Text("查看詳情")
+                            .font(.system(size: DesignTokens.Typography.caption))
+                    }
+                    .foregroundColor(theme.textPrimary)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(theme.itemHover)
+                    )
                 }
-                .environmentObject(theme)
+                .buttonStyle(.plain)
                 
-                SmallButton("插入引用", icon: "arrow.down.doc", isPrimary: true) {
+                Button(action: {
                     // TODO: 插入引用到編輯器
                     ToastManager.shared.showSuccess("已插入引用")
+                }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "arrow.down.doc")
+                            .font(.system(size: 12))
+                        Text("插入引用")
+                            .font(.system(size: DesignTokens.Typography.caption))
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(theme.accent)
+                    )
                 }
-                .environmentObject(theme)
+                .buttonStyle(.plain)
             }
         }
         .padding(DesignTokens.Spacing.md)

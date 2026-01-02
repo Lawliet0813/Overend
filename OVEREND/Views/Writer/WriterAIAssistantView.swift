@@ -8,6 +8,7 @@
 import SwiftUI
 
 /// 編輯器 AI 助手面板
+@available(macOS 26.0, *)
 struct WriterAIAssistantView: View {
     @EnvironmentObject var theme: AppTheme
     @Environment(\.dismiss) private var dismiss
@@ -322,9 +323,13 @@ struct WriterAIAssistantView: View {
 import FoundationModels
 
 #Preview {
-    WriterAIAssistantView(
-        selectedText: .constant("這是一段測試文字，用來測試 AI 寫作助手的功能。"),
-        onInsertText: { _ in }
-    )
-    .environmentObject(AppTheme())
+    if #available(macOS 26.0, *) {
+        WriterAIAssistantView(
+            selectedText: .constant("這是一段測試文字，用來測試 AI 寫作助手的功能。"),
+            onInsertText: { _ in }
+        )
+        .environmentObject(AppTheme())
+    } else {
+        // Fallback on earlier versions
+    }
 }
