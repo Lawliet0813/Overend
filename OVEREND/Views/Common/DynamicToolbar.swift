@@ -42,8 +42,12 @@ struct DynamicToolbar: View {
 
             Spacer()
 
-            // 右側：搜尋 + 主題切換 + 新建按鈕
+            // 右側：番茄鐘 + 搜尋 + 主題切換 + 新建按鈕
             HStack(spacing: DesignTokens.Spacing.sm) {
+                // 🍅 番茄鐘按鈕
+                PomodoroToolbarButton()
+                    .environmentObject(theme)
+                
                 // 主題切換
                 IconButton(
                     icon: theme.isDarkMode ? "sun.max" : "moon",

@@ -247,6 +247,10 @@ struct ProfessionalEditorView: View {
             }
             .buttonStyle(.plain)
             .help("快捷鍵：⌘K")
+            
+            // 🍅 番茄鐘按鈕
+            PomodoroToolbarButton()
+                .environmentObject(theme)
 
             Divider()
                 .frame(height: 16)
