@@ -42,10 +42,18 @@ struct NewContentView: View {
         return false
     }
     
+    /// 是否處於起始頁模式
+    private var isInWelcomeMode: Bool {
+        if case .welcome = viewState.mode {
+            return true
+        }
+        return false
+    }
+    
     var body: some View {
         HStack(spacing: 0) {
-            // 側邊欄 - 使用 Liquid Glass 效果（編輯器全螢幕模式時隱藏）
-            if !isInEditorFullMode {
+            // 側邊欄 - 使用 Liquid Glass 效果（起始頁和編輯器全螢幕模式時隱藏）
+            if !isInEditorFullMode && !isInWelcomeMode {
                 NewSidebarView(libraryVM: libraryVM)
                     .environmentObject(theme)
                     .environmentObject(viewState)
@@ -54,8 +62,8 @@ struct NewContentView: View {
 
             // 主內容區域
             VStack(spacing: 0) {
-                // 動態工具列（編輯器全螢幕模式時隱藏，使用編輯器自己的工具列）
-                if !isInEditorFullMode {
+                // 動態工具列（編輯器全螢幕模式和起始頁時隱藏）
+                if !isInEditorFullMode && !isInWelcomeMode {
                     DynamicToolbar(
                         searchText: $viewState.searchText,
                         onNewItem: handleNewItem
@@ -67,6 +75,12 @@ struct NewContentView: View {
                 // 視圖切換
                 ZStack {
                     switch viewState.mode {
+                    case .welcome:
+                        // 起始頁面
+                        WelcomeView()
+                            .environmentObject(theme)
+                            .environmentObject(viewState)
+                    
                     case .library:
                         // 文獻管理視圖
                         if let library = viewState.selectedLibrary ?? libraryVM.libraries.first {
@@ -78,7 +92,7 @@ struct NewContentView: View {
                         }
 
                     case .editorList:
-                        // 文稿列表視圖
+                        // 寫作專案列表視圖
                         EditorListView()
                             .environmentObject(theme)
                             .environmentObject(viewState)
@@ -264,11 +278,14 @@ struct NewContentView: View {
     
     private func handleNewItem() {
         switch viewState.mode {
+        case .welcome:
+            // 起始頁不處理
+            break
         case .library:
             // 顯示匯入選項
             showImportOptions = true
         case .editorList, .editorFull:
-            // 新建文稿
+            // 新建寫作專案
             showNewDocumentSheet = true
         case .aiCenter:
             // AI 中心暫不支持新建
