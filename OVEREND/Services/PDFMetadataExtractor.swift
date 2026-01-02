@@ -122,7 +122,12 @@ class PDFMetadataExtractor {
             // 策略 3️⃣: 正則表達式降級方案
             // ========================================
             print("📝 使用正則表達式提取...")
-            return await extractFromPDFText(url: url)
+            if let metadata = await extractFromPDFText(url: url) {
+                return metadata
+            }
+            
+            // 最終降級：從文件名提取
+            return extractFromFilename(url: url)
         } else {
             // macOS 版本不支援 FoundationModels
             print("ℹ️ 系統版本不支援 Apple Intelligence，使用傳統方法")
@@ -169,11 +174,11 @@ class PDFMetadataExtractor {
                 authors: metadata.authors,
                 year: metadata.year,
                 doi: doi,
-                abstract: metadata.abstract,
+                abstract: nil,
                 journal: metadata.journal,
                 volume: metadata.volume,
                 pages: metadata.pages,
-                entryType: metadata.type,
+                entryType: metadata.entryType,
                 confidence: .high
             )
         } catch {
