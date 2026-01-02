@@ -32,14 +32,15 @@ class AppTheme: ObservableObject {
         ("🏳️‍🌈 彩虹驕傲", "#E40303", true)  // 使用紅色作為代表色，UI 會顯示漸層
     ]
     
-    /// Pride 漸層顏色
+    /// Pride 漸層顏色（增強版）
     static let prideGradientColors: [Color] = [
         Color(hex: "#E40303"),  // 紅
         Color(hex: "#FF8C00"),  // 橙
         Color(hex: "#FFED00"),  // 黃
         Color(hex: "#008026"),  // 綠
         Color(hex: "#24408E"),  // 藍
-        Color(hex: "#732982")   // 紫
+        Color(hex: "#732982"),  // 紫
+        Color(hex: "#E40303")   // 回到紅（循環）
     ]
     
     /// 是否使用彩虹驕傲模式
@@ -90,7 +91,7 @@ class AppTheme: ObservableObject {
     }
     
     var card: Color {
-        isDarkMode ? Color.white.opacity(0.05) : .white
+        isDarkMode ? Color.white.opacity(0.08) : .white
     }
     
     // MARK: - 文字色
