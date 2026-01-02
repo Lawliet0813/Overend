@@ -25,6 +25,8 @@ class DocumentFormatter {
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Document</title>
+            <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+            <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
             <style>
             \(generateCSS(from: template))
             </style>
@@ -416,161 +418,124 @@ extension DocumentFormatter {
     ) -> String {
         // 🔍 Debug: 檢查輸入內容
         print("🔍 parseAttributedString - 原始長度：\(attributedString.length)")
-        print("🔍 parseAttributedString - 純文字長度：\(attributedString.string.count)")
-        print("🔍 parseAttributedString - 前 200 字元：\(String(attributedString.string.prefix(200)))")
-
+        
         let string = attributedString.string
-
+        
         // 檢查是否為空
         if string.isEmpty {
-            print("⚠️ parseAttributedString - 內容為空！")
             return "<p>文件內容為空</p>"
         }
-
+        
         // 將文字按換行符分割成段落
         let paragraphs = string.components(separatedBy: "\n")
         var html = ""
         var currentCharIndex = 0
-
-        print("🔍 parseAttributedString - 段落數：\(paragraphs.count)")
-
+        
         // 頁面高度追蹤（用於自動分頁）
-        // A4 頁面內容高度 ≈ 600pt (扣除頁邊距後，調整為更合理的分頁)
         let pageContentHeight: CGFloat = 600
         var currentPageHeight: CGFloat = 0
-        let lineHeight: CGFloat = 24 // 平均行高（中文適用）
-
+        let lineHeight: CGFloat = 24
+        
         for (index, paragraph) in paragraphs.enumerated() {
             let paragraphLength = paragraph.count
-
-            // 🔍 Debug: 每 10 個段落輸出一次
-            if index % 10 == 0 {
-                print("🔍 處理段落 \(index)/\(paragraphs.count) - 長度：\(paragraphLength)")
-            }
-
-            // 偵測分頁標記（封面結束或手動分頁符）
-            // 分頁符格式: ═══════════════ 分頁 ═══════════════
+            
+            // 偵測分頁標記
             if paragraph.contains("封面結束") ||
                paragraph.contains("───────") ||
                (paragraph.contains("分頁") && paragraph.contains("═")) {
-                // 🔧 加強分頁符 - 使用多重方式確保跨平台相容
                 html += """
                 <div class="page-break"></div>
                 """
-                currentCharIndex += paragraphLength + 1  // +1 for newline
-                currentPageHeight = 0 // 重置頁面高度
+                currentCharIndex += paragraphLength + 1
+                currentPageHeight = 0
                 continue
             }
             
             // 偵測空白頁標記
-            // 空白頁格式: ═══════════════ 空白頁 ═══════════════
             if paragraph.contains("空白頁") && paragraph.contains("═") {
-                // 🔧 加強空白頁 - 確保完整一頁 + 分頁
                 html += """
                 <div class="blank-page"></div>
                 """
                 currentCharIndex += paragraphLength + 1
-                currentPageHeight = 0 // 重置頁面高度
+                currentPageHeight = 0
                 continue
             }
-
+            
             if paragraphLength == 0 {
-                // 空行 = 段落分隔（但不要太多連續空段落）
                 html += "<p class=\"spacer\">&nbsp;</p>\n"
-                currentCharIndex += 1  // 只有換行符
+                currentCharIndex += 1
                 currentPageHeight += lineHeight
                 continue
             }
             
-            // 安全檢查：確保不超過字串長度
+            // 安全檢查
             guard currentCharIndex < attributedString.length else {
-                // 索引超出範圍，用純文字方式加入
                 html += "<p>\(escapeHTML(paragraph))</p>\n"
                 currentCharIndex += paragraphLength + 1
                 continue
             }
-
-            // 檢查是否有 NSTextAttachment（LaTeX 公式圖片等）
-            // 這些不應該直接轉換為文字
-            var hasAttachment = false
-            attributedString.enumerateAttribute(
-                .attachment,
-                in: NSRange(location: currentCharIndex, length: min(paragraphLength, attributedString.length - currentCharIndex)),
-                options: []
-            ) { value, range, stop in
-                if value != nil {
-                    hasAttachment = true
-                    stop.pointee = true
+            
+            // 取得整個段落的屬性（以第一個字元為準，用於決定標籤類型）
+            let paragraphAttributes = attributedString.attributes(at: currentCharIndex, effectiveRange: nil)
+            
+            // 構建段落內容（處理混合文字與 LaTeX 公式）
+            var paragraphContent = ""
+            let paragraphRange = NSRange(location: currentCharIndex, length: paragraphLength)
+            
+            // 在段落範圍內枚舉屬性
+            attributedString.enumerateAttributes(in: paragraphRange, options: []) { attrs, range, _ in
+                // 檢查是否為 LaTeX 公式
+                if let formula = attrs[NSAttributedString.Key("LaTeXFormula")] as? String {
+                    // 轉換為 MathJax 格式
+                    paragraphContent += "\\(\(formula)\\)"
+                } else {
+                    // 一般文字
+                    let text = (string as NSString).substring(with: range)
+                    // 忽略附件佔位符（如果有的話）
+                    if text != "\u{FFFC}" {
+                        paragraphContent += escapeHTML(text)
+                    }
                 }
             }
-
-            // 如果段落包含附件，暫時跳過（或用佔位符）
-            if hasAttachment {
-                print("⚠️ 段落 \(index) 包含附件，使用純文字輸出")
-                html += "<p>\(escapeHTML(paragraph))</p>\n"
-                currentCharIndex += paragraphLength + 1
-                currentPageHeight += lineHeight
-                continue
-            }
-
-            // 取得這個段落的屬性
-            let attributes = attributedString.attributes(at: currentCharIndex, effectiveRange: nil)
-
+            
             // 計算段落估計高度
             var estimatedHeight = lineHeight
-            if let font = attributes[.font] as? NSFont {
+            if let font = paragraphAttributes[.font] as? NSFont {
                 let fontSize = font.pointSize
-                // 標題佔用更多空間
-                if fontSize >= 20 {
-                    estimatedHeight = fontSize * 2.8 // h1 標題（加大間距）
-                } else if fontSize >= 18 {
-                    estimatedHeight = fontSize * 2.5 // h2 標題（加大間距）
-                } else if fontSize >= 16 {
-                    estimatedHeight = fontSize * 2.2 // h3 標題（加大間距）
+                if fontSize >= 16 {
+                    estimatedHeight = fontSize * 2.2
                 } else {
-                    // 一般段落：根據行數估計（中文每行約 40-45 字）
                     let lineCount = CGFloat(max(1, paragraphLength / 40))
-                    estimatedHeight = lineCount * fontSize * 1.6 // 增加行距係數
+                    estimatedHeight = lineCount * fontSize * 1.6
                 }
             }
-
+            
             // 檢查是否需要自動分頁
             if currentPageHeight + estimatedHeight > pageContentHeight && currentPageHeight > 100 {
-                // 插入自動分頁符
                 html += """
                 <div class="page-break"></div>
                 """
                 currentPageHeight = 0
             }
-
-            // 添加段落
-            html += wrapParagraphWithTag(paragraph, attributes: attributes, template: template)
+            
+            // 使用構建好的內容包裝段落
+            html += wrapParagraphContentWithTag(paragraphContent, attributes: paragraphAttributes, template: template)
             currentPageHeight += estimatedHeight
-
-            currentCharIndex += paragraphLength + 1  // +1 跳過換行符
+            
+            currentCharIndex += paragraphLength + 1
         }
-
-        // 🔍 Debug: 檢查最終 HTML 輸出
-        print("🔍 parseAttributedString - 完成！HTML 長度：\(html.count)")
-        print("🔍 parseAttributedString - HTML 前 500 字元：\(String(html.prefix(500)))")
-
-        // 如果 HTML 為空，返回錯誤訊息
-        if html.isEmpty {
-            print("⚠️ parseAttributedString - HTML 為空！返回佔位內容")
-            return "<p>無法解析文件內容</p>"
-        }
-
+        
         return html
     }
     
-    /// 根據屬性包裝整個段落
-    private static func wrapParagraphWithTag(
-        _ text: String,
+    /// 根據屬性包裝段落內容（已處理過 HTML 轉義和公式）
+    private static func wrapParagraphContentWithTag(
+        _ content: String,
         attributes: [NSAttributedString.Key: Any],
         template: FormatTemplate
     ) -> String {
         guard let font = attributes[.font] as? NSFont else {
-            return "<p>\(escapeHTML(text))</p>\n"
+            return "<p>\(content)</p>\n"
         }
         
         let fontSize = font.pointSize
@@ -614,19 +579,20 @@ extension DocumentFormatter {
             
             // 處理縮排（引用）
             if paragraph.firstLineHeadIndent > 20 || paragraph.headIndent > 20 {
-                return "<blockquote style=\"\(inlineStyle)\">\(escapeHTML(text))</blockquote>\n"
+                return "<blockquote style=\"\(inlineStyle)\">\(content)</blockquote>\n"
             }
         }
         
-        var content = escapeHTML(text)
+        var finalContent = content
         
-        // 套用粗體、斜體（只對非標題段落）
+        // 套用粗體、斜體（只對非標題段落，且假設整個段落一致）
+        // 注意：如果段落內混合樣式，這裡可能不夠精確，但對於 MVP 足夠
         if isBold && tag == "p" {
-            content = "<strong>\(content)</strong>"
+            finalContent = "<strong>\(finalContent)</strong>"
         }
         
         if isItalic {
-            content = "<em>\(content)</em>"
+            finalContent = "<em>\(finalContent)</em>"
         }
         
         // 組合標籤
@@ -639,7 +605,7 @@ extension DocumentFormatter {
         }
         openTag += ">"
         
-        return "\(openTag)\(content)</\(tag)>\n"
+        return "\(openTag)\(finalContent)</\(tag)>\n"
     }
     
     /// 根據字體屬性包裝 HTML 標籤

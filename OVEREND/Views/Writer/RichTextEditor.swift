@@ -18,12 +18,29 @@ struct RichTextEditor: NSViewRepresentable {
     // MARK: - NSViewRepresentable
     
     func makeNSView(context: Context) -> NSScrollView {
-        let scrollView = NSTextView.scrollableTextView()
-        guard let textView = scrollView.documentView as? NSTextView else {
-            return scrollView
-        }
+        let scrollView = NSScrollView()
+        scrollView.hasVerticalScroller = true
+        scrollView.drawsBackground = false
+        
+        // 建立 Text System Stack
+        let textStorage = NSTextStorage()
+        let layoutManager = NSLayoutManager()
+        textStorage.addLayoutManager(layoutManager)
+        
+        let textContainer = NSTextContainer(size: NSSize(width: 0, height: CGFloat.greatestFiniteMagnitude))
+        textContainer.widthTracksTextView = true
+        layoutManager.addTextContainer(textContainer)
+        
+        // 使用支援 LaTeX 的自訂 TextView
+        let textView = LaTeXSupportedTextView(frame: .zero, textContainer: textContainer)
         
         // 基本設定
+        textView.minSize = NSSize(width: 0, height: 0)
+        textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        textView.isVerticallyResizable = true
+        textView.isHorizontallyResizable = false
+        textView.autoresizingMask = [.width]
+        
         textView.isRichText = true
         textView.allowsUndo = true
         textView.isEditable = isEditable
@@ -73,6 +90,7 @@ struct RichTextEditor: NSViewRepresentable {
         // 儲存到 coordinator
         context.coordinator.textView = textView
         
+        scrollView.documentView = textView
         return scrollView
     }
     
