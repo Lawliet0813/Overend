@@ -491,3 +491,154 @@ footer {
         display: none;
     }
 }
+/* Page Content Layout */
+.page-content {
+    padding-top: 100px;
+    min-height: 100vh;
+}
+
+.page-header {
+    text-align: center;
+    padding: 4rem 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.page-header h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.page-header p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+/* Changelog Styles */
+.changelog-list {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+}
+
+.changelog-entry {
+    margin-bottom: 2rem;
+}
+
+.version-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.version-tag {
+    background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+    padding: 0.25rem 0.75rem;
+    border-radius: 99px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.version-date {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.changelog-entry h3 {
+    margin-bottom: 1rem;
+}
+
+.changelog-entry ul {
+    list-style: none;
+}
+
+.changelog-entry li {
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+}
+
+/* Legal Content Styles */
+.legal-content {
+    max-width: 800px;
+    margin: 0 auto 4rem;
+    padding: 3rem;
+}
+
+.legal-content h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+.legal-content h3 {
+    font-size: 1.3rem;
+    margin: 2rem 0 1rem;
+}
+
+.legal-content p {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.legal-content ul {
+    list-style: disc;
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.legal-content li {
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.legal-content a {
+    color: var(--accent-color);
+}
+
+/* Contact Styles */
+.contact-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+}
+
+.contact-card {
+    text-align: center;
+    padding: 2.5rem 2rem;
+}
+
+.contact-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.contact-card h3 {
+    margin-bottom: 0.5rem;
+}
+
+.contact-card p {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+/* Language Switch Styling */
+.lang-switch {
+    border-left: 1px solid var(--glass-border);
+    padding-left: 1rem !important;
+    margin-left: 0.5rem;
+}
+
+/* Active Nav Link */
+.nav-links a.active {
+    color: var(--text-color);
+}
+
+/* Hero Image */
+.hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

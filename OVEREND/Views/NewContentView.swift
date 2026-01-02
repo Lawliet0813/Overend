@@ -34,23 +34,35 @@ struct NewContentView: View {
         _libraryVM = StateObject(wrappedValue: LibraryViewModel(context: context))
     }
     
+    /// 是否處於編輯器全螢幕模式
+    private var isInEditorFullMode: Bool {
+        if case .editorFull = viewState.mode {
+            return true
+        }
+        return false
+    }
+    
     var body: some View {
         HStack(spacing: 0) {
-            // 側邊欄 - 使用 Liquid Glass 效果
-            NewSidebarView(libraryVM: libraryVM)
-                .environmentObject(theme)
-                .environmentObject(viewState)
-                .frame(width: 220)
+            // 側邊欄 - 使用 Liquid Glass 效果（編輯器全螢幕模式時隱藏）
+            if !isInEditorFullMode {
+                NewSidebarView(libraryVM: libraryVM)
+                    .environmentObject(theme)
+                    .environmentObject(viewState)
+                    .frame(width: 220)
+            }
 
             // 主內容區域
             VStack(spacing: 0) {
-                // 動態工具列
-                DynamicToolbar(
-                    searchText: $viewState.searchText,
-                    onNewItem: handleNewItem
-                )
-                .environmentObject(theme)
-                .environmentObject(viewState)
+                // 動態工具列（編輯器全螢幕模式時隱藏，使用編輯器自己的工具列）
+                if !isInEditorFullMode {
+                    DynamicToolbar(
+                        searchText: $viewState.searchText,
+                        onNewItem: handleNewItem
+                    )
+                    .environmentObject(theme)
+                    .environmentObject(viewState)
+                }
 
                 // 視圖切換
                 ZStack {
