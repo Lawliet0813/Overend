@@ -36,7 +36,10 @@ struct EditorListView: View {
                     ForEach(documents) { document in
                         DocumentCardView(document: document) {
                             viewState.openDocument(document)
+                        } onDelete: {
+                            deleteDocument(document)
                         }
+                        .environmentObject(theme)
                     }
                 }
                 .padding(32)
@@ -135,6 +138,16 @@ struct EditorListView: View {
             showNewDocumentSheet = false
         } catch {
             print("建立文稿失敗：\(error.localizedDescription)")
+        }
+    }
+    
+    private func deleteDocument(_ document: Document) {
+        viewContext.delete(document)
+        
+        do {
+            try viewContext.save()
+        } catch {
+            print("刪除文稿失敗：\(error.localizedDescription)")
         }
     }
 }

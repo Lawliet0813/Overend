@@ -94,6 +94,7 @@ struct OVERENDApp: App {
             }
             .frame(minWidth: 1200, minHeight: 800)
         }
+        .windowStyle(.hiddenTitleBar)  // 移除標題列
         .commands {
             // 自定義菜單命令
             CommandGroup(replacing: .newItem) {

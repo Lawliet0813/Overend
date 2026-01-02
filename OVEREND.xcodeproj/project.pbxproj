@@ -32,6 +32,9 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		9A405BEF2F00629300FF030A /* OVEREND */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			explicitFileTypes = {
+				Assets.xcassets = folder.assetcatalog;
+			};
 			path = OVEREND;
 			sourceTree = "<group>";
 		};

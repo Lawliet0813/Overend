@@ -39,15 +39,15 @@ struct ModernEntryListView: View {
                     VStack(spacing: 0) {
                         // 表頭
                         tableHeader
-                        
-                        // 資料列
+
+                        // 資料列 - 添加交錯動畫
                         LazyVStack(spacing: 0) {
-                            ForEach(entries) { entry in
+                            ForEach(Array(entries.enumerated()), id: \.element.id) { index, entry in
                                 EntryTableRow(
                                     entry: entry,
                                     isSelected: selectedEntry?.id == entry.id,
                                     onTap: {
-                                        withAnimation(.easeInOut(duration: 0.2)) {
+                                        withAnimation(AnimationSystem.Easing.quick) {
                                             selectedEntry = entry
                                         }
                                     },
@@ -56,27 +56,35 @@ struct ModernEntryListView: View {
                                     }
                                 )
                                 .environmentObject(theme)
+                                .transition(.asymmetric(
+                                    insertion: .opacity.combined(with: .move(edge: .top)),
+                                    removal: .opacity.combined(with: .move(edge: .leading))
+                                ))
+                                .animation(
+                                    AnimationSystem.Easing.spring.delay(Double(min(index, 20)) * 0.03),
+                                    value: entries.count
+                                )
                             }
                         }
                     }
                     .background(theme.card)
-                    .cornerRadius(12)
+                    .cornerRadius(DesignTokens.CornerRadius.medium)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.medium)
                             .stroke(theme.border, lineWidth: 1)
                     )
-                    .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 4)
-                    .padding(24)
+                    .applyShadow(level: 2)
+                    .padding(DesignTokens.Spacing.lg)
                 }
             }
             .frame(maxWidth: .infinity)
-            
+
             // 右側：詳情面板
             if let entry = selectedEntry {
                 Divider()
-                
+
                 ModernEntryDetailView(entry: entry, onClose: {
-                    withAnimation(.easeInOut(duration: 0.2)) {
+                    withAnimation(AnimationSystem.Easing.quick) {
                         selectedEntry = nil
                     }
                 })
@@ -85,7 +93,7 @@ struct ModernEntryListView: View {
                     .transition(.move(edge: .trailing).combined(with: .opacity))
             }
         }
-        .animation(.easeInOut(duration: 0.25), value: selectedEntry?.id)
+        .animation(AnimationSystem.Easing.spring, value: selectedEntry?.id)
     }
     
     // MARK: - 表頭
@@ -94,23 +102,23 @@ struct ModernEntryListView: View {
         HStack(spacing: 0) {
             Text("標題")
                 .frame(maxWidth: .infinity, alignment: .leading)
-            
+
             Text("作者 / 年份")
                 .frame(width: 150, alignment: .leading)
-            
+
             Text("附件")
                 .frame(width: 50, alignment: .center)
-            
+
             Text("類型")
                 .frame(width: 70, alignment: .center)
-            
+
             Text("")
                 .frame(width: 40)
         }
-        .font(.system(size: 15, weight: .bold))
+        .font(.system(size: DesignTokens.Typography.body, weight: .bold))
         .foregroundColor(theme.textMuted)
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
+        .padding(.horizontal, DesignTokens.Spacing.md)
+        .padding(.vertical, DesignTokens.Spacing.sm)
         .background(theme.tableRowHover)
         .overlay(alignment: .bottom) {
             Rectangle()
@@ -145,24 +153,30 @@ struct ModernEntryListView: View {
     // MARK: - 空狀態
     
     private var emptyState: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: DesignTokens.Spacing.lg) {
             ZStack {
                 Circle()
                     .fill(theme.accentLight)
                     .frame(width: 80, height: 80)
-                
+
                 Image(systemName: "doc.text")
-                    .font(.system(size: 32))
+                    .font(.system(size: DesignTokens.IconSize.xLarge))
                     .foregroundColor(theme.accent)
             }
-            
-            VStack(spacing: 8) {
+            .scaleEffect(1.0)
+            .animation(
+                Animation.easeInOut(duration: 2.0)
+                    .repeatForever(autoreverses: true),
+                value: UUID()
+            )
+
+            VStack(spacing: DesignTokens.Spacing.xs) {
                 Text("尚無文獻")
-                    .font(.system(size: 18, weight: .bold))
+                    .font(.system(size: DesignTokens.Typography.title2, weight: .bold))
                     .foregroundColor(theme.textPrimary)
-                
+
                 Text("匯入 PDF 或 BibTeX 開始管理您的文獻")
-                    .font(.system(size: 15))
+                    .font(.system(size: DesignTokens.Typography.body))
                     .foregroundColor(theme.textMuted)
             }
         }
@@ -185,96 +199,123 @@ struct EntryTableRow: View {
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: 0) {
-                // 標題
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(entry.fields["title"] ?? "無標題")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(isSelected ? theme.accent : theme.textPrimary)
-                        .lineLimit(1)
-                    
-                    // 期刊/來源
-                    if let journal = entry.fields["journal"], !journal.isEmpty {
-                        Text(journal)
-                            .font(.system(size: 14))
-                            .foregroundColor(theme.textMuted)
+                // 選中高亮條
+                if isSelected {
+                    Rectangle()
+                        .fill(theme.accent)
+                        .frame(width: 3)
+                        .transition(.move(edge: .leading).combined(with: .opacity))
+                } else {
+                    Color.clear
+                        .frame(width: 3)
+                }
+
+                HStack(spacing: 0) {
+                    // 標題
+                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.xxs) {
+                        Text(entry.fields["title"] ?? "無標題")
+                            .font(.system(size: DesignTokens.Typography.body, weight: .semibold))
+                            .foregroundColor(isSelected ? theme.accent : theme.textPrimary)
                             .lineLimit(1)
+
+                        // 期刊/來源
+                        if let journal = entry.fields["journal"], !journal.isEmpty {
+                            Text(journal)
+                                .font(.system(size: DesignTokens.Typography.caption))
+                                .foregroundColor(theme.textMuted)
+                                .lineLimit(1)
+                        }
                     }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                
-                // 作者 / 年份
-                Text(authorYearText)
-                    .font(.system(size: 14))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                    // 作者 / 年份
+                    Text(authorYearText)
+                        .font(.system(size: DesignTokens.Typography.body))
+                        .foregroundColor(theme.textMuted)
+                        .lineLimit(1)
+                        .frame(width: 150, alignment: .leading)
+
+                    // 附件數量
+                    HStack(spacing: DesignTokens.Spacing.xxs) {
+                        if !entry.attachmentArray.isEmpty {
+                            Image(systemName: "paperclip")
+                                .font(.system(size: DesignTokens.IconSize.small))
+                            Text("\(entry.attachmentArray.count)")
+                                .font(.system(size: DesignTokens.Typography.body))
+                        }
+                    }
                     .foregroundColor(theme.textMuted)
-                    .lineLimit(1)
-                    .frame(width: 150, alignment: .leading)
-                
-                // 附件數量
-                HStack(spacing: 4) {
-                    if !entry.attachmentArray.isEmpty {
-                        Image(systemName: "paperclip")
-                            .font(.system(size: 15))
-                        Text("\(entry.attachmentArray.count)")
-                            .font(.system(size: 15))
+                    .frame(width: 50)
+
+                    // 類型標籤
+                    Text(entry.entryType)
+                        .font(.system(size: DesignTokens.Typography.caption, weight: .medium))
+                        .foregroundColor(theme.accent)
+                        .padding(.horizontal, DesignTokens.Spacing.xs)
+                        .padding(.vertical, DesignTokens.Spacing.xxs)
+                        .background(
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.small)
+                                .fill(theme.accentLight)
+                        )
+                        .frame(width: 70)
+
+                    // 刪除按鈕
+                    Button(action: { showDeleteConfirm = true }) {
+                        Image(systemName: "trash")
+                            .font(.system(size: DesignTokens.IconSize.small))
+                            .foregroundColor(isHovered ? theme.destructive : theme.textMuted.opacity(0.5))
                     }
+                    .buttonStyle(.plain)
+                    .frame(width: 40)
+                    .opacity(isHovered ? 1 : 0)
                 }
-                .foregroundColor(theme.textMuted)
-                .frame(width: 50)
-                
-                // 類型標籤
-                Text(entry.entryType)
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(theme.accent)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 3)
-                    .background(
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(theme.accentLight)
-                    )
-                    .frame(width: 70)
-                
-                // 刪除按鈕
-                Button(action: { showDeleteConfirm = true }) {
-                    Image(systemName: "trash")
-                        .font(.system(size: 15))
-                        .foregroundColor(isHovered ? .red : theme.textMuted.opacity(0.5))
-                }
-                .buttonStyle(.plain)
-                .frame(width: 40)
-                .opacity(isHovered ? 1 : 0)
+                .padding(.horizontal, DesignTokens.Spacing.md)
+                .padding(.vertical, DesignTokens.Spacing.sm)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(
-                isSelected ? theme.accentLight :
-                (isHovered ? theme.tableRowHover : Color.clear)
-            )
+            .background(backgroundColor)
             .overlay(alignment: .bottom) {
                 Rectangle()
                     .fill(theme.border)
                     .frame(height: 0.5)
             }
-            .overlay(alignment: .leading) {
-                if isSelected {
-                    Rectangle()
-                        .fill(theme.accent)
-                        .frame(width: 3)
-                }
-            }
         }
         .buttonStyle(.plain)
+        .scaleEffect(isHovered && !isSelected ? 1.005 : 1.0)
+        .shadow(
+            color: isHovered && !isSelected ? .black.opacity(0.05) : .clear,
+            radius: isHovered ? 4 : 0,
+            x: 0,
+            y: isHovered ? 2 : 0
+        )
+        .animation(AnimationSystem.Easing.spring, value: isSelected)
+        .animation(AnimationSystem.Easing.quick, value: isHovered)
         .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.1)) {
+            withAnimation(AnimationSystem.Easing.quick) {
                 isHovered = hovering
             }
         }
         .alert("確定刪除？", isPresented: $showDeleteConfirm) {
             Button("取消", role: .cancel) {}
             Button("刪除", role: .destructive) {
-                onDelete()
+                withAnimation(AnimationSystem.Easing.spring) {
+                    onDelete()
+                }
             }
         } message: {
             Text("此操作將刪除「\(entry.title)」及其所有附件，無法還原。")
+        }
+    }
+
+    // MARK: - 計算屬性
+
+    /// 背景顏色
+    private var backgroundColor: Color {
+        if isSelected {
+            return theme.accentLight
+        } else if isHovered {
+            return theme.tableRowHover
+        } else {
+            return Color.clear
         }
     }
     
@@ -290,17 +331,18 @@ struct EntryTableRow: View {
 struct ProgressBar: View {
     @EnvironmentObject var theme: AppTheme
     let progress: Double
-    
+
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
                 RoundedRectangle(cornerRadius: 2)
                     .fill(theme.itemHover)
                     .frame(height: 4)
-                
+
                 RoundedRectangle(cornerRadius: 2)
                     .fill(theme.accent)
                     .frame(width: geometry.size.width * CGFloat(progress), height: 4)
+                    .animation(AnimationSystem.Easing.spring, value: progress)
             }
         }
         .frame(height: 4)
@@ -311,18 +353,18 @@ struct ProgressBar: View {
 struct ImpactBadge: View {
     @EnvironmentObject var theme: AppTheme
     let impact: String
-    
+
     var body: some View {
         Text(impact)
-            .font(.system(size: 16, weight: .bold))
+            .font(.system(size: DesignTokens.Typography.body, weight: .bold))
             .foregroundColor(theme.accent)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 2)
+            .padding(.horizontal, DesignTokens.Spacing.xs)
+            .padding(.vertical, DesignTokens.Spacing.xxs)
             .background(
-                RoundedRectangle(cornerRadius: 4)
+                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.small)
                     .fill(theme.accentLight)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 4)
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.small)
                             .stroke(theme.accent.opacity(0.3), lineWidth: 1)
                     )
             )

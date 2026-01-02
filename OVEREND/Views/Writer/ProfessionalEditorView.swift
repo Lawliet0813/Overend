@@ -156,31 +156,37 @@ struct ProfessionalEditorView: View {
     // MARK: - A4 編輯畫布
     
     private var editorCanvas: some View {
-        ScrollView {
-            VStack {
-                // A4 頁面
-                VStack(alignment: .leading, spacing: 0) {
-                    RichTextEditor(
-                        attributedString: $attributedString,
-                        onTextChange: { newValue in
-                            updateWordCount()
-                            scheduleAutoSave()
-                        }
+        GeometryReader { geometry in
+            ScrollView {
+                VStack {
+                    // A4 頁面
+                    VStack(alignment: .leading, spacing: 0) {
+                        RichTextEditor(
+                            attributedString: $attributedString,
+                            onTextChange: { newValue in
+                                updateWordCount()
+                                scheduleAutoSave()
+                            }
+                        )
+                    }
+                    .frame(
+                        width: min(600, geometry.size.width - 80),  // 最大 600px，或容器寬度減去左右 padding
+                        height: 990
                     )
+                    .padding(80)
+                    .background(
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(theme.page)
+                            .shadow(color: .black.opacity(theme.isDarkMode ? 0.4 : 0.15), radius: 20, x: 0, y: 10)
+                    )
+                    .padding(.top, 32)
+                    .padding(.bottom, 80)
+                    .padding(.horizontal, 40) // 添加左右間距
                 }
-                .frame(width: 700, height: 990)
-                .padding(80)
-                .background(
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(theme.page)
-                        .shadow(color: .black.opacity(theme.isDarkMode ? 0.4 : 0.15), radius: 20, x: 0, y: 10)
-                )
-                .padding(.top, 32)
-                .padding(.bottom, 80)
+                .frame(maxWidth: .infinity)
             }
-            .frame(maxWidth: .infinity)
+            .background(theme.background)
         }
-        .background(theme.background)
     }
     
     // MARK: - 方法

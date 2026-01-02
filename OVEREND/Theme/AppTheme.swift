@@ -61,13 +61,78 @@ class AppTheme: ObservableObject {
     }
     
     // MARK: - 互動色
-    
+
     var itemHover: Color {
         isDarkMode ? Color.white.opacity(0.1) : Color.black.opacity(0.05)
     }
-    
+
     var tableRowHover: Color {
         isDarkMode ? Color.white.opacity(0.02) : Color.black.opacity(0.02)
+    }
+
+    // MARK: - 語義化顏色
+
+    /// 成功色
+    var success: Color { Color(hex: "#00D97E") }
+
+    /// 成功背景色
+    var successBackground: Color { success.opacity(0.1) }
+
+    /// 警告色
+    var warning: Color { Color(hex: "#FF9800") }
+
+    /// 警告背景色
+    var warningBackground: Color { warning.opacity(0.1) }
+
+    /// 錯誤色
+    var error: Color { Color(hex: "#F44336") }
+
+    /// 錯誤背景色
+    var errorBackground: Color { error.opacity(0.1) }
+
+    /// 資訊色
+    var info: Color { Color(hex: "#2196F3") }
+
+    /// 資訊背景色
+    var infoBackground: Color { info.opacity(0.1) }
+
+    /// 破壞性操作色（用於刪除等危險操作）
+    var destructive: Color { Color(hex: "#DC3545") }
+
+    /// 破壞性操作背景色
+    var destructiveBackground: Color { destructive.opacity(0.1) }
+
+    // MARK: - 互動狀態顏色
+
+    /// 按鈕禁用狀態
+    var buttonDisabled: Color {
+        isDarkMode ? Color.white.opacity(0.2) : Color.black.opacity(0.2)
+    }
+
+    /// 輸入框聚焦邊框
+    var focusBorder: Color { accent }
+
+    /// 選中狀態背景
+    var selectedBackground: Color {
+        isDarkMode ? accent.opacity(0.2) : accent.opacity(0.15)
+    }
+
+    /// 次要文字色（用於副標題、說明文字）
+    var textSecondary: Color {
+        isDarkMode ? Color.white.opacity(0.7) : Color.black.opacity(0.6)
+    }
+
+    /// 禁用文字色
+    var textDisabled: Color {
+        isDarkMode ? Color.white.opacity(0.3) : Color.black.opacity(0.3)
+    }
+
+    /// 連結色
+    var link: Color { info }
+
+    /// 分隔線顏色
+    var divider: Color {
+        isDarkMode ? Color.white.opacity(0.08) : Color.black.opacity(0.08)
     }
     
     // MARK: - 字體尺寸系統（整體加大）

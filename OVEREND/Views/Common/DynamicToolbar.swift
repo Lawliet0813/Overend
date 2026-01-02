@@ -16,90 +16,61 @@ struct DynamicToolbar: View {
     var onNewItem: () -> Void
     
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: DesignTokens.Spacing.md) {
             // 左側：返回按鈕 + 標題
-            HStack(spacing: 12) {
+            HStack(spacing: DesignTokens.Spacing.sm) {
                 // 返回按鈕（僅在編輯器模式顯示）
                 if case .editorFull = viewState.mode {
-                    Button(action: { viewState.backToEditorList() }) {
-                        Image(systemName: "arrow.left")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(theme.textPrimary)
-                    }
-                    .buttonStyle(.plain)
-                    .padding(6)
-                    .background(
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(theme.itemHover)
+                    IconButton(
+                        icon: "arrow.left",
+                        action: {
+                            viewState.backToEditorList()
+                        },
+                        style: .standard,
+                        tooltip: "返回"
                     )
+                    .environmentObject(theme)
+                    .transition(.move(edge: .leading).combined(with: .opacity))
                 }
-                
+
                 // 標題
                 Text(toolbarTitle)
-                    .font(.system(size: 15, weight: .bold))
+                    .font(.system(size: DesignTokens.Typography.body, weight: .bold))
                     .foregroundColor(theme.textPrimary)
+                    .animation(AnimationSystem.Easing.quick, value: toolbarTitle)
             }
-            
+
             Spacer()
-            
+
             // 右側：搜尋 + 主題切換 + 新建按鈕
-            HStack(spacing: 12) {
+            HStack(spacing: DesignTokens.Spacing.sm) {
                 // 主題切換
-                Button(action: { theme.isDarkMode.toggle() }) {
-                    Image(systemName: theme.isDarkMode ? "sun.max" : "moon")
-                        .font(.system(size: 14))
-                        .foregroundColor(theme.textPrimary)
-                }
-                .buttonStyle(.plain)
-                .padding(8)
-                .background(
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(theme.itemHover)
+                IconButton(
+                    icon: theme.isDarkMode ? "sun.max" : "moon",
+                    action: {
+                        withAnimation(AnimationSystem.Easing.spring) {
+                            theme.isDarkMode.toggle()
+                        }
+                    },
+                    style: .subtle,
+                    tooltip: theme.isDarkMode ? "切換到淺色模式" : "切換到深色模式"
                 )
-                
+                .environmentObject(theme)
+
                 // 搜尋欄
-                HStack(spacing: 6) {
-                    Image(systemName: "magnifyingglass")
-                        .font(.system(size: 14))
-                        .foregroundColor(theme.textMuted)
-                    
-                    TextField("搜尋...", text: $searchText)
-                        .font(.system(size: 14))
-                        .textFieldStyle(.plain)
-                }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 6)
-                .frame(width: searchText.isEmpty ? 140 : 200)
-                .background(
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(theme.itemHover)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 6)
-                                .stroke(theme.border, lineWidth: 1)
-                        )
-                )
-                .animation(.easeInOut(duration: 0.2), value: searchText)
-                
+                SearchField(placeholder: "搜尋...", text: $searchText)
+                    .environmentObject(theme)
+                    .frame(width: searchText.isEmpty ? 140 : 200)
+                    .animation(AnimationSystem.Easing.quick, value: searchText.isEmpty)
+
                 // 新建按鈕
-                Button(action: onNewItem) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "plus")
-                            .font(.system(size: 16, weight: .bold))
-                        Text(newButtonTitle)
-                            .font(.system(size: 16, weight: .bold))
-                    }
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(theme.accent)
-                    )
+                PrimaryButton(newButtonTitle, icon: "plus", size: .medium) {
+                    onNewItem()
                 }
-                .buttonStyle(.plain)
+                .environmentObject(theme)
             }
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, DesignTokens.Spacing.lg)
         .frame(height: 52)
         // Apple HIG: Liquid Glass 統一工具列樣式
         .background(.ultraThinMaterial)
@@ -120,6 +91,7 @@ struct DynamicToolbar: View {
                 .fill(theme.glassBorder.opacity(0.5))
                 .frame(height: 0.5)
         }
+        .animation(AnimationSystem.Easing.spring, value: viewState.mode)
     }
     
     // MARK: - 計算屬性

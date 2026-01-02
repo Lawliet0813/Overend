@@ -22,6 +22,12 @@ struct NewContentView: View {
     @State private var showImportOptions = false
     @State private var importMessage: String?
     @State private var showImportAlert = false
+
+    // AI 書目提取相關狀態
+    @State private var isExtractingMetadata = false
+    @State private var extractedMetadata: PDFMetadata?
+    @State private var currentPDFURL: URL?
+    @State private var showAIPreview = false
     
     init() {
         let context = PersistenceController.shared.container.viewContext
@@ -29,14 +35,13 @@ struct NewContentView: View {
     }
     
     var body: some View {
-        NavigationSplitView {
+        HStack(spacing: 0) {
             // 側邊欄 - 使用 Liquid Glass 效果
             NewSidebarView(libraryVM: libraryVM)
                 .environmentObject(theme)
                 .environmentObject(viewState)
-                .navigationSplitViewColumnWidth(min: 220, ideal: 220, max: 260)
-                .scrollContentBackground(.hidden)
-        } detail: {
+                .frame(width: 220)
+
             // 主內容區域
             VStack(spacing: 0) {
                 // 動態工具列
@@ -46,7 +51,7 @@ struct NewContentView: View {
                 )
                 .environmentObject(theme)
                 .environmentObject(viewState)
-                
+
                 // 視圖切換
                 ZStack {
                     switch viewState.mode {
@@ -59,13 +64,13 @@ struct NewContentView: View {
                         } else {
                             emptyLibraryState
                         }
-                        
+
                     case .editorList:
                         // 文稿列表視圖
                         EditorListView()
                             .environmentObject(theme)
                             .environmentObject(viewState)
-                        
+
                     case .editorFull(let document):
                         // 專業編輯器視圖
                         ProfessionalEditorView(document: document)
@@ -92,6 +97,21 @@ struct NewContentView: View {
             )
             .environmentObject(theme)
         }
+        .sheet(isPresented: $showAIPreview) {
+            if let metadata = extractedMetadata, let pdfURL = currentPDFURL {
+                AIMetadataPreviewSheet(
+                    metadata: metadata,
+                    pdfURL: pdfURL,
+                    onConfirm: { confirmedMetadata in
+                        saveAIExtractedEntry(metadata: confirmedMetadata, pdfURL: pdfURL)
+                    },
+                    onRetry: {
+                        retryMetadataExtraction(pdfURL: pdfURL)
+                    }
+                )
+                .environmentObject(theme)
+            }
+        }
         .alert("匯入結果", isPresented: $showImportAlert, presenting: importMessage) { _ in
             Button("確定", role: .cancel) {}
         } message: { message in
@@ -101,6 +121,37 @@ struct NewContentView: View {
         .onDrop(of: [.pdf, .fileURL], isTargeted: nil) { providers in
             handleDrop(providers: providers)
             return true
+        }
+        // AI 處理中的遮罩層
+        .overlay {
+            if isExtractingMetadata {
+                ZStack {
+                    Color.black.opacity(0.3)
+                        .ignoresSafeArea()
+
+                    VStack(spacing: DesignTokens.Spacing.lg) {
+                        SpinnerLoadingIndicator(size: 48, lineWidth: 4)
+                            .environmentObject(theme)
+
+                        VStack(spacing: DesignTokens.Spacing.xs) {
+                            Text("正在分析 PDF...")
+                                .font(.system(size: DesignTokens.Typography.title2, weight: .bold))
+                                .foregroundColor(.white)
+
+                            Text("AI 正在提取書目信息")
+                                .font(.system(size: DesignTokens.Typography.body))
+                                .foregroundColor(.white.opacity(0.8))
+                        }
+                    }
+                    .padding(DesignTokens.Spacing.xxl)
+                    .background(
+                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.large)
+                            .fill(.ultraThinMaterial)
+                    )
+                }
+                .transition(.opacity)
+                .animation(AnimationSystem.Easing.spring, value: isExtractingMetadata)
+            }
         }
     }
     
@@ -184,21 +235,10 @@ struct NewContentView: View {
                     .foregroundColor(theme.textMuted)
             }
             
-            Button(action: { showNewLibrarySheet = true }) {
-                HStack(spacing: 6) {
-                    Image(systemName: "plus")
-                    Text("建立文獻庫")
-                }
-                .font(.system(size: 15, weight: .bold))
-                .foregroundColor(.white)
-                .padding(.horizontal, 20)
-                .padding(.vertical, 10)
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(theme.accent)
-                )
+            PrimaryButton("建立文獻庫", icon: "plus") {
+                showNewLibrarySheet = true
             }
-            .buttonStyle(.plain)
+            .environmentObject(theme)
         }
     }
     
@@ -243,62 +283,144 @@ struct NewContentView: View {
     
     private func importPDF() {
         guard let library = viewState.selectedLibrary ?? libraryVM.libraries.first else { return }
-        
+
         let panel = NSOpenPanel()
         panel.title = "匯入 PDF 檔案"
-        panel.message = "選擇 PDF 檔案，將自動建立書目並附加"
+        panel.message = "選擇 PDF 檔案，AI 將自動提取書目信息"
         panel.allowedContentTypes = [.pdf]
-        panel.allowsMultipleSelection = true
+        panel.allowsMultipleSelection = false  // 改為單個文件，避免同時處理多個
         panel.canChooseDirectories = false
         panel.prompt = "匯入"
-        
+
         panel.begin { response in
-            if response == .OK {
-                var successCount = 0
-                var failCount = 0
-                
-                for url in panel.urls {
-                    do {
-                        // 建立新的 Entry
-                        let entry = Entry(context: viewContext)
-                        entry.id = UUID()
-                        entry.entryType = "misc"
-                        let citationKey = generateCitationKey(from: url)
-                        entry.citationKey = citationKey
-                        entry.createdAt = Date()
-                        entry.updatedAt = Date()
-                        entry.library = library
-                        
-                        // 從 PDF 檔名提取標題
-                        let title = url.deletingPathExtension().lastPathComponent
-                            .replacingOccurrences(of: "_", with: " ")
-                            .replacingOccurrences(of: "-", with: " ")
-                        entry.fields = ["title": title]
-                        
-                        // 設置 bibtexRaw（必填欄位）
-                        entry.bibtexRaw = """
-                        @misc{\(citationKey),
-                          title = {\(title)}
-                        }
-                        """
-                        
-                        // 附加 PDF
-                        try PDFService.addPDFAttachment(from: url, to: entry, context: viewContext)
-                        successCount += 1
-                    } catch {
-                        print("匯入 PDF 失敗：\(error)")
-                        failCount += 1
-                    }
-                }
-                
-                if failCount == 0 {
-                    importMessage = "成功匯入 \(successCount) 個 PDF 檔案"
-                } else {
-                    importMessage = "匯入完成：\(successCount) 成功，\(failCount) 失敗"
-                }
-                showImportAlert = true
+            if response == .OK, let url = panel.urls.first {
+                extractAndShowMetadata(from: url)
             }
         }
+    }
+
+    // MARK: - AI 元數據提取方法
+
+    /// 提取並顯示元數據
+    private func extractAndShowMetadata(from url: URL) {
+        currentPDFURL = url
+        isExtractingMetadata = true
+
+        Task {
+            do {
+                // AI 提取元數據
+                let metadata = await PDFMetadataExtractor.extractMetadata(from: url)
+
+                await MainActor.run {
+                    extractedMetadata = metadata
+                    isExtractingMetadata = false
+                    showAIPreview = true
+                }
+            } catch {
+                await MainActor.run {
+                    isExtractingMetadata = false
+                    ToastManager.shared.showError("PDF 分析失敗：\(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
+    /// 重試元數據提取
+    private func retryMetadataExtraction(pdfURL: URL) {
+        extractAndShowMetadata(from: pdfURL)
+    }
+
+    /// 保存 AI 提取的 Entry
+    private func saveAIExtractedEntry(metadata: PDFMetadata, pdfURL: URL) {
+        guard let library = viewState.selectedLibrary ?? libraryVM.libraries.first else {
+            ToastManager.shared.showError("請先選擇文獻庫")
+            return
+        }
+
+        do {
+            // 建立新的 Entry
+            let entry = Entry(context: viewContext)
+            entry.id = UUID()
+            entry.entryType = metadata.entryType
+            let citationKey = generateCitationKey(from: metadata)
+            entry.citationKey = citationKey
+            entry.createdAt = Date()
+            entry.updatedAt = Date()
+            entry.library = library
+
+            // 設置欄位
+            var fields: [String: String] = ["title": metadata.title]
+
+            if !metadata.authors.isEmpty {
+                fields["author"] = metadata.authors.joined(separator: " and ")
+            }
+
+            if let year = metadata.year {
+                fields["year"] = year
+            }
+
+            if let doi = metadata.doi {
+                fields["doi"] = doi
+            }
+
+            if let journal = metadata.journal {
+                fields["journal"] = journal
+            }
+
+            if let abstract = metadata.abstract {
+                fields["abstract"] = abstract
+            }
+
+            entry.fields = fields
+
+            // 生成 BibTeX
+            entry.bibtexRaw = PDFMetadataExtractor.generateBibTeX(from: metadata, citationKey: citationKey)
+
+            // 附加 PDF
+            try PDFService.addPDFAttachment(from: pdfURL, to: entry, context: viewContext)
+
+            // 顯示成功提示
+            let confidenceText = metadata.confidence == .high ? " (高可信度)" : ""
+            ToastManager.shared.showSuccess("成功匯入 PDF\(confidenceText)")
+
+        } catch {
+            ToastManager.shared.showError("保存失敗：\(error.localizedDescription)")
+        }
+    }
+
+    /// 從元數據生成引用鍵
+    private func generateCitationKey(from metadata: PDFMetadata) -> String {
+        var key = ""
+
+        // 使用第一作者的姓氏
+        if let firstAuthor = metadata.authors.first {
+            let lastName = firstAuthor.components(separatedBy: " ").last ?? firstAuthor
+            key = lastName.lowercased()
+        }
+
+        // 添加年份
+        if let year = metadata.year {
+            key += year
+        }
+
+        // 添加標題的前幾個單詞
+        let titleWords = metadata.title
+            .components(separatedBy: .whitespaces)
+            .prefix(2)
+            .map { $0.lowercased() }
+            .joined()
+
+        key += titleWords
+
+        // 清理非字母數字字符
+        key = key.components(separatedBy: CharacterSet.alphanumerics.inverted).joined()
+
+        // 如果 key 太短，添加時間戳
+        if key.count < 5 {
+            key += "\(Int(Date().timeIntervalSince1970) % 10000)"
+        }
+
+        return key.isEmpty ? "entry\(Int(Date().timeIntervalSince1970))" : key
     }
     
     private func generateCitationKey(from url: URL) -> String {
@@ -349,9 +471,10 @@ struct ImportOptionsSheet: View {
                 }
             }
             
-            Button("取消") {
+            SecondaryButton("取消") {
                 dismiss()
             }
+            .environmentObject(theme)
             .keyboardShortcut(.escape)
         }
         .padding(32)
@@ -403,7 +526,7 @@ struct ImportOptionCard: View {
         }
         .buttonStyle(.plain)
         .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.2)) {
+            withAnimation(AnimationSystem.Easing.quick) {
                 isHovered = hovering
             }
         }

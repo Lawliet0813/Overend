@@ -12,75 +12,105 @@ struct DocumentCardView: View {
     @EnvironmentObject var theme: AppTheme
     @ObservedObject var document: Document
     let onTap: () -> Void
+    let onDelete: () -> Void
     
     @State private var isHovered = false
+    @State private var showDeleteConfirm = false
     
     var body: some View {
-        Button(action: onTap) {
-            VStack(alignment: .leading, spacing: 0) {
-                // 圖標
-                ZStack {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(isHovered ? theme.accent : theme.accentLight)
-                        .frame(width: 48, height: 48)
-                    
-                    Image(systemName: "doc.text.fill")
-                        .font(.system(size: 24))
-                        .foregroundColor(isHovered ? .white : theme.accent)
-                }
-                .padding(.bottom, 16)
-                
-                // 標題
-                Text(document.title)
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(theme.textPrimary)
-                    .lineLimit(2)
-                    .padding(.bottom, 4)
-                
-                // 上次編輯
-                Text("上次編輯：\(formatDate(document.updatedAt))")
-                    .font(.system(size: 15))
-                    .foregroundColor(theme.textMuted)
+        ZStack(alignment: .topTrailing) {
+            // 主卡片
+            Button(action: onTap) {
+                VStack(alignment: .leading, spacing: 0) {
+                    // 圖標
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(isHovered ? theme.accent : theme.accentLight)
+                            .frame(width: 48, height: 48)
+                        
+                        Image(systemName: "doc.text.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(isHovered ? .white : theme.accent)
+                    }
                     .padding(.bottom, 16)
-                
-                Spacer()
-                
-                // 底部資訊
-                HStack {
-                    Text("\(wordCount) 字")
+                    
+                    // 標題
+                    Text(document.title)
                         .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(theme.textPrimary)
+                        .lineLimit(2)
+                        .padding(.bottom, 4)
+                    
+                    // 上次編輯
+                    Text("上次編輯：\(formatDate(document.updatedAt))")
+                        .font(.system(size: 15))
                         .foregroundColor(theme.textMuted)
+                        .padding(.bottom, 16)
                     
                     Spacer()
                     
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 14))
-                        .foregroundColor(theme.textMuted)
+                    // 底部資訊
+                    HStack {
+                        Text("\(wordCount) 字")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(theme.textMuted)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 14))
+                            .foregroundColor(theme.textMuted)
+                    }
+                    .padding(.top, 16)
+                    .overlay(alignment: .top) {
+                        Rectangle()
+                            .fill(theme.border)
+                            .frame(height: 1)
+                    }
                 }
-                .padding(.top, 16)
-                .overlay(alignment: .top) {
-                    Rectangle()
-                        .fill(theme.border)
-                        .frame(height: 1)
+                .padding(24)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(theme.card)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(isHovered ? theme.accent : theme.border, lineWidth: 1)
+                        )
+                )
+                .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 4)
+            }
+            .buttonStyle(.plain)
+            .onHover { hovering in
+                withAnimation(AnimationSystem.Easing.quick) {
+                    isHovered = hovering
                 }
             }
-            .padding(24)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(theme.card)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(isHovered ? theme.accent : theme.border, lineWidth: 1)
-                    )
-            )
-            .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: 4)
+            
+            // 刪除按鈕（懸停時顯示）
+            if isHovered {
+                Button(action: { showDeleteConfirm = true }) {
+                    Image(systemName: "trash")
+                        .font(.system(size: 16))
+                        .foregroundColor(.white)
+                        .frame(width: 32, height: 32)
+                        .background(Circle().fill(theme.destructive))
+                }
+                .buttonStyle(.plain)
+                .padding(12)
+                .transition(.scale.combined(with: .opacity))
+                .zIndex(1)
+            }
         }
-        .buttonStyle(.plain)
-        .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.2)) {
-                isHovered = hovering
+        .alert("確定刪除？", isPresented: $showDeleteConfirm) {
+            Button("取消", role: .cancel) {}
+            Button("刪除", role: .destructive) {
+                withAnimation(AnimationSystem.Easing.spring) {
+                    onDelete()
+                }
             }
+        } message: {
+            Text("此操作將刪除「\(document.title)」，無法還原。")
         }
     }
     
@@ -124,7 +154,7 @@ struct DocumentCardView: View {
     let context = PersistenceController.preview.container.viewContext
     let doc = Document(context: context, title: "政大碩士論文草稿")
     
-    return DocumentCardView(document: doc, onTap: {})
+    DocumentCardView(document: doc, onTap: {}, onDelete: {})
         .environmentObject(theme)
         .frame(width: 280, height: 220)
         .padding()
