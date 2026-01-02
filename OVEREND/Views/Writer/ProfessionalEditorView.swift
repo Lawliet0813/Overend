@@ -2,7 +2,7 @@
 //  ProfessionalEditorView.swift
 //  OVEREND
 //
-//  專業編輯器視圖 - Word 風格寫作介面
+//  專業編輯器視圖 - 整合 Physical Canvas Engine
 //
 
 import SwiftUI
@@ -13,41 +13,87 @@ struct ProfessionalEditorView: View {
     @EnvironmentObject var theme: AppTheme
     @EnvironmentObject var viewState: MainViewState
     @Environment(\.managedObjectContext) private var viewContext
-    
+
     @ObservedObject var document: Document
-    
-    @State private var attributedString: NSAttributedString
-    @State private var textView: NSTextView?
+
+    // Physical Canvas ViewModel
+    @StateObject private var canvasViewModel = PhysicalDocumentViewModel()
+
+    // 編輯器模式
+    @State private var editorMode: EditorMode = .physicalCanvas
+    @State private var showCitationPanel = true
     @State private var wordCount: Int = 0
     @State private var isSaving: Bool = false
     @State private var lastSaved: Date?
     @State private var autoSaveTimer: Timer?
-    
+
     init(document: Document) {
         self.document = document
-        _attributedString = State(initialValue: document.attributedString)
+    }
+
+    enum EditorMode {
+        case physicalCanvas  // Physical Canvas 模式（預設）
+        case richText        // 傳統富文本模式
     }
     
     var body: some View {
         VStack(spacing: 0) {
-            // Word 風格格式工具列
-            formatToolbar
-            
+            // 增強型格式工具列
+            enhancedToolbar
+
             // 主編輯區域
             HStack(spacing: 0) {
-                // A4 畫布編輯區
-                editorCanvas
-                
-                Divider()
-                
-                // 右側引用面板
-                CitationInspector { entry in
-                    insertCitation(from: entry)
+                // 編輯器（根據模式切換）
+                editorContent
+
+                // 右側面板（可折疊）
+                if showCitationPanel {
+                    Divider()
+
+                    VStack(spacing: 0) {
+                        // 面板標題
+                        HStack {
+                            Text("引用文獻")
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(theme.textPrimary)
+
+                            Spacer()
+
+                            Button(action: {
+                                withAnimation(AnimationSystem.Easing.quick) {
+                                    showCitationPanel = false
+                                }
+                            }) {
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(theme.textMuted)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .padding(12)
+                        .background(theme.toolbar)
+                        .overlay(alignment: .bottom) {
+                            Rectangle()
+                                .fill(theme.border)
+                                .frame(height: 1)
+                        }
+
+                        // 引用面板
+                        CitationInspector { entry in
+                            insertCitation(from: entry)
+                        }
+                    }
+                    .frame(width: 280)
+                    .transition(.move(edge: .trailing))
                 }
             }
+
+            // 底部狀態列
+            statusBar
         }
         .background(theme.background)
         .onAppear {
+            loadDocumentContent()
             updateWordCount()
         }
         .onDisappear {
@@ -56,73 +102,81 @@ struct ProfessionalEditorView: View {
         }
     }
     
-    // MARK: - 格式工具列
-    
-    private var formatToolbar: some View {
+    // MARK: - 子視圖
+
+    /// 編輯器內容（根據模式切換）
+    private var editorContent: some View {
+        SwiftUI.Group {
+            switch editorMode {
+            case .physicalCanvas:
+                // Physical Canvas 多頁編輯器
+                MultiPageDocumentView()
+                    .environmentObject(canvasViewModel)
+                    .environmentObject(theme)
+
+            case .richText:
+                // 傳統富文本編輯器
+                legacyEditorCanvas
+            }
+        }
+    }
+
+    /// 增強型工具列
+    private var enhancedToolbar: some View {
         HStack(spacing: 12) {
-            // 字體選擇
-            HStack(spacing: 4) {
-                Text("新細明體")
-                    .font(.system(size: 15))
-                Image(systemName: "chevron.down")
-                    .font(.system(size: 14))
+            // 模式切換
+            Picker("", selection: $editorMode) {
+                Label("物理畫布", systemImage: "doc.on.doc")
+                    .tag(EditorMode.physicalCanvas)
+                Label("富文本", systemImage: "doc.richtext")
+                    .tag(EditorMode.richText)
             }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(theme.itemHover)
-            .cornerRadius(4)
-            
-            // 字體大小
-            HStack(spacing: 4) {
-                Text("12")
-                    .font(.system(size: 15))
-                Image(systemName: "chevron.down")
-                    .font(.system(size: 14))
-            }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(theme.itemHover)
-            .cornerRadius(4)
-            
+            .pickerStyle(.segmented)
+            .frame(width: 200)
+
             Divider()
                 .frame(height: 16)
-            
-            // 格式按鈕組
-            HStack(spacing: 8) {
-                FormatButton(icon: "bold") {
-                    if let tv = textView {
-                        RichTextEditor.toggleBold(in: tv)
-                    }
-                }
-                
-                FormatButton(icon: "italic") {
-                    if let tv = textView {
-                        RichTextEditor.toggleItalic(in: tv)
-                    }
-                }
-                
-                FormatButton(icon: "text.aligncenter") {
-                    // 置中對齊
-                }
+
+            // 字數統計
+            HStack(spacing: 4) {
+                Image(systemName: "textformat.characters")
+                    .font(.system(size: 14))
+                    .foregroundColor(theme.textMuted)
+                Text("\(wordCount) 字")
+                    .font(.system(size: 14))
+                    .foregroundColor(theme.textMuted)
             }
-            
-            Divider()
-                .frame(height: 16)
-            
-            // 引用按鈕
-            Button(action: {}) {
+
+            // 頁數（Physical Canvas 模式）
+            if editorMode == .physicalCanvas {
                 HStack(spacing: 4) {
-                    Image(systemName: "book.pages")
+                    Image(systemName: "doc.plaintext")
                         .font(.system(size: 14))
-                    Text("引用文獻")
-                        .font(.system(size: 15, weight: .bold))
+                        .foregroundColor(theme.textMuted)
+                    Text("\(canvasViewModel.totalPages) 頁")
+                        .font(.system(size: 14))
+                        .foregroundColor(theme.textMuted)
+                }
+            }
+
+            Spacer()
+
+            // 引用面板切換
+            Button(action: {
+                withAnimation(AnimationSystem.Easing.quick) {
+                    showCitationPanel.toggle()
+                }
+            }) {
+                HStack(spacing: 4) {
+                    Image(systemName: showCitationPanel ? "sidebar.right" : "sidebar.left")
+                        .font(.system(size: 14))
+                    Text(showCitationPanel ? "隱藏引用" : "顯示引用")
+                        .font(.system(size: 14))
                 }
                 .foregroundColor(theme.accent)
             }
             .buttonStyle(.plain)
-            
-            Spacer()
-            
+
             // 儲存狀態
             if isSaving {
                 HStack(spacing: 4) {
@@ -137,116 +191,136 @@ struct ProfessionalEditorView: View {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 14))
                         .foregroundColor(.green)
-                    Text("已儲存")
+                    Text("已儲存於 \(formatTime(saved))")
                         .font(.system(size: 14))
                         .foregroundColor(theme.textMuted)
                 }
             }
         }
         .padding(.horizontal, 16)
-        .frame(height: 40)
-        .background(theme.toolbar)
+        .frame(height: 44)
+        .background(.ultraThinMaterial)
         .overlay(alignment: .bottom) {
             Rectangle()
                 .fill(theme.border)
                 .frame(height: 1)
         }
     }
-    
-    // MARK: - A4 編輯畫布
-    
-    private var editorCanvas: some View {
-        GeometryReader { geometry in
-            ScrollView {
-                VStack {
-                    // A4 頁面
-                    VStack(alignment: .leading, spacing: 0) {
-                        RichTextEditor(
-                            attributedString: $attributedString,
-                            onTextChange: { newValue in
-                                updateWordCount()
-                                scheduleAutoSave()
-                            }
-                        )
-                    }
-                    .frame(
-                        width: min(600, geometry.size.width - 80),  // 最大 600px，或容器寬度減去左右 padding
-                        height: 990
-                    )
-                    .padding(80)
-                    .background(
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(theme.page)
-                            .shadow(color: .black.opacity(theme.isDarkMode ? 0.4 : 0.15), radius: 20, x: 0, y: 10)
-                    )
-                    .padding(.top, 32)
-                    .padding(.bottom, 80)
-                    .padding(.horizontal, 40) // 添加左右間距
-                }
-                .frame(maxWidth: .infinity)
+
+    /// 底部狀態列
+    private var statusBar: some View {
+        HStack(spacing: 16) {
+            // 文稿名稱
+            Text(document.title)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundColor(theme.textPrimary)
+
+            Spacer()
+
+            // 編輯模式指示
+            Text(editorMode == .physicalCanvas ? "物理畫布模式" : "富文本模式")
+                .font(.system(size: 12))
+                .foregroundColor(theme.textMuted)
+
+            // 自動儲存狀態
+            HStack(spacing: 4) {
+                Circle()
+                    .fill(isSaving ? .orange : .green)
+                    .frame(width: 6, height: 6)
+                Text("自動儲存")
+                    .font(.system(size: 12))
+                    .foregroundColor(theme.textMuted)
             }
-            .background(theme.background)
         }
+        .padding(.horizontal, 16)
+        .frame(height: 28)
+        .background(theme.toolbar)
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(theme.border)
+                .frame(height: 1)
+        }
+    }
+
+    // MARK: - 傳統編輯器（富文本模式）
+
+    private var legacyEditorCanvas: some View {
+        Text("傳統富文本編輯器（開發中）")
+            .font(.system(size: 16))
+            .foregroundColor(theme.textMuted)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(theme.background)
     }
     
     // MARK: - 方法
-    
+
+    /// 載入文稿內容
+    private func loadDocumentContent() {
+        // TODO: 從 document.rtfData 載入到 canvasViewModel
+        // 目前先使用空白文稿
+        canvasViewModel.documentTitle = document.title
+    }
+
+    /// 更新字數統計
     private func updateWordCount() {
-        let text = attributedString.string
-        var count = 0
-        text.enumerateSubstrings(in: text.startIndex..., options: .byWords) { _, _, _, _ in
-            count += 1
-        }
-        let chineseCount = text.unicodeScalars.filter {
-            CharacterSet(charactersIn: "\u{4E00}"..."\u{9FFF}").contains($0)
-        }.count
-        wordCount = count + chineseCount
+        wordCount = canvasViewModel.totalWordCount()
+    }
+
+    /// 格式化時間
+    private func formatTime(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: date)
     }
     
+    /// 插入引用
     private func insertCitation(from entry: Entry) {
-        guard let tv = textView else { return }
-        
+        // TODO: 整合到 Physical Canvas
         let author = formatAuthorShort(entry.fields["author"] ?? "Unknown")
         let year = entry.fields["year"] ?? "n.d."
         let citation = "(\(author), \(year))"
-        
-        RichTextEditor.insertCitation(citation, at: tv)
-        attributedString = tv.attributedString()
+
+        ToastManager.shared.showInfo("引用功能整合中：\(citation)")
         scheduleAutoSave()
     }
-    
+
+    /// 格式化作者名稱
     private func formatAuthorShort(_ author: String) -> String {
         let parts = author.components(separatedBy: " and ")
         guard let firstAuthor = parts.first else { return author }
-        
+
         if firstAuthor.range(of: "\\p{Han}", options: .regularExpression) != nil {
             return String(firstAuthor.prefix(1))
         }
-        
+
         let nameParts = firstAuthor.components(separatedBy: ", ")
         return nameParts.first ?? firstAuthor
     }
-    
+
+    /// 排程自動儲存
     private func scheduleAutoSave() {
         autoSaveTimer?.invalidate()
         autoSaveTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { _ in
             saveDocument()
         }
     }
-    
+
+    /// 儲存文稿
     private func saveDocument() {
         isSaving = true
-        
-        document.attributedString = attributedString
+
+        // TODO: 從 canvasViewModel 取得內容並儲存到 document.rtfData
         document.updatedAt = Date()
-        
+
         do {
             try viewContext.save()
             lastSaved = Date()
+            updateWordCount()
         } catch {
-            print("儲存失敗：\(error.localizedDescription)")
+            print("❌ 儲存失敗：\(error.localizedDescription)")
+            ToastManager.shared.showError("儲存失敗")
         }
-        
+
         isSaving = false
     }
 }
