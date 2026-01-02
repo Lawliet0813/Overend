@@ -47,20 +47,177 @@ struct PDFMetadata {
 /// PDF元數據提取器
 class PDFMetadataExtractor {
 
-    /// 從PDF提取元數據
+    /// 從PDF提取元數據（使用多層策略）
+    /// 
+    /// 提取策略（按優先順序）：
+    /// 1. DOI 查詢 - 如果找到 DOI，直接查詢完整書目（最準確）
+    /// 2. Apple Intelligence - 使用 AI 智慧判讀 PDF 內容
+    /// 3. 正則表達式 - 降級方案，使用規則提取
     static func extractMetadata(from url: URL) async -> PDFMetadata {
-        // 嘗試從PDF文檔元數據提取
-        if let pdfMetadata = extractFromPDFMetadata(url: url) {
-            return pdfMetadata
+        print("\n📄 開始提取 PDF 元數據: \(url.lastPathComponent)")
+        
+        // ========================================
+        // 策略 1️⃣: 快速 DOI 檢測與查詢
+        // ========================================
+        if let doi = extractDOI(from: url) {
+            print("✅ 找到 DOI: \(doi)")
+            
+            // 使用 DOI 查詢完整書目
+            if let metadata = await fetchMetadataByDOI(doi) {
+                print("✅ DOI 查詢成功，信心度: 高")
+                return metadata
+            } else {
+                print("⚠️ DOI 查詢失敗，繼續使用其他方法")
+            }
+        } else {
+            print("ℹ️ 未找到 DOI，使用 AI 提取")
         }
-
-        // 嘗試從PDF文本內容提取
-        if let textMetadata = await extractFromPDFText(url: url) {
-            return textMetadata
+        
+        // ========================================
+        // 策略 2️⃣: Apple Intelligence 提取
+        // ========================================
+        if #available(macOS 26.0, *) {
+            // 提取 PDF 文字（前 3 頁）
+            guard let document = PDFDocument(url: url) else {
+                print("❌ 無法開啟 PDF")
+                return extractFromFilename(url: url)
+            }
+            
+            let fullText = extractFullText(from: document, maxPages: 3)
+            
+            // 檢查 Apple Intelligence 是否可用
+            if AppleAIService.shared.isAvailable {
+                print("🍎 使用 Apple Intelligence 分析...")
+                
+                do {
+                    let aiMetadata = try await AppleAIService.shared.extractMetadata(from: fullText)
+                    
+                    // 檢查 AI 結果品質
+                    if aiMetadata.hasData {
+                        let confidence = aiMetadata.confidence
+                        print("✅ Apple Intelligence 提取成功，信心度: \(confidenceLabel(confidence))")
+                        
+                        // 如果 AI 找到了 DOI，優先用 DOI 查詢完整書目
+                        if let doi = aiMetadata.doi {
+                            print("✅ AI 識別到 DOI: \(doi)，查詢完整書目")
+                            if let doiMetadata = await fetchMetadataByDOI(doi) {
+                                print("✅ DOI 查詢成功，使用完整書目")
+                                return doiMetadata
+                            }
+                        }
+                        
+                        // 沒有 DOI 或 DOI 查詢失敗，使用 AI 提取的結果
+                        return convertToPDFMetadata(aiMetadata, confidence: confidence)
+                    } else {
+                        print("⚠️ Apple Intelligence 提取資料不完整")
+                    }
+                } catch {
+                    print("❌ Apple Intelligence 失敗: \(error.localizedDescription)")
+                }
+            } else {
+                print("ℹ️ Apple Intelligence 不可用")
+            }
+            
+            // ========================================
+            // 策略 3️⃣: 正則表達式降級方案
+            // ========================================
+            print("📝 使用正則表達式提取...")
+            return await extractFromPDFText(url: url)
+        } else {
+            // macOS 版本不支援 FoundationModels
+            print("ℹ️ 系統版本不支援 Apple Intelligence，使用傳統方法")
+            
+            // 嘗試從 PDF 元數據提取
+            if let pdfMetadata = extractFromPDFMetadata(url: url) {
+                return pdfMetadata
+            }
+            
+            // 降級：從 PDF 文字內容提取
+            if let textMetadata = await extractFromPDFText(url: url) {
+                return textMetadata
+            }
+            
+            // 最終降級：從文件名提取
+            return extractFromFilename(url: url)
         }
+    }
 
-        // 降級：從文件名提取
-        return extractFromFilename(url: url)
+    // MARK: - 提取方法
+
+    /// 提取完整文字（前 N 頁）
+    private static func extractFullText(from document: PDFDocument, maxPages: Int = 3) -> String {
+        var fullText = ""
+        let pageCount = min(document.pageCount, maxPages)
+        
+        for i in 0..<pageCount {
+            if let page = document.page(at: i), let text = page.string {
+                fullText += text + "\n\n"
+            }
+        }
+        
+        return fullText
+    }
+    
+    /// 從 DOI 查詢完整書目
+    private static func fetchMetadataByDOI(_ doi: String) async -> PDFMetadata? {
+        do {
+            // 使用 DOIService 查詢
+            let metadata = try await DOIService.fetchMetadata(for: doi)
+            
+            return PDFMetadata(
+                title: metadata.title,
+                authors: metadata.authors,
+                year: metadata.year,
+                doi: doi,
+                abstract: metadata.abstract,
+                journal: metadata.journal,
+                volume: metadata.volume,
+                pages: metadata.pages,
+                entryType: metadata.type,
+                confidence: .high
+            )
+        } catch {
+            print("❌ DOI 查詢失敗: \(error.localizedDescription)")
+            return nil
+        }
+    }
+    
+    /// 轉換 ExtractedMetadata 為 PDFMetadata
+    @available(macOS 26.0, *)
+    private static func convertToPDFMetadata(
+        _ extracted: ExtractedMetadata,
+        confidence: PDFMetadataConfidence
+    ) -> PDFMetadata {
+        // 將 ExtractedMetadata 的 confidence 轉換為 PDFMetadata.MetadataConfidence
+        let pdfConfidence: PDFMetadata.MetadataConfidence = {
+            switch confidence {
+            case .high: return .high
+            case .medium: return .medium
+            case .low: return .low
+            }
+        }()
+        
+        return PDFMetadata(
+            title: extracted.title ?? "Untitled",
+            authors: extracted.authors,
+            year: extracted.year,
+            doi: extracted.doi,
+            abstract: nil,
+            journal: extracted.journal,
+            volume: nil,
+            pages: nil,
+            entryType: extracted.entryType ?? "misc",
+            confidence: pdfConfidence
+        )
+    }
+    
+    /// 信心度標籤
+    private static func confidenceLabel(_ confidence: PDFMetadataConfidence) -> String {
+        switch confidence {
+        case .high: return "高"
+        case .medium: return "中"
+        case .low: return "低"
+        }
     }
 
     // MARK: - 提取方法
@@ -168,7 +325,13 @@ class PDFMetadataExtractor {
 
     // MARK: - 輔助方法
 
-    /// 提取DOI
+    /// 提取 DOI（從 URL）
+    private static func extractDOI(from url: URL) -> String? {
+        // 使用 DOIService 提取 DOI（它會掃描前 5 頁）
+        return DOIService.extractDOI(from: url)
+    }
+
+    /// 提取DOI（從 PDFDocument）
     private static func extractDOI(from document: PDFDocument) -> String? {
         guard let firstPage = document.page(at: 0),
               let text = firstPage.string else {

@@ -23,6 +23,7 @@ public class Entry: NSManagedObject, Identifiable {
     @NSManaged public var library: Library?
     @NSManaged public var groups: Set<Group>?
     @NSManaged public var attachments: Set<Attachment>?
+    @NSManaged public var tags: Set<Tag>?
 
     // MARK: - 計算屬性
 

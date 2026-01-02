@@ -148,6 +148,7 @@ extension PersistenceController {
         let groupEntity = Group.entityDescription()
         let attachmentEntity = Attachment.entityDescription()
         let documentEntity = Document.entityDescription()
+        let tagEntity = Tag.entityDescription()
 
         // 設置關聯關係
         setupRelationships(
@@ -155,7 +156,8 @@ extension PersistenceController {
             entry: entryEntity,
             group: groupEntity,
             attachment: attachmentEntity,
-            document: documentEntity
+            document: documentEntity,
+            tag: tagEntity
         )
 
         model.entities = [
@@ -163,7 +165,8 @@ extension PersistenceController {
             entryEntity,
             groupEntity,
             attachmentEntity,
-            documentEntity
+            documentEntity,
+            tagEntity
         ]
 
         return model
@@ -174,7 +177,8 @@ extension PersistenceController {
         entry: NSEntityDescription,
         group: NSEntityDescription,
         attachment: NSEntityDescription,
-        document: NSEntityDescription
+        document: NSEntityDescription,
+        tag: NSEntityDescription
     ) {
         // Library <-> Entry (1對多)
         let libraryToEntries = NSRelationshipDescription()
@@ -274,11 +278,48 @@ extension PersistenceController {
         documentToCitations.maxCount = 0
         documentToCitations.deleteRule = .nullifyDeleteRule
 
+        // Library <-> Tag (1對多)
+        let libraryToTags = NSRelationshipDescription()
+        libraryToTags.name = "tags"
+        libraryToTags.destinationEntity = tag
+        libraryToTags.minCount = 0
+        libraryToTags.maxCount = 0
+        libraryToTags.deleteRule = .cascadeDeleteRule
+
+        let tagToLibrary = NSRelationshipDescription()
+        tagToLibrary.name = "library"
+        tagToLibrary.destinationEntity = library
+        tagToLibrary.minCount = 0
+        tagToLibrary.maxCount = 1
+        tagToLibrary.deleteRule = .nullifyDeleteRule
+
+        libraryToTags.inverseRelationship = tagToLibrary
+        tagToLibrary.inverseRelationship = libraryToTags
+
+        // Entry <-> Tag (多對多)
+        let entryToTags = NSRelationshipDescription()
+        entryToTags.name = "tags"
+        entryToTags.destinationEntity = tag
+        entryToTags.minCount = 0
+        entryToTags.maxCount = 0
+        entryToTags.deleteRule = .nullifyDeleteRule
+
+        let tagToEntries = NSRelationshipDescription()
+        tagToEntries.name = "entries"
+        tagToEntries.destinationEntity = entry
+        tagToEntries.minCount = 0
+        tagToEntries.maxCount = 0
+        tagToEntries.deleteRule = .nullifyDeleteRule
+
+        entryToTags.inverseRelationship = tagToEntries
+        tagToEntries.inverseRelationship = entryToTags
+
         // 添加關聯到實體
-        library.properties.append(contentsOf: [libraryToEntries, libraryToGroups])
-        entry.properties.append(contentsOf: [entryToLibrary, entryToAttachments, entryToGroups])
-        group.properties.append(contentsOf: [groupToLibrary, groupToEntries, groupToParent, groupToChildren])
-        attachment.properties.append(attachmentToEntry)
-        document.properties.append(documentToCitations)
+        library.properties = library.properties + [libraryToEntries, libraryToGroups, libraryToTags]
+        entry.properties = entry.properties + [entryToLibrary, entryToAttachments, entryToGroups, entryToTags]
+        group.properties = group.properties + [groupToLibrary, groupToEntries, groupToParent, groupToChildren]
+        attachment.properties = attachment.properties + [attachmentToEntry]
+        document.properties = document.properties + [documentToCitations]
+        tag.properties = tag.properties + [tagToLibrary, tagToEntries]
     }
 }

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AppKit
+import UniformTypeIdentifiers
 
 /// 專業編輯器視圖
 struct ProfessionalEditorView: View {
@@ -22,9 +23,11 @@ struct ProfessionalEditorView: View {
 
     // 編輯器模式與狀態
     @State private var editorMode: EditorMode = .physicalCanvas
-    @State private var showCitationPanel = true
+    @State private var showEditorSidebar = true  // 左側邊欄
+    @State private var showCitationPanel = true  // 右側參考文獻面板
     @State private var showAICommandPalette = false
     @State private var showFormatTemplateSheet = false
+    @State private var showExportMenu = false
     @State private var selectedTemplate: FormatTemplate = .nccu
     @State private var wordCount: Int = 0
     @State private var isSaving: Bool = false
@@ -41,59 +44,76 @@ struct ProfessionalEditorView: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            // 增強型格式工具列
-            enhancedToolbar
-
+        HStack(spacing: 0) {
+            // 左側邊欄
+            if showEditorSidebar {
+                EditorSidebarView(
+                    onSelectDocument: { doc in
+                        // TODO: 切換文稿
+                    },
+                    onInsertCitation: { entry in
+                        insertCitation(from: entry)
+                    },
+                    onExitEditor: {
+                        // 返回寫作中心
+                        viewState.mode = .editorList
+                    }
+                )
+                .transition(.move(edge: .leading))
+            }
+            
             // 主編輯區域
-            HStack(spacing: 0) {
+            VStack(spacing: 0) {
+                // 增強型格式工具列
+                enhancedToolbar
+
                 // 編輯器（根據模式切換）
                 editorContent
 
-                // 右側面板（可折疊）
-                if showCitationPanel {
-                    Divider()
-
-                    VStack(spacing: 0) {
-                        // 面板標題
-                        HStack {
-                            Text("引用文獻")
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundColor(theme.textPrimary)
-
-                            Spacer()
-
-                            Button(action: {
-                                withAnimation(AnimationSystem.Easing.quick) {
-                                    showCitationPanel = false
-                                }
-                            }) {
-                                Image(systemName: "xmark")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(theme.textMuted)
-                            }
-                            .buttonStyle(.plain)
-                        }
-                        .padding(12)
-                        .background(theme.toolbar)
-                        .overlay(alignment: .bottom) {
-                            Rectangle()
-                                .fill(theme.border)
-                                .frame(height: 1)
-                        }
-
-                        // 引用面板
-                        CitationInspector { entry in
-                            insertCitation(from: entry)
-                        }
-                    }
-                    .frame(width: 280)
-                    .transition(.move(edge: .trailing))
-                }
+                // 底部狀態列
+                statusBar
             }
+            
+            // 右側參考文獻面板
+            if showCitationPanel {
+                Divider()
+                
+                VStack(spacing: 0) {
+                    // 面板標題
+                    HStack {
+                        Text("參考文獻")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(theme.textPrimary)
 
-            // 底部狀態列
-            statusBar
+                        Spacer()
+
+                        Button(action: {
+                            withAnimation(AnimationSystem.Easing.quick) {
+                                showCitationPanel = false
+                            }
+                        }) {
+                            Image(systemName: "xmark")
+                                .font(.system(size: 12))
+                                .foregroundColor(theme.textMuted)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(12)
+                    .background(theme.toolbar)
+                    .overlay(alignment: .bottom) {
+                        Rectangle()
+                            .fill(theme.border)
+                            .frame(height: 1)
+                    }
+
+                    // 引用面板
+                    CitationInspector { entry in
+                        insertCitation(from: entry)
+                    }
+                }
+                .frame(width: 280)
+                .transition(.move(edge: .trailing))
+            }
         }
         .background(theme.background)
         .onAppear {
@@ -227,6 +247,10 @@ struct ProfessionalEditorView: View {
             }
             .buttonStyle(.plain)
             .help("快捷鍵：⌘K")
+            
+            // 🍅 番茄鐘按鈕
+            PomodoroToolbarButton()
+                .environmentObject(theme)
 
             Divider()
                 .frame(height: 16)
@@ -369,7 +393,34 @@ struct ProfessionalEditorView: View {
                 .environmentObject(theme)
             }
 
-            Spacer()
+            Divider()
+                .frame(height: 16)
+            
+            // Compile 匯出按鈕
+            Menu {
+                Button(action: { exportDocument(format: .pdf) }) {
+                    Label("匯出 PDF", systemImage: "doc.fill")
+                }
+                Button(action: { exportDocument(format: .docx) }) {
+                    Label("匯出 DOCX", systemImage: "doc.richtext")
+                }
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "arrow.down.doc.fill")
+                        .font(.system(size: 14))
+                    Text("Compile")
+                        .font(.system(size: 14, weight: .medium))
+                }
+                .foregroundColor(.white)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(theme.accent)
+                )
+            }
+            .buttonStyle(.plain)
+            .help("匯出文稿")
 
             // 字數統計
             HStack(spacing: 4) {
@@ -395,21 +446,20 @@ struct ProfessionalEditorView: View {
 
             Spacer()
 
-            // 引用面板切換
+            // 側邊欄切換
             Button(action: {
                 withAnimation(AnimationSystem.Easing.quick) {
-                    showCitationPanel.toggle()
+                    showEditorSidebar.toggle()
                 }
             }) {
                 HStack(spacing: 4) {
-                    Image(systemName: showCitationPanel ? "sidebar.right" : "sidebar.left")
-                        .font(.system(size: 14))
-                    Text(showCitationPanel ? "隱藏引用" : "顯示引用")
+                    Image(systemName: showEditorSidebar ? "sidebar.left" : "sidebar.leading")
                         .font(.system(size: 14))
                 }
                 .foregroundColor(theme.accent)
             }
             .buttonStyle(.plain)
+            .help(showEditorSidebar ? "隱藏側邊欄" : "顯示側邊欄")
 
             // 儲存狀態
             if isSaving {
@@ -678,6 +728,140 @@ struct ProfessionalEditorView: View {
         }
 
         isSaving = false
+    }
+    
+    // MARK: - 匯出功能
+    
+    /// 匯出格式
+    enum ExportFormat {
+        case pdf
+        case docx
+        
+        var fileExtension: String {
+            switch self {
+            case .pdf: return "pdf"
+            case .docx: return "docx"
+            }
+        }
+        
+        var displayName: String {
+            switch self {
+            case .pdf: return "PDF"
+            case .docx: return "Word 文件"
+            }
+        }
+    }
+    
+    /// 匯出文稿
+    private func exportDocument(format: ExportFormat) {
+        let panel = NSSavePanel()
+        panel.title = "匯出\(format.displayName)"
+        panel.nameFieldStringValue = "\(document.title).\(format.fileExtension)"
+        panel.canCreateDirectories = true
+        
+        switch format {
+        case .pdf:
+            panel.allowedContentTypes = [.pdf]
+        case .docx:
+            panel.allowedContentTypes = [UTType(filenameExtension: "docx") ?? .data]
+        }
+        
+        panel.begin { response in
+            guard response == .OK, let url = panel.url else { return }
+            
+            Task {
+                do {
+                    switch format {
+                    case .pdf:
+                        try await exportToPDF(url: url)
+                    case .docx:
+                        try await exportToDOCX(url: url)
+                    }
+                    
+                    await MainActor.run {
+                        ToastManager.shared.showSuccess("已成功匯出 \(format.displayName)")
+                        NSWorkspace.shared.activateFileViewerSelecting([url])
+                    }
+                } catch {
+                    await MainActor.run {
+                        ToastManager.shared.showError("匯出失敗：\(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+    }
+    
+    /// 匯出為 PDF
+    private func exportToPDF(url: URL) async throws {
+        // 使用 DocumentFormatter 的 HTML 生成功能
+        let attributedString = document.attributedString
+        let html = DocumentFormatter.toHTML(attributedString, template: selectedTemplate)
+        
+        // 將 HTML 寫入暫存檔案，並用 WebView 渲染成 PDF
+        let tempHTMLURL = FileManager.default.temporaryDirectory.appendingPathComponent("export_temp.html")
+        try html.write(to: tempHTMLURL, atomically: true, encoding: .utf8)
+        
+        // 使用 NSPrintOperation 產生 PDF
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            DispatchQueue.main.async {
+                // 建立 NSTextView 來渲染 HTML
+                let textStorage = NSTextStorage()
+                let layoutManager = NSLayoutManager()
+                let textContainer = NSTextContainer(size: NSSize(width: 595, height: CGFloat.greatestFiniteMagnitude))
+                
+                textStorage.addLayoutManager(layoutManager)
+                layoutManager.addTextContainer(textContainer)
+                textStorage.setAttributedString(attributedString)
+                
+                let textView = NSTextView(frame: NSRect(x: 0, y: 0, width: 595, height: 842))
+                textView.textStorage?.setAttributedString(attributedString)
+                
+                // 設定列印選項
+                let printInfo = NSPrintInfo.shared.copy() as! NSPrintInfo
+                printInfo.paperSize = NSSize(width: 595, height: 842) // A4
+                printInfo.topMargin = 72
+                printInfo.bottomMargin = 72
+                printInfo.leftMargin = 72
+                printInfo.rightMargin = 72
+                printInfo.horizontalPagination = .fit
+                printInfo.verticalPagination = .automatic
+                printInfo.jobDisposition = .save
+                printInfo.dictionary()[NSPrintInfo.AttributeKey.jobSavingURL] = url
+                
+                let printOperation = NSPrintOperation(view: textView, printInfo: printInfo)
+                printOperation.showsPrintPanel = false
+                printOperation.showsProgressPanel = false
+                
+                if printOperation.run() {
+                    continuation.resume()
+                } else {
+                    continuation.resume(throwing: NSError(domain: "ExportError", code: 2, userInfo: [NSLocalizedDescriptionKey: "PDF 匯出失敗"]))
+                }
+            }
+        }
+    }
+    
+    /// 匯出為 DOCX
+    private func exportToDOCX(url: URL) async throws {
+        // 使用 RTF 資料匯出（DOCX 基本相容）
+        let attributedString = document.attributedString
+        
+        // 生成 RTF 資料
+        guard let rtfData = try? attributedString.data(
+            from: NSRange(location: 0, length: attributedString.length),
+            documentAttributes: [.documentType: NSAttributedString.DocumentType.rtf]
+        ) else {
+            throw NSError(domain: "ExportError", code: 1, userInfo: [NSLocalizedDescriptionKey: "無法生成 RTF 資料"])
+        }
+        
+        // 暫時以 RTF 格式儲存（Word 可開啟）
+        let rtfURL = url.deletingPathExtension().appendingPathExtension("rtf")
+        try rtfData.write(to: rtfURL)
+        
+        // 提示使用者
+        await MainActor.run {
+            ToastManager.shared.showInfo("已匯出為 RTF 格式（Word 可開啟）")
+        }
     }
 }
 

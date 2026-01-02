@@ -14,6 +14,7 @@ struct NewSidebarView: View {
     @ObservedObject var libraryVM: LibraryViewModel
     
     @State private var showNewLibrarySheet = false
+    @State private var showThemeSettings = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -106,9 +107,49 @@ struct NewSidebarView: View {
             }
             
             Spacer()
+            
+            // 底部設定區域
+            VStack(spacing: 8) {
+                Divider()
+                    .padding(.horizontal, DesignTokens.Spacing.md)
+                
+                // 主題色設定按鈕
+                Button(action: { showThemeSettings = true }) {
+                    HStack(spacing: 8) {
+                        // 主題色預覽圓點
+                        if theme.isPrideMode {
+                            Circle()
+                                .fill(theme.prideGradient)
+                                .frame(width: 14, height: 14)
+                        } else {
+                            Circle()
+                                .fill(theme.accent)
+                                .frame(width: 14, height: 14)
+                        }
+                        
+                        Text("主題色設定")
+                            .font(.system(size: 13))
+                            .foregroundColor(theme.textPrimary)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 10))
+                            .foregroundColor(theme.textMuted)
+                    }
+                    .padding(.horizontal, DesignTokens.Spacing.md)
+                    .padding(.vertical, 10)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.bottom, DesignTokens.Spacing.sm)
         }
         .frame(minWidth: 220, maxWidth: 220)
         .background(.regularMaterial)
+        .sheet(isPresented: $showThemeSettings) {
+            ThemeSettingsView()
+                .environmentObject(theme)
+        }
         .sheet(isPresented: $showNewLibrarySheet) {
             NewLibrarySheet(libraryVM: libraryVM)
                 .environmentObject(theme)
@@ -199,33 +240,58 @@ struct SidebarButton: View {
                 .padding(.vertical, DesignTokens.Spacing.xs)
                 .background(
                     ZStack {
-                        // 基礎背景
-                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.small)
-                            .fill(backgroundColor)
-                        
-                        // 添加微妙漸變增加深度
-                        if isSelected || isHovered {
+                        // 液態玻璃效果背景
+                        if isSelected {
+                            // 選中：藍色液態玻璃
                             RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.small)
-                                .fill(
-                                    LinearGradient(
-                                        colors: [
-                                            Color.white.opacity(isSelected ? 0.1 : 0.05),
-                                            Color.clear
-                                        ],
-                                        startPoint: .top,
-                                        endPoint: .bottom
-                                    )
+                                .fill(theme.accent.opacity(0.85))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.small)
+                                        .fill(
+                                            LinearGradient(
+                                                colors: [
+                                                    Color.white.opacity(0.3),
+                                                    Color.white.opacity(0.1),
+                                                    Color.clear
+                                                ],
+                                                startPoint: .topLeading,
+                                                endPoint: .bottomTrailing
+                                            )
+                                        )
                                 )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.small)
+                                        .stroke(Color.white.opacity(0.4), lineWidth: 0.5)
+                                )
+                        } else if isHovered {
+                            // 懸停：淡色玻璃
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.small)
+                                .fill(theme.itemHover)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.small)
+                                        .fill(
+                                            LinearGradient(
+                                                colors: [
+                                                    Color.white.opacity(0.1),
+                                                    Color.clear
+                                                ],
+                                                startPoint: .top,
+                                                endPoint: .bottom
+                                            )
+                                        )
+                                )
+                        } else {
+                            Color.clear
                         }
                     }
                 )
                 .foregroundColor(isSelected ? .white : theme.textPrimary)
                 // 懸停時添加陰影
                 .shadow(
-                    color: isHovered && !isSelected ? Color.black.opacity(0.1) : .clear,
-                    radius: isHovered ? 8 : 0,
+                    color: isSelected ? theme.accent.opacity(0.4) : (isHovered ? Color.black.opacity(0.1) : .clear),
+                    radius: isSelected ? 10 : (isHovered ? 8 : 0),
                     x: 0,
-                    y: isHovered ? 4 : 0
+                    y: isSelected ? 4 : (isHovered ? 4 : 0)
                 )
             }
         }
@@ -242,7 +308,7 @@ struct SidebarButton: View {
 
     // MARK: - 計算屬性
 
-    /// 背景顏色
+    /// 背景顏色（不再使用，保留相容性）
     private var backgroundColor: Color {
         if isSelected {
             return theme.accent

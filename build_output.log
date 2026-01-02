@@ -1,0 +1,16 @@
+Command line invocation:
+    /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project OVEREND.xcodeproj -scheme OVEREND -destination "platform=iOS Simulator,name=iPhone 15" clean build
+
+2026-01-02 16:03:18.782 xcodebuild[45250:3627581]  DVTDeviceOperation: Encountered a build number "" that is incompatible with DVTBuildVersion.
+2026-01-02 16:03:19.152 xcodebuild[45250:3627521] [MT] DVTDeviceOperation: Encountered a build number "" that is incompatible with DVTBuildVersion.
+2026-01-02 16:03:19.165 xcodebuild[45250:3627521] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-01-02 16:04:19.506 xcodebuild[45250:3627521] Writing error result bundle to /var/folders/48/xz1jn09j4tvbzrrtrf16rsm80000gn/T/ResultBundle_2026-02-01_16-04-0019.xcresult
+xcodebuild: error: Unable to find a device matching the provided destination specifier:
+		{ platform:iOS Simulator, OS:latest, name:iPhone 15 }
+
+	The requested device could not be found because no available devices matched the request.
+
+	Available destinations for the "OVEREND" scheme:
+		{ platform:macOS, arch:arm64, id:00008132-000104913C85001C, name:My Mac }
+		{ platform:macOS, arch:x86_64, id:00008132-000104913C85001C, name:My Mac }
+		{ platform:macOS, name:Any Mac }

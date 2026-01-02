@@ -10,13 +10,16 @@ import Combine
 
 /// 主視圖模式
 enum MainViewMode: Equatable {
+    case welcome                    // 起始頁面
     case library                    // 文獻管理視圖
-    case editorList                 // 文稿列表視圖
+    case editorList                 // 寫作專案列表視圖
     case editorFull(Document)       // 專業編輯器視圖
     case aiCenter                   // AI 智慧中心視圖
     
     static func == (lhs: MainViewMode, rhs: MainViewMode) -> Bool {
         switch (lhs, rhs) {
+        case (.welcome, .welcome):
+            return true
         case (.library, .library):
             return true
         case (.editorList, .editorList):
@@ -68,7 +71,7 @@ enum SidebarSection: String {
 
 /// 主視圖狀態
 class MainViewState: ObservableObject {
-    @Published var mode: MainViewMode = .library
+    @Published var mode: MainViewMode = .welcome  // 預設顯示起始頁面
     @Published var activeSidebarItem: SidebarItem = .allEntries
     @Published var selectedLibrary: Library?
     @Published var selectedEntry: Entry?

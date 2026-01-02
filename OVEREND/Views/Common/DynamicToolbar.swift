@@ -42,8 +42,12 @@ struct DynamicToolbar: View {
 
             Spacer()
 
-            // 右側：搜尋 + 主題切換 + 新建按鈕
+            // 右側：番茄鐘 + 搜尋 + 主題切換 + 新建按鈕
             HStack(spacing: DesignTokens.Spacing.sm) {
+                // 🍅 番茄鐘按鈕
+                PomodoroToolbarButton()
+                    .environmentObject(theme)
+                
                 // 主題切換
                 IconButton(
                     icon: theme.isDarkMode ? "sun.max" : "moon",
@@ -98,6 +102,8 @@ struct DynamicToolbar: View {
     
     private var toolbarTitle: String {
         switch viewState.mode {
+        case .welcome:
+            return "歡迎"
         case .library:
             return "全部文獻庫"
         case .editorList:
@@ -111,10 +117,12 @@ struct DynamicToolbar: View {
     
     private var newButtonTitle: String {
         switch viewState.mode {
+        case .welcome:
+            return "開始寫作"
         case .library:
             return "匯入文獻"
         case .editorList, .editorFull:
-            return "新建文稿"
+            return "新增寫作專案"
         case .aiCenter:
             return "新功能"
         }

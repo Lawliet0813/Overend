@@ -223,36 +223,39 @@ class AppleAIService: ObservableObject {
         let truncatedText = String(text.prefix(3000))
         
         let prompt = """
-        請分析以下學術文獻的文字內容，識別並提取元數據資訊。
+        請分析以下學術文獻 PDF 的文字內容，提取書目資訊。
 
         文獻內容：
         ---
         \(truncatedText)
         ---
 
-        請提取以下資訊（如果無法識別則留空）：
-        1. 標題（Title）：文獻的完整標題
-        2. 作者（Authors）：所有作者姓名，用分號 ; 分隔
-        3. 年份（Year）：發表年份（4位數字）
-        4. 期刊/來源（Journal）：期刊名稱或出版來源
-        5. DOI：如果有的話
-        6. 文獻類型（Type）：請判斷是以下哪種類型：
-           - article（期刊論文）
-           - book（書籍）
-           - inproceedings（會議論文）
-           - thesis（碩博士論文）
-           - techreport（技術報告）
-           - misc（其他）
+        請以 JSON 格式回覆（不要包含 markdown 程式碼區塊符號```）：
+        {
+          "title": "完整標題",
+          "authors": ["作者1", "作者2", "作者3"],
+          "year": "YYYY",
+          "journal": "期刊或會議名稱",
+          "doi": "10.xxxx/xxxxx",
+          "type": "article"
+        }
 
-        請以下列格式回覆，每行一個欄位：
-        標題: [標題內容]
-        作者: [作者1; 作者2; 作者3]
-        年份: [YYYY]
-        期刊: [期刊名稱]
-        DOI: [DOI]
-        類型: [article/book/inproceedings/thesis/techreport/misc]
-        
-        只回覆上述格式，不要其他說明文字。如果某欄位無法識別，請寫「未知」。
+        重要提示：
+        - 標題：通常在第一頁頂部，字體較大，是完整的論文標題
+        - 作者：通常在標題下方，是作者姓名列表
+        - 年份：4位數字，範圍 1990-2025
+        - 期刊：期刊、會議或出版社名稱
+        - DOI：格式為 10.xxxx/xxxxx，如果有的話
+        - type：必須是以下之一
+          * article - 期刊論文
+          * book - 書籍
+          * inproceedings - 會議論文
+          * thesis - 碩博士論文
+          * techreport - 技術報告
+          * misc - 其他
+        - 如果找不到某欄位，請設為 null（不要用字串 "null"）
+
+        只回覆 JSON 格式，不要其他說明文字。
         """
         
         do {
@@ -263,8 +266,93 @@ class AppleAIService: ObservableObject {
         }
     }
     
-    /// 解析 AI 回應的元數據
+    /// 解析 AI 回應的元數據（優先使用 JSON 格式）
     private func parseMetadataResponse(_ response: String) -> ExtractedMetadata {
+        var metadata = ExtractedMetadata()
+        
+        // 先嘗試解析 JSON 格式
+        if let jsonMetadata = parseJSONFormat(response) {
+            print("✅ 成功解析 JSON 格式")
+            return jsonMetadata
+        }
+        
+        // 降級：嘗試解析舊的文字格式
+        print("⚠️ JSON 解析失敗，嘗試文字格式")
+        return parseTextFormat(response)
+    }
+    
+    /// 解析 JSON 格式的回應
+    private func parseJSONFormat(_ response: String) -> ExtractedMetadata? {
+        // 清理回應（移除可能的 markdown 程式碼區塊）
+        var cleanedResponse = response
+            .replacingOccurrences(of: "```json", with: "")
+            .replacingOccurrences(of: "```", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        // 嘗試提取 JSON 區塊（處理 AI 可能在前後加說明文字的情況）
+        if let jsonStart = cleanedResponse.firstIndex(of: "{"),
+           let jsonEnd = cleanedResponse.lastIndex(of: "}") {
+            cleanedResponse = String(cleanedResponse[jsonStart...jsonEnd])
+        }
+        
+        // 嘗試解析 JSON
+        guard let data = cleanedResponse.data(using: .utf8),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            return nil
+        }
+        
+        var metadata = ExtractedMetadata()
+        
+        // 提取標題
+        if let title = json["title"] as? String, 
+           !title.isEmpty, 
+           title.lowercased() != "null" {
+            metadata.title = title
+        }
+        
+        // 提取作者
+        if let authors = json["authors"] as? [String] {
+            metadata.authors = authors.filter { !$0.isEmpty && $0.lowercased() != "null" }
+        } else if let authorsString = json["authors"] as? String {
+            // 處理 AI 返回字串而非陣列的情況
+            metadata.authors = authorsString
+                .components(separatedBy: CharacterSet(charactersIn: ";,，"))
+                .map { $0.trimmingCharacters(in: .whitespaces) }
+                .filter { !$0.isEmpty && $0.lowercased() != "null" }
+        }
+        
+        // 提取年份
+        if let year = json["year"] as? String, year.count == 4 {
+            metadata.year = year
+        } else if let yearInt = json["year"] as? Int {
+            metadata.year = String(yearInt)
+        }
+        
+        // 提取期刊
+        if let journal = json["journal"] as? String, 
+           !journal.isEmpty, 
+           journal.lowercased() != "null" {
+            metadata.journal = journal
+        }
+        
+        // 提取 DOI
+        if let doi = json["doi"] as? String, 
+           !doi.isEmpty, 
+           doi.lowercased() != "null" {
+            metadata.doi = doi
+        }
+        
+        // 提取類型
+        if let type = json["type"] as? String {
+            let validTypes = ["article", "book", "inproceedings", "thesis", "techreport", "misc"]
+            metadata.entryType = validTypes.contains(type.lowercased()) ? type.lowercased() : "misc"
+        }
+        
+        return metadata
+    }
+    
+    /// 解析文字格式的回應（降級方案）
+    private func parseTextFormat(_ response: String) -> ExtractedMetadata {
         var metadata = ExtractedMetadata()
         
         let lines = response.components(separatedBy: .newlines)
@@ -347,6 +435,37 @@ struct ExtractedMetadata {
         title != nil || !authors.isEmpty || year != nil || journal != nil || doi != nil || entryType != nil
     }
     
+    /// 計算提取的信心度
+    var confidence: PDFMetadataConfidence {
+        var score = 0
+        
+        // DOI = 最高分（有 DOI 就能查到完整書目）
+        if doi != nil { score += 40 }
+        
+        // 標題 = 必要（至少要 10 個字才算有效標題）
+        if let titleText = title, titleText.count > 10 {
+            score += 20
+        }
+        
+        // 作者 = 重要
+        if !authors.isEmpty { score += 20 }
+        
+        // 年份 = 重要
+        if year != nil { score += 10 }
+        
+        // 期刊 = 加分
+        if journal != nil { score += 10 }
+        
+        // 根據分數判斷信心度
+        if score >= 70 {
+            return .high
+        } else if score >= 40 {
+            return .medium
+        } else {
+            return .low
+        }
+    }
+    
     /// 格式化作者為 BibTeX 格式（用 " and " 分隔）
     var authorsBibTeX: String {
         authors.joined(separator: " and ")
@@ -364,6 +483,13 @@ struct ExtractedMetadata {
         default: return "未知"
         }
     }
+}
+
+/// PDF 元數據信心度（與 PDFMetadata.MetadataConfidence 相容）
+enum PDFMetadataConfidence {
+    case high    // 高可信度（DOI 查詢或完整資訊）
+    case medium  // 中等可信度（AI 提取到大部分資訊）
+    case low     // 低可信度（僅部分資訊）
 }
 
 // MARK: - 錯誤類型

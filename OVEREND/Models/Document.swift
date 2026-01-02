@@ -18,9 +18,26 @@ public class Document: NSManagedObject, Identifiable {
     @NSManaged public var rtfData: Data?
     @NSManaged public var createdAt: Date
     @NSManaged public var updatedAt: Date
+    @NSManaged public var editorMode: String? // "rich" or "notion"
 
     // 關聯的引用（用於生成參考文獻）
     @NSManaged public var citations: Set<Entry>?
+    
+    // MARK: - 編輯器模式枚舉
+    
+    enum EditorMode: String {
+        case richText = "rich"
+        case notion = "notion"
+    }
+    
+    var currentEditorMode: EditorMode {
+        get {
+            EditorMode(rawValue: editorMode ?? "rich") ?? .richText
+        }
+        set {
+            editorMode = newValue.rawValue
+        }
+    }
 
     // MARK: - 計算屬性
 
@@ -134,6 +151,13 @@ extension Document {
         updatedAtAttr.attributeType = .dateAttributeType
         updatedAtAttr.isOptional = false
         properties.append(updatedAtAttr)
+        
+        let editorModeAttr = NSAttributeDescription()
+        editorModeAttr.name = "editorMode"
+        editorModeAttr.attributeType = .stringAttributeType
+        editorModeAttr.isOptional = true
+        editorModeAttr.defaultValue = "rich"
+        properties.append(editorModeAttr)
 
         entity.properties = properties
         return entity
