@@ -33,11 +33,11 @@ struct WelcomeView: View {
                 
                 // 主要內容區
                 VStack(spacing: 32) {
-                    // 最近的專案
-                    recentProjectsSection
-                    
-                    // 快速操作卡片
+                    // 快速操作卡片（主要功能第一排）
                     quickActionsSection
+                    
+                    // 最近的專案（第二排）
+                    recentProjectsSection
                 }
                 .padding(.horizontal, 40)
                 .padding(.top, 32)
