@@ -145,7 +145,14 @@ struct NewSidebarView: View {
             .padding(.bottom, DesignTokens.Spacing.sm)
         }
         .frame(minWidth: 220, maxWidth: 220)
-        .background(.regularMaterial)
+        .background(
+            ZStack {
+                // 深色半透明背景確保文字可讀性
+                Color(hex: "#1F2937").opacity(0.95)
+                // 頂層玻璃效果
+                Color.white.opacity(0.03)
+            }
+        )
         .sheet(isPresented: $showThemeSettings) {
             ThemeSettingsView()
                 .environmentObject(theme)
@@ -161,7 +168,7 @@ struct NewSidebarView: View {
     private func sectionHeader(_ title: String) -> some View {
         Text(title)
             .font(.system(size: DesignTokens.Typography.caption, weight: .bold))
-            .foregroundColor(theme.textMuted)
+            .foregroundColor(Color.white.opacity(0.5))
             .textCase(.uppercase)
             .tracking(0.5)
             .padding(.horizontal, DesignTokens.Spacing.sm)
@@ -172,7 +179,7 @@ struct NewSidebarView: View {
         HStack {
             Text(title)
                 .font(.system(size: DesignTokens.Typography.caption, weight: .bold))
-                .foregroundColor(theme.textMuted)
+                .foregroundColor(Color.white.opacity(0.5))
                 .textCase(.uppercase)
                 .tracking(0.5)
             
@@ -285,7 +292,7 @@ struct SidebarButton: View {
                         }
                     }
                 )
-                .foregroundColor(isSelected ? .white : theme.textPrimary)
+                .foregroundColor(isSelected ? .white : Color.white.opacity(0.85))
                 // 懸停時添加陰影
                 .shadow(
                     color: isSelected ? theme.accent.opacity(0.4) : (isHovered ? Color.black.opacity(0.1) : .clear),
