@@ -14,8 +14,8 @@ class AppTheme: ObservableObject {
     
     // MARK: - 主色系
     
-    /// 主色（綠色）
-    var accent: Color { Color(hex: "#00D97E") }
+    /// 主色（藍色 - 類似啟動動畫背景）
+    var accent: Color { Color(hex: "#007AFF") }
     
     /// 淺色主色（用於背景）
     var accentLight: Color { accent.opacity(0.1) }
