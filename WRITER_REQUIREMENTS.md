@@ -9,17 +9,20 @@
 ## 🎯 核心目標
 
 打造一個**整合引用管理**的文章寫作環境，讓研究生能夠：
+
 1. 專注於寫作內容
 2. 快速插入文獻引用
 3. 自動生成參考文獻列表
 4. 輕鬆匯出各種格式
 
 **對標產品：**
+
 - Microsoft Word + EndNote（傳統方案）
 - Notion + Zotero（現代方案）
 - Overleaf（LaTeX 方案）
 
 **OVEREND 的優勢：**
+
 - ✨ 原生 macOS 體驗
 - ✨ 繁體中文優化
 - ✨ 文獻與寫作無縫整合
@@ -32,6 +35,7 @@
 ### A. 基本編輯功能
 
 #### A1. 文字輸入與格式
+
 - [ ] 多行文字輸入
 - [ ] 粗體、斜體、底線
 - [ ] 字體大小調整
@@ -41,6 +45,7 @@
 - [ ] 上標、下標
 
 #### A2. 段落格式
+
 - [ ] 標題層級（H1-H6）
 - [ ] 段落對齊（左、中、右、兩端）
 - [ ] 行距調整
@@ -51,6 +56,7 @@
 - [ ] 引用區塊
 
 #### A3. 插入功能
+
 - [ ] 插入圖片
 - [ ] 插入表格
 - [ ] 插入連結
@@ -62,6 +68,7 @@
 ### B. 引用管理功能 ⭐ 最重要
 
 #### B1. 引用插入
+
 - [ ] 快捷鍵插入引用（Cmd+K）
 - [ ] 搜尋文獻彈窗
 - [ ] 多選文獻插入
@@ -69,6 +76,7 @@
 - [ ] 引用位置標記
 
 **插入方式範例：**
+
 ```
 原文：根據研究[   ]指出，改革需要...
          ↓ Cmd+K 快捷鍵
@@ -79,6 +87,7 @@
 ```
 
 #### B2. 引用格式
+
 - [ ] APA 7th 格式
 - [ ] MLA 9th 格式
 - [ ] Chicago 格式
@@ -87,6 +96,7 @@
 - [ ] 格式即時切換
 
 **格式範例：**
+
 ```
 APA:     (Chen, 2023)
 MLA:     (Chen 45)
@@ -94,6 +104,7 @@ Chicago: (Chen 2023, 45)
 ```
 
 #### B3. 參考文獻列表
+
 - [ ] 自動生成列表
 - [ ] 按姓氏排序
 - [ ] 未引用文獻標記
@@ -101,6 +112,7 @@ Chicago: (Chen 2023, 45)
 - [ ] 列表樣式自訂
 
 **參考文獻範例：**
+
 ```
 References
 
@@ -113,6 +125,7 @@ Lin, S. (2007). Privatization and deregulation in public transportation.
 ```
 
 #### B4. 引用管理
+
 - [ ] 查看所有引用
 - [ ] 跳轉至文獻
 - [ ] 修改引用格式
@@ -124,6 +137,7 @@ Lin, S. (2007). Privatization and deregulation in public transportation.
 ### C. 文件管理功能
 
 #### C1. 文件操作
+
 - [ ] 新建文件
 - [ ] 開啟文件
 - [ ] 儲存文件
@@ -132,14 +146,16 @@ Lin, S. (2007). Privatization and deregulation in public transportation.
 - [ ] 關閉文件
 
 #### C2. 文件屬性
-- [ ] 文件標題
-- [ ] 作者資訊
-- [ ] 創建日期
-- [ ] 修改日期
-- [ ] 字數統計
-- [ ] 引用統計
+
+- [x] 文件標題
+- [x] 作者資訊
+- [x] 創建日期
+- [x] 修改日期
+- [x] 字數統計
+- [x] 引用統計
 
 #### C3. 多文件管理
+
 - [ ] 標籤頁切換
 - [ ] 文件列表
 - [ ] 搜尋文件
@@ -150,6 +166,7 @@ Lin, S. (2007). Privatization and deregulation in public transportation.
 ### D. 匯出功能
 
 #### D1. 匯出格式
+
 - [ ] Word (.docx)
 - [ ] PDF
 - [ ] Markdown (.md)
@@ -158,6 +175,7 @@ Lin, S. (2007). Privatization and deregulation in public transportation.
 - [ ] 純文字 (.txt)
 
 #### D2. 匯出選項
+
 - [ ] 包含參考文獻
 - [ ] 包含圖片
 - [ ] 包含頁碼
@@ -165,6 +183,7 @@ Lin, S. (2007). Privatization and deregulation in public transportation.
 - [ ] 自訂樣式
 
 #### D3. 批次匯出
+
 - [ ] 多文件批次匯出
 - [ ] 格式批次轉換
 
@@ -173,23 +192,26 @@ Lin, S. (2007). Privatization and deregulation in public transportation.
 ### E. 進階功能
 
 #### E1. 協作功能
+
 - [ ] 評論功能
 - [ ] 修訂追蹤
 - [ ] 版本控制
 - [ ] 共享文件
 
-#### E2. AI 輔助（未來）
-- [ ] 文法檢查
-- [ ] 改寫建議
-- [ ] 摘要生成
-- [ ] 翻譯功能
+#### E2. AI 輔助（已完成）
+
+- [x] 文法檢查 (Standards Check)
+- [x] 改寫建議 (Writing Aid)
+- [x] 摘要生成 (Summary)
+- [x] 翻譯功能 (Translation)
 
 #### E3. 其他功能
+
 - [ ] 搜尋與取代
 - [ ] 拼字檢查
 - [ ] 字數限制提醒
 - [ ] 閱讀模式
-- [ ] 專注模式
+- [x] 專注模式
 
 ---
 
@@ -198,16 +220,19 @@ Lin, S. (2007). Privatization and deregulation in public transportation.
 ### 方案 A：Markdown 編輯器（推薦 MVP）
 
 **優點：**
+
 - ✅ 快速開發（2-3 天）
 - ✅ 語法簡單
 - ✅ 易於版本控制
 - ✅ 匯出彈性大
 
 **缺點：**
+
 - ⚠️ 需要學習 Markdown 語法
 - ⚠️ 不是所見即所得
 
 **實作重點：**
+
 ```swift
 // 編輯器架構
 WriterView
@@ -226,6 +251,7 @@ WriterView
 ```
 
 **Markdown 格式範例：**
+
 ```markdown
 # 論文標題
 
@@ -247,16 +273,19 @@ WriterView
 ### 方案 B：Rich Text 編輯器
 
 **優點：**
+
 - ✅ 所見即所得
 - ✅ 類似 Word
 - ✅ 格式直覺
 
 **缺點：**
+
 - ⚠️ 開發複雜（1-2 週）
 - ⚠️ 格式儲存複雜
 - ⚠️ 匯出較困難
 
 **實作重點：**
+
 ```swift
 // 使用 NSTextView + NSAttributedString
 WriterView
@@ -269,16 +298,19 @@ WriterView
 ### 方案 C：混合方案
 
 **概念：**
+
 - 底層用 Markdown 儲存
 - 介面用 Rich Text 顯示
 - 兩者即時同步
 
 **優點：**
+
 - ✅ 儲存簡單
 - ✅ 介面友善
 - ✅ 版本控制容易
 
 **缺點：**
+
 - ⚠️ 同步邏輯複雜
 - ⚠️ 開發時間長
 
@@ -287,9 +319,11 @@ WriterView
 ## 📊 開發優先順序
 
 ### Phase 1: MVP（2-3 天）
+
 **目標：** 最基本可用的寫作環境
 
 **必要功能：**
+
 1. ✅ Markdown 編輯器
 2. ✅ 引用插入（Cmd+K）
 3. ✅ 即時預覽
@@ -298,9 +332,11 @@ WriterView
 6. ✅ 自動儲存
 
 ### Phase 2: 增強版（1 週）
+
 **目標：** 完善使用體驗
 
 **新增功能：**
+
 1. 格式工具列
 2. 圖片插入
 3. 表格支援
@@ -308,9 +344,11 @@ WriterView
 5. 字數統計
 
 ### Phase 3: 進階版（2 週）
+
 **目標：** 專業級功能
 
 **新增功能：**
+
 1. Rich Text 編輯（可選）
 2. 協作功能
 3. 版本控制
@@ -351,18 +389,21 @@ WriterView
 ## ❓ 待決定問題
 
 ### 設計問題
+
 1. **編輯器類型？** Markdown vs Rich Text vs 混合
 2. **引用格式？** 預設用 APA 還是讓使用者選？
 3. **儲存位置？** CoreData vs 檔案系統
 4. **多文件？** 標籤頁 vs 獨立視窗
 
 ### 功能問題
+
 1. **圖片支援？** Phase 1 是否需要？
 2. **表格支援？** Phase 1 是否需要？
 3. **協作功能？** 未來才做？
 4. **AI 輔助？** 如何整合？
 
 ### 技術問題
+
 1. **匯出引擎？** 使用什麼套件？
 2. **預覽引擎？** 即時渲染如何實作？
 3. **引用同步？** 編輯器與文獻庫如何同步？
@@ -372,12 +413,14 @@ WriterView
 ## 📚 參考資源
 
 ### 類似專案
+
 - Ulysses（Markdown 編輯器）
 - Bear（筆記應用）
 - Notion（混合編輯器）
 - Typora（Markdown 即時預覽）
 
 ### Swift/SwiftUI 資源
+
 - NSTextView 文檔
 - AttributedString 文檔
 - Markdown 解析器（如 Swift-Markdown）

@@ -117,6 +117,24 @@ struct AICenterView: View {
                 .environmentObject(theme)
                 .environmentObject(viewState)
             
+        case .academicTranslation:
+            if #available(macOS 26.0, *) {
+                AcademicTranslationView()
+                    .environmentObject(theme)
+            } else {
+                Text("此功能需要 macOS 26.0 或更新版本")
+                    .foregroundColor(theme.textMuted)
+            }
+            
+        case .standardsCheck:
+            if #available(macOS 26.0, *) {
+                AcademicStandardsCheckView()
+                    .environmentObject(theme)
+            } else {
+                Text("此功能需要 macOS 26.0 或更新版本")
+                    .foregroundColor(theme.textMuted)
+            }
+            
         case .citationCheck:
             Text("引用檢查功能（開發中）")
                 .foregroundColor(theme.textMuted)
@@ -137,6 +155,8 @@ struct AICenterView: View {
 /// AI 功能類型
 enum AIFeature: String, CaseIterable, Identifiable {
     case recommendations = "智慧推薦"
+    case academicTranslation = "學術翻譯"
+    case standardsCheck = "規範檢查"
     case citationCheck = "引用檢查"
     case structureAnalysis = "結構分析"
     case literatureQA = "文獻問答"
@@ -151,8 +171,12 @@ enum AIFeature: String, CaseIterable, Identifiable {
         switch self {
         case .recommendations:
             return "sparkles"
-        case .citationCheck:
+        case .academicTranslation:
+            return "character.book.closed"
+        case .standardsCheck:
             return "checkmark.seal"
+        case .citationCheck:
+            return "quote.closing"
         case .structureAnalysis:
             return "chart.bar.doc.horizontal"
         case .literatureQA:
@@ -164,6 +188,10 @@ enum AIFeature: String, CaseIterable, Identifiable {
         switch self {
         case .recommendations:
             return "根據您的寫作內容，智慧推薦相關文獻"
+        case .academicTranslation:
+            return "中英文學術表達轉換，保持學術嚴謹性"
+        case .standardsCheck:
+            return "檢查台灣學術規範，包含用語與格式"
         case .citationCheck:
             return "檢查引用品質與相關性，提供改進建議"
         case .structureAnalysis:
@@ -175,8 +203,8 @@ enum AIFeature: String, CaseIterable, Identifiable {
     
     var isAvailable: Bool {
         switch self {
-        case .recommendations:
-            return true  // P0 功能
+        case .recommendations, .academicTranslation, .standardsCheck:
+            return true  // 可用功能
         case .citationCheck, .structureAnalysis:
             return false // 開發中
         case .literatureQA:
@@ -186,7 +214,7 @@ enum AIFeature: String, CaseIterable, Identifiable {
     
     var statusBadge: String {
         switch self {
-        case .recommendations:
+        case .recommendations, .academicTranslation, .standardsCheck:
             return "可用"
         case .citationCheck, .structureAnalysis:
             return "開發中"
@@ -197,7 +225,7 @@ enum AIFeature: String, CaseIterable, Identifiable {
     
     var badgeColor: Color {
         switch self {
-        case .recommendations:
+        case .recommendations, .academicTranslation, .standardsCheck:
             return .green
         case .citationCheck, .structureAnalysis:
             return .orange

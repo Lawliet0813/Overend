@@ -146,6 +146,98 @@ struct AnimationSystem {
     /// 列表項最大交錯動畫數量
     /// 避免列表過長時動畫延遲過久
     static let maxStaggeredItems: Int = 20
+    
+    // MARK: - P2 擴充動畫
+    
+    /// 面板動畫
+    enum Panel {
+        /// 面板滑入
+        static let slideIn: Animation = .spring(response: 0.3, dampingFraction: 0.85)
+        
+        /// 面板滑出
+        static let slideOut: Animation = .easeIn(duration: 0.2)
+        
+        /// 面板淡入
+        static let fadeIn: Animation = .easeIn(duration: 0.15)
+        
+        /// 面板淡出
+        static let fadeOut: Animation = .easeOut(duration: 0.12)
+    }
+    
+    /// 按鈕動畫
+    enum Button {
+        /// 按鈕點擊
+        static let press: Animation = .easeInOut(duration: 0.1)
+        
+        /// 按鈕懸停
+        static let hover: Animation = .easeOut(duration: 0.12)
+        
+        /// 按鈕縮放值
+        static let pressScale: CGFloat = 0.95
+        
+        /// 按鈕懸停縮放值
+        static let hoverScale: CGFloat = 1.02
+    }
+    
+    /// 卡片動畫
+    enum Card {
+        /// 卡片懸停浮起
+        static let lift: Animation = .spring(response: 0.2, dampingFraction: 0.8)
+        
+        /// 卡片選取
+        static let select: Animation = .easeOut(duration: 0.15)
+        
+        /// 卡片出現
+        static let appear: Animation = .spring(response: 0.4, dampingFraction: 0.7)
+    }
+    
+    /// 內容動畫
+    enum Content {
+        /// 內容載入
+        static let load: Animation = .easeOut(duration: 0.3)
+        
+        /// 內容刷新
+        static let refresh: Animation = .easeInOut(duration: 0.25)
+        
+        /// 列表項目出現（staggered）
+        static func staggered(index: Int) -> Animation {
+            .spring(response: 0.35, dampingFraction: 0.8)
+            .delay(Double(index) * 0.05)
+        }
+    }
+    
+    /// Modal 動畫
+    enum Modal {
+        /// Modal 彈出
+        static let present: Animation = .spring(response: 0.35, dampingFraction: 0.85)
+        
+        /// Modal 關閉
+        static let dismiss: Animation = .easeIn(duration: 0.2)
+        
+        /// 背景淡入
+        static let backdropFade: Animation = .easeOut(duration: 0.2)
+    }
+    
+    /// Toast 動畫
+    enum Toast {
+        /// Toast 滑入
+        static let slideIn: Animation = .spring(response: 0.3, dampingFraction: 0.7)
+        
+        /// Toast 滑出
+        static let slideOut: Animation = .easeIn(duration: 0.15)
+    }
+    
+    /// 載入動畫
+    enum Loading {
+        /// 脈動動畫
+        static let pulse: Animation = .easeInOut(duration: 0.8).repeatForever(autoreverses: true)
+        
+        /// 旋轉動畫
+        static let spin: Animation = .linear(duration: 1.0).repeatForever(autoreverses: false)
+        
+        /// 骨架屏閃爍
+        static let shimmer: Animation = .easeInOut(duration: 1.2).repeatForever(autoreverses: true)
+    }
 }
 
 // MARK: - View 擴展

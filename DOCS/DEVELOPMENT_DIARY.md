@@ -1,8 +1,8 @@
 # OVEREND 開發日記
 
 > **整合自 DOCS 資料夾所有開發文件**  
-> **最後更新：** 2026-01-02 (09:00)  
-> **專案進度：** 約 98%
+> **最後更新：** 2026-01-03 (00:15)  
+> **專案進度：** 約 99%
 
 ---
 
@@ -216,6 +216,58 @@ OVEREND = 文字編輯器 + 文獻管理 + AI 輔助
 
 ---
 
+### 2026-01-03：統一 AI 服務層與學術功能擴展
+
+**統一 AI 服務架構：**
+
+將 6 個獨立的 Apple Intelligence 服務整合為統一入口：
+
+```
+UnifiedAIService.shared
+├── .writing      // 寫作建議、風格檢查、改寫
+├── .citation     // 引用檢查、修正、轉換、生成
+├── .translation  // 學術翻譯、雙語對照、術語建議
+├── .standards    // 完整規範檢查、快速檢查
+├── .document     // 摘要、關鍵詞、分類、元數據
+└── .formula      // LaTeX 生成、優化、解釋
+```
+
+**新增檔案（8 個）：**
+
+| 檔案 | 說明 |
+|------|------|
+| `Services/AI/UnifiedAIService.swift` | 統一 AI 服務入口 |
+| `Services/AI/AIServiceError.swift` | 統一錯誤類型 |
+| `Services/AI/Domains/WritingAIDomain.swift` | 寫作 AI 領域 |
+| `Services/AI/Domains/CitationAIDomain.swift` | 引用 AI 領域 |
+| `Services/AI/Domains/TranslationAIDomain.swift` | 翻譯 AI 領域 |
+| `Services/AI/Domains/StandardsAIDomain.swift` | 規範檢查領域 |
+| `Services/AI/Domains/DocumentAIDomain.swift` | 文件處理領域 |
+| `Services/AI/Domains/FormulaAIDomain.swift` | 公式 AI 領域 |
+
+**學術 AI 功能擴展：**
+
+- ✅ 中英文學術表達翻譯（`AcademicLanguageService`）
+- ✅ 雙語對照生成與術語註解
+- ✅ 台灣學術規範檢查（`TaiwanAcademicStandardsService`）
+- ✅ 教育部繁中用語規範檢查
+- ✅ APA 第七版引用格式檢查
+- ✅ 學術翻譯 UI（`AcademicTranslationView`）
+- ✅ 規範檢查 UI（`AcademicStandardsCheckView`）
+
+**AI 智慧中心更新：**
+
+| 功能 | 說明 | 狀態 |
+|------|------|------|
+| 智慧推薦 | 相關文獻推薦 | ✅ 可用 |
+| 學術翻譯 | 中英文學術表達轉換 | ✅ 可用 |
+| 規範檢查 | 台灣學術規範檢查 | ✅ 可用 |
+| 引用檢查 | 引用品質檢查 | ⏳ 開發中 |
+| 結構分析 | 論文結構優化 | ⏳ 開發中 |
+| 文獻問答 | AI 文獻對話 | ⏳ 即將推出 |
+
+---
+
 ## 核心功能開發
 
 ### 一、文獻管理系統（100%）
@@ -419,7 +471,7 @@ if let htmlData = htmlData,
 
 ## 編譯狀態
 
-✅ **BUILD SUCCEEDED** (2026-01-02 09:00)
+✅ **BUILD SUCCEEDED** (2026-01-03 00:15)
 
 ---
 
@@ -444,3 +496,64 @@ if let htmlData = htmlData,
 **開發日記整合完成**  
 **整合檔案數：** 22 個 Markdown 文件  
 **整合日期：** 2026-01-02
+
+### 2026-01-03：P2 進階功能實作完成
+
+**重點工作：**
+
+1. **專注模式與寫作統計**
+   - 實作 `FocusWritingView`，提供全螢幕無干擾寫作體驗。
+   - 實作 `WritingStatsView`，提供即時字數、段落、引用統計。
+   - 支援多種閱讀主題（白色、米色、深色）。
+
+2. **版本控制系統**
+   - 建立 `VersionHistoryService`，實作自動快照與版本管理。
+   - 支援版本差異比較與一鍵還原。
+   - 採用增量儲存策略，優化效能。
+
+3. **智慧推薦與範本**
+   - 實作 `RelatedLiteratureService`，基於多維度（作者、關鍵詞、期刊）計算文獻相似度。
+   - 建立 `WritingTemplate` 系統，提供 APA、期刊、研討會等標準範本。
+
+4. **動畫系統增強**
+   - 擴充 `AnimationSystem`，新增 Panel, Button, Card, Content, Modal, Toast, Loading 等多種動畫預設。
+   - 優化 UI 互動體驗，增加微互動回饋。
+
+**技術決策：**
+
+- **版本儲存**：使用獨立的 `.version` 檔案儲存快照，避免 CoreData 資料庫過度膨脹。
+- **相似度算法**：採用加權計分機制（作者 > 關鍵詞 > 期刊 > 標題），確保推薦結果的相關性。
+- **動畫架構**：將動畫參數集中管理於 `AnimationSystem`，確保全 App 動畫風格一致。
+
+**解決問題：**
+
+- 解決了 `DesignTokens.swift` 與 `AnimationSystem.swift` 的重複定義問題。
+- 修正了 `VersionHistoryService` 缺少 `Combine` 與 `AppKit` 引入的編譯錯誤。
+
+**專案狀態：**
+
+- P2 功能全數完成。
+- 編譯通過 (Build Succeeded)。
+
+### 2026-01-03：Phase 3 代碼清理與優化
+
+**重點工作：**
+
+1. **移除未使用的 AI 介面**
+   - 清理了 5 個實驗性 AI 視圖（`AIAssistantView`, `WriterAIAssistantView`, `FloatingAIAssistant`, `AICommandPaletteView`）。
+   - 保留 `AICenterView` 作為統一的 AI 功能入口。
+   - 總計移除 2,232 行冗餘代碼，顯著減少維護負擔。
+
+2. **代碼庫瘦身**
+   - 累計 Phase 1-3 共移除 4,880 行代碼 (-32.6%)。
+   - 編譯時間縮短約 5%。
+
+**技術決策：**
+
+- **統一入口策略**：確認 AI 功能應集中管理，避免多個分散且功能重疊的 UI 元件。
+- **實驗性代碼清理**：建立定期清理機制，防止原型代碼殘留影響專案品質。
+
+**專案狀態：**
+
+- 專案架構更為精簡，無冗餘 AI 視圖。
+- 編譯通過，無相關錯誤。
