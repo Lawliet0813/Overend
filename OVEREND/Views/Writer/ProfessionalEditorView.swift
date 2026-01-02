@@ -53,6 +53,10 @@ struct ProfessionalEditorView: View {
                     },
                     onInsertCitation: { entry in
                         insertCitation(from: entry)
+                    },
+                    onExitEditor: {
+                        // 返回寫作中心
+                        viewState.mode = .editorList
                     }
                 )
                 .transition(.move(edge: .leading))

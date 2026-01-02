@@ -49,6 +49,7 @@ struct EditorSidebarView: View {
     // 回調
     var onSelectDocument: ((Document) -> Void)?
     var onInsertCitation: ((Entry) -> Void)?
+    var onExitEditor: (() -> Void)?  // 退出編輯器
     
     var body: some View {
         VStack(spacing: 0) {
@@ -74,15 +75,73 @@ struct EditorSidebarView: View {
     // MARK: - 標題區
     
     private var headerView: some View {
-        HStack(spacing: 8) {
-            Text("OVEREND")
-                .font(.system(size: 16, weight: .bold))
-                .foregroundColor(theme.textPrimary)
+        VStack(spacing: 0) {
+            // 首頁按鈕 - 精緻設計
+            Button(action: { onExitEditor?() }) {
+                HStack(spacing: 12) {
+                    // 漸層圖示背景
+                    ZStack {
+                        Circle()
+                            .fill(
+                                LinearGradient(
+                                    colors: [theme.accent, theme.accent.opacity(0.7)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .frame(width: 32, height: 32)
+                        
+                        Image(systemName: "house.fill")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.white)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("返回寫作中心")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundColor(theme.textPrimary)
+                        
+                        Text("退出編輯器")
+                            .font(.system(size: 11))
+                            .foregroundColor(theme.textMuted)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "arrow.left.circle.fill")
+                        .font(.system(size: 18))
+                        .foregroundColor(theme.accent.opacity(0.6))
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(theme.card)
+                        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(theme.border, lineWidth: 1)
+                )
+            }
+            .buttonStyle(.plain)
+            .padding(.horizontal, 12)
+            .padding(.top, 12)
+            .padding(.bottom, 12)
             
-            Spacer()
+            Divider()
+            
+            // 標題
+            HStack(spacing: 8) {
+                Text("OVEREND")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(theme.textPrimary)
+                
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
         .background(theme.sidebar)
     }
     
