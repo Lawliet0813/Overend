@@ -112,7 +112,7 @@ struct MultiPageDocumentView: View {
 
     /// 頁面狀態指示器
     private func pageStateIndicator(for page: PageModel) -> some View {
-        Group {
+        SwiftUI.Group {
             switch page.administrativeState {
             case .cover:
                 Image(systemName: "book.closed.fill")

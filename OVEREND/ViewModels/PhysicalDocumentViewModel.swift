@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import AppKit
+import Combine
 
 /// 物理文檔視圖模型 - 處理跨頁文字流與格式繼承
 class PhysicalDocumentViewModel: ObservableObject {
@@ -166,22 +167,22 @@ class PhysicalDocumentViewModel: ObservableObject {
         if nextPageIndex < pages.count {
             // 下一頁已存在，插入溢出文字到開頭
             if let nextPageData = pages[nextPageIndex].contentData {
-                let mutableText = NSMutableAttributedString(overflowText)
+                let mutableText = NSMutableAttributedString(attributedString: overflowText)
                 if let existingText = try? NSAttributedString(
                     data: nextPageData,
-                    options: [.documentType: NSAttributedString.DocumentType.rtf],
+                    options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.rtf],
                     documentAttributes: nil
                 ) {
                     mutableText.append(existingText)
                 }
                 pages[nextPageIndex].contentData = try? mutableText.data(
                     from: NSRange(location: 0, length: mutableText.length),
-                    documentAttributes: [.documentType: NSAttributedString.DocumentType.rtf]
+                    documentAttributes: [NSAttributedString.DocumentAttributeKey.documentType: NSAttributedString.DocumentType.rtf]
                 )
             } else {
                 pages[nextPageIndex].contentData = try? overflowText.data(
                     from: NSRange(location: 0, length: overflowText.length),
-                    documentAttributes: [.documentType: NSAttributedString.DocumentType.rtf]
+                    documentAttributes: [NSAttributedString.DocumentAttributeKey.documentType: NSAttributedString.DocumentType.rtf]
                 )
             }
         } else {
@@ -189,7 +190,7 @@ class PhysicalDocumentViewModel: ObservableObject {
             let newPage = addPage(after: pageIndex)
             newPage.contentData = try? overflowText.data(
                 from: NSRange(location: 0, length: overflowText.length),
-                documentAttributes: [.documentType: NSAttributedString.DocumentType.rtf]
+                documentAttributes: [NSAttributedString.DocumentAttributeKey.documentType: NSAttributedString.DocumentType.rtf]
             )
         }
     }
@@ -269,7 +270,7 @@ class PhysicalDocumentViewModel: ObservableObject {
             if let data = page.contentData,
                let attrString = try? NSAttributedString(
                 data: data,
-                options: [.documentType: NSAttributedString.DocumentType.rtf],
+                options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.rtf],
                 documentAttributes: nil
                ) {
                 let text = attrString.string
@@ -287,7 +288,7 @@ class PhysicalDocumentViewModel: ObservableObject {
             if let data = page.contentData,
                let attrString = try? NSAttributedString(
                 data: data,
-                options: [.documentType: NSAttributedString.DocumentType.rtf],
+                options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.rtf],
                 documentAttributes: nil
                ) {
                 count += attrString.length

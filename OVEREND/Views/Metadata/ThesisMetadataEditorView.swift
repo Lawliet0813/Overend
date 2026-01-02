@@ -440,65 +440,6 @@ struct KeywordChip: View {
     }
 }
 
-struct FlowLayout: Layout {
-    var spacing: CGFloat = 8
-
-    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        let rows = arrangeSubviews(proposal: proposal, subviews: subviews)
-        let height = rows.reduce(0) { $0 + $1.height + spacing } - spacing
-        return CGSize(width: proposal.width ?? 0, height: height)
-    }
-
-    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        let rows = arrangeSubviews(proposal: proposal, subviews: subviews)
-        var y = bounds.minY
-
-        for row in rows {
-            var x = bounds.minX
-            for (subview, size) in row.items {
-                subview.place(at: CGPoint(x: x, y: y), proposal: ProposedViewSize(size))
-                x += size.width + spacing
-            }
-            y += row.height + spacing
-        }
-    }
-
-    private func arrangeSubviews(proposal: ProposedViewSize, subviews: Subviews) -> [Row] {
-        var rows: [Row] = []
-        var currentRow = Row()
-        let maxWidth = proposal.width ?? .infinity
-
-        for subview in subviews {
-            let size = subview.sizeThatFits(.unspecified)
-
-            if currentRow.width + size.width + spacing > maxWidth, !currentRow.items.isEmpty {
-                rows.append(currentRow)
-                currentRow = Row()
-            }
-
-            currentRow.add(subview: subview, size: size, spacing: spacing)
-        }
-
-        if !currentRow.items.isEmpty {
-            rows.append(currentRow)
-        }
-
-        return rows
-    }
-
-    struct Row {
-        var items: [(LayoutSubview, CGSize)] = []
-        var width: CGFloat = 0
-        var height: CGFloat = 0
-
-        mutating func add(subview: LayoutSubview, size: CGSize, spacing: CGFloat) {
-            items.append((subview, size))
-            width += size.width + (items.count > 1 ? spacing : 0)
-            height = max(height, size.height)
-        }
-    }
-}
-
 struct TagReferenceSection: View {
     let title: String
     let tags: [(String, String)]

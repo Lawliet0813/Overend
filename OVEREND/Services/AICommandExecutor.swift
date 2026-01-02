@@ -7,6 +7,7 @@
 
 import Foundation
 import AppKit
+import Combine
 import FoundationModels
 
 /// AI 服務提供者類型

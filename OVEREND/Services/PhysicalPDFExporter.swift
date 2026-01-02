@@ -60,14 +60,17 @@ class PhysicalPDFExporter {
         // 使用精確的 A4 尺寸（Points）
         let pageRect = CGRect(origin: .zero, size: A4PageSize.sizeInPoints)
 
+        // 創建臨時 PDF 檔案
+        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString + ".pdf")
+
         // 創建 PDF 上下文
         var mediaBox = pageRect
-        guard let context = CGContext(url: URL(fileURLWithPath: NSTemporaryDirectory() + UUID().uuidString + ".pdf") as CFURL, mediaBox: &mediaBox, nil) else {
+        guard let context = CGContext(tempURL as CFURL, mediaBox: &mediaBox, nil) else {
             throw PDFExportError.contextCreationFailed
         }
 
         // 開始頁面
-        context.beginPDFPage(nil)
+        context.beginPDFPage(nil as CFDictionary?)
 
         // 設定座標系（PDF 座標系原點在左下角，需要翻轉）
         context.translateBy(x: 0, y: pageRect.height)
@@ -114,11 +117,14 @@ class PhysicalPDFExporter {
         context.closePDF()
 
         // 創建 PDFPage
-        guard let pdfData = try? Data(contentsOf: context.url as URL),
+        guard let pdfData = try? Data(contentsOf: tempURL),
               let pdfDoc = PDFDocument(data: pdfData),
               let pdfPage = pdfDoc.page(at: 0) else {
             throw PDFExportError.pageCreationFailed
         }
+
+        // 清理臨時檔案
+        try? FileManager.default.removeItem(at: tempURL)
 
         return pdfPage
     }

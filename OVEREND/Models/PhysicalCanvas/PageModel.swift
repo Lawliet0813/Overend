@@ -7,9 +7,10 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 /// 物理長度單位系統
-enum UnitLength {
+enum UnitLength: Equatable {
     case millimeter(Double)
     case centimeter(Double)
     case inch(Double)

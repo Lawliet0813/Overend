@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import UniformTypeIdentifiers
 
 /// 物理編輯器主視圖
 struct PhysicalEditorMainView: View {
@@ -137,7 +138,7 @@ struct PhysicalEditorMainView: View {
     // MARK: - 編輯區域
 
     private var editorArea: some View {
-        Group {
+        SwiftUI.Group {
             if let currentPage = documentViewModel.currentPage {
                 MultiPageDocumentView()
                     .environmentObject(documentViewModel)
@@ -166,7 +167,7 @@ struct PhysicalEditorMainView: View {
     // MARK: - 工具列
 
     private var mainToolbar: some ToolbarContent {
-        Group {
+        SwiftUI.Group {
             ToolbarItemGroup(placement: .primaryAction) {
                 Button(action: { showMetadataEditor.toggle() }) {
                     Label("元數據", systemImage: "info.circle")
