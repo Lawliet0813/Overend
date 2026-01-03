@@ -57,7 +57,9 @@ struct OnlineSearchView: View {
             } else {
                 List(viewModel.results) { result in
                     SearchResultRow(result: result) {
-                        viewModel.importResult(result, to: entryViewModel)
+                        Task {
+                            await viewModel.importResult(result, to: entryViewModel)
+                        }
                         // Optional: Show feedback
                     }
                 }

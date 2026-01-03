@@ -57,6 +57,44 @@ public struct ExtractedDocumentMetadata {
     public var authorsBibTeX: String {
         authors.joined(separator: " and ")
     }
+    
+    /// 計算提取的信心度
+    public var confidence: PDFMetadataConfidence {
+        var score = 0
+        
+        // DOI = 最高分（有 DOI 就能查到完整書目）
+        if doi != nil { score += 40 }
+        
+        // 標題 = 必要（至少要 10 個字才算有效標題）
+        if let titleText = title, titleText.count > 10 {
+            score += 20
+        }
+        
+        // 作者 = 重要
+        if !authors.isEmpty { score += 20 }
+        
+        // 年份 = 重要
+        if year != nil { score += 10 }
+        
+        // 期刊 = 加分
+        if journal != nil { score += 10 }
+        
+        // 根據分數判斷信心度
+        if score >= 70 {
+            return .high
+        } else if score >= 40 {
+            return .medium
+        } else {
+            return .low
+        }
+    }
+}
+
+/// PDF 元數據信心度
+public enum PDFMetadataConfidence {
+    case high    // 高可信度（DOI 查詢或完整資訊）
+    case medium  // 中等可信度（AI 提取到大部分資訊）
+    case low     // 低可信度（僅部分資訊）
 }
 
 // MARK: - 文件處理 AI 領域
@@ -74,7 +112,7 @@ public class DocumentAIDomain {
     
     // MARK: - 生成摘要
     
-    /// 生成文獻摘要
+    /// 生成文獻摘要（使用 Tool Calling）
     /// - Parameters:
     ///   - title: 標題
     ///   - abstract: 原始摘要
@@ -94,24 +132,45 @@ public class DocumentAIDomain {
         service.startProcessing()
         defer { service.endProcessing() }
         
+        var inputText = "標題：\(title)"
+        if let abstract = abstract, !abstract.isEmpty {
+            inputText += "\n原始摘要：\(abstract)"
+        }
+        if let content = content, !content.isEmpty {
+            inputText += "\n內容節錄：\(String(content.prefix(2000)))"
+        }
+        
+        // 策略 1: Tool Calling
+        do {
+            let tool = GenerateSummaryTool()
+            let session = GenerateSummaryTool.createSession(with: tool)
+            
+            let prompt = """
+            請為以下學術文獻生成摘要：
+            
+            \(inputText)
+            """
+            
+            let _ = try await session.respond(to: prompt)
+            
+            if let result = tool.result {
+                print("✅ Tool Calling 摘要生成成功")
+                return result.summary
+            }
+        } catch {
+            print("⚠️ Tool Calling 失敗: \(error.localizedDescription)，降級到 Prompt 方式")
+        }
+        
+        // 策略 2: Prompt 方式降級
         let session = service.createSession()
         
-        var prompt = """
+        let prompt = """
         請為以下學術文獻生成一段簡潔的中文摘要（約 100-150 字）：
         
-        標題：\(title)
+        \(inputText)
+        
+        請用繁體中文回覆，保持學術風格。
         """
-        
-        if let abstract = abstract, !abstract.isEmpty {
-            prompt += "\n原始摘要：\(abstract)"
-        }
-        
-        if let content = content, !content.isEmpty {
-            let truncatedContent = String(content.prefix(2000))
-            prompt += "\n內容節錄：\(truncatedContent)"
-        }
-        
-        prompt += "\n\n請用繁體中文回覆，保持學術風格。"
         
         do {
             let response = try await session.respond(to: prompt)
@@ -123,7 +182,7 @@ public class DocumentAIDomain {
     
     // MARK: - 提取關鍵詞
     
-    /// 從文獻中提取關鍵詞
+    /// 從文獻中提取關鍵詞（使用 Tool Calling）
     /// - Parameters:
     ///   - title: 標題
     ///   - abstract: 摘要
@@ -138,13 +197,36 @@ public class DocumentAIDomain {
         service.startProcessing()
         defer { service.endProcessing() }
         
+        let inputText = "標題：\(title)\n摘要：\(abstract)"
+        
+        // 策略 1: Tool Calling
+        do {
+            let tool = ExtractKeywordsTool()
+            let session = ExtractKeywordsTool.createSession(with: tool)
+            
+            let prompt = """
+            請從以下文獻中提取關鍵詞：
+            
+            \(inputText)
+            """
+            
+            let _ = try await session.respond(to: prompt)
+            
+            if let result = tool.result, !result.keywords.isEmpty {
+                print("✅ Tool Calling 關鍵詞提取成功")
+                return result.keywords
+            }
+        } catch {
+            print("⚠️ Tool Calling 失敗: \(error.localizedDescription)，降級到 Prompt 方式")
+        }
+        
+        // 策略 2: Prompt 方式降級
         let session = service.createSession()
         
         let prompt = """
         請從以下學術文獻中提取 5-8 個關鍵詞，用逗號分隔：
         
-        標題：\(title)
-        摘要：\(abstract)
+        \(inputText)
         
         只回覆關鍵詞，用逗號分隔，不要其他文字。使用繁體中文。
         """
@@ -216,7 +298,7 @@ public class DocumentAIDomain {
     
     // MARK: - 提取 PDF 元數據
     
-    /// 從 PDF 文字中提取元數據
+    /// 從 PDF 文字中提取元數據（使用 Tool Calling）
     /// - Parameter pdfText: PDF 提取的文字
     /// - Returns: 識別出的元數據
     public func extractMetadata(from pdfText: String) async throws -> ExtractedDocumentMetadata {
@@ -229,41 +311,135 @@ public class DocumentAIDomain {
         service.startProcessing()
         defer { service.endProcessing() }
         
-        let session = service.createSession()
-        let truncatedText = String(pdfText.prefix(3000))
+        let cleanedText = sanitizePDFText(pdfText)
+        let truncatedText = String(cleanedText.prefix(4000))
+        
+        // ========================================
+        // 策略 1️⃣: Tool Calling（優先）
+        // ========================================
+        do {
+            let result = try await extractMetadataWithToolCalling(text: truncatedText)
+            if result.hasData {
+                print("✅ Tool Calling 提取成功")
+                return augmentMetadata(result, with: truncatedText)
+            }
+            print("⚠️ Tool Calling 結果不完整，降級到 Prompt 方式")
+        } catch {
+            print("⚠️ Tool Calling 失敗: \(error.localizedDescription)，降級到 Prompt 方式")
+        }
+        
+        // ========================================
+        // 策略 2️⃣: Prompt 方式（降級）
+        // ========================================
+        return try await extractMetadataWithPrompt(text: truncatedText)
+    }
+    
+    // MARK: - Tool Calling 提取
+    
+    /// 使用 Tool Calling 提取元數據
+    private func extractMetadataWithToolCalling(text: String) async throws -> ExtractedDocumentMetadata {
+        let tool = ExtractPDFMetadataTool()
+        let session = ExtractPDFMetadataTool.createSession(with: tool)
         
         let prompt = """
-        請分析以下學術文獻 PDF 的文字內容，提取書目資訊。
-
-        文獻內容：
+        分析以下學術文獻的內容，提取書目資訊後調用 extractPDFMetadata 工具：
+        
         ---
-        \(truncatedText)
+        \(text)
+        ---
+        """
+        
+        let response = try await session.respond(to: prompt)
+        
+        // 檢查工具是否被調用並取得結果
+        if let result = tool.extractedResult {
+            return result
+        }
+        
+        // 如果工具沒有被調用，嘗試解析回應內容
+        throw AIServiceError.processingFailed("Tool was not called by the model")
+    }
+    
+    // MARK: - Prompt 方式提取（降級）
+    
+    /// 使用傳統 Prompt + JSON 解析方式提取元數據
+    private func extractMetadataWithPrompt(text: String) async throws -> ExtractedDocumentMetadata {
+        guard let service = service else {
+            throw AIServiceError.notAvailable
+        }
+        
+        let session = service.createSession()
+        
+        let preDetectedDOI = detectDOI(in: text)
+        let preDetectedYear = detectYear(in: text)
+        let preDetectedTitle = detectTitle(in: text)
+
+        var detectedInfo = ""
+        if let d = preDetectedDOI { detectedInfo += "\n偵測到 DOI：\(d)" }
+        if let y = preDetectedYear { detectedInfo += "\n偵測到年份：\(y)" }
+        if let t = preDetectedTitle { detectedInfo += "\n偵測到可能標題：\(t)" }
+        
+        let prompt = """
+        請分析以下學術文獻 PDF 的文字內容，提取書目資訊，並以『純 JSON』回覆（不要任何解釋、不要包含 ``` 區塊）。
+
+        文獻內容（已截斷）：
+        ---
+        \(text)
         ---
 
-        請以 JSON 格式回覆（不要包含 markdown 程式碼區塊符號```）：
+        附加線索（若與內容矛盾，以內容為準）：
+        \(detectedInfo.isEmpty ? "(無)" : detectedInfo)
+
+        請回覆以下 JSON（鍵名固定，值允許為 null）：
         {
-          "title": null,
-          "authors": [],
-          "year": null,
-          "journal": null,
-          "doi": null,
-          "type": "article"
+          "title": null,          // 完整標題字串
+          "authors": [],          // 作者陣列（每位作者為字串；中文保留原順序；英文建議 "Last, F."）
+          "year": null,           // 四位數年份（如 2024）
+          "journal": null,        // 期刊或出版社
+          "doi": null,            // DOI（標準格式，不含 URL 前綴）
+          "type": "article"      // article/book/inproceedings/thesis/misc
         }
 
-        欄位說明：
-        1. title: 從 PDF 提取的完整標題
-        2. authors: 作者姓名陣列
-        3. year: 出版年份（四位數字）
-        4. journal: 期刊或出版社名稱
-        5. doi: DOI（如有）
-        6. type: article/book/inproceedings/thesis/misc
-
-        只回覆 JSON，不要其他文字。
+        嚴格要求：
+        1. 只回覆上述 JSON 物件。
+        2. authors 必須是字串陣列；若無法確定，回傳空陣列。
+        3. year 必須為四位數字；無法確定則為 null。
+        4. doi 請輸出標準 DOI（例如：10.1145/3368089.3409690），不要包含 https://doi.org/ 或 doi: 前綴。
+        5. type 僅能為 article/book/inproceedings/thesis/misc。
+        6. 請使用繁體中文語境判斷（若可）。
         """
         
         do {
             let response = try await session.respond(to: prompt)
-            return try parseMetadataResponse(response.content)
+            var metadata = try parseMetadataResponse(response.content)
+            metadata = augmentMetadata(metadata, with: text)
+
+            if !metadata.hasData {
+                // Retry once with a stricter prompt and shorter context
+                let retryPrompt = """
+                嚴格只回覆 JSON，不要任何解釋、不要 ``` 區塊。請根據以下內容提取：
+                ---
+                \(String(text.prefix(2000)))
+                ---
+                JSON 模板：
+                {
+                  "title": null,
+                  "authors": [],
+                  "year": null,
+                  "journal": null,
+                  "doi": null,
+                  "type": "article"
+                }
+
+                規則：authors 為字串陣列；year 為四位數；doi 為標準 DOI；type 僅能為 article/book/inproceedings/thesis/misc。
+                """
+                let retryResponse = try await session.respond(to: retryPrompt)
+                var retryMetadata = try parseMetadataResponse(retryResponse.content)
+                retryMetadata = augmentMetadata(retryMetadata, with: text)
+                return retryMetadata
+            }
+
+            return metadata
         } catch let error as AIServiceError {
             throw error
         } catch {
@@ -340,12 +516,25 @@ public class DocumentAIDomain {
             metadata.title = title
         }
         
-        if let authors = json["authors"] as? [String] {
-            metadata.authors = authors.filter { !$0.isEmpty && $0.lowercased() != "null" }
+        if let authorsArray = json["authors"] as? [String] {
+            metadata.authors = authorsArray.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty && $0.lowercased() != "null" }
+        } else if let authorsStr = json["authors"] as? String {
+            let parts = authorsStr
+                .replacingOccurrences(of: ";", with: ",")
+                .components(separatedBy: CharacterSet(charactersIn: "，,、| and "))
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty }
+            metadata.authors = parts
         }
         
-        if let year = json["year"] as? String, year.count == 4 {
-            metadata.year = year
+        if let yearStr = json["year"] as? String {
+            let trimmed = yearStr.trimmingCharacters(in: .whitespacesAndNewlines)
+            if trimmed.count == 4, Int(trimmed) != nil {
+                metadata.year = trimmed
+            } else if let y = extractFourDigitYear(from: trimmed) {
+                metadata.year = y
+            }
         } else if let yearInt = json["year"] as? Int {
             metadata.year = String(yearInt)
         }
@@ -355,7 +544,7 @@ public class DocumentAIDomain {
         }
         
         if let doi = json["doi"] as? String, !doi.isEmpty, doi.lowercased() != "null" {
-            metadata.doi = doi
+            metadata.doi = normalizeDOI(doi)
         }
         
         if let type = json["type"] as? String {
@@ -422,4 +611,93 @@ public class DocumentAIDomain {
         let lines = response.components(separatedBy: .newlines)
         return lines.filter { $0.contains("建議") || $0.contains("可以") || $0.contains("應該") }
     }
+    
+    private func sanitizePDFText(_ text: String) -> String {
+        var t = text
+        // Join hyphenated line breaks (e.g., "exam-\nple" -> "example")
+        t = t.replacingOccurrences(of: "-\n", with: "")
+        // Normalize newlines and spaces
+        t = t.replacingOccurrences(of: "\r", with: "\n")
+        t = t.replacingOccurrences(of: "\n{2,}", with: "\n", options: .regularExpression)
+        t = t.replacingOccurrences(of: "[\t\u{00A0}]", with: " ", options: .regularExpression)
+        t = t.replacingOccurrences(of: " {2,}", with: " ", options: .regularExpression)
+
+        // Remove reference section to reduce noise
+        let cutMarkers = ["\nReferences\n", "\nREFERENCE\n", "\n參考文獻\n", "\n參考資料\n"]
+        for marker in cutMarkers {
+            if let range = t.range(of: marker, options: [.caseInsensitive]) {
+                let prefix = String(t[..<range.lowerBound])
+                if prefix.count > 500 { // keep at least some content
+                    t = prefix
+                }
+                break
+            }
+        }
+        return t.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+    private func detectDOI(in text: String) -> String? {
+        // DOI regex per CrossRef recommendation (simplified)
+        let pattern = #"10\.\d{4,9}/[-._;()/:A-Z0-9]+"#
+        if let range = text.range(of: pattern, options: [.regularExpression, .caseInsensitive]) {
+            let raw = String(text[range])
+            return normalizeDOI(raw)
+        }
+        // Also handle URL form
+        if let range = text.range(of: #"https?://doi\.org/([A-Z0-9./_-]+)"#, options: [.regularExpression, .caseInsensitive]) {
+            let raw = String(text[range])
+            return normalizeDOI(raw)
+        }
+        return nil
+    }
+    
+    private func normalizeDOI(_ doi: String) -> String {
+        var d = doi.trimmingCharacters(in: .whitespacesAndNewlines)
+        d = d.replacingOccurrences(of: "https://doi.org/", with: "", options: .caseInsensitive)
+        d = d.replacingOccurrences(of: "http://doi.org/", with: "", options: .caseInsensitive)
+        d = d.replacingOccurrences(of: "doi:", with: "", options: .caseInsensitive)
+        d = d.trimmingCharacters(in: CharacterSet(charactersIn: "/ "))
+        return d
+    }
+    
+    private func detectYear(in text: String) -> String? {
+        let pattern = #"\b(19\d{2}|20\d{2})\b"#
+        if let range = text.range(of: pattern, options: [.regularExpression]) {
+            return String(text[range])
+        }
+        return nil
+    }
+    
+    private func extractFourDigitYear(from text: String) -> String? {
+        let pattern = #"\b(19\d{2}|20\d{2})\b"#
+        if let range = text.range(of: pattern, options: [.regularExpression]) {
+            return String(text[range])
+        }
+        return nil
+    }
+    
+    private func detectTitle(in text: String) -> String? {
+        // Heuristic: pick the first reasonably long line near the beginning that doesn't look like section headings
+        let lines = text.components(separatedBy: .newlines).prefix(30)
+        let banned = ["abstract", "introduction", "目錄", "摘要", "參考文獻", "references", "contents"]
+        for line in lines {
+            let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
+            if trimmed.count > 10 && trimmed.count < 200 {
+                let lower = trimmed.lowercased()
+                if !banned.contains(where: { lower.contains($0) }) {
+                    return trimmed
+                }
+            }
+        }
+        return nil
+    }
+    
+    private func augmentMetadata(_ metadata: ExtractedDocumentMetadata, with context: String) -> ExtractedDocumentMetadata {
+        var m = metadata
+        if m.doi == nil, let d = detectDOI(in: context) { m.doi = d }
+        if m.year == nil, let y = detectYear(in: context) { m.year = y }
+        if (m.title == nil || (m.title?.count ?? 0) <= 10), let t = detectTitle(in: context) { m.title = t }
+        return m
+    }
 }
+

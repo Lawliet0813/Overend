@@ -9,10 +9,13 @@ import SwiftUI
 import CoreData
 
 /// 智慧文獻推薦視圖
+@available(macOS 26.0, *)
 struct CitationRecommendationView: View {
     @EnvironmentObject var theme: AppTheme
     @EnvironmentObject var viewState: MainViewState
     @Environment(\.managedObjectContext) private var viewContext
+    
+    @StateObject private var aiService = UnifiedAIService.shared
     
     @State private var searchText: String = ""
     @State private var recommendations: [RecommendedEntry] = []
@@ -170,41 +173,16 @@ struct CitationRecommendationView: View {
         
         Task {
             do {
-                // TODO: 實現真正的 AI 推薦邏輯
-                // 暫時使用模擬數據
-                try await Task.sleep(nanoseconds: 2_000_000_000) // 2 秒
+                let results = try await aiService.citation.recommendCitations(for: text)
                 
                 await MainActor.run {
-                    // 模擬推薦結果
-                    recommendations = [
-                        RecommendedEntry(
-                            title: "AI in Education: A Review",
-                            authors: "Smith, J., & Jones, A.",
-                            year: "2023",
-                            relevanceScore: 0.95,
-                            reason: "討論 AI 技術在教育領域的應用，與您的內容高度相關"
-                        ),
-                        RecommendedEntry(
-                            title: "Machine Learning for Academic Writing",
-                            authors: "Chen, L.",
-                            year: "2022",
-                            relevanceScore: 0.87,
-                            reason: "探討機器學習在學術寫作中的輔助角色"
-                        ),
-                        RecommendedEntry(
-                            title: "The Future of Digital Learning",
-                            authors: "Brown, K., et al.",
-                            year: "2024",
-                            relevanceScore: 0.76,
-                            reason: "分析數位學習的未來趨勢與挑戰"
-                        )
-                    ]
+                    recommendations = results
                     isAnalyzing = false
                 }
             } catch {
                 await MainActor.run {
                     isAnalyzing = false
-                    ToastManager.shared.showError("分析失敗")
+                    ToastManager.shared.showError("分析失敗：\(error.localizedDescription)")
                 }
             }
         }
@@ -213,19 +191,12 @@ struct CitationRecommendationView: View {
 
 // MARK: - 推薦的文獻模型
 
-/// 推薦的文獻
-struct RecommendedEntry: Identifiable {
-    let id = UUID()
-    let title: String
-    let authors: String
-    let year: String
-    let relevanceScore: Double
-    let reason: String
-}
+
 
 // MARK: - 推薦卡片
 
 /// 推薦卡片
+@available(macOS 26.0, *)
 struct RecommendationCard: View {
     @EnvironmentObject var theme: AppTheme
     

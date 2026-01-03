@@ -28,10 +28,11 @@ struct NewContentView: View {
     @State private var extractedMetadata: PDFMetadata?
     @State private var currentPDFURL: URL?
     @State private var showAIPreview = false
+    @State private var processingStartTime: Date?
+    @State private var currentExtractionLogs: String = ""
     
     init() {
-        let context = PersistenceController.shared.container.viewContext
-        _libraryVM = StateObject(wrappedValue: LibraryViewModel(context: context))
+        _libraryVM = StateObject(wrappedValue: LibraryViewModel())
     }
     
     /// 是否處於編輯器全螢幕模式
@@ -355,15 +356,29 @@ struct NewContentView: View {
         
         Task {
             for (index, url) in urls.enumerated() {
+                let startTime = Date()
                 do {
                     // 提取元數據
-                    let metadata = await PDFMetadataExtractor.extractMetadata(from: url)
+                    let (metadata, logs) = await PDFMetadataExtractor.extractMetadata(from: url)
                     
                     // 保存到資料庫
                     await MainActor.run {
                         do {
                             try self.savePDFEntry(metadata: metadata, pdfURL: url, library: library)
                             successCount += 1
+                            
+                            // Notion 整合
+                            if NotionConfig.isAutoCreateEnabled {
+                                let duration = Date().timeIntervalSince(startTime)
+                                Task {
+                                    try? await NotionService.shared.createRecord(
+                                        metadata: metadata,
+                                        fileURL: url,
+                                        processingTime: duration,
+                                        logs: logs
+                                    )
+                                }
+                            }
                         } catch {
                             print("保存失敗：\(url.lastPathComponent) - \(error.localizedDescription)")
                             failedCount += 1
@@ -399,16 +414,25 @@ struct NewContentView: View {
     private func extractAndShowMetadata(from url: URL) {
         currentPDFURL = url
         isExtractingMetadata = true
+        processingStartTime = Date()
 
         Task {
             do {
                 // AI 提取元數據
-                let metadata = await PDFMetadataExtractor.extractMetadata(from: url)
+                let (metadata, logs) = await PDFMetadataExtractor.extractMetadata(from: url)
 
                 await MainActor.run {
                     extractedMetadata = metadata
                     isExtractingMetadata = false
                     showAIPreview = true
+                    
+                    // 暫存 logs 以便稍後使用
+                    // 注意：這裡我們需要一個地方暫存 logs，或者直接在這裡發送 Notion 請求（如果不需要用戶確認）
+                    // 但目前的流程是：提取 -> 預覽 -> 用戶確認 -> 保存
+                    // 所以我們需要將 logs 傳遞給 saveAIExtractedEntry
+                    // 為了簡單起見，我們可以將 logs 存儲在一個臨時變量中，或者修改 extractedMetadata 結構（不推薦）
+                    // 這裡我們使用一個 State 變量來存儲當前的 logs
+                    self.currentExtractionLogs = logs
                 }
             } catch {
                 await MainActor.run {
@@ -476,6 +500,20 @@ struct NewContentView: View {
             // 顯示成功提示
             let confidenceText = metadata.confidence == .high ? " (高可信度)" : ""
             ToastManager.shared.showSuccess("成功匯入 PDF\(confidenceText)")
+            
+            // Notion 整合
+            if NotionConfig.isAutoCreateEnabled, let startTime = processingStartTime {
+                let duration = Date().timeIntervalSince(startTime)
+                let logs = self.currentExtractionLogs
+                Task {
+                    try? await NotionService.shared.createRecord(
+                        metadata: metadata,
+                        fileURL: pdfURL,
+                        processingTime: duration,
+                        logs: logs
+                    )
+                }
+            }
 
         } catch {
             ToastManager.shared.showError("保存失敗：\(error.localizedDescription)")

@@ -89,7 +89,7 @@ public class CitationAIDomain {
     
     // MARK: - 檢查引用格式
     
-    /// 檢查引用格式
+    /// 檢查引用格式（使用 Tool Calling）
     /// - Parameters:
     ///   - text: 包含引用的文字
     ///   - style: 引用格式樣式
@@ -107,8 +107,59 @@ public class CitationAIDomain {
         service.startProcessing()
         defer { service.endProcessing() }
         
-        let session = service.createSession()
         let truncatedText = String(text.prefix(4000))
+        
+        // 策略 1: Tool Calling
+        do {
+            let toolStyle: ToolCitationStyle
+            switch style {
+            case .apa7: toolStyle = .apa7
+            case .apa6: toolStyle = .apa6
+            case .chicago: toolStyle = .chicago
+            case .mla: toolStyle = .mla
+            case .ieee: toolStyle = .ieee
+            case .harvard: toolStyle = .harvard
+            }
+            
+            let tool = CheckCitationFormatTool()
+            let session = CheckCitationFormatTool.createSession(with: tool, style: toolStyle)
+            
+            let prompt = """
+            請檢查以下文本的引用格式：
+            
+            ---
+            \(truncatedText)
+            ---
+            """
+            
+            let _ = try await session.respond(to: prompt)
+            
+            if let result = tool.result {
+                print("✅ Tool Calling 引用格式檢查成功")
+                
+                return result.issues.map { issue in
+                    let severity: CitationIssue.Severity
+                    switch issue.severity {
+                    case .error: severity = .error
+                    case .suggestion: severity = .suggestion
+                    default: severity = .warning
+                    }
+                    
+                    return CitationIssue(
+                        original: issue.original,
+                        description: issue.description,
+                        suggestion: issue.suggestion,
+                        severity: severity,
+                        reference: "\(style.displayName) 引用規範"
+                    )
+                }
+            }
+        } catch {
+            print("⚠️ Tool Calling 失敗: \(error.localizedDescription)，降級到 Prompt 方式")
+        }
+        
+        // 策略 2: Prompt 方式降級
+        let session = service.createSession()
         
         let prompt = """
         你是台灣學術引用格式專家。請檢查以下文本的引用格式是否符合 \(style.displayName) 規範。
@@ -352,5 +403,106 @@ public class CitationAIDomain {
                 reference: dict["reference"] as? String
             )
         }
+    }
+    
+    // MARK: - 文獻推薦
+    
+    /// 推薦文獻
+    /// - Parameter text: 相關文本
+    /// - Returns: 推薦文獻列表
+    public func recommendCitations(for text: String) async throws -> [RecommendedEntry] {
+        guard let service = service else {
+            throw AIServiceError.notAvailable
+        }
+        
+        try service.ensureAvailable()
+        guard !text.isEmpty else {
+            throw AIServiceError.emptyInput
+        }
+        
+        service.startProcessing()
+        defer { service.endProcessing() }
+        
+        let session = service.createSession()
+        let truncatedText = String(text.prefix(2000))
+        
+        let prompt = """
+        請根據以下文本內容，推薦 3-5 篇相關的學術文獻。
+        
+        文本：
+        ---
+        \(truncatedText)
+        ---
+        
+        請以 JSON 格式回覆（不要包含 markdown 程式碼區塊符號```）：
+        [
+          {
+            "title": "文獻標題",
+            "authors": "作者",
+            "year": "年份",
+            "relevanceScore": 0.95,
+            "reason": "推薦理由"
+          }
+        ]
+        
+        relevanceScore 範圍為 0.0 到 1.0。
+        """
+        
+        do {
+            let response = try await session.respond(to: prompt)
+            return try parseRecommendationsResponse(response.content)
+        } catch {
+            throw AIServiceError.citationFormatError(error.localizedDescription)
+        }
+    }
+    
+    private func parseRecommendationsResponse(_ response: String) throws -> [RecommendedEntry] {
+        var cleanedResponse = response
+            .replacingOccurrences(of: "```json", with: "")
+            .replacingOccurrences(of: "```", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if let jsonStart = cleanedResponse.firstIndex(of: "["),
+           let jsonEnd = cleanedResponse.lastIndex(of: "]") {
+            cleanedResponse = String(cleanedResponse[jsonStart...jsonEnd])
+        }
+        
+        guard let data = cleanedResponse.data(using: .utf8),
+              let jsonArray = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] else {
+            return []
+        }
+        
+        return jsonArray.compactMap { dict in
+            guard let title = dict["title"] as? String,
+                  let authors = dict["authors"] as? String,
+                  let year = dict["year"] as? String,
+                  let reason = dict["reason"] as? String else { return nil }
+            
+            return RecommendedEntry(
+                title: title,
+                authors: authors,
+                year: year,
+                relevanceScore: dict["relevanceScore"] as? Double ?? 0.5,
+                reason: reason
+            )
+        }
+    }
+}
+
+/// 推薦的文獻
+public struct RecommendedEntry: Identifiable {
+    public let id = UUID()
+    public let title: String
+    public let authors: String
+    public let year: String
+    public let relevanceScore: Double
+    public let reason: String
+    
+    public init(title: String, authors: String, year: String, relevanceScore: Double, reason: String) {
+        self.title = title
+        self.authors = authors
+        self.year = year
+        self.relevanceScore = relevanceScore
+        self.reason = reason
     }
 }

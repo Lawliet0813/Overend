@@ -29,6 +29,11 @@ struct SettingsView: View {
                 .tabItem {
                     Label("校外連線", systemImage: "network")
                 }
+            
+            NotionSettingsView()
+                .tabItem {
+                    Label("Notion", systemImage: "tablecells")
+                }
         }
         .frame(width: 500, height: 400)
     }

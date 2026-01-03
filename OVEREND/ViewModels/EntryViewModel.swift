@@ -2,7 +2,7 @@
 //  EntryViewModel.swift
 //  OVEREND
 //
-//  書目視圖模型
+//  書目視圖模型 - 使用 Repository 層
 //
 
 import Foundation
@@ -17,19 +17,20 @@ class EntryViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
 
-    private let context: NSManagedObjectContext
+    private let repository: EntryRepositoryProtocol
     private var cancellables = Set<AnyCancellable>()
 
     var library: Library? {
         didSet {
-            fetchEntries()
+            Task {
+                await fetchEntries()
+            }
         }
     }
 
-    init(context: NSManagedObjectContext = PersistenceController.shared.container.viewContext) {
-        self.context = context
+    init(repository: EntryRepositoryProtocol? = nil) {
+        self.repository = repository ?? EntryRepository()
         setupSearch()
-        setupContextObserver()
     }
 
     // MARK: - 搜尋設置
@@ -38,25 +39,16 @@ class EntryViewModel: ObservableObject {
         $searchQuery
             .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
             .sink { [weak self] query in
-                self?.performSearch(query: query)
-            }
-            .store(in: &cancellables)
-    }
-    
-    // MARK: - Core Data 監聽
-    
-    private func setupContextObserver() {
-        NotificationCenter.default.publisher(for: .NSManagedObjectContextDidSave, object: context)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                self?.fetchEntries()
+                Task {
+                    await self?.performSearch(query: query)
+                }
             }
             .store(in: &cancellables)
     }
 
     // MARK: - 數據操作
 
-    func fetchEntries() {
+    func fetchEntries() async {
         guard let library = library else {
             entries = []
             filteredEntries = []
@@ -64,47 +56,45 @@ class EntryViewModel: ObservableObject {
         }
 
         isLoading = true
-        entries = Entry.fetchAll(in: library, context: context)
-        filteredEntries = entries
-        isLoading = false
-    }
-
-    func createEntry(citationKey: String, entryType: String, fields: [String: String]) {
-        guard let library = library else { return }
-
-        _ = Entry(
-            context: context,
-            citationKey: citationKey,
-            entryType: entryType,
-            fields: fields,
-            library: library
-        )
+        defer { isLoading = false }
 
         do {
-            try context.save()
-            fetchEntries()
+            entries = try await repository.fetchAll(in: library, sortBy: .updated)
+            filteredEntries = entries
+        } catch {
+            errorMessage = "獲取書目失敗: \(error.localizedDescription)"
+        }
+    }
+
+    func createEntry(citationKey: String, entryType: String, fields: [String: String]) async {
+        guard let library = library else { return }
+
+        do {
+            _ = try await repository.create(
+                citationKey: citationKey,
+                entryType: entryType,
+                fields: fields,
+                library: library
+            )
+            await fetchEntries()
         } catch {
             errorMessage = "創建書目失敗: \(error.localizedDescription)"
         }
     }
 
-    func deleteEntry(_ entry: Entry) {
-        context.delete(entry)
-
+    func deleteEntry(_ entry: Entry) async {
         do {
-            try context.save()
-            fetchEntries()
+            try repository.delete(entry)
+            await fetchEntries()
         } catch {
             errorMessage = "刪除書目失敗: \(error.localizedDescription)"
         }
     }
 
-    func updateEntry(_ entry: Entry, fields: [String: String]) {
-        entry.updateFields(fields)
-
+    func updateEntry(_ entry: Entry, fields: [String: String]) async {
         do {
-            try context.save()
-            fetchEntries()
+            try repository.updateFields(entry, fields: fields)
+            await fetchEntries()
         } catch {
             errorMessage = "更新書目失敗: \(error.localizedDescription)"
         }
@@ -112,13 +102,17 @@ class EntryViewModel: ObservableObject {
 
     // MARK: - 搜尋
 
-    private func performSearch(query: String) {
+    private func performSearch(query: String) async {
         guard let library = library else { return }
 
-        if query.isEmpty {
-            filteredEntries = entries
-        } else {
-            filteredEntries = Entry.search(query: query, in: library, context: context)
+        do {
+            if query.isEmpty {
+                filteredEntries = entries
+            } else {
+                filteredEntries = try await repository.search(query: query, in: library)
+            }
+        } catch {
+            errorMessage = "搜尋失敗: \(error.localizedDescription)"
         }
     }
 }

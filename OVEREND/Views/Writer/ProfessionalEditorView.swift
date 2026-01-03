@@ -26,6 +26,7 @@ struct ProfessionalEditorView: View {
     @State private var showEditorSidebar = true  // 左側邊欄
     @State private var showCitationPanel = true  // 右側參考文獻面板
     @State private var showAICommandPalette = false
+    @State private var showCitationSearch = false // 引用搜尋面板
     @State private var showFormatTemplateSheet = false
     @State private var showExportMenu = false
     @State private var selectedTemplate: FormatTemplate = .nccu
@@ -41,6 +42,9 @@ struct ProfessionalEditorView: View {
     enum EditorMode {
         case physicalCanvas  // Physical Canvas 模式（預設）
         case richText        // 傳統富文本模式
+        case markdown        // Markdown 模式
+        case academic        // 學術模式
+        case wysiwyg         // 所見即所得模式
     }
     
     var body: some View {
@@ -136,6 +140,14 @@ struct ProfessionalEditorView: View {
         .sheet(isPresented: $showFormatTemplateSheet) {
             formatTemplateSheet
         }
+        .background(KeyAwareView { event in
+            // 監聽 Cmd+Shift+C
+            if event.modifierFlags.contains([.command, .shift]) && event.keyCode == 8 { // 8 is 'C'
+                showCitationSearch = true
+                return true
+            }
+            return false
+        })
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ShowAICommandPalette"))) { _ in
             showAICommandPalette = true
         }
@@ -145,17 +157,60 @@ struct ProfessionalEditorView: View {
 
     /// 編輯器內容（根據模式切換）
     private var editorContent: some View {
-        SwiftUI.Group {
-            switch editorMode {
-            case .physicalCanvas:
-                // Physical Canvas 多頁編輯器
-                MultiPageDocumentView()
-                    .environmentObject(canvasViewModel)
-                    .environmentObject(theme)
+        ZStack {
+            SwiftUI.Group {
+                switch editorMode {
+                case .physicalCanvas:
+                    // Physical Canvas 多頁編輯器
+                    MultiPageDocumentView()
+                        .environmentObject(canvasViewModel)
+                        .environmentObject(theme)
 
-            case .richText:
-                // 傳統富文本編輯器
-                legacyEditorCanvas
+                case .richText, .wysiwyg:
+                    // 傳統富文本編輯器
+                    legacyEditorCanvas
+                    
+                case .academic:
+                    // 學術模式編輯器（基於富文本，但有額外功能）
+                    legacyEditorCanvas
+                        .overlay(alignment: .top) {
+                            AcademicEditorToolbar(
+                                onInsertCitation: { showCitationSearch = true },
+                                onInsertFootnote: insertFootnote,
+                                onInsertBibliography: insertBibliography,
+                                onToggleSplitView: { 
+                                    withAnimation {
+                                        showCitationPanel.toggle()
+                                    }
+                                }
+                            )
+                            .padding(.top, 16)
+                        }
+                    
+                case .markdown:
+                    // Markdown 編輯器
+                    Text("Markdown 編輯器（開發中）")
+                        .font(.system(size: 16))
+                        .foregroundColor(theme.textMuted)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(theme.background)
+                }
+            }
+            
+            // 引用搜尋面板（浮動層）
+            if showCitationSearch {
+                Color.black.opacity(0.2)
+                    .edgesIgnoringSafeArea(.all)
+                    .onTapGesture { showCitationSearch = false }
+                
+                CitationSearchPanel(
+                    isPresented: $showCitationSearch,
+                    onSelectEntry: { entry in
+                        insertCitation(from: entry)
+                    }
+                )
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .zIndex(100)
             }
         }
     }
@@ -169,9 +224,13 @@ struct ProfessionalEditorView: View {
                     .tag(EditorMode.physicalCanvas)
                 Label("富文本", systemImage: "doc.richtext")
                     .tag(EditorMode.richText)
+                Label("學術", systemImage: "graduationcap")
+                    .tag(EditorMode.academic)
+                Label("Markdown", systemImage: "text.alignleft")
+                    .tag(EditorMode.markdown)
             }
             .pickerStyle(.segmented)
-            .frame(width: 200)
+            .frame(width: 320)
 
             Divider()
                 .frame(height: 16)
@@ -501,8 +560,8 @@ struct ProfessionalEditorView: View {
 
             Spacer()
 
-            // 編輯模式指示
-            Text(editorMode == .physicalCanvas ? "物理畫布模式" : "富文本模式")
+            // 編輯器模式指示
+            Text(modeName(for: editorMode))
                 .font(.system(size: 12))
                 .foregroundColor(theme.textMuted)
 
@@ -689,6 +748,18 @@ struct ProfessionalEditorView: View {
         ToastManager.shared.showInfo("引用功能整合中：\(citation)")
         scheduleAutoSave()
     }
+    
+    /// 插入註腳
+    private func insertFootnote() {
+        // TODO: 實作註腳插入邏輯
+        ToastManager.shared.showInfo("插入註腳（開發中）")
+    }
+    
+    /// 插入參考文獻列表
+    private func insertBibliography() {
+        // TODO: 實作參考文獻列表生成
+        ToastManager.shared.showInfo("插入參考文獻列表（開發中）")
+    }
 
     /// 格式化作者名稱
     private func formatAuthorShort(_ author: String) -> String {
@@ -838,6 +909,16 @@ struct ProfessionalEditorView: View {
                     continuation.resume(throwing: NSError(domain: "ExportError", code: 2, userInfo: [NSLocalizedDescriptionKey: "PDF 匯出失敗"]))
                 }
             }
+        }
+    }
+    
+    private func modeName(for mode: EditorMode) -> String {
+        switch mode {
+        case .physicalCanvas: return "物理畫布模式"
+        case .richText: return "富文本模式"
+        case .academic: return "學術模式"
+        case .markdown: return "Markdown 模式"
+        case .wysiwyg: return "所見即所得模式"
         }
     }
     

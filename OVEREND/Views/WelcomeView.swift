@@ -151,34 +151,18 @@ struct WelcomeView: View {
         }
     }
     
-    /// 隨機鼓勵語句庫
-    private static let motivationalMessages = [
-        // 正向鼓勵
-        "新的一天，開始創作吧！",
-        "持續專注，靈感不斷～",
-        "今天的寫作進展如何？",
-        "每一個段落都是進步 ✨",
-        "好的開始是成功的一半",
-        "靈感來了擋都擋不住！",
-        "相信自己，你可以的！",
-        "一步一步，穩步前進",
-        "今天也要元氣滿滿唷！",
-        "寫作是思想的對話",
-        // 趣味金句
-        "論文寫完沒？沒關係寫不完我也沒差 😏",
-        "聽說 deadline 是第一生產力？",
-        "又是寫論文的一天呢（微笑）",
-        "咖啡☕ + 靈感💡 = 生產力🚀",
-        "今天不寫，明天也不想寫...",
-        "拖延症患者請點擊開始寫作",
-        "不要問我寫了多少，問我喝了幾杯咖啡",
-        "工作做不完，不如先寫論文？",
-        "寫作時間到！（逃避可恥但有用）",
-        "論文不會自己寫完的，除非...？"
-    ]
-    
+    /// 統計資訊文字
     private var motivationalText: String {
-        Self.motivationalMessages.randomElement() ?? "開始寫作吧！"
+        let docCount = recentDocuments.count
+        let libraryCount = fetchLibraryCount()
+        
+        return "文獻：\(libraryCount) 筆  •  文稿：\(docCount) 篇"
+    }
+    
+    /// 取得文獻庫數量
+    private func fetchLibraryCount() -> Int {
+        let request = NSFetchRequest<Entry>(entityName: "Entry")
+        return (try? viewContext.count(for: request)) ?? 0
     }
     
     // MARK: - 最近的專案
@@ -285,7 +269,7 @@ struct WelcomeView: View {
             QuickActionCard(
                 icon: "books.vertical.fill",
                 title: "文獻管理",
-                subtitle: "管理您的參考文獻庫",
+                subtitle: "\(fetchLibraryCount()) 筆文獻",
                 color: .purple
             ) {
                 viewState.mode = .library
@@ -309,7 +293,7 @@ struct WelcomeView: View {
     private func createNewProject() {
         let newDoc = Document(context: viewContext)
         newDoc.id = UUID()
-        newDoc.title = "未命名寫作專案"
+        newDoc.title = "新建文稿"
         newDoc.createdAt = Date()
         newDoc.updatedAt = Date()
         
@@ -344,7 +328,7 @@ struct ProjectCard: View {
                 }
                 
                 // 標題
-                Text(document.title)
+                Text(document.title ?? "未命名文稿")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(theme.textPrimary)
                     .lineLimit(2)

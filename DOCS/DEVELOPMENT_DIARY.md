@@ -557,3 +557,79 @@ if let htmlData = htmlData,
 
 - 專案架構更為精簡，無冗餘 AI 視圖。
 - 編譯通過，無相關錯誤。
+
+### 2026-01-03 (晚間)：AI 智慧中心內容導入與批次選取功能
+
+**重點工作：**
+
+1. **AI 智慧中心內容導入功能**
+   - 新增 `ContentImportPicker.swift` 共用元件
+   - `LibraryEntryPicker`：從文獻庫導入摘要、筆記或 BibTeX
+   - `DocumentPicker`：從寫作中心導入文稿內容（RTF 轉純文字）
+   - 修改 `AcademicTranslationView.swift` 新增「從文獻庫導入」按鈕
+   - 修改 `AcademicStandardsCheckView.swift` 新增「從寫作中心導入」按鈕
+
+2. **文獻庫與文稿批次選取刪除功能**
+   - `ModernEntryListView.swift`：新增選擇模式、批次操作工具列
+   - `EntryTableRow`：新增複選框支援
+   - `EditorListView.swift`：新增批次操作工具列
+   - `DocumentCardView.swift`：新增複選框覆蓋層與選中邊框
+
+**新增/修改檔案：**
+
+| 檔案 | 說明 |
+|------|------|
+| `Views/AICenter/ContentImportPicker.swift` | 內容導入選擇器 🆕 |
+| `Views/AICenter/AcademicTranslationView.swift` | 新增文獻庫導入 |
+| `Views/AICenter/AcademicStandardsCheckView.swift` | 新增寫作中心導入 |
+| `Views/EntryList/ModernEntryListView.swift` | 批次選取與刪除 |
+| `Views/Writer/EditorListView.swift` | 批次選取與刪除 |
+| `Views/Writer/DocumentCardView.swift` | 選擇模式 UI |
+
+**技術決策：**
+
+- **選擇模式切換**：使用 `isSelectionMode` 狀態控制 UI 切換，避免常駐複選框影響一般操作體驗。
+- **批次刪除確認**：所有批次刪除操作都有確認對話框，防止誤刪。
+
+**專案狀態：**
+
+- 編譯通過 (Build Succeeded)。
+- 功能測試待手動驗證。
+
+### 2026-01-03 (深夜)：AI 工具整合與日誌同步
+
+**重點工作：**
+
+1. **AI 工具全面整合**
+   - 將 P1/P2 開發的 AI 工具正式整合至各個領域服務中 (`Domains`)。
+   - `WritingAIDomain`: 整合 `AnalyzeWritingTool`, `RewriteTextTool`。
+   - `TranslationAIDomain`: 整合 `TranslateAcademicTool`, `SuggestTermTranslationTool`。
+   - `CitationAIDomain`: 整合 `CheckCitationFormatTool`, `GenerateCitationTool`, `ConvertCitationStyleTool`。
+   - `FormulaAIDomain`: 整合 `ExplainFormulaTool`, `GenerateFormulaTool`。
+   - `StandardsAIDomain`: 整合 `CheckAcademicStandardsTool`, `CheckAcademicStyleTool`。
+   - 實作 Tool Calling 失敗時的回退機制 (Fallback Mechanism)，確保功能穩定性。
+
+2. **Notion 日誌同步系統**
+   - 實作 `ExtractionLogger` 類別，詳實記錄 PDF 元數據提取過程。
+   - 更新 `NotionService`，支援將提取日誌同步至 Notion 資料庫。
+   - 在 `PDFMetadataExtractor` 中整合日誌記錄功能。
+
+3. **UI/UX 細節優化**
+   - **批次操作 UI**：優化 `EditorListView` 與 `ModernEntryListView` 的批次操作工具列，增大按鈕尺寸以符合 macOS HIG 規範。
+   - **列表體驗**：實作可排序的表格欄位、側邊欄數量統計、文獻懸停預覽。
+
+**修改檔案：**
+
+| 檔案 | 說明 |
+|------|------|
+| `Services/AI/Domains/*.swift` | 各領域 AI 服務整合工具 |
+| `Services/NotionService.swift` | 支援日誌同步 |
+| `Services/PDFMetadataExtractor.swift` | 整合 ExtractionLogger |
+| `Views/EntryList/ModernEntryListView.swift` | UI 優化 |
+| `Views/Writer/EditorListView.swift` | UI 優化 |
+
+**專案狀態：**
+
+- AI 功能整合度大幅提升，從單純 Prompt 轉向結構化 Tool Calling。
+- 系統可觀測性增強 (Notion Log Sync)。
+- 編譯通過 (Build Succeeded)。

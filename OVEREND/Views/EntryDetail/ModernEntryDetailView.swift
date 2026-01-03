@@ -22,7 +22,7 @@ struct ModernEntryDetailView: View {
     @State private var selectedAttachment: Attachment?
     
     // AI 功能狀態
-    @StateObject private var aiService = AppleAIService.shared
+    @StateObject private var aiService = UnifiedAIService.shared
     @State private var aiSummary: String = ""
     @State private var aiKeywords: [String] = []
     @State private var isGeneratingSummary = false
@@ -49,20 +49,19 @@ struct ModernEntryDetailView: View {
                 
                 if isEditMode {
                     // 編輯模式：AI 提取、取消和儲存按鈕
-                    if aiService.isAvailable {
-                        Button(action: { performAIExtraction() }) {
-                            if isExtractingMetadata {
-                                ProgressView()
-                                    .scaleEffect(0.7)
-                            } else {
-                                Label("AI 提取", systemImage: "sparkles")
-                                    .font(.system(size: 14))
-                            }
+                    // 編輯模式：AI 提取、取消和儲存按鈕
+                    Button(action: { performAIExtraction() }) {
+                        if isExtractingMetadata {
+                            ProgressView()
+                                .scaleEffect(0.7)
+                        } else {
+                            Label("AI 提取", systemImage: "sparkles")
+                                .font(.system(size: 14))
                         }
-                        .buttonStyle(.bordered)
-                        .controlSize(.small)
-                        .disabled(isExtractingMetadata)
                     }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+                    .disabled(isExtractingMetadata)
                     
                     Button("取消") {
                         cancelEdit()
@@ -190,11 +189,7 @@ struct ModernEntryDetailView: View {
                 
                 Spacer()
                 
-                if !aiService.isAvailable {
-                    Text("需要 macOS 15+")
-                        .font(.system(size: 14))
-                        .foregroundColor(theme.textMuted)
-                }
+
             }
             
             // AI 摘要
@@ -206,20 +201,18 @@ struct ModernEntryDetailView: View {
                     
                     Spacer()
                     
-                    if aiService.isAvailable {
-                        Button(action: generateSummary) {
-                            if isGeneratingSummary {
-                                ProgressView()
-                                    .scaleEffect(0.6)
-                            } else {
-                                Label("生成", systemImage: "sparkles")
-                                    .font(.system(size: 14))
-                            }
+                    Button(action: generateSummary) {
+                        if isGeneratingSummary {
+                            ProgressView()
+                                .scaleEffect(0.6)
+                        } else {
+                            Label("生成", systemImage: "sparkles")
+                                .font(.system(size: 14))
                         }
-                        .buttonStyle(.bordered)
-                        .controlSize(.mini)
-                        .disabled(isGeneratingSummary)
                     }
+                    .buttonStyle(.bordered)
+                    .controlSize(.mini)
+                    .disabled(isGeneratingSummary)
                 }
                 
                 if aiSummary.isEmpty {
@@ -249,20 +242,18 @@ struct ModernEntryDetailView: View {
                     
                     Spacer()
                     
-                    if aiService.isAvailable {
-                        Button(action: extractKeywords) {
-                            if isExtractingKeywords {
-                                ProgressView()
-                                    .scaleEffect(0.6)
-                            } else {
-                                Label("提取", systemImage: "tag")
-                                    .font(.system(size: 14))
-                            }
+                    Button(action: extractKeywords) {
+                        if isExtractingKeywords {
+                            ProgressView()
+                                .scaleEffect(0.6)
+                        } else {
+                            Label("提取", systemImage: "tag")
+                                .font(.system(size: 14))
                         }
-                        .buttonStyle(.bordered)
-                        .controlSize(.mini)
-                        .disabled(isExtractingKeywords)
                     }
+                    .buttonStyle(.bordered)
+                    .controlSize(.mini)
+                    .disabled(isExtractingKeywords)
                 }
                 
                 if aiKeywords.isEmpty {
@@ -450,7 +441,7 @@ struct ModernEntryDetailView: View {
                 let abstract = entry.fields["abstract"] ?? ""
                 let content = entry.fields["note"] ?? ""
                 
-                let summary = try await aiService.generateSummary(
+                let summary = try await aiService.document.generateSummary(
                     title: entry.title,
                     abstract: abstract,
                     content: content
@@ -480,7 +471,7 @@ struct ModernEntryDetailView: View {
             do {
                 let abstract = entry.fields["abstract"] ?? entry.title
                 
-                let keywords = try await aiService.extractKeywords(
+                let keywords = try await aiService.document.extractKeywords(
                     title: entry.title,
                     abstract: abstract
                 )
@@ -625,7 +616,7 @@ struct ModernEntryDetailView: View {
                 }
                 
                 // 使用 AI 提取元數據
-                let metadata = try await aiService.extractMetadata(from: pdfText)
+                let metadata = try await aiService.document.extractMetadata(from: pdfText)
                 
                 await MainActor.run {
                     applyExtractedMetadata(metadata)
@@ -727,7 +718,7 @@ struct ModernEntryDetailView: View {
         Task {
             do {
                 let textToAnalyze = "標題: \(title)\n\n摘要: \(abstract)"
-                let metadata = try await aiService.extractMetadata(from: textToAnalyze)
+                let metadata = try await aiService.document.extractMetadata(from: textToAnalyze)
                 
                 await MainActor.run {
                     applyExtractedMetadata(metadata)
@@ -743,7 +734,7 @@ struct ModernEntryDetailView: View {
     }
     
     /// 將提取的元數據應用到編輯欄位
-    private func applyExtractedMetadata(_ metadata: ExtractedMetadata) {
+    private func applyExtractedMetadata(_ metadata: ExtractedDocumentMetadata) {
         var fieldsUpdated = 0
         
         if let title = metadata.title, !title.isEmpty, editedTitle.isEmpty {

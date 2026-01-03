@@ -12,27 +12,28 @@ import SwiftUI
 struct AcademicStandardsCheckView: View {
     @EnvironmentObject var theme: AppTheme
     
-    @StateObject private var service = TaiwanAcademicStandardsService.shared
+    @StateObject private var aiService = UnifiedAIService.shared
     
     // 輸入狀態
     @State private var inputText: String = ""
     @State private var documentTitle: String = ""
-    @State private var documentType: AcademicDocument.DocumentType = .thesis
+    @State private var documentType: DocumentType = .thesis
     
     // 選項狀態
     @State private var checkTerminology: Bool = true
     @State private var checkCitation: Bool = true
     @State private var checkFormat: Bool = true
     @State private var checkStyle: Bool = true
-    @State private var citationStyle: StandardsCheckOptions.CitationStyle = .apa7
+    @State private var citationStyle: CitationStyle = .apa7
     
     // 結果狀態
-    @State private var checkResult: StandardsCheckResult?
-    @State private var selectedIssueType: ComplianceIssueType?
+    @State private var checkResult: ComplianceReport?
+    @State private var selectedIssueType: StandardsIssueType?
     
     // UI 狀態
     @State private var errorMessage: String?
     @State private var showingQuickCheck: Bool = false
+    @State private var showDocumentImport: Bool = false
     
     var body: some View {
         HSplitView {
@@ -71,6 +72,13 @@ struct AcademicStandardsCheckView: View {
             .padding(DesignTokens.Spacing.lg)
         }
         .background(theme.background)
+        .sheet(isPresented: $showDocumentImport) {
+            DocumentPicker { document, content in
+                documentTitle = document.title
+                inputText = content
+            }
+            .environmentObject(theme)
+        }
     }
     
     // MARK: - 文件資訊區
@@ -107,7 +115,7 @@ struct AcademicStandardsCheckView: View {
                         .frame(width: 60, alignment: .leading)
                     
                     Picker("文件類型", selection: $documentType) {
-                        ForEach(AcademicDocument.DocumentType.allCases, id: \.rawValue) { type in
+                        ForEach(DocumentType.allCases, id: \.rawValue) { type in
                             Text(type.displayName).tag(type)
                         }
                     }
@@ -132,6 +140,18 @@ struct AcademicStandardsCheckView: View {
                     .foregroundColor(theme.textPrimary)
                 
                 Spacer()
+                
+                // 從寫作中心導入按鈕
+                Button(action: { showDocumentImport = true }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "square.and.arrow.down")
+                        Text("從寫作中心導入")
+                    }
+                    .font(.system(size: DesignTokens.Typography.caption))
+                    .foregroundColor(theme.accent)
+                }
+                .buttonStyle(.plain)
+                .help("從寫作中心導入文稿內容")
                 
                 Text("\(inputText.count) 字")
                     .font(.system(size: DesignTokens.Typography.caption))
@@ -209,7 +229,7 @@ struct AcademicStandardsCheckView: View {
                     Spacer()
                     
                     Picker("引用格式", selection: $citationStyle) {
-                        ForEach(StandardsCheckOptions.CitationStyle.allCases, id: \.rawValue) { style in
+                        ForEach(CitationStyle.allCases, id: \.rawValue) { style in
                             Text(style.displayName).tag(style)
                         }
                     }
@@ -259,7 +279,7 @@ struct AcademicStandardsCheckView: View {
             // 完整檢查按鈕
             Button(action: performFullCheck) {
                 HStack(spacing: DesignTokens.Spacing.sm) {
-                    if service.isProcessing {
+                    if aiService.isProcessing {
                         ProgressView()
                             .scaleEffect(0.8)
                             .progressViewStyle(CircularProgressViewStyle())
@@ -274,11 +294,11 @@ struct AcademicStandardsCheckView: View {
                 .padding(.vertical, DesignTokens.Spacing.md)
                 .background(
                     RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.medium)
-                        .fill(inputText.isEmpty || service.isProcessing ? theme.textMuted : theme.accent)
+                        .fill(inputText.isEmpty || aiService.isProcessing ? theme.textMuted : theme.accent)
                 )
             }
             .buttonStyle(.plain)
-            .disabled(inputText.isEmpty || service.isProcessing)
+            .disabled(inputText.isEmpty || aiService.isProcessing)
             
             // 快速檢查按鈕
             Button(action: performQuickCheck) {
@@ -300,7 +320,7 @@ struct AcademicStandardsCheckView: View {
                 )
             }
             .buttonStyle(.plain)
-            .disabled(inputText.isEmpty || service.isProcessing)
+            .disabled(inputText.isEmpty || aiService.isProcessing)
         }
     }
     
@@ -326,7 +346,7 @@ struct AcademicStandardsCheckView: View {
                 
                 // 問題列表
                 issuesList(result)
-            } else if service.isProcessing {
+            } else if aiService.isProcessing {
                 // 載入中
                 progressView
             } else {
@@ -361,7 +381,7 @@ struct AcademicStandardsCheckView: View {
         .padding(DesignTokens.Spacing.lg)
     }
     
-    private func resultsSummary(_ result: StandardsCheckResult) -> some View {
+    private func resultsSummary(_ result: ComplianceReport) -> some View {
         HStack(spacing: DesignTokens.Spacing.xl) {
             // 錯誤數量
             summaryCard(
@@ -420,7 +440,7 @@ struct AcademicStandardsCheckView: View {
         }
     }
     
-    private func issueTypeFilter(_ result: StandardsCheckResult) -> some View {
+    private func issueTypeFilter(_ result: ComplianceReport) -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: DesignTokens.Spacing.sm) {
                 // 全部
@@ -432,7 +452,7 @@ struct AcademicStandardsCheckView: View {
                 )
                 
                 // 各類型
-                ForEach(ComplianceIssueType.allCases) { type in
+                ForEach(StandardsIssueType.allCases) { type in
                     let count = result.issuesByType[type]?.count ?? 0
                     if count > 0 {
                         filterButton(
@@ -481,7 +501,7 @@ struct AcademicStandardsCheckView: View {
         .buttonStyle(.plain)
     }
     
-    private func issuesList(_ result: StandardsCheckResult) -> some View {
+    private func issuesList(_ result: ComplianceReport) -> some View {
         let filteredIssues = selectedIssueType == nil 
             ? result.issues 
             : result.issues.filter { $0.type == selectedIssueType }
@@ -499,15 +519,12 @@ struct AcademicStandardsCheckView: View {
     
     private var progressView: some View {
         VStack(spacing: DesignTokens.Spacing.lg) {
-            ProgressView(value: service.progress)
-                .progressViewStyle(.linear)
-                .frame(width: 200)
+            ProgressView()
+                .progressViewStyle(.circular)
             
-            if let checkType = service.currentCheckType {
-                Text("正在檢查：\(checkType.displayName)")
-                    .font(.system(size: DesignTokens.Typography.body))
-                    .foregroundColor(theme.textSecondary)
-            }
+            Text("正在檢查中...")
+                .font(.system(size: DesignTokens.Typography.body))
+                .foregroundColor(theme.textSecondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -565,28 +582,22 @@ struct AcademicStandardsCheckView: View {
         
         Task {
             do {
-                let document = AcademicDocument(
+                let document = CheckDocument(
                     content: inputText,
                     title: documentTitle.isEmpty ? nil : documentTitle,
-                    metadata: AcademicDocument.DocumentMetadata(documentType: documentType)
+                    documentType: documentType
                 )
                 
-                var options = StandardsCheckOptions()
+                var options = UnifiedStandardsCheckOptions()
                 options.checkTerminology = checkTerminology
                 options.checkCitation = checkCitation
                 options.checkFormat = checkFormat
                 options.checkStyle = checkStyle
                 options.citationStyle = citationStyle
                 
-                let issues = try await service.checkTaiwanAcademicStandards(
+                checkResult = try await aiService.standards.checkCompliance(
                     document: document,
                     options: options
-                )
-                
-                checkResult = StandardsCheckResult(
-                    issues: issues,
-                    checkedAt: Date(),
-                    documentTitle: documentTitle.isEmpty ? nil : documentTitle
                 )
             } catch {
                 errorMessage = error.localizedDescription
@@ -603,9 +614,9 @@ struct AcademicStandardsCheckView: View {
         
         Task {
             do {
-                let issues = try await service.quickCheck(text: inputText)
+                let issues = try await aiService.standards.quickCheck(text: inputText)
                 
-                checkResult = StandardsCheckResult(
+                checkResult = ComplianceReport(
                     issues: issues,
                     checkedAt: Date(),
                     documentTitle: nil
@@ -623,7 +634,7 @@ struct AcademicStandardsCheckView: View {
 struct IssueRow: View {
     @EnvironmentObject var theme: AppTheme
     
-    let issue: ComplianceIssue
+    let issue: StandardsIssue
     
     @State private var isExpanded: Bool = false
     
@@ -728,3 +739,4 @@ struct IssueRow: View {
         .animation(.easeInOut(duration: 0.2), value: isExpanded)
     }
 }
+

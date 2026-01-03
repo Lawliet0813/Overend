@@ -122,7 +122,7 @@ public class TranslationAIDomain {
     
     // MARK: - 學術翻譯
     
-    /// 學術翻譯
+    /// 學術翻譯（使用 Tool Calling）
     /// - Parameters:
     ///   - text: 原始文字
     ///   - from: 來源語言
@@ -151,6 +151,38 @@ public class TranslationAIDomain {
         service.startProcessing()
         defer { service.endProcessing() }
         
+        // 策略 1: Tool Calling
+        do {
+            let fromLang: ToolTranslationLanguage = from == .chinese ? .chinese : .english
+            let toLang: ToolTranslationLanguage = to == .chinese ? .chinese : .english
+            
+            let tool = TranslateAcademicTool()
+            let session = TranslateAcademicTool.createSession(with: tool, from: fromLang, to: toLang)
+            
+            var fieldContext = ""
+            if let field = options.field {
+                fieldContext = "（\(field.displayName)領域）"
+            }
+            
+            let prompt = """
+            請翻譯以下學術文本\(fieldContext)：
+            
+            ---
+            \(text)
+            ---
+            """
+            
+            let _ = try await session.respond(to: prompt)
+            
+            if let result = tool.result {
+                print("✅ Tool Calling 翻譯成功")
+                return result.translatedText
+            }
+        } catch {
+            print("⚠️ Tool Calling 失敗: \(error.localizedDescription)，降級到 Prompt 方式")
+        }
+        
+        // 策略 2: Prompt 方式降級
         let session = service.createSession()
         
         var fieldContext = ""

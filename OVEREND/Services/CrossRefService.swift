@@ -2,168 +2,163 @@
 //  CrossRefService.swift
 //  OVEREND
 //
-//  CrossRef API 服務 - 透過 DOI 查詢完整書目資訊
+//  CrossRef API 服務 - 用於 DOI 文獻查詢
 //
 
 import Foundation
 
+enum CrossRefError: Error {
+    case invalidDOI
+    case networkError(Error)
+    case decodingError(Error)
+    case notFound
+}
+
 class CrossRefService {
-    private static let baseURL = "https://api.crossref.org/works/"
+    static let shared = CrossRefService()
     
-    /// 通過 DOI 查詢完整書目資訊
-    static func fetchMetadata(doi: String) async throws -> CrossRefMetadata {
-        // 清理 DOI（移除前綴）
-        let cleanDOI = doi.replacingOccurrences(of: "https://doi.org/", with: "")
-                         .replacingOccurrences(of: "http://dx.doi.org/", with: "")
-                         .replacingOccurrences(of: "doi:", with: "", options: .caseInsensitive)
-                         .trimmingCharacters(in: .whitespacesAndNewlines)
+    private let baseURL = "https://api.crossref.org/works/"
+    
+    /// 透過 DOI 查詢文獻資訊
+    func fetchMetadata(doi: String) async throws -> ImportedEntry {
+        let cleanDOI = doi.trimmingCharacters(in: .whitespacesAndNewlines)
+            .replacingOccurrences(of: "https://doi.org/", with: "")
+            .replacingOccurrences(of: "doi:", with: "")
         
-        // 構建 URL（需要 URL 編碼）
-        guard let encodedDOI = cleanDOI.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed),
-              let url = URL(string: "\(baseURL)\(encodedDOI)") else {
+        guard let url = URL(string: baseURL + cleanDOI) else {
             throw CrossRefError.invalidDOI
         }
         
-        // 設置請求（加上禮貌的 User-Agent）
         var request = URLRequest(url: url)
-        request.setValue("OVEREND/1.0 (mailto:overend@example.com)", forHTTPHeaderField: "User-Agent")
-        request.timeoutInterval = 10
+        request.setValue("OVEREND/1.0 (mailto:support@overend.app)", forHTTPHeaderField: "User-Agent")
         
-        print("📡 查詢 CrossRef API: \(cleanDOI)")
-        
-        // 發送請求
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        // 檢查回應
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw CrossRefError.networkError
-        }
-        
-        print("📊 CrossRef 回應狀態: \(httpResponse.statusCode)")
-        
-        guard httpResponse.statusCode == 200 else {
-            if httpResponse.statusCode == 404 {
-                throw CrossRefError.doiNotFound
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            guard let httpResponse = response as? HTTPURLResponse,
+                  httpResponse.statusCode == 200 else {
+                throw CrossRefError.notFound
             }
-            throw CrossRefError.apiError(statusCode: httpResponse.statusCode)
+            
+            let result = try JSONDecoder().decode(CrossRefResponse.self, from: data)
+            return convertToEntry(result.message)
+            
+        } catch let error as CrossRefError {
+            throw error
+        } catch {
+            throw CrossRefError.networkError(error)
+        }
+    }
+    
+    private func convertToEntry(_ item: CrossRefWork) -> ImportedEntry {
+        var fields: [String: String] = [:]
+        
+        // 標題
+        if let title = item.title?.first {
+            fields["title"] = title
         }
         
-        // 解析 JSON
-        let decoder = JSONDecoder()
-        let result = try decoder.decode(CrossRefResponse.self, from: data)
+        // 作者
+        if let authors = item.author {
+            let authorString = authors.map { "\($0.family ?? ""), \($0.given ?? "")" }.joined(separator: " and ")
+            fields["author"] = authorString
+        }
         
-        print("✅ CrossRef 查詢成功: \(result.message.title?.first ?? "Unknown")")
+        // 年份
+        if let year = item.published?.dateParts?.first?.first {
+            fields["year"] = String(year)
+        }
         
-        return result.message
+        // 期刊/會議名稱
+        if let containerTitle = item.containerTitle?.first {
+            if item.type == "journal-article" {
+                fields["journal"] = containerTitle
+            } else {
+                fields["booktitle"] = containerTitle
+            }
+        }
+        
+        // 卷期頁
+        if let volume = item.volume { fields["volume"] = volume }
+        if let issue = item.issue { fields["number"] = issue }
+        if let page = item.page { fields["pages"] = page }
+        
+        // DOI & URL
+        fields["doi"] = item.DOI
+        fields["url"] = item.URL
+        
+        // 出版商
+        if let publisher = item.publisher {
+            fields["publisher"] = publisher
+        }
+        
+        // 類型轉換
+        let type = mapType(item.type)
+        
+        // 生成簡單 Citation Key
+        let authorKey = item.author?.first?.family ?? "Unknown"
+        let yearKey = fields["year"] ?? "n.d."
+        let citationKey = "\(authorKey)\(yearKey)"
+        
+        return ImportedEntry(type: type, fields: fields, citationKey: citationKey)
+    }
+    
+    private func mapType(_ crossRefType: String) -> String {
+        switch crossRefType {
+        case "journal-article": return "article"
+        case "book-chapter": return "incollection"
+        case "book": return "book"
+        case "proceedings-article": return "inproceedings"
+        case "dissertation": return "phdthesis"
+        default: return "misc"
+        }
     }
 }
 
-// MARK: - Data Models
-
-struct CrossRefResponse: Codable {
-    let status: String
-    let message: CrossRefMetadata
+/// 匯入的文獻資料結構（非 Core Data）
+struct ImportedEntry {
+    let type: String
+    let fields: [String: String]
+    let citationKey: String
 }
 
-struct CrossRefMetadata: Codable {
+// MARK: - CrossRef API Response Models
+
+struct CrossRefResponse: Codable {
+    let message: CrossRefWork
+}
+
+struct CrossRefWork: Codable {
     let title: [String]?
     let author: [CrossRefAuthor]?
     let published: CrossRefDate?
     let containerTitle: [String]?
+    let type: String
+    let DOI: String?
+    let URL: String?
     let volume: String?
     let issue: String?
     let page: String?
     let publisher: String?
-    let type: String?
-    let DOI: String?
     
     enum CodingKeys: String, CodingKey {
         case title
         case author
-        case published = "published-print"
+        case published = "published-print" // 優先使用印刷日期
         case containerTitle = "container-title"
+        case type
+        case DOI
+        case URL
         case volume
         case issue
         case page
         case publisher
-        case type
-        case DOI
-    }
-    
-    // 備用：如果沒有 published-print，嘗試其他日期欄位
-    struct DynamicCodingKeys: CodingKey {
-        var stringValue: String
-        var intValue: Int?
-        
-        init?(stringValue: String) {
-            self.stringValue = stringValue
-        }
-        
-        init?(intValue: Int) {
-            return nil
-        }
-    }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        title = try container.decodeIfPresent([String].self, forKey: .title)
-        author = try container.decodeIfPresent([CrossRefAuthor].self, forKey: .author)
-        containerTitle = try container.decodeIfPresent([String].self, forKey: .containerTitle)
-        volume = try container.decodeIfPresent(String.self, forKey: .volume)
-        issue = try container.decodeIfPresent(String.self, forKey: .issue)
-        page = try container.decodeIfPresent(String.self, forKey: .page)
-        publisher = try container.decodeIfPresent(String.self, forKey: .publisher)
-        type = try container.decodeIfPresent(String.self, forKey: .type)
-        DOI = try container.decodeIfPresent(String.self, forKey: .DOI)
-        
-        // 嘗試多個日期欄位
-        if let pub = try? container.decodeIfPresent(CrossRefDate.self, forKey: .published) {
-            published = pub
-        } else {
-            // 嘗試其他日期欄位
-            let dynamicContainer = try decoder.container(keyedBy: DynamicCodingKeys.self)
-            if let key = DynamicCodingKeys(stringValue: "published-online"),
-               let pub = try? dynamicContainer.decodeIfPresent(CrossRefDate.self, forKey: key) {
-                published = pub
-            } else if let key = DynamicCodingKeys(stringValue: "created"),
-                      let pub = try? dynamicContainer.decodeIfPresent(CrossRefDate.self, forKey: key) {
-                published = pub
-            } else {
-                published = nil
-            }
-        }
     }
 }
 
 struct CrossRefAuthor: Codable {
     let given: String?
     let family: String?
-    
-    var fullName: String {
-        if let given = given, let family = family {
-            return "\(family) \(given)"
-        } else if let family = family {
-            return family
-        } else if let given = given {
-            return given
-        } else {
-            return "Unknown"
-        }
-    }
-    
-    var chineseName: String {
-        // 如果是中文名字，使用不同格式
-        if let family = family, let given = given {
-            // 檢查是否為中文
-            let isChinese = family.range(of: "[\u{4E00}-\u{9FFF}]", options: .regularExpression) != nil
-            if isChinese {
-                return "\(family)\(given)" // 中文不加空格
-            }
-            return "\(family) \(given)"
-        }
-        return fullName
-    }
 }
 
 struct CrossRefDate: Codable {
@@ -171,41 +166,5 @@ struct CrossRefDate: Codable {
     
     enum CodingKeys: String, CodingKey {
         case dateParts = "date-parts"
-    }
-    
-    var year: String? {
-        guard let parts = dateParts?.first,
-              !parts.isEmpty else {
-            return nil
-        }
-        return String(parts[0])
-    }
-    
-    var fullDate: String? {
-        guard let parts = dateParts?.first,
-              parts.count >= 3 else {
-            return nil
-        }
-        return "\(parts[0])-\(String(format: "%02d", parts[1]))-\(String(format: "%02d", parts[2]))"
-    }
-}
-
-enum CrossRefError: Error {
-    case invalidDOI
-    case apiError(statusCode: Int)
-    case networkError
-    case doiNotFound
-    
-    var localizedDescription: String {
-        switch self {
-        case .invalidDOI:
-            return "無效的 DOI"
-        case .apiError(let code):
-            return "API 錯誤 (狀態碼: \(code))"
-        case .networkError:
-            return "網路錯誤"
-        case .doiNotFound:
-            return "DOI 不存在"
-        }
     }
 }

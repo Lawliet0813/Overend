@@ -52,57 +52,50 @@ struct LaTeXFormulaSheet: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     // AI 智慧生成（新功能！）
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            Image(systemName: "sparkles")
-                                .foregroundColor(theme.accent)
-                            Text("AI 智慧生成")
-                                .font(.headline)
-                                .foregroundColor(theme.textPrimary)
-                            Spacer()
-                            if AppleAIService.shared.isAvailable {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundColor(.green)
-                                    .help("Apple Intelligence 可用")
-                            } else {
-                                Image(systemName: "exclamationmark.triangle.fill")
-                                    .foregroundColor(.orange)
-                                    .help("Apple Intelligence 不可用")
+                    if #available(macOS 26.0, *) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack {
+                                Image(systemName: "sparkles")
+                                    .foregroundColor(theme.accent)
+                                Text("AI 智慧生成")
+                                    .font(.headline)
+                                    .foregroundColor(theme.textPrimary)
+                                Spacer()
                             }
-                        }
 
-                        HStack(spacing: 8) {
-                            TextField("描述公式（例如：「畢氏定理」）", text: $aiDescription)
-                                .textFieldStyle(.roundedBorder)
-                                .font(.system(size: 15))
+                            HStack(spacing: 8) {
+                                TextField("描述公式（例如：「畢氏定理」）", text: $aiDescription)
+                                    .textFieldStyle(.roundedBorder)
+                                    .font(.system(size: 15))
 
-                            Button(action: generateWithAI) {
-                                HStack(spacing: 4) {
-                                    if isGenerating {
-                                        ProgressView()
-                                            .scaleEffect(0.6)
-                                    } else {
-                                        Image(systemName: "wand.and.stars")
+                                Button(action: generateWithAI) {
+                                    HStack(spacing: 4) {
+                                        if isGenerating {
+                                            ProgressView()
+                                                .scaleEffect(0.6)
+                                        } else {
+                                            Image(systemName: "wand.and.stars")
+                                        }
+                                        Text("生成")
                                     }
-                                    Text("生成")
+                                    .font(.caption)
                                 }
-                                .font(.caption)
+                                .buttonStyle(.borderedProminent)
+                                .disabled(aiDescription.isEmpty || isGenerating)
                             }
-                            .buttonStyle(.borderedProminent)
-                            .disabled(aiDescription.isEmpty || isGenerating || !AppleAIService.shared.isAvailable)
+
+                            Text("提示：用自然語言描述公式，AI 會自動轉換為 LaTeX")
+                                .font(.caption)
+                                .foregroundColor(theme.textMuted)
                         }
-
-                        Text("提示：用自然語言描述公式，AI 會自動轉換為 LaTeX")
-                            .font(.caption)
-                            .foregroundColor(theme.textMuted)
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(theme.accentLight)
+                        )
+                        
+                        Divider()
                     }
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(theme.accentLight)
-                    )
-
-                    Divider()
 
                     // 快速模板
                     VStack(alignment: .leading, spacing: 8) {
@@ -252,26 +245,30 @@ struct LaTeXFormulaSheet: View {
 
     /// AI 生成公式
     private func generateWithAI() {
-        isGenerating = true
-        errorMessage = nil
+        if #available(macOS 26.0, *) {
+            isGenerating = true
+            errorMessage = nil
 
-        Task {
-            do {
-                let latex = try await AILatexGenerator.generateFormula(from: aiDescription)
+            Task {
+                do {
+                    let latex = try await UnifiedAIService.shared.formula.generateLatex(from: aiDescription)
 
-                await MainActor.run {
-                    formulaText = "$\(latex)$"
-                    isGenerating = false
+                    await MainActor.run {
+                        formulaText = "$\(latex)$"
+                        isGenerating = false
 
-                    // 自動預覽
-                    renderPreview()
-                }
-            } catch {
-                await MainActor.run {
-                    isGenerating = false
-                    errorMessage = "AI 生成失敗：\(error.localizedDescription)"
+                        // 自動預覽
+                        renderPreview()
+                    }
+                } catch {
+                    await MainActor.run {
+                        isGenerating = false
+                        errorMessage = "AI 生成失敗：\(error.localizedDescription)"
+                    }
                 }
             }
+        } else {
+            errorMessage = "AI 功能僅支援 macOS 26.0 或以上版本"
         }
     }
 }

@@ -12,23 +12,24 @@ import SwiftUI
 struct AcademicTranslationView: View {
     @EnvironmentObject var theme: AppTheme
     
-    @StateObject private var service = AcademicLanguageService.shared
+    @StateObject private var aiService = UnifiedAIService.shared
     
     // 輸入狀態
     @State private var inputText: String = ""
-    @State private var sourceLanguage: AcademicLanguage = .chinese
-    @State private var targetLanguage: AcademicLanguage = .english
+    @State private var sourceLanguage: TranslationLanguage = .chinese
+    @State private var targetLanguage: TranslationLanguage = .english
     @State private var preserveStyle: Bool = true
-    @State private var selectedField: AcademicField?
+    @State private var selectedField: AcademicFieldType?
     
     // 輸出狀態
     @State private var translatedText: String = ""
-    @State private var bilingualResult: BilingualResult?
+    @State private var bilingualResult: BilingualTranslationResult?
     @State private var showBilingual: Bool = false
     
     // UI 狀態
     @State private var errorMessage: String?
     @State private var showCopiedToast: Bool = false
+    @State private var showLibraryImport: Bool = false
     
     var body: some View {
         ScrollView {
@@ -62,6 +63,12 @@ struct AcademicTranslationView: View {
                 copiedToastView
             }
         }
+        .sheet(isPresented: $showLibraryImport) {
+            LibraryEntryPicker { content in
+                inputText = content
+            }
+            .environmentObject(theme)
+        }
     }
     
     // MARK: - 語言選擇區
@@ -75,7 +82,7 @@ struct AcademicTranslationView: View {
                     .foregroundColor(theme.textMuted)
                 
                 Picker("來源語言", selection: $sourceLanguage) {
-                    ForEach(AcademicLanguage.allCases) { lang in
+                    ForEach(TranslationLanguage.allCases) { lang in
                         Text(lang.displayName).tag(lang)
                     }
                 }
@@ -103,7 +110,7 @@ struct AcademicTranslationView: View {
                     .foregroundColor(theme.textMuted)
                 
                 Picker("目標語言", selection: $targetLanguage) {
-                    ForEach(AcademicLanguage.allCases) { lang in
+                    ForEach(TranslationLanguage.allCases) { lang in
                         Text(lang.displayName).tag(lang)
                     }
                 }
@@ -137,6 +144,18 @@ struct AcademicTranslationView: View {
                     .foregroundColor(theme.textPrimary)
                 
                 Spacer()
+                
+                // 從文獻庫導入按鈕
+                Button(action: { showLibraryImport = true }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "square.and.arrow.down")
+                        Text("從文獻庫導入")
+                    }
+                    .font(.system(size: DesignTokens.Typography.caption))
+                    .foregroundColor(theme.accent)
+                }
+                .buttonStyle(.plain)
+                .help("從文獻庫導入摘要或筆記")
                 
                 Text("\(inputText.count) 字")
                     .font(.system(size: DesignTokens.Typography.caption))
@@ -190,9 +209,9 @@ struct AcademicTranslationView: View {
                         .foregroundColor(theme.accent)
                     
                     Picker("學科領域", selection: $selectedField) {
-                        Text("通用").tag(nil as AcademicField?)
-                        ForEach(AcademicField.allCases) { field in
-                            Text(field.displayName).tag(field as AcademicField?)
+                        Text("通用").tag(nil as AcademicFieldType?)
+                        ForEach(AcademicFieldType.allCases) { field in
+                            Text(field.displayName).tag(field as AcademicFieldType?)
                         }
                     }
                     .pickerStyle(.menu)
@@ -214,7 +233,7 @@ struct AcademicTranslationView: View {
             // 翻譯按鈕
             Button(action: translateText) {
                 HStack(spacing: DesignTokens.Spacing.sm) {
-                    if service.isProcessing {
+                    if aiService.isProcessing {
                         ProgressView()
                             .scaleEffect(0.8)
                             .progressViewStyle(CircularProgressViewStyle())
@@ -229,16 +248,16 @@ struct AcademicTranslationView: View {
                 .padding(.vertical, DesignTokens.Spacing.md)
                 .background(
                     RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.medium)
-                        .fill(inputText.isEmpty || service.isProcessing ? theme.textMuted : theme.accent)
+                        .fill(inputText.isEmpty || aiService.isProcessing ? theme.textMuted : theme.accent)
                 )
             }
             .buttonStyle(.plain)
-            .disabled(inputText.isEmpty || service.isProcessing)
+            .disabled(inputText.isEmpty || aiService.isProcessing)
             
             // 雙語對照按鈕
             Button(action: generateBilingual) {
                 HStack(spacing: DesignTokens.Spacing.sm) {
-                    if service.isProcessing && showBilingual {
+                    if aiService.isProcessing && showBilingual {
                         ProgressView()
                             .scaleEffect(0.8)
                             .progressViewStyle(CircularProgressViewStyle())
@@ -261,7 +280,7 @@ struct AcademicTranslationView: View {
                 )
             }
             .buttonStyle(.plain)
-            .disabled(inputText.isEmpty || service.isProcessing)
+            .disabled(inputText.isEmpty || aiService.isProcessing)
             
             Spacer()
             
@@ -324,7 +343,7 @@ struct AcademicTranslationView: View {
     
     // MARK: - 雙語對照視圖
     
-    private func bilingualView(_ result: BilingualResult) -> some View {
+    private func bilingualView(_ result: BilingualTranslationResult) -> some View {
         VStack(spacing: DesignTokens.Spacing.md) {
             // 原文
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
@@ -485,11 +504,11 @@ struct AcademicTranslationView: View {
         
         Task {
             do {
-                var options = TranslationOptions()
+                var options = AcademicTranslationOptions()
                 options.preserveStyle = preserveStyle
-                options.fieldContext = selectedField
+                options.field = selectedField
                 
-                translatedText = try await service.translateAcademicExpression(
+                translatedText = try await aiService.translation.translateAcademic(
                     text: inputText,
                     from: sourceLanguage,
                     to: targetLanguage,
@@ -509,7 +528,7 @@ struct AcademicTranslationView: View {
         
         Task {
             do {
-                bilingualResult = try await service.generateBilingualComparison(
+                bilingualResult = try await aiService.translation.generateBilingual(
                     text: inputText,
                     sourceLanguage: sourceLanguage
                 )

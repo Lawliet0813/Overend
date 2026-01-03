@@ -23,6 +23,11 @@ struct EditorListView: View {
     @State private var showNewDocumentSheet = false
     @State private var newDocumentTitle = ""
     
+    // 批次選取狀態
+    @State private var isSelectionMode: Bool = false
+    @State private var selectedDocumentIDs: Set<UUID> = []
+    @State private var showBatchDeleteConfirm: Bool = false
+    
     let columns = [
         GridItem(.adaptive(minimum: 260, maximum: 320), spacing: 24)
     ]
@@ -40,20 +45,38 @@ struct EditorListView: View {
                         // 標題與統計
                         headerSection
 
+                        // 批次操作工具列
+                        batchOperationToolbar
+                        
                         // 文稿網格
                         LazyVGrid(columns: columns, spacing: 24) {
-                            // 新增文稿按鈕卡片
-                            newDocumentCard
+                            // 新增文稿按鈕卡片（非選擇模式時顯示）
+                            if !isSelectionMode {
+                                newDocumentCard
+                            }
 
                             // 現有文稿卡片
                             ForEach(documents) { document in
-                                DocumentCardView(document: document) {
-                                    withAnimation(AnimationSystem.Easing.spring) {
-                                        viewState.openDocument(document)
+                                DocumentCardView(
+                                    document: document,
+                                    isSelectionMode: isSelectionMode,
+                                    isSelected: selectedDocumentIDs.contains(document.id),
+                                    onTap: {
+                                        if isSelectionMode {
+                                            toggleSelection(document)
+                                        } else {
+                                            withAnimation(AnimationSystem.Easing.spring) {
+                                                viewState.openDocument(document)
+                                            }
+                                        }
+                                    },
+                                    onToggleSelection: {
+                                        toggleSelection(document)
+                                    },
+                                    onDelete: {
+                                        deleteDocument(document)
                                     }
-                                } onDelete: {
-                                    deleteDocument(document)
-                                }
+                                )
                                 .environmentObject(theme)
                             }
                         }
@@ -112,6 +135,165 @@ struct EditorListView: View {
             }
             .padding(.horizontal, DesignTokens.Spacing.xl)
             .padding(.top, DesignTokens.Spacing.lg)
+        }
+    }
+    
+    // MARK: - 批次操作工具列
+    
+    private var batchOperationToolbar: some View {
+        HStack(spacing: DesignTokens.Spacing.lg) {
+            if isSelectionMode {
+                // 全選/取消全選按鈕 - 遵循 44pt 最小觸控區域
+                Button(action: toggleSelectAll) {
+                    HStack(spacing: 8) {
+                        Image(systemName: selectedDocumentIDs.count == documents.count ? "checkmark.circle.fill" : "circle")
+                            .font(.system(size: 18, weight: .medium))
+                        Text(selectedDocumentIDs.count == documents.count ? "取消全選" : "全選")
+                            .font(.system(size: 15, weight: .medium))
+                    }
+                    .foregroundColor(theme.accent)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(theme.accentLight)
+                    )
+                }
+                .buttonStyle(.plain)
+                .frame(minHeight: 44)
+                
+                // 已選取數量標籤
+                Text("已選取 \(selectedDocumentIDs.count) 項")
+                    .font(.system(size: 15, weight: .medium))
+                    .foregroundColor(theme.textMuted)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(theme.card)
+                    )
+                
+                Spacer()
+                
+                // 刪除按鈕 - 遵循 44pt 最小觸控區域
+                if !selectedDocumentIDs.isEmpty {
+                    Button(action: { showBatchDeleteConfirm = true }) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "trash")
+                                .font(.system(size: 16, weight: .medium))
+                            Text("刪除選取項目")
+                                .font(.system(size: 15, weight: .semibold))
+                        }
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(theme.destructive)
+                        )
+                        .shadow(color: theme.destructive.opacity(0.3), radius: 4, x: 0, y: 2)
+                    }
+                    .buttonStyle(.plain)
+                    .frame(minHeight: 44)
+                }
+                
+                // 完成按鈕 - 遵循 44pt 最小觸控區域
+                Button(action: exitSelectionMode) {
+                    Text("完成")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(theme.accent)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(theme.accent, lineWidth: 1.5)
+                        )
+                }
+                .buttonStyle(.plain)
+                .frame(minHeight: 44)
+            } else {
+                Spacer()
+                
+                // 進入選取模式按鈕 - 遵循 44pt 最小觸控區域
+                Button(action: { isSelectionMode = true }) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "checkmark.circle")
+                            .font(.system(size: 18, weight: .medium))
+                        Text("選取")
+                            .font(.system(size: 15, weight: .medium))
+                    }
+                    .foregroundColor(theme.accent)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(theme.accentLight)
+                    )
+                }
+                .buttonStyle(.plain)
+                .frame(minHeight: 44)
+            }
+        }
+        .padding(.horizontal, DesignTokens.Spacing.xl)
+        .padding(.vertical, DesignTokens.Spacing.md)
+        .background(theme.sidebar.opacity(0.5))
+        .alert("確定刪除 \(selectedDocumentIDs.count) 份文稿？", isPresented: $showBatchDeleteConfirm) {
+            Button("取消", role: .cancel) {}
+            Button("刪除", role: .destructive) {
+                batchDeleteDocuments()
+            }
+        } message: {
+            Text("此操作將刪除所有選取的文稿，無法還原。")
+        }
+    }
+    
+    // MARK: - 批次操作方法
+    
+    private func toggleSelection(_ document: Document) {
+        if selectedDocumentIDs.contains(document.id) {
+            selectedDocumentIDs.remove(document.id)
+        } else {
+            selectedDocumentIDs.insert(document.id)
+        }
+    }
+    
+    private func toggleSelectAll() {
+        if selectedDocumentIDs.count == documents.count {
+            selectedDocumentIDs.removeAll()
+        } else {
+            selectedDocumentIDs = Set(documents.map { $0.id })
+        }
+    }
+    
+    private func exitSelectionMode() {
+        isSelectionMode = false
+        selectedDocumentIDs.removeAll()
+    }
+    
+    private func batchDeleteDocuments() {
+        let deleteCount = selectedDocumentIDs.count
+        
+        // 先收集要刪除的文稿，避免在迭代過程中修改集合
+        let documentsToDelete = documents.filter { selectedDocumentIDs.contains($0.id) }
+        
+        // 使用 performAndWait 確保在主執行緒上同步執行
+        viewContext.performAndWait {
+            for document in documentsToDelete {
+                viewContext.delete(document)
+            }
+            
+            do {
+                try viewContext.save()
+            } catch {
+                print("批次刪除文稿失敗：\(error)")
+                viewContext.rollback()
+            }
+        }
+        
+        // 在主執行緒上更新 UI
+        DispatchQueue.main.async {
+            ToastManager.shared.showSuccess("已刪除 \(deleteCount) 份文稿")
+            self.exitSelectionMode()
         }
     }
 

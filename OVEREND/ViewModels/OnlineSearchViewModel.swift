@@ -38,7 +38,7 @@ class OnlineSearchViewModel: ObservableObject {
         isLoading = false
     }
     
-    func importResult(_ result: SearchResult, to entryViewModel: EntryViewModel) {
+    func importResult(_ result: SearchResult, to entryViewModel: EntryViewModel) async {
         // Convert SearchResult to Entry fields
         var fields: [String: String] = [
             "title": result.title,
@@ -47,15 +47,15 @@ class OnlineSearchViewModel: ObservableObject {
             "journal": result.publication,
             "url": result.url ?? ""
         ]
-        
+
         if let doi = result.doi {
             fields["doi"] = doi
         }
-        
+
         // Generate a simple citation key
         let key = generateCitationKey(result)
-        
-        entryViewModel.createEntry(citationKey: key, entryType: "article", fields: fields)
+
+        await entryViewModel.createEntry(citationKey: key, entryType: "article", fields: fields)
     }
     
     private func generateCitationKey(_ result: SearchResult) -> String {

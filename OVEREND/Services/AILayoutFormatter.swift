@@ -11,6 +11,7 @@ import FoundationModels
 
 /// AI 智慧排版服務
 @available(macOS 26.0, *)
+@MainActor
 class AILayoutFormatter {
 
     /// 排版類型
@@ -35,7 +36,7 @@ class AILayoutFormatter {
     ///   - type: 排版類型
     /// - Returns: 排版結果
     static func format(text: NSAttributedString, type: FormattingType) async throws -> FormattingResult {
-        guard AppleAIService.shared.isAvailable else {
+        guard UnifiedAIService.shared.isAvailable else {
             throw NSError(domain: "AILayoutFormatter", code: -1, userInfo: [
                 NSLocalizedDescriptionKey: "Apple Intelligence 不可用"
             ])
@@ -46,18 +47,7 @@ class AILayoutFormatter {
         // 根據類型建構提示詞
         let prompt = buildPrompt(for: type, with: plainText)
 
-        let session: LanguageModelSession?
-        if #available(macOS 26.0, *) {
-            session = LanguageModelSession()
-        } else {
-            session = nil
-        }
-
-        guard let session else {
-            throw NSError(domain: "AILayoutFormatter", code: -2, userInfo: [
-                NSLocalizedDescriptionKey: "需要 macOS 26 或更新版本才能使用 Apple Intelligence 排版"
-            ])
-        }
+        let session = UnifiedAIService.shared.createSession()
 
         let response = try await session.respond(to: prompt)
         let responseText = response.content
@@ -74,50 +64,7 @@ class AILayoutFormatter {
 
     /// 自動修正引用格式（APA 第 7 版）
     static func fixCitations(in text: NSAttributedString) async throws -> NSAttributedString {
-        guard AppleAIService.shared.isAvailable else {
-            throw NSError(domain: "AILayoutFormatter", code: -1, userInfo: [
-                NSLocalizedDescriptionKey: "Apple Intelligence 不可用"
-            ])
-        }
-
-        let plainText = text.string
-
-        let prompt = """
-        請將以下文字中的引用格式修正為 APA 第 7 版格式。
-
-        **APA 7 引用規則：**
-        1. 文內引用：(作者姓氏, 年份)
-        2. 多位作者：
-           - 2 位：(Smith & Jones, 2020)
-           - 3 位以上：(Smith et al., 2020)
-        3. 直接引用：(Smith, 2020, p. 123)
-        4. 同一作者多篇：(Smith, 2019, 2020)
-
-        **參考文獻格式：**
-        期刊文章：作者 (年份). 文章標題. *期刊名稱*, *卷號*(期號), 頁碼. DOI
-
-        書籍：作者 (年份). *書名*. 出版社.
-
-        請保持原文其他內容不變，只修正引用格式。
-        """
-
-        let session: LanguageModelSession?
-        if #available(macOS 26.0, *) {
-            session = LanguageModelSession()
-        } else {
-            session = nil
-        }
-
-        guard let session else {
-            throw NSError(domain: "AILayoutFormatter", code: -2, userInfo: [
-                NSLocalizedDescriptionKey: "需要 macOS 26 或更新版本才能使用 Apple Intelligence 修正引用格式"
-            ])
-        }
-
-        let response = try await session.respond(to: prompt)
-        let responseText = response.content
-
-        return NSAttributedString(string: responseText)
+        return try await UnifiedAIService.shared.citation.fixFormat(text: text, style: .apa7)
     }
 
     /// 自動調整段落間距與對齊
@@ -156,7 +103,7 @@ class AILayoutFormatter {
 
     /// 智慧標題層級調整
     static func adjustHeadingLevels(in text: NSAttributedString) async throws -> NSAttributedString {
-        guard AppleAIService.shared.isAvailable else {
+        guard UnifiedAIService.shared.isAvailable else {
             throw NSError(domain: "AILayoutFormatter", code: -1, userInfo: [
                 NSLocalizedDescriptionKey: "Apple Intelligence 不可用"
             ])
@@ -176,18 +123,7 @@ class AILayoutFormatter {
         請回傳調整建議。
         """
 
-        let session: LanguageModelSession?
-        if #available(macOS 26.0, *) {
-            session = LanguageModelSession()
-        } else {
-            session = nil
-        }
-
-        guard let session else {
-            throw NSError(domain: "AILayoutFormatter", code: -2, userInfo: [
-                NSLocalizedDescriptionKey: "需要 macOS 26 或更新版本才能使用 Apple Intelligence 調整標題層級"
-            ])
-        }
+        let session = UnifiedAIService.shared.createSession()
 
         let response = try await session.respond(to: prompt)
         let responseText = response.content

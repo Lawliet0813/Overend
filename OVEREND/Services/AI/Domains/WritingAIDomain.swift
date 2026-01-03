@@ -129,7 +129,7 @@ public class WritingAIDomain {
     
     // MARK: - 寫作建議
     
-    /// 取得寫作建議
+    /// 取得寫作建議（使用 Tool Calling）
     /// - Parameters:
     ///   - text: 要檢查的文字
     ///   - options: 檢查選項
@@ -147,8 +147,70 @@ public class WritingAIDomain {
         service.startProcessing()
         defer { service.endProcessing() }
         
-        let session = service.createSession()
         let truncatedText = String(text.prefix(3000))
+        
+        // 策略 1: Tool Calling
+        do {
+            let tool = AnalyzeWritingTool()
+            let session = AnalyzeWritingTool.createSession(with: tool, academicMode: options.academicMode)
+            
+            let prompt = """
+            請分析以下\(options.academicMode ? "學術" : "")寫作內容：
+            
+            ---
+            \(truncatedText)
+            ---
+            """
+            
+            let _ = try await session.respond(to: prompt)
+            
+            if let result = tool.result {
+                print("✅ Tool Calling 寫作分析成功")
+                
+                // 轉換結果
+                let grammarIssues = result.grammarIssues.map { issue in
+                    GrammarIssue(
+                        original: issue.original,
+                        suggestion: issue.suggestion,
+                        explanation: issue.explanation
+                    )
+                }
+                
+                let styleIssues = result.styleIssues.map { issue in
+                    let severity: StyleIssue.IssueSeverity
+                    switch issue.severity {
+                    case .high: severity = .high
+                    case .low: severity = .low
+                    default: severity = .medium
+                    }
+                    return StyleIssue(
+                        original: issue.original,
+                        suggestion: issue.suggestion,
+                        reason: issue.explanation,
+                        severity: severity
+                    )
+                }
+                
+                let logicIssues = result.logicIssues.map { issue in
+                    LogicIssue(
+                        description: issue.original,
+                        suggestion: issue.suggestion
+                    )
+                }
+                
+                return WritingSuggestions(
+                    grammarIssues: grammarIssues,
+                    styleIssues: styleIssues,
+                    logicIssues: logicIssues,
+                    overallFeedback: result.overallFeedback
+                )
+            }
+        } catch {
+            print("⚠️ Tool Calling 失敗: \(error.localizedDescription)，降級到 Prompt 方式")
+        }
+        
+        // 策略 2: Prompt 方式降級
+        let session = service.createSession()
         
         let prompt = """
         請審閱以下\(options.academicMode ? "學術" : "")寫作內容，並提供改進建議。

@@ -43,7 +43,8 @@ struct NewSidebarView: View {
                     SidebarButton(
                         icon: "books.vertical",
                         title: "全部文獻",
-                        isSelected: viewState.activeSidebarItem == .allEntries
+                        isSelected: viewState.activeSidebarItem == .allEntries,
+                        badge: libraryVM.totalEntryCount > 0 ? libraryVM.totalEntryCount : nil
                     ) {
                         viewState.showLibrary()
                     }
@@ -63,6 +64,7 @@ struct NewSidebarView: View {
                     ) {
                         viewState.showAICenter()
                     }
+
 
                     // 智能過濾區塊
                     sectionHeader("智能過濾")
@@ -331,9 +333,10 @@ struct SidebarButton: View {
     let theme = AppTheme()
     let viewState = MainViewState()
     let context = PersistenceController.preview.container.viewContext
-    let libraryVM = LibraryViewModel(context: context)
-    
-    return NewSidebarView(libraryVM: libraryVM)
+    let repository = LibraryRepository(context: context)
+    let libraryVM = LibraryViewModel(repository: repository)
+
+    NewSidebarView(libraryVM: libraryVM)
         .environmentObject(theme)
         .environmentObject(viewState)
         .frame(height: 500)
@@ -382,7 +385,9 @@ struct NewLibrarySheet: View {
     private func createLibrary() {
         let trimmed = libraryName.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return }
-        libraryVM.createLibrary(name: trimmed)
-        dismiss()
+        Task {
+            await libraryVM.createLibrary(name: trimmed)
+            dismiss()
+        }
     }
 }

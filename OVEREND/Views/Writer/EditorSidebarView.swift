@@ -45,6 +45,9 @@ struct EditorSidebarView: View {
     // 側邊欄狀態
     @State private var expandedSections: Set<EditorSidebarSection> = [.projects]
     @State private var searchText = ""
+    @State private var showDOIImportSheet = false
+    @State private var doiInput = ""
+    @State private var isImporting = false
     
     // 回調
     var onSelectDocument: ((Document) -> Void)?
@@ -70,6 +73,9 @@ struct EditorSidebarView: View {
         }
         .frame(minWidth: 200, idealWidth: 240, maxWidth: 280)
         .background(theme.sidebar)
+        .sheet(isPresented: $showDOIImportSheet) {
+            doiImportSheet
+        }
     }
     
     // MARK: - 標題區
@@ -282,6 +288,20 @@ struct EditorSidebarView: View {
             )
             .padding(.bottom, 6)
             
+            // 工具列
+            HStack {
+                Button(action: { showDOIImportSheet = true }) {
+                    Label("DOI 匯入", systemImage: "arrow.down.doc")
+                        .font(.system(size: 11))
+                }
+                .buttonStyle(.plain)
+                .foregroundColor(theme.accent)
+                
+                Spacer()
+            }
+            .padding(.horizontal, 8)
+            .padding(.bottom, 6)
+            
             // 文獻列表
             let filteredEntries = filterEntries()
             ForEach(filteredEntries.prefix(15), id: \.id) { entry in
@@ -409,6 +429,79 @@ struct EditorSidebarView: View {
                 expandedSections.remove(section)
             } else {
                 expandedSections.insert(section)
+            }
+        }
+    }
+    
+    // MARK: - DOI 匯入 Sheet
+    
+    private var doiImportSheet: some View {
+        VStack(spacing: 20) {
+            Text("從 DOI 匯入文獻")
+                .font(.headline)
+                .foregroundColor(theme.textPrimary)
+            
+            TextField("輸入 DOI (例如: 10.1038/s41586-020-2649-2)", text: $doiInput)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .frame(width: 300)
+            
+            if isImporting {
+                ProgressView("匯入中...")
+            }
+            
+            HStack {
+                Button("取消") {
+                    showDOIImportSheet = false
+                    doiInput = ""
+                }
+                .keyboardShortcut(.cancelAction)
+                
+                Button("匯入") {
+                    importDOI()
+                }
+                .keyboardShortcut(.defaultAction)
+                .disabled(doiInput.isEmpty || isImporting)
+            }
+        }
+        .padding(24)
+        .background(theme.card)
+    }
+    
+    private func importDOI() {
+        guard !doiInput.isEmpty else { return }
+        
+        isImporting = true
+        
+        Task {
+            do {
+                let entry = try await CrossRefService.shared.fetchMetadata(doi: doiInput)
+                
+                await MainActor.run {
+                    // 儲存到 Core Data
+                    let newEntry = Entry(context: viewContext)
+                    newEntry.id = UUID()
+                    newEntry.citationKey = entry.citationKey
+                    newEntry.entryType = entry.type
+                    newEntry.fields = entry.fields
+                    newEntry.createdAt = Date()
+                    newEntry.updatedAt = Date()
+                    
+                    do {
+                        try viewContext.save()
+                        ToastManager.shared.showSuccess("成功匯入文獻")
+                        showDOIImportSheet = false
+                        doiInput = ""
+                    } catch {
+                        ToastManager.shared.showError("儲存失敗：\(error.localizedDescription)")
+                    }
+                    
+                    isImporting = false
+                }
+            } catch {
+                await MainActor.run {
+                    ToastManager.shared.showError("匯入失敗：\(error.localizedDescription)")
+                    isImporting = false
+                }
             }
         }
     }

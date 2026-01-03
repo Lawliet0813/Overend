@@ -113,9 +113,14 @@ struct AICenterView: View {
     private func featureDetailView(for feature: AIFeature) -> some View {
         switch feature {
         case .recommendations:
-            CitationRecommendationView()
-                .environmentObject(theme)
-                .environmentObject(viewState)
+            if #available(macOS 26.0, *) {
+                CitationRecommendationView()
+                    .environmentObject(theme)
+                    .environmentObject(viewState)
+            } else {
+                Text("此功能需要 macOS 26.0 或更新版本")
+                    .foregroundColor(theme.textMuted)
+            }
             
         case .academicTranslation:
             if #available(macOS 26.0, *) {

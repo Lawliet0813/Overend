@@ -2,7 +2,7 @@
 //  LibraryViewModel.swift
 //  OVEREND
 //
-//  文獻庫視圖模型
+//  文獻庫視圖模型 - 使用 Repository 層
 //
 
 import Foundation
@@ -16,63 +16,73 @@ class LibraryViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
 
-    private let context: NSManagedObjectContext
+    private let repository: LibraryRepositoryProtocol
 
-    init(context: NSManagedObjectContext = PersistenceController.shared.container.viewContext) {
-        self.context = context
-        fetchLibraries()
+    init(repository: LibraryRepositoryProtocol? = nil) {
+        self.repository = repository ?? LibraryRepository()
+        Task {
+            await fetchLibraries()
+        }
     }
 
     // MARK: - 數據操作
 
-    func fetchLibraries() {
+    func fetchLibraries() async {
         isLoading = true
-        libraries = Library.fetchAll(in: context)
-        isLoading = false
+        defer { isLoading = false }
 
-        // 如果沒有庫，創建默認庫
-        if libraries.isEmpty {
-            createDefaultLibrary()
+        do {
+            libraries = try await repository.fetchAll()
+
+            // 如果沒有庫，創建默認庫
+            if libraries.isEmpty {
+                await createDefaultLibrary()
+            }
+        } catch {
+            errorMessage = "獲取文獻庫失敗: \(error.localizedDescription)"
         }
     }
 
-    func createLibrary(name: String, colorHex: String? = nil) {
-        let library = Library(context: context, name: name)
-        library.colorHex = colorHex
-
+    func createLibrary(name: String, colorHex: String? = nil) async {
         do {
-            try context.save()
-            fetchLibraries()
+            let library = try await repository.create(name: name, isDefault: false)
+            if let colorHex = colorHex {
+                try repository.update(library, name: nil, colorHex: colorHex)
+            }
+            await fetchLibraries()
         } catch {
-            errorMessage = "創建庫失敗: \\(error.localizedDescription)"
+            errorMessage = "創建庫失敗: \(error.localizedDescription)"
         }
     }
 
-    func deleteLibrary(_ library: Library) {
-        context.delete(library)
-
+    func deleteLibrary(_ library: Library) async {
         do {
-            try context.save()
-            fetchLibraries()
+            try repository.delete(library)
+            await fetchLibraries()
         } catch {
-            errorMessage = "刪除庫失敗: \\(error.localizedDescription)"
+            errorMessage = "刪除庫失敗: \(error.localizedDescription)"
         }
     }
 
-    func updateLibrary(_ library: Library, name: String, colorHex: String? = nil) {
-        library.update(name: name, colorHex: colorHex)
-
+    func updateLibrary(_ library: Library, name: String, colorHex: String? = nil) async {
         do {
-            try context.save()
-            fetchLibraries()
+            try repository.update(library, name: name, colorHex: colorHex)
+            await fetchLibraries()
         } catch {
-            errorMessage = "更新庫失敗: \\(error.localizedDescription)"
+            errorMessage = "更新庫失敗: \(error.localizedDescription)"
         }
     }
 
     // MARK: - 輔助方法
 
-    private func createDefaultLibrary() {
-        createLibrary(name: "我的文獻庫")
+    private func createDefaultLibrary() async {
+        await createLibrary(name: "我的文獻庫")
+    }
+    
+    // MARK: - 統計屬性
+    
+    /// 所有文獻總數
+    var totalEntryCount: Int {
+        libraries.reduce(0) { $0 + $1.entryCount }
     }
 }
