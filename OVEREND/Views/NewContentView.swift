@@ -55,7 +55,7 @@ struct NewContentView: View {
         HStack(spacing: 0) {
             // 側邊欄 - 使用 Liquid Glass 效果（起始頁和編輯器全螢幕模式時隱藏）
             if !isInEditorFullMode && !isInWelcomeMode {
-                NewSidebarView(libraryVM: libraryVM)
+                MainSidebarView(libraryVM: libraryVM)
                     .environmentObject(theme)
                     .environmentObject(viewState)
                     .frame(width: 220)
