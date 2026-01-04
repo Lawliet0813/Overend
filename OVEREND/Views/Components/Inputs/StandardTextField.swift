@@ -253,14 +253,12 @@ struct SearchField: View {
 }
 
 #Preview("Dark Mode") {
+    @Previewable @State var username = ""
+    @Previewable @State var search = ""
+    @Previewable @State var errorText = "test"
     let theme = AppTheme()
-    theme.isDarkMode = true
 
-    @State var username = ""
-    @State var search = ""
-    @State var errorText = "test"
-
-    return VStack(spacing: 24) {
+    VStack(spacing: 24) {
         StandardTextField(placeholder: "使用者名稱", text: $username, icon: "person")
             .environmentObject(theme)
 

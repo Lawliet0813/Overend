@@ -24,6 +24,7 @@ public class Entry: NSManagedObject, Identifiable {
     @NSManaged public var groups: Set<Group>?
     @NSManaged public var attachments: Set<Attachment>?
     @NSManaged public var tags: Set<Tag>?
+    @NSManaged public var extractionLog: ExtractionLog?  // AI 提取日誌
 
     // MARK: - 計算屬性
 
@@ -64,6 +65,18 @@ public class Entry: NSManagedObject, Identifiable {
     var publication: String {
         fields["journal"] ?? fields["booktitle"] ?? fields["publisher"] ?? ""
     }
+    
+    /// 星號標記狀態（儲存在 fields 中）
+    var isStarred: Bool {
+        get {
+            fields["_starred"] == "true"
+        }
+        set {
+            var newFields = fields
+            newFields["_starred"] = newValue ? "true" : "false"
+            self.fields = newFields
+        }
+    }
 
     // MARK: - 便利初始化
 
@@ -96,11 +109,130 @@ public class Entry: NSManagedObject, Identifiable {
         for element in fields.sorted(by: { $0.key < $1.key }) {
             let key = element.key
             let value = element.value
-            bib += "  \(key) = {\(value)},\n"
+            // 排除內部使用的欄位
+            if !key.hasPrefix("_") {
+                bib += "  \(key) = {\(value)},\n"
+            }
         }
 
         bib += "}\n"
         return bib
+    }
+    
+    // MARK: - 引用格式生成
+    
+    /// 生成 APA 7th Edition 引用格式
+    func generateAPACitation() -> String {
+        let authorList = formatAuthorsAPA(author)
+        let yearStr = year.isEmpty ? "n.d." : "(\(year))"
+        let titleStr = title
+        let journalStr = fields["journal"] ?? ""
+        let volumeStr = fields["volume"] ?? ""
+        let issueStr = fields["number"] ?? ""
+        let pagesStr = fields["pages"] ?? ""
+        let doiStr = fields["doi"] ?? ""
+        
+        var citation = "\(authorList) \(yearStr). \(titleStr)."
+        
+        if !journalStr.isEmpty {
+            citation += " *\(journalStr)*"
+            if !volumeStr.isEmpty {
+                citation += ", *\(volumeStr)*"
+                if !issueStr.isEmpty {
+                    citation += "(\(issueStr))"
+                }
+            }
+            if !pagesStr.isEmpty {
+                citation += ", \(pagesStr)"
+            }
+            citation += "."
+        }
+        
+        if !doiStr.isEmpty {
+            let doiURL = doiStr.hasPrefix("http") ? doiStr : "https://doi.org/\(doiStr)"
+            citation += " \(doiURL)"
+        }
+        
+        return citation
+    }
+    
+    /// 生成 MLA 9th Edition 引用格式
+    func generateMLACitation() -> String {
+        let authorList = formatAuthorsMLA(author)
+        let titleStr = "\"\(title).\""
+        let journalStr = fields["journal"] ?? ""
+        let volumeStr = fields["volume"] ?? ""
+        let issueStr = fields["number"] ?? ""
+        let yearStr = year
+        let pagesStr = fields["pages"] ?? ""
+        let doiStr = fields["doi"] ?? ""
+        
+        var citation = "\(authorList) \(titleStr)"
+        
+        if !journalStr.isEmpty {
+            citation += " *\(journalStr)*"
+            if !volumeStr.isEmpty {
+                citation += ", vol. \(volumeStr)"
+            }
+            if !issueStr.isEmpty {
+                citation += ", no. \(issueStr)"
+            }
+            if !yearStr.isEmpty {
+                citation += ", \(yearStr)"
+            }
+            if !pagesStr.isEmpty {
+                citation += ", pp. \(pagesStr)"
+            }
+            citation += "."
+        }
+        
+        if !doiStr.isEmpty {
+            let doiURL = doiStr.hasPrefix("http") ? doiStr : "https://doi.org/\(doiStr)"
+            citation += " \(doiURL)."
+        }
+        
+        return citation
+    }
+    
+    /// 格式化作者列表（APA 格式）
+    private func formatAuthorsAPA(_ authorString: String) -> String {
+        let authors = authorString.components(separatedBy: " and ")
+        if authors.isEmpty { return "Unknown" }
+        
+        let formatted = authors.enumerated().map { index, author -> String in
+            let parts = author.trimmingCharacters(in: .whitespaces).components(separatedBy: ", ")
+            if parts.count >= 2 {
+                // 格式：姓, 名首字母.
+                let lastName = parts[0]
+                let firstName = parts[1]
+                let initials = firstName.components(separatedBy: " ").map { String($0.prefix(1)) + "." }.joined(separator: " ")
+                return "\(lastName), \(initials)"
+            }
+            return author
+        }
+        
+        if formatted.count == 1 {
+            return formatted[0]
+        } else if formatted.count == 2 {
+            return "\(formatted[0]), & \(formatted[1])"
+        } else {
+            let allButLast = formatted.dropLast().joined(separator: ", ")
+            return "\(allButLast), & \(formatted.last!)"
+        }
+    }
+    
+    /// 格式化作者列表（MLA 格式）
+    private func formatAuthorsMLA(_ authorString: String) -> String {
+        let authors = authorString.components(separatedBy: " and ")
+        if authors.isEmpty { return "Unknown." }
+        
+        if authors.count == 1 {
+            return "\(authors[0].trimmingCharacters(in: .whitespaces))."
+        } else if authors.count == 2 {
+            return "\(authors[0].trimmingCharacters(in: .whitespaces)), and \(authors[1].trimmingCharacters(in: .whitespaces))."
+        } else {
+            return "\(authors[0].trimmingCharacters(in: .whitespaces)), et al."
+        }
     }
 
     /// 更新字段並重新生成 BibTeX

@@ -465,6 +465,46 @@ extension RichTextEditor {
         let attrs = getCurrentAttributes(from: textView)
         return attrs[.underlineStyle] != nil
     }
+    
+    // MARK: - 對齊功能別名
+    
+    /// 套用對齊方式
+    static func applyAlignment(_ alignment: NSTextAlignment, to textView: NSTextView) {
+        setAlignment(alignment, in: textView)
+    }
+    
+    // MARK: - 列表功能
+    
+    /// 插入項目符號列表
+    static func insertBulletList(in textView: NSTextView) {
+        toggleBulletList(in: textView)
+    }
+    
+    /// 插入編號列表
+    static func insertNumberedList(in textView: NSTextView) {
+        guard let textStorage = textView.textStorage else { return }
+        let range = textView.selectedRange()
+        let paragraphRange = (textStorage.string as NSString).paragraphRange(for: range)
+        
+        textStorage.beginEditing()
+        
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.headIndent = 20
+        paragraphStyle.firstLineHeadIndent = 0
+        paragraphStyle.tabStops = [NSTextTab(textAlignment: .left, location: 20)]
+        
+        textStorage.addAttribute(.paragraphStyle, value: paragraphStyle, range: paragraphRange)
+        
+        // 在段落開頭插入數字
+        if paragraphRange.location < textStorage.length {
+            let paragraphStart = paragraphRange.location
+            let numberPrefix = "1. "
+            let numberAttr = NSAttributedString(string: numberPrefix)
+            textStorage.insert(numberAttr, at: paragraphStart)
+        }
+        
+        textStorage.endEditing()
+    }
 }
 
 #Preview {

@@ -9,25 +9,29 @@ import SwiftUI
 
 /// 多頁面文檔視圖 - 包含頁面導航、工具列等
 struct MultiPageDocumentView: View {
-    @StateObject private var viewModel = PhysicalDocumentViewModel()
+    @EnvironmentObject var viewModel: PhysicalDocumentViewModel
+    @EnvironmentObject var theme: AppTheme
     @State private var selectedPageIndex: Int = 0
 
     var body: some View {
-        NavigationSplitView {
+        HStack(spacing: 0) {
             // 左側：頁面縮圖導航
             pageNavigationSidebar
-        } detail: {
+                .frame(width: 180)
+                .background(theme.sidebar)
+            
+            Divider()
+            
             // 主要編輯區域
             if let page = viewModel.pages[safe: selectedPageIndex] {
                 pageEditorView(for: page, at: selectedPageIndex)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 emptyStateView
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .navigationTitle(viewModel.documentTitle)
-        .toolbar {
-            documentToolbar
-        }
+        .background(theme.background)
     }
 
     // MARK: - 子視圖
@@ -38,16 +42,22 @@ struct MultiPageDocumentView: View {
             // 標題
             HStack {
                 Text("頁面")
-                    .font(.headline)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(theme.textPrimary)
                 Spacer()
                 Button(action: { viewModel.insertPageBreak() }) {
                     Image(systemName: "plus.rectangle.on.rectangle")
+                        .foregroundColor(theme.textMuted)
                 }
                 .buttonStyle(.borderless)
             }
-            .padding()
-
-            Divider()
+            .padding(12)
+            .background(theme.toolbar)
+            .overlay(alignment: .bottom) {
+                Rectangle()
+                    .fill(theme.border)
+                    .frame(height: 1)
+            }
 
             // 頁面列表
             ScrollView {
@@ -56,7 +66,7 @@ struct MultiPageDocumentView: View {
                         pageThumbnailCard(page: page, index: index)
                     }
                 }
-                .padding()
+                .padding(10)
             }
 
             Divider()
@@ -64,7 +74,6 @@ struct MultiPageDocumentView: View {
             // 統計資訊
             documentStatsView
         }
-        .frame(minWidth: 200)
     }
 
     /// 頁面縮圖卡片

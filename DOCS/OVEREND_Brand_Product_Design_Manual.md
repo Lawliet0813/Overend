@@ -1,8 +1,7 @@
 # OVEREND 品牌及產品設計手冊
-
 **Brand & Product Design Manual**
 
-Version 2.0 | 2025.12.29
+Version 1.0 | 2025.12
 
 ---
 
@@ -52,7 +51,6 @@ OVEREND 誕生於一個簡單的信念：學術寫作工具應該讓研究者專
 **OVEREND 是整合型學術寫作軟體**，將文字編輯器與文獻管理系統完美融合，專為華語研究者設計。
 
 **產品公式**
-
 ```
 OVEREND = 文字編輯器 + 文獻管理 + AI 輔助
        = Word + EndNote（無插件、原生繁中）
@@ -61,13 +59,11 @@ OVEREND = 文字編輯器 + 文獻管理 + AI 輔助
 ### 2.2 目標受眾
 
 **主要目標**
-
 - 台灣研究生（碩博士生）
 - 學術研究人員
 - 需要撰寫學術論文的專業人士
 
 **用戶痛點**
-
 - Word + EndNote 組合需要插件，整合體驗差
 - EndNote 繁體中文支援不佳
 - 工具學習曲線佔用研究時間
@@ -97,20 +93,17 @@ OVEREND = 文字編輯器 + 文獻管理 + AI 輔助
 ### 3.1 Logo 設計
 
 **設計概念**
-
 - **字母組合**：OE（OVEREND 首尾字母）
 - **視覺隱喻**：O 代表完整、包容；E 代表效率、卓越
 - **底線元素**：象徵學術基礎、引用標註
 
 **Logo 規範**
-
 - 主要版本：OE 字母組合 + 底線
 - 字體：Inter（Bold/ExtraBold）
 - 最小使用尺寸：32x32px
 - 保護區域：Logo 周圍至少保留 0.5x Logo 高度的空白
 
 **Logo 檔案**
-
 ```
 OVEREND_AppIcon_Option1_OE.svg
 - 背景：圓角矩形（rx=115）
@@ -121,67 +114,80 @@ OVEREND_AppIcon_Option1_OE.svg
 
 ### 3.2 色彩系統
 
-#### 主配色方案（目前使用）
+基於現有 Logo（#1976D2），提供以下配色方案供選擇：
+
+#### 方案 A：專業學術（推薦）
 
 **主色調**
+- Primary：`#1976D2`（Material Blue 700）- 專業、可信賴
+- Secondary：`#424242`（Grey 800）- 穩重、學術感
 
-- **Primary**：`#00D97E`（綠色）- 活力、科技、專注
-- **Secondary**：`#1A1A1A`（深色背景）- 專業、現代
-
-**介面色彩（淺色模式）**
-
-```swift
-// AppTheme.swift 定義
-background    = #FFFFFF    // 主背景
-sidebar       = #F5F5F5    // 側邊欄背景
-toolbar       = #FAFAFA    // 工具列背景
-card          = #FFFFFF    // 卡片背景
-border        = #E0E0E0    // 邊框
-```
-
-**文字色階**
-
-```swift
-textPrimary   = #212121    // 主要文字
-textSecondary = #757575    // 次要文字
-textMuted     = #9E9E9E    // 輔助文字
-```
+**輔助色**
+- Accent：`#00BCD4`（Cyan 500）- 科技感、活力
+- Background：`#FAFAFA`（Grey 50）- 清爽、閱讀友善
+- Surface：`#FFFFFF` - 純白
 
 **功能色**
+- Success：`#4CAF50`（Green 500）
+- Warning：`#FF9800`（Orange 500）
+- Error：`#F44336`（Red 500）
+- Info：`#2196F3`（Blue 500）
 
-```swift
-accent        = #00D97E    // 強調色
-accentLight   = #00D97E/15% // 強調色淺色版
-success       = #4CAF50    // 成功
-warning       = #FF9800    // 警告
-error         = #F44336    // 錯誤
-```
+**文字色階**
+- Primary Text：`#212121`（87% opacity）
+- Secondary Text：`#757575`（60% opacity）
+- Disabled Text：`#BDBDBD`（38% opacity）
 
-**介面色彩（深色模式）**
+#### 方案 B：現代科技
 
-```swift
-background    = #1A1A1A    // 主背景
-sidebar       = #242424    // 側邊欄背景
-toolbar       = #2A2A2A    // 工具列背景
-card          = #2E2E2E    // 卡片背景
-border        = #3A3A3A    // 邊框
-textPrimary   = #FFFFFF    // 主要文字
-textSecondary = #B0B0B0    // 次要文字
-```
+**主色調**
+- Primary：`#1976D2`（保持不變）
+- Secondary：`#6A1B9A`（Purple 800）- 創新、AI 感
+
+**輔助色**
+- Accent：`#00E676`（Green A400）- 活力、智能
+- Background：`#F5F5F5`
+- Surface：`#FFFFFF`
+
+#### 方案 C：溫暖親和
+
+**主色調**
+- Primary：`#1976D2`（保持不變）
+- Secondary：`#5D4037`（Brown 700）- 溫暖、人文
+
+**輔助色**
+- Accent：`#FFA726`（Orange 400）- 友善、易接近
+- Background：`#FFF8E1`（Amber 50）- 溫暖、紙張感
+- Surface：`#FFFFFF`
+
+#### 方案 D：深色模式基調
+
+**主色調**
+- Primary：`#42A5F5`（Blue 400）- 適合深色背景
+- Secondary：`#37474F`（Blue Grey 800）
+
+**輔助色**
+- Accent：`#26C6DA`（Cyan 400）
+- Background：`#121212`（深色模式標準）
+- Surface：`#1E1E1E`
+
+**各方案適用場景**
+- **方案 A**：建議作為主要配色，適合學術專業形象
+- **方案 B**：強調 AI 科技特色時使用
+- **方案 C**：需要親和力、降低專業距離感時使用
+- **方案 D**：深色模式介面（可選功能）
 
 ### 3.3 字體規範
 
 #### 介面字體
 
 **macOS 系統字體**
-
 - **主要**：SF Pro（系統預設）
   - Display：標題、大尺寸文字
   - Text：正文、介面元素
 - **備選**：PingFang TC（繁體中文優化）
 
 **字重使用**
-
 - **Heavy (800-900)**：品牌標識、重要標題
 - **Bold (700)**：次級標題、強調文字
 - **Semibold (600)**：按鈕文字、標籤
@@ -191,13 +197,11 @@ textSecondary = #B0B0B0    // 次要文字
 #### 編輯器字體
 
 **寫作內容字體**
-
 - **中文**：思源宋體 / Noto Serif CJK TC
 - **英文**：Georgia / Crimson Pro
 - **等寬字體**：SF Mono / JetBrains Mono（Markdown 模式）
 
 **字體大小建議**
-
 - 標題 1：28pt
 - 標題 2：24pt
 - 標題 3：20pt
@@ -207,7 +211,6 @@ textSecondary = #B0B0B0    // 次要文字
 ### 3.4 圖形元素
 
 **設計語言**
-
 - **圓角**：8px（小元素）、16px（卡片）、24px（面板）
 - **陰影**：Material Design Elevation 原則
   - Level 1：按鈕懸停
@@ -216,7 +219,6 @@ textSecondary = #B0B0B0    // 次要文字
 - **間距系統**：8px 基準網格（8, 16, 24, 32, 48, 64...）
 
 **圖示風格**
-
 - **風格**：線性圖示（Outline）
 - **粗細**：2px
 - **圓角**：圓潤端點
@@ -238,19 +240,16 @@ textSecondary = #B0B0B0    // 次要文字
 ### 4.2 UX 設計原則
 
 #### 易用性（Usability）
-
 - **零學習曲線**：首次使用即能快速上手
 - **一致性**：介面元素、互動行為保持一致
 - **容錯性**：提供撤銷機制，降低操作焦慮
 
 #### 效率性（Efficiency）
-
 - **鍵盤優先**：支援完整快捷鍵操作
 - **智能建議**：AI 預測用戶需求，主動提供協助
 - **批次處理**：文獻管理支援批次匯入、編輯
 
 #### 可及性（Accessibility）
-
 - **對比度**：符合 WCAG AA 標準
 - **可縮放**：支援介面字體大小調整
 - **鍵盤導航**：所有功能可透過鍵盤完成
@@ -258,7 +257,6 @@ textSecondary = #B0B0B0    // 次要文字
 ### 4.3 UI 設計原則
 
 #### 視覺層級
-
 ```
 1. 內容層（最重要）
    - 寫作文字內容
@@ -276,19 +274,16 @@ textSecondary = #B0B0B0    // 次要文字
 #### 介面布局
 
 **主編輯區**
-
 - 佔據畫面 60-70% 寬度
 - 最大閱讀寬度：720px（約 80 字元）
 - 留白充足，減少視覺壓力
 
 **側邊欄設計**
-
 - 可折疊/展開
 - 預設寬度：320px
 - 支援拖曳調整
 
 **工具列**
-
 - 浮動式設計，需要時顯示
 - 分組清晰，常用功能優先
 - 支援自訂配置
@@ -296,19 +291,16 @@ textSecondary = #B0B0B0    // 次要文字
 ### 4.4 互動設計原則
 
 #### 操作回饋
-
 - **視覺回饋**：按鈕狀態變化、進度指示
 - **聲音回饋**（可選）：操作完成提示音
 - **觸覺回饋**（未來）：Force Touch 支援
 
 #### 動畫設計
-
 - **微動畫**：提升使用愉悅感
 - **過渡動畫**：200-300ms（快速不拖沓）
 - **緩動函數**：ease-in-out（自然流暢）
 
 **禁止過度動畫**
-
 - 避免妨礙快速操作
 - 提供關閉動畫選項
 
@@ -316,46 +308,25 @@ textSecondary = #B0B0B0    // 次要文字
 
 ## 5. 功能架構
 
-### 5.1 目前已實作的 UI 架構
+### 5.1 核心功能模組
 
 ```
-NewContentView (主容器)
-├── NewSidebarView (側邊欄 - 200px)
-│   ├── 資源管理區
-│   │   ├── 🏠 全部文獻
-│   │   └── ✏️ 寫作中心
-│   ├── 智能過濾區
-│   │   ├── 🕐 最近閱覽
-│   │   └── 📋 待讀標註
-│   └── 文獻庫區
-│       └── 📁 我的文獻庫
-│
-├── 主內容區
-│   ├── DynamicToolbar (動態工具列)
-│   │
-│   ├── 文獻管理模式 (ModernEntryListView)
-│   │   ├── 表格式列表
-│   │   │   ├── 標題
-│   │   │   ├── 作者/年份
-│   │   │   ├── 附件數
-│   │   │   ├── 類型
-│   │   │   └── 刪除按鈕
-│   │   └── 詳情面板 (ModernEntryDetailView)
-│   │       ├── 書目資訊
-│   │       ├── 引用格式 (APA/MLA)
-│   │       └── 附件列表
-│   │
-│   ├── 寫作中心模式 (EditorListView)
-│   │   └── 文稿卡片網格 (DocumentCardView)
-│   │
-│   └── 編輯器模式 (ProfessionalEditorView)
-│       ├── 格式工具列
-│       ├── 編輯區
-│       └── 引用面板 (CitationInspector)
-│
-└── AppTheme (主題管理)
-    ├── 淺色模式
-    └── 深色模式
+OVEREND
+├── 文字編輯器
+│   ├── Markdown 模式
+│   ├── 學術模式（註腳、引用插入）
+│   └── WYSIWYG 模式
+├── 文獻管理
+│   ├── 文獻庫
+│   ├── 引用格式管理
+│   └── 文獻匯入/匯出
+├── AI 輔助功能
+│   ├── 文獻摘要
+│   ├── 文句改寫
+│   └── 寫作建議
+└── 整合特色
+    ├── 邊寫邊對照文獻
+    └── 即時引用插入
 ```
 
 ### 5.2 文字編輯器功能
@@ -363,14 +334,12 @@ NewContentView (主容器)
 #### 5.2.1 編輯模式切換
 
 **Markdown 模式**
-
 - 純文字編輯，Markdown 語法標記
 - 即時預覽（分割視窗或懸浮預覽)
 - 語法高亮
 - 快捷鍵：`Cmd + Shift + M`
 
 **學術模式**
-
 - 註腳插入與管理
 - 引用插入（連接文獻庫）
 - 章節編號自動化
@@ -378,7 +347,6 @@ NewContentView (主容器)
 - 快捷鍵：`Cmd + Shift + A`
 
 **WYSIWYG 模式**
-
 - 所見即所得編輯
 - 工具列提供格式按鈕
 - 類似 Word 的操作體驗
@@ -387,20 +355,17 @@ NewContentView (主容器)
 #### 5.2.2 基本編輯功能
 
 **文字格式**
-
 - 粗體、斜體、底線、刪除線
 - 上標、下標
 - 高亮標記（多色支援）
 
 **段落格式**
-
 - 標題（H1-H6）
 - 列表（有序、無序、待辦）
 - 引用區塊
 - 程式碼區塊
 
 **進階編輯**
-
 - 尋找與取代（支援正規表達式）
 - 多游標編輯
 - 文字統計（字數、字元數、頁數估算）
@@ -411,7 +376,6 @@ NewContentView (主容器)
 #### 5.3.1 文獻匯入
 
 **支援方式**
-
 - **拖曳檔案**：PDF、DOCX、TXT
 - **DOI 匯入**：輸入 DOI 自動抓取資訊
 - **ISBN 匯入**：圖書資料自動完成
@@ -421,14 +385,12 @@ NewContentView (主容器)
 #### 5.3.2 文獻庫管理
 
 **組織方式**
-
 - 資料夾分類
 - 標籤系統（多標籤支援）
 - 星號標記（重要文獻）
 - 搜尋與篩選
 
 **文獻資訊**
-
 - 自動解析 PDF metadata
 - 可編輯欄位（作者、標題、年份、期刊等）
 - 附件管理（PDF、筆記、相關檔案）
@@ -436,7 +398,6 @@ NewContentView (主容器)
 #### 5.3.3 引用格式
 
 **支援格式**
-
 - APA 7th Edition
 - MLA 9th Edition
 - Chicago 17th Edition
@@ -445,7 +406,6 @@ NewContentView (主容器)
 - 台灣常用格式（可自訂）
 
 **引用管理**
-
 - 即時預覽引用格式
 - 批次修改引用格式
 - 自動生成參考文獻列表
@@ -453,20 +413,17 @@ NewContentView (主容器)
 ### 5.4 AI 輔助功能
 
 #### 5.4.1 文獻摘要
-
 - 自動生成文獻摘要（中英文）
 - 摘要長度可調整（短/中/長）
 - 關鍵字提取
 
 #### 5.4.2 文句改寫
-
 - 學術語氣調整
 - 改善文法與用詞
 - 去除重複表達
 - 中英文互換建議
 
 #### 5.4.3 寫作建議
-
 - 段落結構優化建議
 - 論證邏輯檢查
 - 引用適當性提醒
@@ -477,27 +434,23 @@ NewContentView (主容器)
 #### 5.5.1 邊寫邊對照文獻
 
 **分割視窗模式**
-
 - 左側：編輯區
 - 右側：文獻閱讀區
 - 可調整比例
 
 **浮動預覽**
-
 - 懸停引用標記時顯示文獻內容
 - 可快速跳轉至完整文獻
 
 #### 5.5.2 即時引用插入
 
 **插入方式**
-
 - 快捷鍵：`Cmd + Shift + C`
 - 彈出文獻庫搜尋框
 - 支援模糊搜尋（作者、標題、年份）
 - 選取後立即插入引用
 
 **引用樣式**
-
 - 內文引用（in-text citation）
 - 註腳引用（footnote）
 - 尾註引用（endnote）
@@ -509,12 +462,10 @@ NewContentView (主容器)
 ### 6.1 平台與架構
 
 **目標平台**
-
 - macOS 13.0 (Ventura) 以上
 - 支援 Intel 與 Apple Silicon（Universal Binary）
 
 **技術棧（建議）**
-
 - **框架**：Electron / Tauri（輕量化優先）
 - **前端**：React / Vue.js + TypeScript
 - **編輯器核心**：ProseMirror / Slate.js
@@ -525,7 +476,6 @@ NewContentView (主容器)
 ### 6.2 資料儲存
 
 **本地儲存結構**
-
 ```
 ~/Library/Application Support/OVEREND/
 ├── database.sqlite          # 主資料庫
@@ -536,7 +486,6 @@ NewContentView (主容器)
 ```
 
 **資料庫結構**
-
 - Documents：文件內容、版本歷史
 - References：文獻資訊、metadata
 - Citations：引用記錄、關聯
@@ -546,31 +495,26 @@ NewContentView (主容器)
 ### 6.3 性能要求
 
 **啟動速度**
-
 - 冷啟動：< 2 秒
 - 熱啟動：< 1 秒
 
 **編輯性能**
-
 - 大型文件（10萬字）流暢編輯
 - 輸入延遲：< 16ms（60 FPS）
 - 自動儲存：每 30 秒（背景執行）
 
 **資源佔用**
-
 - 記憶體使用：< 500 MB（空閒狀態）
 - CPU 使用：< 5%（空閒狀態）
 
 ### 6.4 安全性
 
 **資料安全**
-
 - 本地儲存，無雲端傳輸
 - 資料庫加密（可選）
 - 定期自動備份
 
 **隱私保護**
-
 - AI 功能提示資料使用政策
 - 使用者可選擇關閉 AI 功能
 - 不收集使用者寫作內容
@@ -582,7 +526,6 @@ NewContentView (主容器)
 ### 7.1 介面布局示意
 
 #### 主編輯畫面
-
 ```
 ┌─────────────────────────────────────────────────────────┐
 │ OVEREND    檔案  編輯  插入  格式  工具  視窗  說明      │
@@ -611,7 +554,6 @@ NewContentView (主容器)
 ```
 
 #### 引用插入流程
-
 ```
 1. 編輯中按 Cmd+Shift+C
    ↓
@@ -636,28 +578,24 @@ NewContentView (主容器)
 ### 7.2 使用場景
 
 #### 場景 1：論文初稿撰寫
-
 1. 使用者開啟 OVEREND，選擇「新增文件」
 2. 切換至「Markdown 模式」快速打草稿
 3. 邊寫邊按 `Cmd+Shift+C` 插入文獻引用
 4. 右側文獻庫隨時查閱資料，無需切換視窗
 
 #### 場景 2：文獻整理與摘要
-
 1. 拖曳多個 PDF 至文獻庫
 2. OVEREND 自動解析 metadata
 3. 選擇文獻，點選「AI 摘要」
 4. 生成中英文摘要，標記重點
 
 #### 場景 3：引用格式調整
-
 1. 論文完成後，發現需要改用 APA 格式
 2. 選單 > 格式 > 引用樣式 > APA 7th
 3. 所有引用與參考文獻自動更新
 4. 無需手動逐一修改
 
 #### 場景 4：AI 輔助改寫
-
 1. 選取一段文字
 2. 右鍵 > AI 改寫 > 學術語氣
 3. AI 提供 2-3 個改寫建議
@@ -666,7 +604,6 @@ NewContentView (主容器)
 ### 7.3 色彩應用範例
 
 #### 方案 A：專業學術（主介面配色）
-
 ```
 導覽列背景：     #1976D2 (Primary Blue)
 側邊欄背景：     #FAFAFA (Light Grey)
@@ -679,7 +616,6 @@ NewContentView (主容器)
 ```
 
 #### 暗色模式（方案 D）
-
 ```
 導覽列背景：     #1E1E1E (Dark Surface)
 側邊欄背景：     #121212 (Dark Background)
@@ -692,7 +628,6 @@ NewContentView (主容器)
 ### 7.4 字體應用範例
 
 #### 介面文字
-
 ```
 標題文字：       SF Pro Display Semibold 20pt
 按鈕文字：       SF Pro Text Semibold 14pt
@@ -701,7 +636,6 @@ NewContentView (主容器)
 ```
 
 #### 編輯器內容
-
 ```
 標題 1：         思源宋體 28pt Bold
 標題 2：         思源宋體 24pt Bold
@@ -717,13 +651,11 @@ Markdown 模式：  SF Mono 16pt Regular
 ### 8.1 品牌名稱使用
 
 **正確使用**
-
 - OVEREND（全大寫，英文環境）
 - Overend（首字母大寫，一般文案）
 - OVEREND 學術寫作軟體（完整名稱）
 
 **錯誤使用**
-
 - ❌ Over End（分開）
 - ❌ overend（全小寫，除非特殊設計需求）
 - ❌ OverEnd（駝峰式）
@@ -731,12 +663,10 @@ Markdown 模式：  SF Mono 16pt Regular
 ### 8.2 Slogan（標語）
 
 **主標語**
-
 - **中文**：專注研究，不再研究工具
 - **英文**：Focus on Research, Not on Tools
 
 **輔助標語**
-
 - 讓論文寫作回歸本質
 - 整合型學術寫作平台
 - 為華語研究者設計
@@ -744,7 +674,6 @@ Markdown 模式：  SF Mono 16pt Regular
 ### 8.3 語氣與調性
 
 **品牌語氣**
-
 - **專業但親切**：展現學術專業，但不冷漠疏離
 - **簡潔明確**：避免技術術語堆砌
 - **鼓勵性**：強調效率提升，而非批評現有工具
@@ -760,7 +689,6 @@ Markdown 模式：  SF Mono 16pt Regular
 ### 8.4 視覺應用禁止事項
 
 **Logo 使用禁止**
-
 - ❌ 改變 Logo 比例（拉伸變形）
 - ❌ 改變 Logo 顏色（除非深色模式版本）
 - ❌ 在低對比背景上使用
@@ -768,7 +696,6 @@ Markdown 模式：  SF Mono 16pt Regular
 - ❌ 重新排列字母組合
 
 **色彩使用禁止**
-
 - ❌ 使用未定義的色彩
 - ❌ 低對比度組合（影響可讀性）
 - ❌ 過度使用強調色（Accent Color）
@@ -780,11 +707,9 @@ Markdown 模式：  SF Mono 16pt Regular
 ### 9.1 版本規劃
 
 #### v1.0 - MVP（最小可行產品）
-
 **目標**：完成核心功能，可供個人使用
 
 **核心功能**
-
 - [x] 基本文字編輯（粗體、斜體、標題）
 - [ ] Markdown 模式
 - [ ] WYSIWYG 模式
@@ -796,11 +721,9 @@ Markdown 模式：  SF Mono 16pt Regular
 **時程**：預估 3-4 個月
 
 #### v1.1 - 完善體驗
-
 **目標**：提升使用體驗，增加實用功能
 
 **新增功能**
-
 - [ ] 學術模式（註腳、引用管理）
 - [ ] 多種引用格式（MLA、Chicago）
 - [ ] DOI/ISBN 自動匯入
@@ -811,11 +734,9 @@ Markdown 模式：  SF Mono 16pt Regular
 **時程**：v1.0 後 2-3 個月
 
 #### v1.5 - AI 整合
-
 **目標**：引入 AI 輔助功能
 
 **新增功能**
-
 - [ ] AI 文獻摘要
 - [ ] AI 文句改寫
 - [ ] AI 寫作建議
@@ -824,11 +745,9 @@ Markdown 模式：  SF Mono 16pt Regular
 **時程**：v1.1 後 2-3 個月
 
 #### v2.0 - 進階功能
-
 **目標**：專業級學術寫作平台
 
 **新增功能**
-
 - [ ] 協作功能（未來規劃）
 - [ ] 雲端同步（未來規劃）
 - [ ] Windows 版本（未來規劃）
@@ -838,13 +757,11 @@ Markdown 模式：  SF Mono 16pt Regular
 ### 9.2 技術債務管理
 
 **優先處理**
-
 - 效能優化（大型文件編輯）
 - 資料備份機制
 - 錯誤處理與恢復
 
 **持續改進**
-
 - 使用者體驗優化
 - 介面細節打磨
 - 無障礙功能
@@ -856,49 +773,35 @@ Markdown 模式：  SF Mono 16pt Regular
 ### 10.1 設計資源
 
 **Logo 檔案**
-
 - `OVEREND_AppIcon_Option1_OE.svg` - 主要 Logo（SVG 向量）
 - 建議輸出尺寸：512x512, 256x256, 128x128, 64x64, 32x32
 
 **色彩檔案**
-
 - Adobe Swatch Exchange (.ase)
 - Sketch Palette (.sketchpalette)
 - CSS Variables（開發用）
 
 **字體資源**
-
 - SF Pro（macOS 系統內建）
-- Inter（<https://rsms.me/inter/）>
-- 思源宋體（<https://github.com/adobe-fonts/source-han-serif）>
+- Inter（https://rsms.me/inter/）
+- 思源宋體（https://github.com/adobe-fonts/source-han-serif）
 
 ### 10.2 參考文獻
 
 **競品研究**
-
-- EndNote: <https://endnote.com>
-- Zotero: <https://www.zotero.org>
-- Notion: <https://www.notion.so>
-- Scrivener: <https://www.literatureandlatte.com/scrivener>
+- EndNote: https://endnote.com
+- Zotero: https://www.zotero.org
+- Notion: https://www.notion.so
+- Scrivener: https://www.literatureandlatte.com/scrivener
 
 **設計參考**
-
 - Apple Human Interface Guidelines
 - Material Design 3
 - Stripe Design System
 
 ### 10.3 更新紀錄
 
-**Version 2.0** (2025.12.29)
-
-- 更新主色調為 `#00D97E`
-- 新增 UI 架構文件（已實作）
-- 新增主題系統定義（AppTheme.swift）
-- 更新三視圖導航系統
-- 新增詳情面板規格
-
 **Version 1.0** (2025.12.27)
-
 - 初版發布
 - 確立品牌核心、產品定位
 - 定義視覺識別系統
@@ -911,7 +814,6 @@ Markdown 模式：  SF Mono 16pt Regular
 ### 11.1 為何選擇 macOS 離線優先？
 
 **決策理由**
-
 1. **目標用戶集中**：台灣研究生 macOS 使用率高
 2. **開發效率**：單一平台專注打磨體驗
 3. **資料安全**：本地儲存，無隱私疑慮
@@ -919,20 +821,17 @@ Markdown 模式：  SF Mono 16pt Regular
 5. **邊用邊開發**：開發者本身即為 macOS 用戶
 
 **未來擴展**
-
 - v2.0 考慮 Windows 版本
 - 雲端同步為可選功能，非強制
 
 ### 11.2 為何整合編輯器與文獻管理？
 
 **問題分析**
-
 - Word + EndNote 組合需要插件，整合體驗差
 - 寫作時需頻繁切換軟體，打斷思緒
 - 引用插入流程繁瑣，降低效率
 
 **解決方案**
-
 - 一體化設計，無縫整合
 - 邊寫邊對照文獻，分割視窗顯示
 - 快捷鍵插入引用，流程簡化
@@ -940,13 +839,11 @@ Markdown 模式：  SF Mono 16pt Regular
 ### 11.3 為何提供三種編輯模式？
 
 **用戶需求多元**
-
 - **Markdown 模式**：快速打草稿，專注內容
 - **學術模式**：論文寫作專用，註腳引用完整
 - **WYSIWYG 模式**：降低學習門檻，類 Word 操作
 
 **設計原則**
-
 - 模式間可快速切換
 - 內容格式保持一致
 - 滿足不同寫作階段需求
@@ -956,16 +853,14 @@ Markdown 模式：  SF Mono 16pt Regular
 ## 聯絡資訊
 
 **產品開發者**
-
 - 彥儒
 - 國立政治大學 行政管理碩士班
 - 開發位置：/Users/lawliet/dev-workspace
 
 **版本資訊**
-
-- 手冊版本：2.0
+- 手冊版本：1.0
 - 發布日期：2025.12.27
-- 最後更新：2025.12.29
+- 最後更新：2025.12.27
 
 ---
 

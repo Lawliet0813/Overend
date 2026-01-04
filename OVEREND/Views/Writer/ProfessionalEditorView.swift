@@ -34,6 +34,8 @@ struct ProfessionalEditorView: View {
     @State private var isSaving: Bool = false
     @State private var lastSaved: Date?
     @State private var autoSaveTimer: Timer?
+    @State private var selectedParagraphStyle: ParagraphStyleType = .body
+    @State private var currentTextView: NSTextView?
 
     init(document: Document) {
         self.document = document
@@ -213,6 +215,8 @@ struct ProfessionalEditorView: View {
                 .zIndex(100)
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .clipped()
     }
 
     /// 增強型工具列
@@ -364,49 +368,71 @@ struct ProfessionalEditorView: View {
             Divider()
                 .frame(height: 16)
 
-            // 格式按鈕組
-            HStack(spacing: 6) {
-                FormatButton(icon: "bold", tooltip: "粗體 (⌘B)") {
-                    // TODO: 套用粗體
-                }
-                .environmentObject(theme)
-
-                FormatButton(icon: "italic", tooltip: "斜體 (⌘I)") {
-                    // TODO: 套用斜體
-                }
-                .environmentObject(theme)
-
-                FormatButton(icon: "underline", tooltip: "底線 (⌘U)") {
-                    // TODO: 套用底線
-                }
-                .environmentObject(theme)
+            // 段落樣式選擇器
+            ParagraphStylePicker(selectedStyle: $selectedParagraphStyle) { style in
+                applyParagraphStyle(style)
             }
+            .environmentObject(theme)
 
             Divider()
                 .frame(height: 16)
 
-            // 對齊按鈕組
-            HStack(spacing: 6) {
-                FormatButton(icon: "text.alignleft", tooltip: "靠左對齊") {
-                    // TODO: 靠左對齊
+            // 格式按鈕組（視覺分組）
+            EditorToolbarSection {
+                EditorFormatButton(icon: "bold", tooltip: "粗體 (⌘B)") {
+                    if let tv = currentTextView {
+                        RichTextEditor.toggleBold(in: tv)
+                    }
                 }
                 .environmentObject(theme)
 
-                FormatButton(icon: "text.aligncenter", tooltip: "置中對齊") {
-                    // TODO: 置中對齊
+                EditorFormatButton(icon: "italic", tooltip: "斜體 (⌘I)") {
+                    if let tv = currentTextView {
+                        RichTextEditor.toggleItalic(in: tv)
+                    }
                 }
                 .environmentObject(theme)
 
-                FormatButton(icon: "text.alignright", tooltip: "靠右對齊") {
-                    // TODO: 靠右對齊
-                }
-                .environmentObject(theme)
-
-                FormatButton(icon: "text.justify", tooltip: "左右對齊") {
-                    // TODO: 左右對齊
+                EditorFormatButton(icon: "underline", tooltip: "底線 (⌘U)") {
+                    if let tv = currentTextView {
+                        RichTextEditor.toggleUnderline(in: tv)
+                    }
                 }
                 .environmentObject(theme)
             }
+            .environmentObject(theme)
+
+            // 對齊按鈕組（視覺分組）
+            EditorToolbarSection {
+                EditorFormatButton(icon: "text.alignleft", tooltip: "靠左對齊") {
+                    if let tv = currentTextView {
+                        RichTextEditor.applyAlignment(.left, to: tv)
+                    }
+                }
+                .environmentObject(theme)
+
+                EditorFormatButton(icon: "text.aligncenter", tooltip: "置中對齊") {
+                    if let tv = currentTextView {
+                        RichTextEditor.applyAlignment(.center, to: tv)
+                    }
+                }
+                .environmentObject(theme)
+
+                EditorFormatButton(icon: "text.alignright", tooltip: "靠右對齊") {
+                    if let tv = currentTextView {
+                        RichTextEditor.applyAlignment(.right, to: tv)
+                    }
+                }
+                .environmentObject(theme)
+
+                EditorFormatButton(icon: "text.justify", tooltip: "左右對齊") {
+                    if let tv = currentTextView {
+                        RichTextEditor.applyAlignment(.justified, to: tv)
+                    }
+                }
+                .environmentObject(theme)
+            }
+            .environmentObject(theme)
 
             Divider()
                 .frame(height: 16)
@@ -439,18 +465,23 @@ struct ProfessionalEditorView: View {
             Divider()
                 .frame(height: 16)
 
-            // 項目符號與編號
-            HStack(spacing: 6) {
-                FormatButton(icon: "list.bullet", tooltip: "項目符號") {
-                    // TODO: 項目符號
+            // 項目符號與編號（視覺分組）
+            EditorToolbarSection {
+                EditorFormatButton(icon: "list.bullet", tooltip: "項目符號") {
+                    if let tv = currentTextView {
+                        RichTextEditor.insertBulletList(in: tv)
+                    }
                 }
                 .environmentObject(theme)
 
-                FormatButton(icon: "list.number", tooltip: "編號列表") {
-                    // TODO: 編號列表
+                EditorFormatButton(icon: "list.number", tooltip: "編號列表") {
+                    if let tv = currentTextView {
+                        RichTextEditor.insertNumberedList(in: tv)
+                    }
                 }
                 .environmentObject(theme)
             }
+            .environmentObject(theme)
 
             Divider()
                 .frame(height: 16)
@@ -759,6 +790,31 @@ struct ProfessionalEditorView: View {
     private func insertBibliography() {
         // TODO: 實作參考文獻列表生成
         ToastManager.shared.showInfo("插入參考文獻列表（開發中）")
+    }
+    
+    /// 套用段落樣式
+    private func applyParagraphStyle(_ style: ParagraphStyleType) {
+        guard let tv = currentTextView else { return }
+        
+        switch style {
+        case .heading1:
+            RichTextEditor.applyHeading(level: 1, to: tv)
+        case .heading2:
+            RichTextEditor.applyHeading(level: 2, to: tv)
+        case .heading3:
+            RichTextEditor.applyHeading(level: 3, to: tv)
+        case .heading4:
+            RichTextEditor.applyHeading(level: 4, to: tv)
+        case .body:
+            RichTextEditor.setFontSize(12, in: tv)
+        case .quote:
+            // 引文樣式：斜體 + 縮排
+            RichTextEditor.toggleItalic(in: tv)
+        case .code:
+            // 程式碼樣式：等寬字體
+            RichTextEditor.setFontFamily("Menlo", in: tv)
+            RichTextEditor.setFontSize(11, in: tv)
+        }
     }
 
     /// 格式化作者名稱

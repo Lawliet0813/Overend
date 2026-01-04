@@ -31,6 +31,10 @@ struct NewContentView: View {
     @State private var processingStartTime: Date?
     @State private var currentExtractionLogs: String = ""
     
+    // AI 提取工作台
+    @State private var showExtractionWorkbench = false
+    @State private var extractionWorkbenchVM: ExtractionWorkbenchViewModel?
+    
     init() {
         _libraryVM = StateObject(wrappedValue: LibraryViewModel())
     }
@@ -143,6 +147,17 @@ struct NewContentView: View {
                     }
                 )
                 .environmentObject(theme)
+            }
+        }
+        .sheet(isPresented: $showExtractionWorkbench) {
+            if let vm = extractionWorkbenchVM {
+                ExtractionWorkbenchView(viewModel: vm)
+                    .environmentObject(theme)
+                    .environment(\.managedObjectContext, viewContext)
+                    .onDisappear {
+                        // 清理
+                        extractionWorkbenchVM = nil
+                    }
             }
         }
         .alert("匯入結果", isPresented: $showImportAlert, presenting: importMessage) { _ in
@@ -410,8 +425,13 @@ struct NewContentView: View {
 
     // MARK: - AI 元數據提取方法
 
-    /// 提取並顯示元數據
+    /// 提取並顯示元數據（使用 AI 提取工作台）
     private func extractAndShowMetadata(from url: URL) {
+        guard let library = viewState.selectedLibrary ?? libraryVM.libraries.first else {
+            ToastManager.shared.showError("請先選擇文獻庫")
+            return
+        }
+        
         currentPDFURL = url
         isExtractingMetadata = true
         processingStartTime = Date()
@@ -420,19 +440,33 @@ struct NewContentView: View {
             do {
                 // AI 提取元數據
                 let (metadata, logs) = await PDFMetadataExtractor.extractMetadata(from: url)
+                
+                // 嘗試提取 PDF 文字
+                var pdfText: String? = nil
+                if let (_, extractedText) = try? PDFService.extractPDFMetadata(from: url) {
+                    pdfText = extractedText
+                }
 
                 await MainActor.run {
-                    extractedMetadata = metadata
-                    isExtractingMetadata = false
-                    showAIPreview = true
+                    // 建立 ViewModel
+                    let vm = ExtractionWorkbenchViewModel(context: viewContext, library: library)
                     
-                    // 暫存 logs 以便稍後使用
-                    // 注意：這裡我們需要一個地方暫存 logs，或者直接在這裡發送 Notion 請求（如果不需要用戶確認）
-                    // 但目前的流程是：提取 -> 預覽 -> 用戶確認 -> 保存
-                    // 所以我們需要將 logs 傳遞給 saveAIExtractedEntry
-                    // 為了簡單起見，我們可以將 logs 存儲在一個臨時變量中，或者修改 extractedMetadata 結構（不推薦）
-                    // 這裡我們使用一個 State 變量來存儲當前的 logs
-                    self.currentExtractionLogs = logs
+                    // 添加待處理的提取
+                    vm.addPendingExtraction(
+                        metadata: metadata,
+                        pdfURL: url,
+                        pdfText: pdfText,
+                        logs: logs
+                    )
+                    
+                    // 設置狀態
+                    extractionWorkbenchVM = vm
+                    isExtractingMetadata = false
+                    showExtractionWorkbench = true
+                    
+                    // 暫存資料（為了保持 Notion 整合相容性）
+                    extractedMetadata = metadata
+                    currentExtractionLogs = logs
                 }
             } catch {
                 await MainActor.run {

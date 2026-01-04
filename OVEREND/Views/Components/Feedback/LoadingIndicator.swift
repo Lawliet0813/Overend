@@ -361,12 +361,10 @@ struct DotLoadingIndicator: View {
 }
 
 #Preview("Dark Mode") {
+    @Previewable @State var progress: Double = 0.6
     let theme = AppTheme()
-    theme.isDarkMode = true
 
-    @State var progress: Double = 0.6
-
-    return VStack(spacing: 32) {
+    VStack(spacing: 32) {
         SpinnerLoadingIndicator()
             .environmentObject(theme)
 

@@ -297,9 +297,8 @@ struct GlassCard<Content: View>: View {
 
 #Preview("Dark Mode") {
     let theme = AppTheme()
-    theme.isDarkMode = true
-
-    return VStack(spacing: 20) {
+    
+    VStack(spacing: 20) {
         CardView {
             VStack(alignment: .leading, spacing: 8) {
                 Text("深色模式卡片")

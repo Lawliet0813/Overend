@@ -1,5 +1,5 @@
 //
-//  NewSidebarView.swift
+//  MainSidebarView.swift
 //  OVEREND
 //
 //  新版側邊欄 - 現代化 macOS 風格
@@ -8,7 +8,7 @@
 import SwiftUI
 
 /// 新版側邊欄
-struct NewSidebarView: View {
+struct MainSidebarView: View {
     @EnvironmentObject var theme: AppTheme
     @EnvironmentObject var viewState: MainViewState
     @ObservedObject var libraryVM: LibraryViewModel
@@ -336,7 +336,7 @@ struct SidebarButton: View {
     let repository = LibraryRepository(context: context)
     let libraryVM = LibraryViewModel(repository: repository)
 
-    NewSidebarView(libraryVM: libraryVM)
+    MainSidebarView(libraryVM: libraryVM)
         .environmentObject(theme)
         .environmentObject(viewState)
         .frame(height: 500)

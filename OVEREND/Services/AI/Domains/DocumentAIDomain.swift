@@ -513,18 +513,30 @@ public class DocumentAIDomain {
         var metadata = ExtractedDocumentMetadata()
         
         if let title = json["title"] as? String, !title.isEmpty, title.lowercased() != "null" {
-            metadata.title = title
+            // ❗ 佔位符檢測
+            if !isPlaceholderTitle(title) {
+                metadata.title = title
+            } else {
+                print("⚠️ Prompt 提取偵測到佔位符標題: \(title)，已過濾")
+            }
         }
         
         if let authorsArray = json["authors"] as? [String] {
-            metadata.authors = authorsArray.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-                .filter { !$0.isEmpty && $0.lowercased() != "null" }
+            // ❗ 過濾佔位符作者
+            let filteredAuthors = authorsArray
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty && $0.lowercased() != "null" && !isPlaceholderAuthor($0) }
+            metadata.authors = filteredAuthors
+            
+            if filteredAuthors.count < authorsArray.count {
+                print("⚠️ Prompt 提取過濾掉 \(authorsArray.count - filteredAuthors.count) 個佔位符作者")
+            }
         } else if let authorsStr = json["authors"] as? String {
             let parts = authorsStr
                 .replacingOccurrences(of: ";", with: ",")
                 .components(separatedBy: CharacterSet(charactersIn: "，,、| and "))
                 .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-                .filter { !$0.isEmpty }
+                .filter { !$0.isEmpty && !isPlaceholderAuthor($0) }
             metadata.authors = parts
         }
         
@@ -540,7 +552,10 @@ public class DocumentAIDomain {
         }
         
         if let journal = json["journal"] as? String, !journal.isEmpty, journal.lowercased() != "null" {
-            metadata.journal = journal
+            // ❗ 檢測期刊佔位符
+            if !isPlaceholderJournal(journal) {
+                metadata.journal = journal
+            }
         }
         
         if let doi = json["doi"] as? String, !doi.isEmpty, doi.lowercased() != "null" {
@@ -552,6 +567,77 @@ public class DocumentAIDomain {
         }
         
         return metadata
+    }
+    
+    // MARK: - 佔位符檢測
+    
+    /// 已知的標題佔位符
+    private let titlePlaceholders: Set<String> = [
+        "論文標題", "文章標題", "書籍標題", "標題", "未知標題", "無標題",
+        "Title", "Article Title", "Paper Title", "Book Title", "Unknown Title",
+        "測試標題", "範例標題", "Example Title", "Sample Title"
+    ]
+    
+    /// 已知的作者佔位符
+    private let authorPlaceholders: Set<String> = [
+        "作者1", "作者2", "作者3", "作者", "未知作者",
+        "Author 1", "Author 2", "Author 3", "Author", "Unknown Author",
+        "張三", "李四", "王五", "某某人", "佚名",
+        "John Doe", "Jane Doe", "First Author", "Second Author"
+    ]
+    
+    /// 已知的期刊佔位符
+    private let journalPlaceholders: Set<String> = [
+        "期刊名稱", "會議名稱", "出版社", "未知期刊",
+        "Journal Name", "Conference Name", "Publisher", "Unknown Journal"
+    ]
+    
+    /// 檢查標題是否為佔位符
+    private func isPlaceholderTitle(_ title: String) -> Bool {
+        let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if titlePlaceholders.contains(trimmed) {
+            return true
+        }
+        
+        // 檢查是否過短
+        if trimmed.count < 5 {
+            return true
+        }
+        
+        // 檢查是否包含佔位符關鍵詞
+        let lowerTitle = trimmed.lowercased()
+        let keywords = ["論文標題", "文章標題", "書籍標題", "paper title", "article title"]
+        for keyword in keywords {
+            if lowerTitle.contains(keyword) {
+                return true
+            }
+        }
+        
+        return false
+    }
+    
+    /// 檢查作者是否為佔位符
+    private func isPlaceholderAuthor(_ author: String) -> Bool {
+        let trimmed = author.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if authorPlaceholders.contains(trimmed) {
+            return true
+        }
+        
+        // 檢查「作者+數字」模式
+        let pattern = #"^(作者|Author|author)\s*\d*$"#
+        if trimmed.range(of: pattern, options: .regularExpression) != nil {
+            return true
+        }
+        
+        return false
+    }
+    
+    /// 檢查期刊是否為佔位符
+    private func isPlaceholderJournal(_ journal: String) -> Bool {
+        let trimmed = journal.trimmingCharacters(in: .whitespacesAndNewlines)
+        return journalPlaceholders.contains(trimmed)
     }
     
     private func buildFormattingPrompt(for type: FormattingType, with text: String) -> String {

@@ -149,6 +149,7 @@ extension PersistenceController {
         let attachmentEntity = Attachment.entityDescription()
         let documentEntity = Document.entityDescription()
         let tagEntity = Tag.entityDescription()
+        let extractionLogEntity = ExtractionLog.entityDescription()
 
         // 設置關聯關係
         setupRelationships(
@@ -157,7 +158,8 @@ extension PersistenceController {
             group: groupEntity,
             attachment: attachmentEntity,
             document: documentEntity,
-            tag: tagEntity
+            tag: tagEntity,
+            extractionLog: extractionLogEntity
         )
 
         model.entities = [
@@ -166,7 +168,8 @@ extension PersistenceController {
             groupEntity,
             attachmentEntity,
             documentEntity,
-            tagEntity
+            tagEntity,
+            extractionLogEntity
         ]
 
         return model
@@ -178,7 +181,8 @@ extension PersistenceController {
         group: NSEntityDescription,
         attachment: NSEntityDescription,
         document: NSEntityDescription,
-        tag: NSEntityDescription
+        tag: NSEntityDescription,
+        extractionLog: NSEntityDescription
     ) {
         // Library <-> Entry (1對多)
         let libraryToEntries = NSRelationshipDescription()
@@ -314,12 +318,31 @@ extension PersistenceController {
         entryToTags.inverseRelationship = tagToEntries
         tagToEntries.inverseRelationship = entryToTags
 
+        // Entry <-> ExtractionLog (1對1，可選)
+        let entryToExtractionLog = NSRelationshipDescription()
+        entryToExtractionLog.name = "extractionLog"
+        entryToExtractionLog.destinationEntity = extractionLog
+        entryToExtractionLog.minCount = 0
+        entryToExtractionLog.maxCount = 1
+        entryToExtractionLog.deleteRule = .cascadeDeleteRule
+
+        let extractionLogToEntry = NSRelationshipDescription()
+        extractionLogToEntry.name = "entry"
+        extractionLogToEntry.destinationEntity = entry
+        extractionLogToEntry.minCount = 0
+        extractionLogToEntry.maxCount = 1
+        extractionLogToEntry.deleteRule = .nullifyDeleteRule
+
+        entryToExtractionLog.inverseRelationship = extractionLogToEntry
+        extractionLogToEntry.inverseRelationship = entryToExtractionLog
+
         // 添加關聯到實體
         library.properties = library.properties + [libraryToEntries, libraryToGroups, libraryToTags]
-        entry.properties = entry.properties + [entryToLibrary, entryToAttachments, entryToGroups, entryToTags]
+        entry.properties = entry.properties + [entryToLibrary, entryToAttachments, entryToGroups, entryToTags, entryToExtractionLog]
         group.properties = group.properties + [groupToLibrary, groupToEntries, groupToParent, groupToChildren]
         attachment.properties = attachment.properties + [attachmentToEntry]
         document.properties = document.properties + [documentToCitations]
         tag.properties = tag.properties + [tagToLibrary, tagToEntries]
+        extractionLog.properties = extractionLog.properties + [extractionLogToEntry]
     }
 }

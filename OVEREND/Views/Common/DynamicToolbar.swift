@@ -42,24 +42,11 @@ struct DynamicToolbar: View {
 
             Spacer()
 
-            // 右側：番茄鐘 + 搜尋 + 主題切換 + 新建按鈕
+            // 右側：番茄鐘 + 搜尋 + 新建按鈕
             HStack(spacing: DesignTokens.Spacing.sm) {
                 // 🍅 番茄鐘按鈕
                 PomodoroToolbarButton()
                     .environmentObject(theme)
-                
-                // 主題切換
-                IconButton(
-                    icon: theme.isDarkMode ? "sun.max" : "moon",
-                    action: {
-                        withAnimation(AnimationSystem.Easing.spring) {
-                            theme.isDarkMode.toggle()
-                        }
-                    },
-                    style: .subtle,
-                    tooltip: theme.isDarkMode ? "切換到淺色模式" : "切換到深色模式"
-                )
-                .environmentObject(theme)
 
                 // 搜尋欄
                 SearchField(placeholder: "搜尋...", text: $searchText)

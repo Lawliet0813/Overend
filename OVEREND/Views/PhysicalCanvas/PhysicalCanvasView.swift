@@ -70,6 +70,7 @@ struct PhysicalCanvasView: View {
     @Binding var attributedString: NSAttributedString
     @State private var displayScale: CGFloat = 1.0
     @State private var viewportSize: CGSize = .zero
+    @State private var focusMode: Bool = true  // 預設開啟專注模式
 
     var onTextChange: ((NSAttributedString) -> Void)?
 
@@ -99,63 +100,121 @@ struct PhysicalCanvasView: View {
 
     var body: some View {
         GeometryReader { geometry in
-            ZStack {
-                Color(.windowBackgroundColor)
-
-                ScrollView([.horizontal, .vertical], showsIndicators: true) {
-                    ZStack(alignment: .topLeading) {
-                        // 頁面背景（白色紙張）
-                        Rectangle()
-                            .fill(Color.white)
-                            .frame(width: displayPageSize.width, height: displayPageSize.height)
-                            .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
-
-                        // 邊距導引線
-                        if page.showMarginGuides {
-                            marginGuidesView
-                        }
-
-                        // 標尺
-                        if page.showRulers {
-                            rulersView
-                        }
-
-                        // 頁首
-                        if let headerText = page.headerText {
-                            headerView(text: headerText)
-                        }
-
-                        // 主要內容區域
-                        PhysicalTextEditorView(
-                            attributedString: $attributedString,
-                            page: page,
-                            displayScale: displayScale,
-                            onTextChange: onTextChange
-                        )
-                        .frame(width: displayContentSize.width, height: displayContentSize.height)
-                        .position(
-                            x: displayContentOrigin.x + displayContentSize.width / 2,
-                            y: displayContentOrigin.y + displayContentSize.height / 2
-                        )
-
-                        // 頁尾與頁碼
-                        footerView
+            if focusMode {
+                // 專注模式：只顯示內容編輯區域
+                focusModeContent
+                    .onAppear {
+                        displayScale = 1.0
                     }
-                    .frame(width: displayPageSize.width, height: displayPageSize.height)
-                    .padding(40) // 頁面周圍留白
-                }
-            }
-            .onAppear {
-                updateScale(for: geometry.size)
-            }
-            .onChange(of: geometry.size) { newSize in
-                updateScale(for: newSize)
+            } else {
+                // 完整頁面模式
+                fullPageModeContent(geometry: geometry)
             }
         }
+        .clipped()
         .toolbar {
             ToolbarItemGroup {
-                scaleControls
+                viewModeToggle
             }
+        }
+    }
+    
+    // MARK: - 模式切換
+    
+    private var viewModeToggle: some View {
+        HStack(spacing: 8) {
+            Button(action: { focusMode = true }) {
+                Image(systemName: "text.alignleft")
+                    .foregroundColor(focusMode ? .accentColor : .secondary)
+            }
+            .help("專注模式")
+            
+            Button(action: { focusMode = false }) {
+                Image(systemName: "doc.richtext")
+                    .foregroundColor(!focusMode ? .accentColor : .secondary)
+            }
+            .help("頁面預覽模式")
+        }
+    }
+    
+    // MARK: - 專注模式內容
+    
+    private var focusModeContent: some View {
+        VStack(spacing: 0) {
+            // 主要編輯區域 - 填滿可用空間
+            PhysicalTextEditorView(
+                attributedString: $attributedString,
+                page: page,
+                displayScale: 1.0,
+                onTextChange: onTextChange
+            )
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color.white)
+            .padding(16)
+            .background(Color(.windowBackgroundColor))
+        }
+    }
+    
+    // MARK: - 完整頁面模式內容
+    
+    private func fullPageModeContent(geometry: GeometryProxy) -> some View {
+        let effectiveViewportSize = CGSize(
+            width: max(geometry.size.width, 100),
+            height: max(geometry.size.height, 100)
+        )
+        
+        return ScrollView([.horizontal, .vertical], showsIndicators: true) {
+            ZStack(alignment: .topLeading) {
+                // 頁面背景（白色紙張）
+                Rectangle()
+                    .fill(Color.white)
+                    .frame(width: displayPageSize.width, height: displayPageSize.height)
+                    .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
+
+                // 邊距導引線
+                if page.showMarginGuides {
+                    marginGuidesView
+                }
+
+                // 標尺
+                if page.showRulers {
+                    rulersView
+                }
+
+                // 頁首
+                if let headerText = page.headerText {
+                    headerView(text: headerText)
+                }
+
+                // 主要內容區域
+                PhysicalTextEditorView(
+                    attributedString: $attributedString,
+                    page: page,
+                    displayScale: displayScale,
+                    onTextChange: onTextChange
+                )
+                .frame(width: displayContentSize.width, height: displayContentSize.height)
+                .position(
+                    x: displayContentOrigin.x + displayContentSize.width / 2,
+                    y: displayContentOrigin.y + displayContentSize.height / 2
+                )
+
+                // 頁尾與頁碼
+                footerView
+            }
+            .frame(width: displayPageSize.width, height: displayPageSize.height)
+            .padding(16)
+            .frame(
+                minWidth: max(displayPageSize.width + 32, effectiveViewportSize.width),
+                minHeight: max(displayPageSize.height + 32, effectiveViewportSize.height)
+            )
+        }
+        .background(Color(.windowBackgroundColor))
+        .onAppear {
+            updateScale(for: geometry.size)
+        }
+        .onChange(of: geometry.size) { newSize in
+            updateScale(for: newSize)
         }
     }
 

@@ -1,4 +1,0 @@
-OVEREND/ContentView.swift
-OVEREND/Views/EntryList/EntryListView.swift
-OVEREND/Views/EntryDetail/EntryDetailView.swift
-OVEREND/Views/Sidebar/LibrarySidebarView.swift

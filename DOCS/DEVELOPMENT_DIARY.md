@@ -1,7 +1,7 @@
 # OVEREND 開發日記
 
 > **整合自 DOCS 資料夾所有開發文件**  
-> **最後更新：** 2026-01-03 (00:15)  
+> **最後更新：** 2026-01-04 (21:37)  
 > **專案進度：** 約 99%
 
 ---
@@ -471,7 +471,7 @@ if let htmlData = htmlData,
 
 ## 編譯狀態
 
-✅ **BUILD SUCCEEDED** (2026-01-03 00:15)
+✅ **BUILD SUCCEEDED** (2026-01-04 21:37)
 
 ---
 
@@ -632,4 +632,57 @@ if let htmlData = htmlData,
 
 - AI 功能整合度大幅提升，從單純 Prompt 轉向結構化 Tool Calling。
 - 系統可觀測性增強 (Notion Log Sync)。
+- 編譯通過 (Build Succeeded)。
+
+### 2026-01-04：UI/UX 視覺優化與互動增強
+
+**重點工作：**
+
+1. **深色模式專用化**
+   - 移除淺色模式，應用程式全面採用深色配色 (Dark Slate Blue)。
+   - 修改 `AppTheme.swift`，簡化所有 `isDarkMode` 條件運算式。
+   - `isDarkMode` 改為唯讀屬性，始終返回 `true`。
+   - 移除 `DynamicToolbar.swift` 中的主題切換按鈕。
+
+2. **Liquid Glass 按鈕設計（WWDC25 風格）**
+   - `CustomButton.swift` 全面重構：
+     - `.ultraThinMaterial` 毛玻璃背景
+     - 漸層玻璃邊框（白色 → 透明）
+     - 發光陰影效果 (`glowShadowColor`)
+     - SF Symbols `.hierarchical` 渲染模式
+   - 新增 `glowShadowColor` 計算屬性，根據按鈕樣式產生相應光暈。
+
+3. **右鍵選單功能增強**
+   - `ModernEntryListView.swift` 文獻列表右鍵選單新增：
+     - 開啟 PDF / 開啟 DOI 連結
+     - 複製引用（APA 7th / MLA 9th / BibTeX / 引用鍵）
+     - 星號標記切換
+     - 編輯書目
+   - `Entry.swift` 新增屬性與方法：
+     - `isStarred` 星號標記屬性
+     - `generateAPACitation()` APA 7th 引用生成
+     - `generateMLACitation()` MLA 9th 引用生成
+
+**修改檔案：**
+
+| 檔案 | 說明 |
+|------|------|
+| `Theme/AppTheme.swift` | 深色模式專用化 |
+| `Views/Common/DynamicToolbar.swift` | 移除主題切換按鈕 |
+| `Views/Components/Buttons/CustomButton.swift` | Liquid Glass 設計 |
+| `Views/EntryList/ModernEntryListView.swift` | 右鍵選單增強 |
+| `Models/Entry.swift` | 新增 isStarred、引用生成方法 |
+| `Views/Components/Cards/CardView.swift` | Preview 修復 |
+| `Views/Components/Feedback/LoadingIndicator.swift` | Preview 修復 |
+| `Views/Components/Inputs/StandardTextField.swift` | Preview 修復 |
+
+**技術決策：**
+
+- **深色模式專用**：考量開發者長時間使用體驗，統一採用深色配色減少視覺疲勞。
+- **Liquid Glass 風格**：遵循 WWDC25 macOS 設計語言，增加 UI 的現代感與層次感。
+- **星號標記儲存**：使用 `fields["_starred"]` 儲存於現有 JSON 結構，避免 CoreData 模型變更。
+
+**專案狀態：**
+
+- UI/UX 全面現代化，符合 macOS 26 設計規範。
 - 編譯通過 (Build Succeeded)。

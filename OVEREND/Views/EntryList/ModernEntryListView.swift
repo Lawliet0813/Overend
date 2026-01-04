@@ -763,51 +763,97 @@ struct EntryTableRow: View {
             onHover?(hovering)
         }
         .contextMenu {
-            // 複製引用鍵
-            Button(action: {
-                NSPasteboard.general.clearContents()
-                NSPasteboard.general.setString(entry.citationKey, forType: .string)
-                ToastManager.shared.showSuccess("已複製引用鍵")
-            }) {
-                Label("複製引用鍵", systemImage: "doc.on.doc")
-            }
-
-            // 複製 BibTeX
-            Button(action: {
-                let bibtex = entry.generateBibTeX()
-                NSPasteboard.general.clearContents()
-                NSPasteboard.general.setString(bibtex, forType: .string)
-                ToastManager.shared.showSuccess("已複製 BibTeX")
-            }) {
-                Label("複製 BibTeX", systemImage: "doc.text")
-            }
-
-            Divider()
-
-            // 開啟附件
+            // MARK: - 開啟操作
             if !entry.attachmentArray.isEmpty {
+                Button(action: {
+                    if let firstAttachment = entry.attachmentArray.first {
+                        NSWorkspace.shared.open(firstAttachment.fileURL)
+                    }
+                }) {
+                    Label("開啟 PDF", systemImage: "doc.text")
+                }
+            }
+            
+            if let doi = entry.fields["doi"], !doi.isEmpty {
+                Button(action: {
+                    let doiURL = doi.hasPrefix("http") ? doi : "https://doi.org/\(doi)"
+                    if let url = URL(string: doiURL) {
+                        NSWorkspace.shared.open(url)
+                    }
+                }) {
+                    Label("開啟 DOI 連結", systemImage: "link")
+                }
+            }
+            
+            Divider()
+            
+            // MARK: - 複製引用
+            Menu("複製引用") {
+                Button("APA 7th") {
+                    let citation = entry.generateAPACitation()
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(citation, forType: .string)
+                    ToastManager.shared.showSuccess("已複製 APA 引用")
+                }
+                
+                Button("MLA 9th") {
+                    let citation = entry.generateMLACitation()
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(citation, forType: .string)
+                    ToastManager.shared.showSuccess("已複製 MLA 引用")
+                }
+                
+                Divider()
+                
+                Button("BibTeX") {
+                    let bibtex = entry.generateBibTeX()
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(bibtex, forType: .string)
+                    ToastManager.shared.showSuccess("已複製 BibTeX")
+                }
+                
+                Button("引用鍵") {
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(entry.citationKey, forType: .string)
+                    ToastManager.shared.showSuccess("已複製引用鍵")
+                }
+            }
+            
+            Divider()
+            
+            // MARK: - 組織操作
+            Button(action: {
+                entry.isStarred.toggle()
+                try? entry.managedObjectContext?.save()
+                ToastManager.shared.showSuccess(entry.isStarred ? "已加入星號標記" : "已移除星號標記")
+            }) {
+                Label(entry.isStarred ? "取消星號標記" : "加入星號標記", 
+                      systemImage: entry.isStarred ? "star.fill" : "star")
+            }
+            
+            // 開啟多個附件
+            if entry.attachmentArray.count > 1 {
                 Menu("開啟附件") {
                     ForEach(Array(entry.attachmentArray.enumerated()), id: \.element.id) { index, attachment in
                         Button(action: {
                             NSWorkspace.shared.open(attachment.fileURL)
                         }) {
-                            Text(attachment.fileName)
+                            Label(attachment.fileName, systemImage: "doc.fill")
                         }
                     }
                 }
-
-                Divider()
             }
-
-            // 編輯
+            
+            Divider()
+            
+            // MARK: - 編輯與刪除
             Button(action: {
                 // TODO: 開啟編輯面板
                 ToastManager.shared.showInfo("編輯功能開發中")
             }) {
-                Label("編輯", systemImage: "pencil")
+                Label("編輯書目", systemImage: "pencil")
             }
-
-            // 刪除
+            
             Button(role: .destructive, action: {
                 showDeleteConfirm = true
             }) {
