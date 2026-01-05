@@ -25,7 +25,7 @@ struct CardView<Content: View>: View {
 
     init(
         padding: CGFloat = DesignTokens.Spacing.md,
-        cornerRadius: CGFloat = DesignTokens.CornerRadius.medium,
+        cornerRadius: CGFloat = DesignTokens.CornerRadius.large,  // 24px - Academic Green spec
         shadowLevel: Int = 2,
         borderWidth: CGFloat = 0.5,
         showBorder: Bool = true,
@@ -46,7 +46,7 @@ struct CardView<Content: View>: View {
             .padding(padding)
             .background(
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(theme.card)
+                    .fill(theme.elevated)
             )
             .overlay {
                 if showBorder {
@@ -78,7 +78,7 @@ struct HoverCard<Content: View>: View {
 
     init(
         padding: CGFloat = DesignTokens.Spacing.md,
-        cornerRadius: CGFloat = DesignTokens.CornerRadius.medium,
+        cornerRadius: CGFloat = DesignTokens.CornerRadius.large,  // 24px
         action: (() -> Void)? = nil,
         @ViewBuilder content: () -> Content
     ) {

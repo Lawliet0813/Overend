@@ -705,10 +705,10 @@ struct ImportOptionCard: View {
             .padding(20)
             .frame(width: 160)
             .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(theme.card)
+                RoundedRectangle(cornerRadius: 24)
+                    .fill(theme.elevated)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: 24)
                             .stroke(isHovered ? theme.accent : theme.border, lineWidth: 1)
                     )
             )

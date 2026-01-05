@@ -77,8 +77,8 @@ struct OVERENDApp: App {
     var body: some Scene {
         WindowGroup {
             ZStack {
-                // 主內容
-                NewContentView()
+                // 主內容 - 使用簡潔版 UI
+                SimpleContentView()
                     .environment(\.managedObjectContext, persistenceController.container.viewContext)
                     .opacity(showSplash ? 0 : 1)
                 

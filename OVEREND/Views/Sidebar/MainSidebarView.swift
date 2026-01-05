@@ -30,8 +30,8 @@ struct MainSidebarView: View {
             .background(.ultraThinMaterial)
             .overlay(alignment: .bottom) {
                 Rectangle()
-                    .fill(theme.glassBorder.opacity(0.5))
-                    .frame(height: 0.5)
+                    .fill(theme.border)
+                    .frame(height: 1)
             }
             
             // 側邊欄內容
@@ -149,10 +149,10 @@ struct MainSidebarView: View {
         .frame(minWidth: 220, maxWidth: 220)
         .background(
             ZStack {
-                // 深色半透明背景確保文字可讀性
-                Color(hex: "#1F2937").opacity(0.95)
+                // 提升層背景 (Elevated Layer)
+                theme.elevated
                 // 頂層玻璃效果
-                Color.white.opacity(0.03)
+                theme.cardGlass
             }
         )
         .sheet(isPresented: $showThemeSettings) {
@@ -170,9 +170,9 @@ struct MainSidebarView: View {
     private func sectionHeader(_ title: String) -> some View {
         Text(title)
             .font(.system(size: DesignTokens.Typography.caption, weight: .bold))
-            .foregroundColor(Color.white.opacity(0.5))
+            .foregroundColor(theme.textTertiary)
             .textCase(.uppercase)
-            .tracking(0.5)
+            .tracking(1.5)  // 增加字距 (academic style)
             .padding(.horizontal, DesignTokens.Spacing.sm)
             .padding(.vertical, DesignTokens.Spacing.xxs)
     }
@@ -181,9 +181,9 @@ struct MainSidebarView: View {
         HStack {
             Text(title)
                 .font(.system(size: DesignTokens.Typography.caption, weight: .bold))
-                .foregroundColor(Color.white.opacity(0.5))
+                .foregroundColor(theme.textTertiary)
                 .textCase(.uppercase)
-                .tracking(0.5)
+                .tracking(1.5)  // 增加字距 (academic style)
             
             Spacer()
             
