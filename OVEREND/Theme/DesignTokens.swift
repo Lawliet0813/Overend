@@ -13,19 +13,19 @@ struct DesignTokens {
 
     // MARK: - 圓角系統
 
-    /// 圓角半徑標準
+    /// 圓角半徑標準 (Academic Green Design Spec)
     enum CornerRadius {
-        /// 小圓角 - 用於按鈕、輸入框 (Updated to 8)
+        /// 小圓角 - 用於輸入框 (8px)
         static let small: CGFloat = 8
 
-        /// 中圓角 - 用於卡片、Toast (Updated to 12)
+        /// 中圓角 - 用於小按鈕 (12px)
         static let medium: CGFloat = 12
 
-        /// 大圓角 - 用於面板、Modal (Updated to 20)
-        static let large: CGFloat = 20
+        /// 大圓角 - 用於卡片 (24px)
+        static let large: CGFloat = 24
 
-        /// 特大圓角 - 用於大型容器 (Updated to 28 - rounded-3xl equivalent)
-        static let xLarge: CGFloat = 28
+        /// 特大圓角 - 用於大區塊 Banner (40px)
+        static let xLarge: CGFloat = 40
     }
 
     // MARK: - 陰影系統

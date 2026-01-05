@@ -58,8 +58,8 @@ struct DocumentCardView: View {
                     // 底部資訊
                     HStack {
                         Text("\(wordCount) 字")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(theme.textMuted)
+                            .font(theme.monoFont(size: 16))
+                            .foregroundColor(theme.textSecondary)
                         
                         Spacer()
                         
@@ -79,11 +79,11 @@ struct DocumentCardView: View {
                 .background(
                     ZStack {
                         // 基礎卡片背景
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(theme.card)
+                        RoundedRectangle(cornerRadius: 24)
+                            .fill(theme.elevated)
                         
                         // 添加微妙漸變光澤
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: 24)
                             .fill(
                                 LinearGradient(
                                     colors: [
@@ -96,8 +96,8 @@ struct DocumentCardView: View {
                             )
                         
                         // 邊框
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(isHovered ? theme.accent : theme.border, lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 24)
+                        .stroke(isHovered ? theme.accent : theme.border, lineWidth: 1)
                     }
                 )
                 // 增強陰影效果
@@ -148,7 +148,7 @@ struct DocumentCardView: View {
         }
         // 選中狀態邊框
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: 24)
                 .stroke(isSelected ? theme.accent : Color.clear, lineWidth: 3)
         )
         .alert("確定刪除？", isPresented: $showDeleteConfirm) {
