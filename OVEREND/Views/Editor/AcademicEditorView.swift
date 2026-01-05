@@ -179,6 +179,7 @@ struct AcademicEditorView: View {
         .padding(.horizontal, 20)
         .frame(height: 52)
         .background(.ultraThinMaterial)
+        .border(width: 1, edges: [.bottom], color: Color.white.opacity(0.05))
     }
     
     // MARK: - 打字機遮罩
@@ -231,6 +232,7 @@ struct AcademicEditorView: View {
         .padding(.horizontal, 20)
         .frame(height: 32)
         .background(Color.white.opacity(0.02))
+        .border(width: 1, edges: [.top], color: Color.white.opacity(0.05))
     }
     
     // MARK: - 檢查器面板
