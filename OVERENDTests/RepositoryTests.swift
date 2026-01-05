@@ -9,42 +9,40 @@ import XCTest
 import CoreData
 @testable import OVEREND
 
+@MainActor
 final class RepositoryTests: XCTestCase {
 
+    var testHelper: CoreDataTestHelper!
     var testContext: NSManagedObjectContext!
     var libraryRepository: LibraryRepository!
     var entryRepository: EntryRepository!
     var documentRepository: DocumentRepository!
     var groupRepository: GroupRepository!
 
-    override func setUpWithError() throws {
-        // 創建內存中的 Core Data Stack 用於測試
-        let container = NSPersistentContainer(name: "OVEREND")
-        let description = NSPersistentStoreDescription()
-        description.type = NSInMemoryStoreType
-        container.persistentStoreDescriptions = [description]
-
-        container.loadPersistentStores { _, error in
-            if let error = error {
-                fatalError("Failed to load test store: \(error)")
-            }
+    override func setUp() async throws {
+        // 使用 CoreDataTestHelper 創建測試環境
+        await MainActor.run {
+            testHelper = CoreDataTestHelper(inMemory: true)
+            testContext = testHelper.viewContext
+            
+            // 初始化 Repositories
+            libraryRepository = LibraryRepository(context: testContext)
+            entryRepository = EntryRepository(context: testContext)
+            documentRepository = DocumentRepository(context: testContext)
+            groupRepository = GroupRepository(context: testContext)
         }
-
-        testContext = container.viewContext
-
-        // 初始化 Repositories
-        libraryRepository = LibraryRepository(context: testContext)
-        entryRepository = EntryRepository(context: testContext)
-        documentRepository = DocumentRepository(context: testContext)
-        groupRepository = GroupRepository(context: testContext)
     }
 
-    override func tearDownWithError() throws {
-        testContext = nil
-        libraryRepository = nil
-        entryRepository = nil
-        documentRepository = nil
-        groupRepository = nil
+    override func tearDown() async throws {
+        await MainActor.run {
+            testHelper?.reset()
+            testHelper = nil
+            testContext = nil
+            libraryRepository = nil
+            entryRepository = nil
+            documentRepository = nil
+            groupRepository = nil
+        }
     }
 
     // MARK: - Library Repository Tests

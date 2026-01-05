@@ -337,6 +337,8 @@ struct SimpleContentView: View {
                         try self.savePDFEntry(metadata: metadata, pdfURL: url, library: library)
                         successCount += 1
                         
+                        // Notion 同步 - 僅開發版本
+                        #if DEBUG
                         if NotionConfig.isAutoCreateEnabled {
                             let duration = Date().timeIntervalSince(startTime)
                             Task {
@@ -348,6 +350,7 @@ struct SimpleContentView: View {
                                 )
                             }
                         }
+                        #endif
                     } catch {
                         failedCount += 1
                     }

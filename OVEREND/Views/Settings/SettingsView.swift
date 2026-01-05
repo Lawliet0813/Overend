@@ -30,10 +30,12 @@ struct SettingsView: View {
                     Label("校外連線", systemImage: "network")
                 }
             
+            #if DEBUG
             NotionSettingsView()
                 .tabItem {
                     Label("Notion", systemImage: "tablecells")
                 }
+            #endif
         }
         .frame(width: 500, height: 400)
     }
