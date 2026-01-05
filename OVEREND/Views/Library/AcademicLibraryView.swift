@@ -97,31 +97,47 @@ struct AcademicLibraryView: View {
             }
             .frame(minWidth: 350)
             
-            // --- 右側詳情面板 ---
-            if let entry = selectedEntry {
-                EntryDetailPanel(
-                    entry: entry,
-                    theme: theme,
-                    isAiLoading: $isAiLoading,
-                    aiSummary: $aiSummary,
-                    onGenerateSummary: { generateAISummary(for: entry) },
-                    onOpenPDF: { openPDF(for: entry) }
-                )
-                .transition(.move(edge: .trailing))
-            } else {
-                // 空狀態
-                VStack(spacing: 15) {
-                    Image(systemName: "books.vertical")
-                        .font(.system(size: 40))
-                        .foregroundColor(theme.textTertiary.opacity(0.3))
-                    
-                    Text("選擇一篇文獻以檢視詳情")
-                        .font(.subheadline)
-                        .foregroundColor(theme.textTertiary)
+            Divider().opacity(0.1)
+            
+            // --- 右側詳情面板 (動畫過渡) ---
+            ZStack {
+                if let entry = selectedEntry {
+                    EntryDetailPanel(
+                        entry: entry,
+                        theme: theme,
+                        isAiLoading: $isAiLoading,
+                        aiSummary: $aiSummary,
+                        onGenerateSummary: { generateAISummary(for: entry) },
+                        onOpenPDF: { openPDF(for: entry) }
+                    )
+                    .transition(.asymmetric(
+                        insertion: .move(edge: .trailing).combined(with: .opacity),
+                        removal: .opacity
+                    ))
+                } else {
+                    // 空狀態
+                    VStack(spacing: 20) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.white.opacity(0.02))
+                                .frame(width: 80, height: 80)
+                            
+                            Image(systemName: "doc.text.magnifyingglass")
+                                .font(.system(size: 32))
+                                .foregroundColor(theme.textTertiary.opacity(0.3))
+                        }
+                        
+                        Text("選擇一篇文獻以檢視書目詳情")
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(theme.textTertiary.opacity(0.5))
+                    }
+                    .frame(width: 300)
+                    .frame(maxHeight: .infinity)
+                    .background(theme.elevated)
+                    .transition(.opacity)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(theme.elevated)
             }
+            .animation(.spring(response: 0.3, dampingFraction: 0.8), value: selectedEntry)
         }
         .background(theme.background)
     }
@@ -265,16 +281,33 @@ struct EntryDetailPanel: View {
     
     @State private var activeTab = 0
     
+    private let tabTitles = ["資訊", "引用", "AI"]
+    
     var body: some View {
         VStack(spacing: 0) {
-            // 分頁選擇器
-            Picker("", selection: $activeTab) {
-                Text("資訊").tag(0)
-                Text("引用").tag(1)
-                Text("AI").tag(2)
+            // 自定義分頁標籤
+            HStack(spacing: 0) {
+                ForEach(tabTitles.indices, id: \.self) { index in
+                    VStack(spacing: 8) {
+                        Text(tabTitles[index])
+                            .font(.system(size: 12, weight: activeTab == index ? .bold : .medium))
+                            .foregroundColor(activeTab == index ? theme.accent : theme.textTertiary)
+                        
+                        Rectangle()
+                            .fill(activeTab == index ? theme.accent : Color.clear)
+                            .frame(height: 2)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .contentShape(Rectangle())
+                    .onTapGesture { 
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            activeTab = index 
+                        }
+                    }
+                }
             }
-            .pickerStyle(.segmented)
-            .padding()
+            .padding(.top, 20)
+            .padding(.horizontal, 10)
             
             ScrollView {
                 VStack(alignment: .leading, spacing: 25) {
@@ -289,22 +322,24 @@ struct EntryDetailPanel: View {
                         metadataTab
                     }
                 }
-                .padding(30)
+                .padding(.horizontal, 24)
+                .padding(.vertical, 20)
             }
             
             // 底部操作按鈕
             HStack(spacing: 15) {
                 if !entry.attachmentArray.isEmpty {
                     Button(action: onOpenPDF) {
-                        Label("閱讀原文", systemImage: "doc.viewfinder.fill")
+                        Label("閱讀 PDF", systemImage: "doc.viewfinder.fill")
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(theme.accent)
                     .foregroundColor(.black)
+                    .controlSize(.large)
                 }
             }
-            .padding(25)
+            .padding(24)
             .background(.ultraThinMaterial)
         }
         .frame(width: 300)
