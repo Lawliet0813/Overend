@@ -1,7 +1,7 @@
 # OVEREND 開發日記
 
 > **整合自 DOCS 資料夾所有開發文件**  
-> **最後更新：** 2026-01-04 (21:37)  
+> **最後更新：** 2026-01-05 (23:48)  
 > **專案進度：** 約 99%
 
 ---
@@ -471,7 +471,7 @@ if let htmlData = htmlData,
 
 ## 編譯狀態
 
-✅ **BUILD SUCCEEDED** (2026-01-04 21:37)
+✅ **BUILD SUCCEEDED** (2026-01-05 23:48)
 
 ---
 
@@ -685,4 +685,55 @@ if let htmlData = htmlData,
 **專案狀態：**
 
 - UI/UX 全面現代化，符合 macOS 26 設計規範。
+- 編譯通過 (Build Succeeded)。
+
+### 2026-01-05：完整測試計畫實作與發布準備
+
+**重點工作：**
+
+1. **測試計畫實作（72/78 測試通過，92%）**
+   - 建立 `CoreDataTestHelper.swift`，解決程式化 CoreData 模型的測試環境問題。
+   - 實作 P0 優先單元測試：
+     - `PDFMetadataExtractorTests.swift` (7 cases)
+     - `CitationServiceTests.swift` (10 cases)
+     - `BibTeXParserTests.swift` (16 cases)
+     - `RepositoryTests.swift` (16 cases)
+   - 實作 AI 服務測試：
+     - `AIServiceTests.swift` (24 cases) - 涵蓋 AI 錯誤類型、工具、領域
+   - 實作 P0 UI 自動化測試：
+     - `LibraryUITests.swift` (8 cases)
+     - `EditorUITests.swift` (12 cases)
+
+2. **Core Data 測試環境修復**
+   - 問題：專案使用程式化 CoreData 模型，無法用傳統方式載入。
+   - 解決：使用 `PersistenceController.createManagedObjectModel()` 建立測試專用 in-memory stack。
+   - 加入 `@MainActor` 與 async `setUp()/tearDown()` 確保線程安全。
+
+3. **Notion 同步功能發布準備**
+   - 使用 `#if DEBUG` 編譯旗標包裝 Notion 相關程式碼。
+   - Release 版本自動移除 Notion 功能：
+     - `SettingsView.swift` - Notion 設定頁籤
+     - `SimpleContentView.swift` - PDF 匯入後的自動同步
+
+**新增檔案（7 個）：**
+
+| 檔案 | 說明 |
+|------|------|
+| `OVERENDTests/CoreDataTestHelper.swift` | CoreData 測試輔助 🆕 |
+| `OVERENDTests/PDFMetadataExtractorTests.swift` | PDF 提取測試 🆕 |
+| `OVERENDTests/CitationServiceTests.swift` | 引用格式測試 🆕 |
+| `OVERENDTests/BibTeXParserTests.swift` | BibTeX 解析測試 🆕 |
+| `OVERENDTests/AIServiceTests.swift` | AI 服務測試 🆕 |
+| `OVERENDUITests/LibraryUITests.swift` | 文獻庫 UI 測試 🆕 |
+| `OVERENDUITests/EditorUITests.swift` | 編輯器 UI 測試 🆕 |
+
+**技術決策：**
+
+- **測試隔離**：每個測試方法使用獨立的 in-memory CoreData stack，避免測試間干擾。
+- **編譯旗標策略**：使用 `#if DEBUG` 而非運行時旗標，確保 Release 版本完全不包含開發功能。
+
+**專案狀態：**
+
+- 測試覆蓋率大幅提升（新增 78 個測試案例）。
+- Notion 功能已設定為僅開發版本可用。
 - 編譯通過 (Build Succeeded)。
