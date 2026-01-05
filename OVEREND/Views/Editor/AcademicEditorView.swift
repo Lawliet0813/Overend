@@ -285,7 +285,7 @@ struct AcademicEditorView: View {
             .padding(20)
             .background(.ultraThinMaterial)
         }
-        .frame(width: 280)
+        .frame(width: 240)
         .background(theme.elevated)
     }
     

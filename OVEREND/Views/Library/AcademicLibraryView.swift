@@ -95,7 +95,7 @@ struct AcademicLibraryView: View {
                     .scrollContentBackground(.hidden)
                 }
             }
-            .frame(minWidth: 400)
+            .frame(minWidth: 350)
             
             // --- 右側詳情面板 ---
             if let entry = selectedEntry {
@@ -307,7 +307,7 @@ struct EntryDetailPanel: View {
             .padding(25)
             .background(.ultraThinMaterial)
         }
-        .frame(width: 400)
+        .frame(width: 300)
         .background(theme.elevated)
     }
     
