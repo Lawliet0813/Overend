@@ -18,28 +18,45 @@
             <div class="logo">OVEREND</div>
             <div class="nav-links">
                 <a href="#features">功能</a>
-                <a href="#showcase">展示</a>
+                <a href="#testimonials">評價</a>
                 <a href="#pricing">價格</a>
                 <a href="index.html" class="lang-switch">English</a>
             </div>
             <a href="#" class="cta-button small">下載</a>
+            <!-- Hamburger Menu for Mobile -->
+            <div class="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </div>
     </nav>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav">
+        <div class="mobile-nav-links">
+            <a href="#features">功能</a>
+            <a href="#testimonials">評價</a>
+            <a href="#pricing">價格</a>
+            <a href="index.html">English</a>
+            <a href="#" class="cta-button primary">下載</a>
+        </div>
+    </div>
 
     <main>
         <!-- Hero Section -->
         <section class="hero">
             <div class="hero-content">
                 <h1 class="hero-title">寫作，<span class="gradient-text">重新想像。</span></h1>
-                <p class="hero-subtitle">專為 macOS 打造的終極學術寫作工具。AI 驅動、支援 LaTeX，設計優雅。</p>
+                <p class="hero-subtitle">專為 macOS 打造的終極學術寫作工具。AI 智慧中心、專業文獻管理，搭配極致優雅的設計。</p>
                 <div class="hero-actions">
                     <a href="#" class="cta-button primary">下載 macOS 版本</a>
                     <a href="#features" class="cta-button secondary">了解更多</a>
                 </div>
             </div>
             <div class="hero-visual">
-                <div class="app-window-mockup">
-                    <img src="assets/images/app_mockup.png" alt="OVEREND 應用程式介面" class="hero-img">
+                <div class="app-window-mockup scale-in">
+                    <img src="assets/images/app_mockup_v2.png" alt="OVEREND 應用程式介面" class="hero-img">
                 </div>
             </div>
         </section>
@@ -51,25 +68,147 @@
                 <p>您撰寫最佳作品所需的一切。</p>
             </div>
             <div class="feature-grid">
-                <div class="feature-card glass-card">
-                    <div class="icon">✨</div>
-                    <h3>AI 驅動</h3>
-                    <p>智慧寫作輔助、自動完成和語境感知建議。</p>
+                <div class="feature-card glass-card fade-in">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M12 2a4 4 0 0 1 4 4v1a4 4 0 0 1-.094.874A5.002 5.002 0 0 1 18 12.75v.25a5 5 0 0 1-5 5h-2a5 5 0 0 1-5-5v-.25a5.002 5.002 0 0 1 2.094-4.876A4.001 4.001 0 0 1 8 7V6a4 4 0 0 1 4-4z"
+                                stroke="url(#gradient-ai)" stroke-width="1.5" fill="none" />
+                            <circle cx="9" cy="6" r="1" fill="currentColor" />
+                            <circle cx="15" cy="6" r="1" fill="currentColor" />
+                            <path d="M9 15h6M10 18h4" stroke="url(#gradient-ai)" stroke-width="1.5"
+                                stroke-linecap="round" />
+                            <defs>
+                                <linearGradient id="gradient-ai" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#00c6ff" />
+                                    <stop offset="100%" stop-color="#0072ff" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <h3>AI 智慧中心</h3>
+                    <p>整合寫作建議、學術翻譯、引用檢查與規範驗證，全方位提升研究效率。</p>
                 </div>
-                <div class="feature-card glass-card">
-                    <div class="icon">∑</div>
-                    <h3>支援 LaTeX</h3>
-                    <p>專業數學公式渲染變得簡單。只需輸入即可見證奇蹟。</p>
+                <div class="feature-card glass-card fade-in">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="url(#gradient-lib)" stroke-width="1.5"
+                                stroke-linecap="round" />
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"
+                                stroke="url(#gradient-lib)" stroke-width="1.5" fill="none" />
+                            <path d="M8 7h8M8 11h6M8 15h4" stroke="url(#gradient-lib)" stroke-width="1.5"
+                                stroke-linecap="round" />
+                            <defs>
+                                <linearGradient id="gradient-lib" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#00c6ff" />
+                                    <stop offset="100%" stop-color="#0072ff" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <h3>專業文獻管理</h3>
+                    <p>DOI 自動查詢、CrossRef 整合，支援 APA、MLA 等多種引用格式自動生成。</p>
                 </div>
-                <div class="feature-card glass-card">
-                    <div class="icon">📄</div>
-                    <h3>PDF 匯出</h3>
-                    <p>批次匯出、自訂分頁控制和出版級輸出。</p>
+                <div class="feature-card glass-card fade-in">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 3L3 8l9 5 9-5-9-5z" stroke="url(#gradient-focus)" stroke-width="1.5"
+                                fill="none" />
+                            <path d="M3 12l9 5 9-5" stroke="url(#gradient-focus)" stroke-width="1.5" fill="none" />
+                            <path d="M3 17l9 5 9-5" stroke="url(#gradient-focus)" stroke-width="1.5" fill="none" />
+                            <defs>
+                                <linearGradient id="gradient-focus" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#00c6ff" />
+                                    <stop offset="100%" stop-color="#0072ff" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <h3>極致寫作體驗</h3>
+                    <p>打字機專注模式、麵包屑導航與 LaTeX 公式即時預覽，讓您專注於思考。</p>
                 </div>
-                <div class="feature-card glass-card">
-                    <div class="icon">🍎</div>
-                    <h3>原生 macOS</h3>
-                    <p>使用 SwiftUI 建構，提供流暢、靈敏的原生體驗。</p>
+                <div class="feature-card glass-card fade-in">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="2" y="3" width="20" height="14" rx="2" stroke="url(#gradient-mac)"
+                                stroke-width="1.5" fill="none" />
+                            <path d="M8 21h8M12 17v4" stroke="url(#gradient-mac)" stroke-width="1.5"
+                                stroke-linecap="round" />
+                            <circle cx="12" cy="10" r="3" stroke="url(#gradient-mac)" stroke-width="1.5" fill="none" />
+                            <defs>
+                                <linearGradient id="gradient-mac" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#00c6ff" />
+                                    <stop offset="100%" stop-color="#0072ff" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <h3>原生 macOS 設計</h3>
+                    <p>採用最新的 Liquid Glass 視覺風格與深色主題，提供流暢、沈浸的原生體驗。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Social Proof: Stats -->
+        <section id="testimonials" class="testimonials">
+            <div class="section-header">
+                <h2>深受研究者信賴</h2>
+                <p>來自世界各地學術工作者的真實回饋。</p>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="stats-section">
+                <div class="stat-item fade-in">
+                    <div class="stat-number" data-value="5000">0</div>
+                    <div class="stat-label">活躍用戶</div>
+                </div>
+                <div class="stat-item fade-in">
+                    <div class="stat-number" data-value="120000">0</div>
+                    <div class="stat-label">已撰寫文章</div>
+                </div>
+                <div class="stat-item fade-in">
+                    <div class="stat-number" data-value="98">0</div>
+                    <div class="stat-label">% 滿意度</div>
+                </div>
+            </div>
+
+            <!-- Testimonials -->
+            <div class="testimonial-grid">
+                <div class="testimonial-card glass-card fade-in">
+                    <div class="testimonial-content">
+                        <p class="testimonial-text">OVEREND 徹底改變了我的論文寫作流程。AI 寫作建議和自動引用功能讓我節省了大量時間，可以專注在研究本身。</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">陳</div>
+                            <div class="author-info">
+                                <h4>陳博士</h4>
+                                <p>台灣大學 資工系教授</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card glass-card fade-in">
+                    <div class="testimonial-content">
+                        <p class="testimonial-text">終於有一款真正為學術寫作設計的工具了。Liquid Glass 的視覺效果非常舒適，長時間寫作也不會感到疲勞。</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">林</div>
+                            <div class="author-info">
+                                <h4>林同學</h4>
+                                <p>清華大學 博士生</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card glass-card fade-in">
+                    <div class="testimonial-content">
+                        <p class="testimonial-text">文獻管理功能超乎期待，DOI 自動查詢和 CrossRef 整合讓建立引用變得前所未有的簡單。強烈推薦給所有研究者！</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">王</div>
+                            <div class="author-info">
+                                <h4>王研究員</h4>
+                                <p>中央研究院</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -81,8 +220,8 @@
                 <p>一個讓您專注於想法的無干擾環境。</p>
             </div>
             <div class="showcase-content">
-                <div class="showcase-image-container">
-                    <img src="assets/images/app_mockup.png" alt="OVEREND 應用程式介面" class="showcase-img">
+                <div class="showcase-image-container scale-in">
+                    <img src="assets/images/app_mockup_v2.png" alt="OVEREND 應用程式介面" class="showcase-img">
                     <div class="showcase-overlay"></div>
                 </div>
             </div>
@@ -95,7 +234,7 @@
                 <p>一次購買，終身使用。無訂閱制。</p>
             </div>
             <div class="pricing-cards">
-                <div class="pricing-card glass-card">
+                <div class="pricing-card glass-card fade-in">
                     <div class="card-header">
                         <h3>標準版</h3>
                         <div class="price">$49.99</div>
@@ -114,7 +253,7 @@
 
         <!-- CTA Section -->
         <section class="cta-section">
-            <div class="cta-content glass-card">
+            <div class="cta-content glass-card fade-in">
                 <h2>準備好提升您的寫作體驗了嗎？</h2>
                 <p>立即加入成千上萬使用 OVEREND 的研究人員和學生。</p>
                 <div class="cta-actions">
