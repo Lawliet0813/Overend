@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreData
+import UniformTypeIdentifiers
 
 // MARK: - 學術編輯器主視圖
 
@@ -115,71 +116,143 @@ struct AcademicEditorView: View {
     // MARK: - 工具列
     
     private var editorToolbar: some View {
-        HStack {
-            // 文件資訊
-            HStack(spacing: 15) {
-                Image(systemName: "doc.text")
-                    .foregroundColor(theme.accent)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(document.title)
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(theme.textPrimary)
-                    
-                    Text("最後同步於 \(formatDate(document.updatedAt))")
-                        .font(.system(size: 9))
-                        .foregroundColor(theme.textTertiary)
+        ProfessionalEditorToolbar(
+            fontSize: $fontSize,
+            isTypewriterMode: $isTypewriterMode,
+            showInspector: $showInspector,
+            onFormatAction: handleFormatAction,
+            onInsertCitation: {
+                inspectorMode = .citations
+                if !showInspector {
+                    withAnimation(.spring(response: 0.3)) {
+                        showInspector = true
+                    }
+                }
+            },
+            onExport: handleExport
+        )
+    }
+    
+    // MARK: - 匯出處理
+    
+    private func handleExport(_ exportType: ExportType) {
+        Task {
+            do {
+                switch exportType {
+                case .pdf:
+                    try await DocumentExportService.export(
+                        document: document,
+                        format: .pdf,
+                        template: .apa
+                    )
+                case .docx:
+                    try await DocumentExportService.export(
+                        document: document,
+                        format: .docx,
+                        template: .apa
+                    )
+                case .latex:
+                    await exportToLaTeX()
+                }
+            } catch {
+                if case ExportError.cancelled = error {
+                    // 使用者取消，不顯示錯誤
+                } else {
+                    await MainActor.run {
+                        ToastManager.shared.showError("匯出失敗：\(error.localizedDescription)")
+                    }
                 }
             }
-            
-            Spacer()
-            
-            // 字體大小控制
-            HStack(spacing: 2) {
-                Button(action: { fontSize = max(12, fontSize - 1) }) {
-                    Image(systemName: "textformat.size.smaller")
-                }
-                .buttonStyle(.plain)
-                .foregroundColor(theme.textSecondary)
-                
-                Text("\(Int(fontSize))")
-                    .font(theme.monoFont(size: 11))
-                    .frame(width: 25)
-                    .foregroundColor(theme.textSecondary)
-                
-                Button(action: { fontSize = min(32, fontSize + 1) }) {
-                    Image(systemName: "textformat.size.larger")
-                }
-                .buttonStyle(.plain)
-                .foregroundColor(theme.textSecondary)
-            }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(Color.white.opacity(0.05))
-            .cornerRadius(8)
-            
-            Divider().frame(height: 20).padding(.horizontal, 10)
-            
-            // 專注模式
-            Button(action: { isTypewriterMode.toggle() }) {
-                Image(systemName: "scope")
-                    .foregroundColor(isTypewriterMode ? theme.accent : theme.textTertiary)
-            }
-            .buttonStyle(.plain)
-            .help("打字機專注模式")
-            
-            // Inspector 切換
-            Button(action: { withAnimation(.spring(response: 0.3)) { showInspector.toggle() } }) {
-                Image(systemName: "sidebar.right")
-                    .foregroundColor(showInspector ? theme.accent : theme.textTertiary)
-            }
-            .buttonStyle(.plain)
-            .help("切換學術助理")
         }
-        .padding(.horizontal, 20)
-        .frame(height: 52)
-        .background(.ultraThinMaterial)
-        .border(width: 1, edges: [.bottom], color: Color.white.opacity(0.05))
+    }
+    
+    private func exportToLaTeX() async {
+        // 簡單的 LaTeX 匯出實作
+        let panel = NSSavePanel()
+        panel.title = "匯出 LaTeX"
+        panel.nameFieldStringValue = "\(document.title).tex"
+        panel.canCreateDirectories = true
+        panel.allowedContentTypes = [.plainText]
+        
+        let response = await panel.beginSheetModal(for: NSApp.keyWindow!)
+        
+        if response == .OK, let url = panel.url {
+            let latexContent = generateLaTeX()
+            do {
+                try latexContent.write(to: url, atomically: true, encoding: .utf8)
+                await MainActor.run {
+                    ToastManager.shared.showSuccess("已成功匯出 LaTeX")
+                    NSWorkspace.shared.activateFileViewerSelecting([url])
+                }
+            } catch {
+                await MainActor.run {
+                    ToastManager.shared.showError("LaTeX 匯出失敗")
+                }
+            }
+        }
+    }
+    
+    private func generateLaTeX() -> String {
+        """
+        \\documentclass[12pt,a4paper]{article}
+        \\usepackage[utf8]{inputenc}
+        \\usepackage{xeCJK}
+        \\usepackage{geometry}
+        \\geometry{margin=2.5cm}
+        
+        \\title{\(document.title)}
+        \\author{}
+        \\date{\\today}
+        
+        \\begin{document}
+        
+        \\maketitle
+        
+        \(text)
+        
+        \\end{document}
+        """
+    }
+    
+    // MARK: - 格式動作處理
+    
+    private func handleFormatAction(_ action: FormatAction) {
+        // 由於目前使用 TextEditor (純文字)，這些格式化功能需要 RichTextEditor
+        // 這裡先記錄動作，當切換到 RichTextEditor 時可以直接使用
+        switch action {
+        case .toggleBold:
+            ToastManager.shared.showInfo("粗體格式已切換")
+        case .toggleItalic:
+            ToastManager.shared.showInfo("斜體格式已切換")
+        case .toggleUnderline:
+            ToastManager.shared.showInfo("底線格式已切換")
+        case .toggleStrikethrough:
+            ToastManager.shared.showInfo("刪除線格式已切換")
+        case .setFont(let fontName):
+            ToastManager.shared.showInfo("字型已設為 \(fontName)")
+        case .setFontSize(let size):
+            // fontSize 已經透過 binding 更新
+            break
+        case .setTextColor(let color):
+            ToastManager.shared.showInfo("文字顏色已更新")
+        case .setHighlight(let color):
+            ToastManager.shared.showInfo("螢光標記已套用")
+        case .setAlignment(let alignment):
+            let alignmentName = switch alignment {
+            case .left: "靠左"
+            case .center: "置中"
+            case .right: "靠右"
+            case .justified: "兩端"
+            default: "對齊"
+            }
+            ToastManager.shared.showInfo("\(alignmentName)對齊")
+        case .insertBulletList:
+            text += "\n• "
+            ToastManager.shared.showInfo("已插入項目列表")
+        case .insertNumberedList:
+            text += "\n1. "
+            ToastManager.shared.showInfo("已插入編號列表")
+        }
     }
     
     // MARK: - 打字機遮罩

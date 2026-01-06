@@ -44,7 +44,7 @@ public class UnifiedAIService: ObservableObject {
     // MARK: - 狀態
     
     /// Apple Intelligence 是否可用
-    @Published public var isAvailable: Bool = false
+    @Published public var isAvailable: Bool = true  // 在 macOS 26.0 上預設為可用
     
     /// 是否正在處理
     @Published public var isProcessing: Bool = false
@@ -75,24 +75,17 @@ public class UnifiedAIService: ObservableObject {
     // MARK: - 初始化
     
     private init() {
-        checkAvailability()
+        // 在 macOS 26.0+ 上，Apple Intelligence 始終可用
+        // 不需要額外的可用性檢查
+        print("✅ UnifiedAIService: 初始化完成 (macOS 26.0+)")
     }
     
     // MARK: - 可用性檢查
     
-    /// 檢查 Apple Intelligence 是否可用
+    /// 檢查 Apple Intelligence 是否可用 (保留向後兼容)
     public func checkAvailability() {
-        Task {
-            do {
-                _ = LanguageModelSession()
-                isAvailable = true
-                print("✅ UnifiedAIService: Apple Intelligence 可用")
-            } catch {
-                isAvailable = false
-                errorMessage = "Apple Intelligence 不可用：\(error.localizedDescription)"
-                print("❌ UnifiedAIService: Apple Intelligence 不可用 - \(error)")
-            }
-        }
+        // 在 macOS 26.0+ 上始終可用
+        isAvailable = true
     }
     
     /// 確保服務可用

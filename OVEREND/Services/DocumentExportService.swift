@@ -156,14 +156,34 @@ class DocumentExportService {
 
     // MARK: - DOCX Export
 
-    /// 匯出為 DOCX（實際為 RTF 格式，Word 可開啟）
+    /// 匯出為 DOCX（使用 RTFD 或 Office Open XML）
     private static func exportToDOCX(
         document: Document,
         url: URL
     ) async throws {
         let attributedString = document.attributedString
+        
+        // 如果內容為空，使用純文字
+        if attributedString.length == 0 {
+            let emptyContent = "（空白文件）"
+            try emptyContent.write(to: url.deletingPathExtension().appendingPathExtension("rtf"), 
+                                   atomically: true, 
+                                   encoding: .utf8)
+            return
+        }
 
-        // 生成 RTF 資料
+        // 嘗試使用 Office Open XML (DOCX) 格式
+        if let docxData = try? attributedString.data(
+            from: NSRange(location: 0, length: attributedString.length),
+            documentAttributes: [
+                .documentType: NSAttributedString.DocumentType.officeOpenXML
+            ]
+        ) {
+            try docxData.write(to: url)
+            return
+        }
+        
+        // 回退方案：使用 RTF 格式（Word 可開啟）
         guard let rtfData = try? attributedString.data(
             from: NSRange(location: 0, length: attributedString.length),
             documentAttributes: [.documentType: NSAttributedString.DocumentType.rtf]
@@ -171,14 +191,20 @@ class DocumentExportService {
             throw ExportError.rtfGenerationFailed
         }
 
-        // 暫時以 RTF 格式儲存（Word 可開啟）
+        // 儲存為 RTF（修改副檔名）
         let rtfURL = url.deletingPathExtension().appendingPathExtension("rtf")
         try rtfData.write(to: rtfURL)
 
-        // 提示使用者
+        // 提示使用者格式變更
         await MainActor.run {
             ToastManager.shared.showInfo("已匯出為 RTF 格式（Word 可開啟）")
         }
+        
+        // 開啟實際儲存的檔案
+        NSWorkspace.shared.activateFileViewerSelecting([rtfURL])
+        
+        // 拋出取消錯誤以避免外層再顯示成功訊息
+        throw ExportError.cancelled
     }
 }
 
