@@ -138,10 +138,10 @@ struct SimpleContentView: View {
                     if let docId = docSelection?.replacingOccurrences(of: "doc_", with: ""),
                        let uuid = UUID(uuidString: docId),
                        let doc = documents.first(where: { $0.id == uuid }) {
-                        AcademicEditorView(document: doc)
+                        DocumentEditorView(document: doc)
                             .environmentObject(theme)
                     } else if let doc = selectedDocument {
-                        AcademicEditorView(document: doc)
+                        DocumentEditorView(document: doc)
                             .environmentObject(theme)
                     }
                     
@@ -794,7 +794,31 @@ struct EnhancedProjectCard: View {
     }
 }
 
-// MARK: - 預覽
+// MARK: - 編輯器佔位視圖
+
+struct EditorPlaceholderView: View {
+    let document: Document
+    @EnvironmentObject var theme: AppTheme
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "doc.text")
+                .font(.system(size: 64))
+                .foregroundColor(theme.textTertiary)
+            
+            Text("編輯器開發中...")
+                .font(.title2)
+                .foregroundColor(theme.textSecondary)
+            
+            Text(document.title)
+                .font(.headline)
+                .foregroundColor(theme.textPrimary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(theme.background)
+    }
+}
+
 
 #Preview {
     SimpleContentView()
