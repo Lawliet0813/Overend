@@ -18,6 +18,7 @@ class EntryViewModel: ObservableObject {
     @Published var errorMessage: String?
 
     private let repository: EntryRepositoryProtocol
+    private let learningService = LearningService.shared
     private var cancellables = Set<AnyCancellable>()
 
     var library: Library? {

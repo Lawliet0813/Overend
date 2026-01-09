@@ -11,30 +11,57 @@ import SwiftUI
 
 struct AcademicLibraryView: View {
     @EnvironmentObject var theme: AppTheme
+    @EnvironmentObject var toastManager: ToastManager
     @Environment(\.managedObjectContext) private var viewContext
     
     let entries: [Entry]
     var onImportPDF: () -> Void
+    
+    // Fetch groups and tags for batch operations
+    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Group.name, ascending: true)])
+    private var groups: FetchedResults<Group>
+    
+    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Tag.name, ascending: true)])
+    private var tags: FetchedResults<Tag>
     
     @State private var searchText = ""
     @State private var selectedEntry: Entry?
     @State private var isAiLoading = false
     @State private var aiSummary: String?
     
+    // 進階搜尋
+    @State private var showAdvancedSearch = false
+    @State private var advancedFilter = AdvancedSearchFilter()
+    
+    // 批次選擇
+    @State private var isSelectionMode = false
+    @State private var selectedEntries: Set<Entry> = []
+    
     var filteredEntries: [Entry] {
-        if searchText.isEmpty { return entries }
-        return entries.filter {
-            $0.title.localizedCaseInsensitiveContains(searchText) ||
-            $0.author.localizedCaseInsensitiveContains(searchText)
+        var result = entries
+        
+        // 基本文字搜尋
+        if !searchText.isEmpty {
+            result = result.filter {
+                $0.title.localizedCaseInsensitiveContains(searchText) ||
+                $0.author.localizedCaseInsensitiveContains(searchText)
+            }
         }
+        
+        // 進階篩選
+        if advancedFilter.hasFilters {
+            result = advancedFilter.filterInMemory(result)
+        }
+        
+        return result
     }
     
     var body: some View {
         HStack(spacing: 0) {
             // --- 左側文獻列表 ---
             VStack(spacing: 0) {
-                // 工具欄
-                HStack(spacing: 15) {
+            // 工具欄
+                HStack(spacing: 12) {
                     // 搜尋欄
                     HStack {
                         Image(systemName: "magnifyingglass")
@@ -43,10 +70,69 @@ struct AcademicLibraryView: View {
                         TextField("搜尋標題、作者...", text: $searchText)
                             .textFieldStyle(.plain)
                             .font(.system(size: 13))
+                        
+                        if !searchText.isEmpty {
+                            Button {
+                                searchText = ""
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundColor(theme.textTertiary)
+                            }
+                            .buttonStyle(.plain)
+                        }
                     }
                     .padding(8)
                     .background(Color.white.opacity(0.05))
                     .cornerRadius(10)
+                    
+                    // 進階篩選
+                    Button {
+                        showAdvancedSearch.toggle()
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "line.3.horizontal.decrease.circle")
+                            if advancedFilter.hasFilters {
+                                Text("\(advancedFilter.filterCount)")
+                                    .font(.system(size: 10, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 5)
+                                    .padding(.vertical, 1)
+                                    .background(theme.accent)
+                                    .cornerRadius(8)
+                            }
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundColor(advancedFilter.hasFilters ? theme.accent : theme.textTertiary)
+                    .help("進階篩選")
+                    .popover(isPresented: $showAdvancedSearch) {
+                        AdvancedSearchPanel(
+                            filter: $advancedFilter,
+                            onApply: {
+                                showAdvancedSearch = false
+                            },
+                            onReset: {
+                                advancedFilter.reset()
+                            }
+                        )
+                        .environmentObject(theme)
+                    }
+                    
+                    Divider()
+                        .frame(height: 20)
+                    
+                    // 批次選擇模式
+                    Button {
+                        isSelectionMode.toggle()
+                        if !isSelectionMode {
+                            selectedEntries.removeAll()
+                        }
+                    } label: {
+                        Image(systemName: isSelectionMode ? "checkmark.circle.fill" : "checkmark.circle")
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundColor(isSelectionMode ? theme.accent : theme.textTertiary)
+                    .help(isSelectionMode ? "完成選擇" : "批次操作")
                     
                     Button(action: onImportPDF) {
                         Image(systemName: "plus.app.fill")
@@ -54,10 +140,25 @@ struct AcademicLibraryView: View {
                     }
                     .buttonStyle(.plain)
                     .foregroundColor(theme.accent)
-                    .help("匯入文獻")
+                    .help("匯入文獨")
                 }
                 .padding(20)
                 .background(.ultraThinMaterial)
+                
+                // 批次操作工具列
+                if isSelectionMode {
+                    BatchOperationsToolbar(
+                        selectedEntries: $selectedEntries,
+                        isSelectionMode: $isSelectionMode,
+                        allEntries: filteredEntries,
+                        availableGroups: Array(groups),
+                        availableTags: Array(tags),
+                        onEntriesUpdated: {
+                            // UI 刷新由外層處理
+                        }
+                    )
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                }
                 
                 // 文獻列表
                 if entries.isEmpty {
@@ -82,14 +183,37 @@ struct AcademicLibraryView: View {
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
-                    List(filteredEntries, selection: $selectedEntry) { entry in
-                        EntryRow(entry: entry, theme: theme)
-                            .tag(entry)
-                            .listRowBackground(
-                                selectedEntry == entry ?
-                                theme.accent.opacity(0.1) : Color.clear
-                            )
-                            .listRowInsets(EdgeInsets(top: 10, leading: 15, bottom: 10, trailing: 15))
+                    List(filteredEntries, selection: isSelectionMode ? nil : $selectedEntry) { entry in
+                        HStack {
+                            // 選擇模式核取方方塊
+                            if isSelectionMode {
+                                Button {
+                                    if selectedEntries.contains(entry) {
+                                        selectedEntries.remove(entry)
+                                    } else {
+                                        selectedEntries.insert(entry)
+                                    }
+                                } label: {
+                                    Image(systemName: selectedEntries.contains(entry) ? "checkmark.circle.fill" : "circle")
+                                        .foregroundColor(selectedEntries.contains(entry) ? theme.accent : theme.textTertiary)
+                                        .font(.system(size: 20))
+                                }
+                                .buttonStyle(.plain)
+                            }
+                            
+                            EntryRow(entry: entry, theme: theme)
+                        }
+                        .tag(entry)
+                        .listRowBackground(
+                            (selectedEntry == entry || selectedEntries.contains(entry)) ?
+                            theme.accent.opacity(0.1) : Color.clear
+                        )
+                        .listRowInsets(EdgeInsets(top: 10, leading: 15, bottom: 10, trailing: 15))
+                        .onTapGesture {
+                            if !isSelectionMode {
+                                selectedEntry = entry
+                            }
+                        }
                     }
                     .listStyle(.plain)
                     .scrollContentBackground(.hidden)

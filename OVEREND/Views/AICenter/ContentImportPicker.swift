@@ -28,26 +28,42 @@ struct LibraryEntryPicker: View {
     @Environment(\.dismiss) private var dismiss
     
     @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \Library.name, ascending: true)],
+        animation: .default
+    )
+    private var libraries: FetchedResults<Library>
+    
+    @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Entry.updatedAt, ascending: false)],
         animation: .default
     )
-    private var entries: FetchedResults<Entry>
+    private var allEntries: FetchedResults<Entry>
     
     @State private var searchText: String = ""
     @State private var selectedContentType: LibraryImportContentType = .abstract
+    @State private var selectedLibrary: Library?
     
     let onSelect: (String) -> Void
     
     private var filteredEntries: [Entry] {
-        if searchText.isEmpty {
-            return Array(entries)
+        var entries = Array(allEntries)
+        
+        // 按文獻庫篩選
+        if let selectedLibrary = selectedLibrary {
+            entries = entries.filter { $0.library?.id == selectedLibrary.id }
         }
-        let query = searchText.lowercased()
-        return entries.filter { entry in
-            entry.title.lowercased().contains(query) ||
-            entry.author.lowercased().contains(query) ||
-            entry.citationKey.lowercased().contains(query)
+        
+        // 按搜尋文字篩選
+        if !searchText.isEmpty {
+            let query = searchText.lowercased()
+            entries = entries.filter { entry in
+                entry.title.lowercased().contains(query) ||
+                entry.author.lowercased().contains(query) ||
+                entry.citationKey.lowercased().contains(query)
+            }
         }
+        
+        return entries
     }
     
     var body: some View {
@@ -56,6 +72,12 @@ struct LibraryEntryPicker: View {
             headerView
             
             Divider()
+            
+            // 文獻庫選擇
+            if libraries.count > 1 {
+                librarySelector
+                Divider()
+            }
             
             // 內容類型選擇
             contentTypeSelector
@@ -76,6 +98,12 @@ struct LibraryEntryPicker: View {
         }
         .frame(width: 500, height: 600)
         .background(theme.card)
+        .onAppear {
+            // 預設選擇第一個文獻庫（通常是預設庫）
+            if selectedLibrary == nil, let firstLibrary = libraries.first {
+                selectedLibrary = firstLibrary
+            }
+        }
     }
     
     private var headerView: some View {
@@ -85,9 +113,15 @@ struct LibraryEntryPicker: View {
                     .font(.system(size: DesignTokens.Typography.title3, weight: .bold))
                     .foregroundColor(theme.textPrimary)
                 
-                Text("選擇要導入的文獻內容")
-                    .font(.system(size: DesignTokens.Typography.caption))
-                    .foregroundColor(theme.textMuted)
+                if libraries.count > 1 {
+                    Text("選擇文獻庫和要導入的內容")
+                        .font(.system(size: DesignTokens.Typography.caption))
+                        .foregroundColor(theme.textMuted)
+                } else {
+                    Text("選擇要導入的文獻內容")
+                        .font(.system(size: DesignTokens.Typography.caption))
+                        .foregroundColor(theme.textMuted)
+                }
             }
             
             Spacer()
@@ -100,6 +134,37 @@ struct LibraryEntryPicker: View {
             .buttonStyle(.plain)
         }
         .padding(DesignTokens.Spacing.lg)
+    }
+    
+    private var librarySelector: some View {
+        HStack(spacing: DesignTokens.Spacing.md) {
+            Image(systemName: "books.vertical")
+                .foregroundColor(theme.accent)
+                .font(.system(size: DesignTokens.IconSize.small))
+            
+            Text("文獻庫")
+                .font(.system(size: DesignTokens.Typography.caption))
+                .foregroundColor(theme.textMuted)
+            
+            Picker("選擇文獻庫", selection: $selectedLibrary) {
+                Text("全部文獻庫").tag(nil as Library?)
+                ForEach(Array(libraries), id: \.id) { library in
+                    HStack {
+                        Text(library.name)
+                        Text("(\(library.entryCount))")
+                            .foregroundColor(theme.textMuted)
+                    }
+                    .tag(library as Library?)
+                }
+            }
+            .pickerStyle(.menu)
+            .frame(maxWidth: .infinity)
+            
+            Spacer()
+        }
+        .padding(.horizontal, DesignTokens.Spacing.lg)
+        .padding(.vertical, DesignTokens.Spacing.md)
+        .background(theme.background)
     }
     
     private var contentTypeSelector: some View {
@@ -142,9 +207,31 @@ struct LibraryEntryPicker: View {
                 .font(.system(size: 48))
                 .foregroundColor(theme.textMuted)
             
-            Text(searchText.isEmpty ? "文獻庫為空" : "找不到符合的文獻")
-                .font(.system(size: DesignTokens.Typography.body))
-                .foregroundColor(theme.textMuted)
+            if allEntries.isEmpty {
+                Text("文獻庫為空")
+                    .font(.system(size: DesignTokens.Typography.body))
+                    .foregroundColor(theme.textMuted)
+                
+                Text("請先從主介面匯入文獻")
+                    .font(.system(size: DesignTokens.Typography.caption))
+                    .foregroundColor(theme.textSecondary)
+            } else if selectedLibrary != nil && filteredEntries.isEmpty && searchText.isEmpty {
+                Text("此文獻庫中尚無文獻")
+                    .font(.system(size: DesignTokens.Typography.body))
+                    .foregroundColor(theme.textMuted)
+                
+                Text("請選擇其他文獻庫或匯入文獻")
+                    .font(.system(size: DesignTokens.Typography.caption))
+                    .foregroundColor(theme.textSecondary)
+            } else {
+                Text("找不到符合的文獻")
+                    .font(.system(size: DesignTokens.Typography.body))
+                    .foregroundColor(theme.textMuted)
+                
+                Text("請嘗試其他搜尋關鍵字")
+                    .font(.system(size: DesignTokens.Typography.caption))
+                    .foregroundColor(theme.textSecondary)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -171,10 +258,25 @@ struct LibraryEntryPicker: View {
                 
                 // 文獻資訊
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(entry.title)
-                        .font(.system(size: DesignTokens.Typography.body, weight: .medium))
-                        .foregroundColor(theme.textPrimary)
-                        .lineLimit(2)
+                    HStack(spacing: DesignTokens.Spacing.xs) {
+                        Text(entry.title)
+                            .font(.system(size: DesignTokens.Typography.body, weight: .medium))
+                            .foregroundColor(theme.textPrimary)
+                            .lineLimit(2)
+                        
+                        Spacer()
+                        
+                        // 文獻庫標籤（當顯示全部文獻庫時）
+                        if selectedLibrary == nil, let library = entry.library {
+                            Text(library.name)
+                                .font(.system(size: 9, weight: .medium))
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(theme.accentLight)
+                                .foregroundColor(theme.accent)
+                                .cornerRadius(4)
+                        }
+                    }
                     
                     HStack(spacing: DesignTokens.Spacing.sm) {
                         Text(entry.author)
@@ -204,8 +306,6 @@ struct LibraryEntryPicker: View {
                             .padding(.top, 4)
                     }
                 }
-                
-                Spacer()
                 
                 // 導入按鈕
                 Image(systemName: "arrow.down.circle")

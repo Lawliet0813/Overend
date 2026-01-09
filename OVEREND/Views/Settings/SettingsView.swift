@@ -25,6 +25,11 @@ struct SettingsView: View {
                     Label("BibTeX", systemImage: "doc.text")
                 }
             
+            DataManagementView()
+                .tabItem {
+                    Label("資料管理", systemImage: "cylinder")
+                }
+            
             ProxySettingsView()
                 .tabItem {
                     Label("校外連線", systemImage: "network")
@@ -37,7 +42,7 @@ struct SettingsView: View {
                 }
             #endif
         }
-        .frame(width: 500, height: 400)
+        .frame(width: 650, height: 500)
     }
 }
 

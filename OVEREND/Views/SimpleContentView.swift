@@ -30,6 +30,10 @@ struct SimpleContentView: View {
     @State private var extractedMetadata: PDFMetadata?
     @State private var currentExtractionLogs: String = ""
     @State private var processingStartTime: Date?
+
+    // 金句輪播
+    @State private var currentQuoteIndex = 0
+    @State private var quoteTimer: Timer?
     
     // 設定相關
     @State private var showThemeSettings = false
@@ -407,12 +411,22 @@ struct SimpleContentView: View {
 
 struct SimpleDashboardView: View {
     @EnvironmentObject var theme: AppTheme
-    
+    @Environment(\.managedObjectContext) private var viewContext
+
     let documents: [Document]
     var onProjectTap: (Document) -> Void
     var onNewProject: () -> Void
-    
+
     let momentumData: [Double] = [0.2, 0.5, 0.1, 0.8, 0.4, 0.3, 0.9, 0.6, 0.7, 0.2, 0.4, 0.5, 0.8, 1.0]
+
+    // 金句輪播狀態
+    @State private var currentQuoteIndex = 0
+    @State private var quoteTimer: Timer?
+    
+    // 選取模式狀態
+    @State private var isSelectionMode: Bool = false
+    @State private var selectedDocumentIDs: Set<UUID> = []
+    @State private var showBatchDeleteConfirm: Bool = false
     
     var body: some View {
         ScrollView {
@@ -439,7 +453,11 @@ struct SimpleDashboardView: View {
                             Text(greeting)
                                 .font(.system(size: 32, weight: .semibold))
                                 .foregroundColor(theme.textPrimary)
-                            
+
+                            // 金句卡片
+                            dailyQuoteCard
+                                .padding(.vertical, 8)
+
                             HStack(spacing: 20) {
                                 Label("14 天後提交", systemImage: "calendar")
                                     .font(.subheadline)
@@ -510,11 +528,87 @@ struct SimpleDashboardView: View {
                     
                     Spacer()
                     
+                    if !documents.isEmpty {
+                        // 選取模式按鈕
+                        Button(action: { 
+                            isSelectionMode.toggle()
+                            if !isSelectionMode {
+                                selectedDocumentIDs.removeAll()
+                            }
+                        }) {
+                            HStack(spacing: 6) {
+                                Image(systemName: isSelectionMode ? "checkmark.circle.fill" : "checkmark.circle")
+                                    .font(.system(size: 16, weight: .medium))
+                                Text(isSelectionMode ? "取消選取" : "選取")
+                                    .font(.system(size: 14, weight: .medium))
+                            }
+                            .foregroundColor(theme.accent)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(theme.accentLight)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    
                     Button(action: onNewProject) {
                         Label("新建專案", systemImage: "plus.circle.fill")
                     }
                     .buttonStyle(.plain)
                     .foregroundColor(theme.accent)
+                }
+                
+                // 批次操作工具列
+                if isSelectionMode && !selectedDocumentIDs.isEmpty {
+                    HStack(spacing: 16) {
+                        Text("已選取 \(selectedDocumentIDs.count) 個專案")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(theme.textMuted)
+                        
+                        Spacer()
+                        
+                        Button(action: { 
+                            if selectedDocumentIDs.count == documents.count {
+                                selectedDocumentIDs.removeAll()
+                            } else {
+                                selectedDocumentIDs = Set(documents.map { $0.id })
+                            }
+                        }) {
+                            Text(selectedDocumentIDs.count == documents.count ? "取消全選" : "全選")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(theme.accent)
+                        }
+                        .buttonStyle(.plain)
+                        
+                        Button(action: { showBatchDeleteConfirm = true }) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "trash")
+                                    .font(.system(size: 14, weight: .medium))
+                                Text("刪除")
+                                    .font(.system(size: 14, weight: .semibold))
+                            }
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.red)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(theme.card)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(theme.border, lineWidth: 1)
+                    )
                 }
                 
                 if documents.isEmpty {
@@ -536,14 +630,63 @@ struct SimpleDashboardView: View {
                 } else {
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 300), spacing: 25)], spacing: 25) {
                         ForEach(documents.prefix(6)) { document in
-                            EnhancedProjectCard(document: document, theme: theme)
-                                .onTapGesture { onProjectTap(document) }
+                            EnhancedProjectCard(
+                                document: document, 
+                                theme: theme,
+                                isSelectionMode: isSelectionMode,
+                                isSelected: selectedDocumentIDs.contains(document.id)
+                            )
+                            .onTapGesture { 
+                                if isSelectionMode {
+                                    toggleSelection(document.id)
+                                } else {
+                                    onProjectTap(document)
+                                }
+                            }
                         }
                     }
                 }
             }
             .padding(45)
         }
+        .alert("確定刪除 \(selectedDocumentIDs.count) 個專案？", isPresented: $showBatchDeleteConfirm) {
+            Button("取消", role: .cancel) {}
+            Button("刪除", role: .destructive) {
+                batchDeleteDocuments()
+            }
+        } message: {
+            Text("此操作將刪除所有選取的文稿，無法還原。")
+        }
+    }
+    
+    // MARK: - 批次操作方法
+    
+    private func toggleSelection(_ documentID: UUID) {
+        if selectedDocumentIDs.contains(documentID) {
+            selectedDocumentIDs.remove(documentID)
+        } else {
+            selectedDocumentIDs.insert(documentID)
+        }
+    }
+    
+    private func batchDeleteDocuments() {
+        let documentsToDelete = documents.filter { selectedDocumentIDs.contains($0.id) }
+        
+        viewContext.performAndWait {
+            for document in documentsToDelete {
+                viewContext.delete(document)
+            }
+            
+            do {
+                try viewContext.save()
+                ToastManager.shared.showSuccess("已刪除 \(documentsToDelete.count) 個專案")
+            } catch {
+                ToastManager.shared.showError("刪除失敗：\(error.localizedDescription)")
+            }
+        }
+        
+        selectedDocumentIDs.removeAll()
+        isSelectionMode = false
     }
     
     private var greeting: String {
@@ -565,7 +708,142 @@ struct SimpleDashboardView: View {
         let avgWords = documents.reduce(0) { $0 + $1.attributedString.string.count } / documents.count
         return min(Int(Double(avgWords) / 50.0), 100)
     }
+
+    // MARK: - 金句庫存
+
+    private let inspirationalQuotes: [(text: String, author: String)] = [
+        ("研究的目的不在於證明自己是對的，而在於發現真理。", "卡爾·波普爾"),
+        ("在科學研究中，問對問題比找到答案更重要。", "愛因斯坦"),
+        ("學術寫作是思想的建築，每一句話都是支撐論點的磚石。", "溫貝托·艾可"),
+        ("優秀的論文不是一次完成的，而是反覆打磨的結果。", "海明威"),
+        ("研究者的使命是站在前人的肩膀上，看得更遠。", "牛頓"),
+        ("批判性思考是學術研究的靈魂。", "約翰·杜威"),
+        ("文獻回顧不是堆砌資料，而是建構對話。", "韋恩·布斯"),
+        ("寫作是思考的過程，而非思考的記錄。", "E.M.佛斯特"),
+        ("每一個偉大的研究都始於一個小小的好奇。", "瑪麗·居里"),
+        ("論文的價值在於其對知識體系的貢獻，而非篇幅。", "威廉·斯特倫克"),
+        ("學術誠信是研究者最寶貴的資產。", "羅伯特·默頓"),
+        ("數據不會說話，但研究者必須讓數據說出有意義的故事。", "愛德華·塔夫特"),
+        ("研究方法是通往真理的地圖，選對方法才能到達目的地。", "查爾斯·達爾文"),
+        ("引用不僅是致敬，更是將個人研究置於學術傳統之中。", "米歇爾·傅柯"),
+        ("寫論文如同登山，每一步都要踏實，最終才能登頂。", "艾德蒙·希拉里"),
+        ("好的研究問題值得用一生去探索。", "漢娜·鄂蘭"),
+        ("學術寫作需要清晰、精確、優雅三者兼具。", "史蒂芬·平克"),
+        ("研究的過程比結果更能塑造一個學者。", "托馬斯·庫恩"),
+        ("每一份文獻都是前人智慧的結晶，值得尊重與學習。", "本傑明·富蘭克林"),
+        ("論文的邏輯如同音樂的旋律，必須和諧流暢。", "路德維希·維根斯坦"),
+        ("學術研究是一場馬拉松，而非短跑。", "村上春樹"),
+        ("資料分析如同偵探辦案，細節中藏著真相。", "夏洛克·福爾摩斯"),
+        ("寫作的第一步是克服空白頁的恐懼。", "安妮·拉莫特"),
+        ("創新來自於對既有知識的質疑與重組。", "史蒂夫·賈伯斯"),
+        ("研究倫理不是限制，而是保護研究價值的盾牌。", "艾莉絲·沃克")
+    ]
+
+    // MARK: - 金句卡片視圖
+
+    private var dailyQuoteCard: some View {
+        let quote = inspirationalQuotes[currentQuoteIndex]
+
+        return HStack(spacing: 12) {
+            // 左側引號裝飾
+            VStack {
+                Image(systemName: "quote.opening")
+                    .font(.system(size: 20))
+                    .foregroundColor(theme.accent.opacity(0.4))
+                Spacer()
+            }
+
+            // 金句內容
+            VStack(alignment: .leading, spacing: 6) {
+                Text(quote.text)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(theme.textPrimary)
+                    .lineSpacing(3)
+                    .transition(.opacity)
+                    .id("quote-\(currentQuoteIndex)")
+
+                Text("— \(quote.author)")
+                    .font(.system(size: 11))
+                    .foregroundColor(theme.textSecondary)
+                    .italic()
+            }
+
+            Spacer()
+
+            // 右側切換按鈕
+            VStack(spacing: 6) {
+                Button(action: {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        previousQuote()
+                    }
+                }) {
+                    Image(systemName: "chevron.up.circle.fill")
+                        .font(.system(size: 16))
+                        .foregroundColor(theme.accent.opacity(0.5))
+                }
+                .buttonStyle(.plain)
+                .help("上一句")
+
+                Button(action: {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        nextQuote()
+                    }
+                }) {
+                    Image(systemName: "chevron.down.circle.fill")
+                        .font(.system(size: 16))
+                        .foregroundColor(theme.accent.opacity(0.5))
+                }
+                .buttonStyle(.plain)
+                .help("下一句")
+            }
+        }
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(theme.accent.opacity(0.08))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(theme.accent.opacity(0.15), lineWidth: 1)
+        )
+        .onAppear {
+            startQuoteRotation()
+        }
+        .onDisappear {
+            stopQuoteRotation()
+        }
+    }
+
+    // MARK: - 金句控制方法
+
+    private func startQuoteRotation() {
+        // 隨機選擇初始金句
+        currentQuoteIndex = Int.random(in: 0..<inspirationalQuotes.count)
+
+        // 每45秒自動切換金句
+        quoteTimer = Timer.scheduledTimer(withTimeInterval: 45.0, repeats: true) { _ in
+            withAnimation(.easeInOut(duration: 0.5)) {
+                nextQuote()
+            }
+        }
+    }
+
+    private func stopQuoteRotation() {
+        quoteTimer?.invalidate()
+        quoteTimer = nil
+    }
+
+    private func nextQuote() {
+        currentQuoteIndex = (currentQuoteIndex + 1) % inspirationalQuotes.count
+    }
+
+    private func previousQuote() {
+        currentQuoteIndex = (currentQuoteIndex - 1 + inspirationalQuotes.count) % inspirationalQuotes.count
+    }
 }
+
+// MARK: - 原始變數保留位置
+// 以下變數移至 SimpleDashboardView 內
 
 // MARK: - 整合版文獻庫
 
@@ -744,42 +1022,63 @@ struct AIProcessingOverlay: View {
 struct EnhancedProjectCard: View {
     @ObservedObject var document: Document
     let theme: AppTheme
+    var isSelectionMode: Bool = false
+    var isSelected: Bool = false
     
     @State private var isHovered = false
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            Image(systemName: "doc.text.fill")
-                .foregroundColor(theme.accent)
-                .font(.title2)
-            
-            Text(document.title)
-                .font(.headline)
-                .foregroundColor(theme.textPrimary)
-                .lineLimit(2)
-            
-            Spacer()
-            
-            VStack(alignment: .leading, spacing: 8) {
-                Text("最後編輯：\(formatDate(document.updatedAt))")
-                    .font(.caption)
-                    .foregroundColor(theme.textSecondary)
+        ZStack(alignment: .topTrailing) {
+            VStack(alignment: .leading, spacing: 20) {
+                Image(systemName: "doc.text.fill")
+                    .foregroundColor(theme.accent)
+                    .font(.title2)
                 
-                ProgressView(value: Double(progress) / 100.0)
-                    .tint(theme.accent)
+                Text(document.title)
+                    .font(.headline)
+                    .foregroundColor(theme.textPrimary)
+                    .lineLimit(2)
+                
+                Spacer()
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("最後編輯：\(formatDate(document.updatedAt))")
+                        .font(.caption)
+                        .foregroundColor(theme.textSecondary)
+                    
+                    ProgressView(value: Double(progress) / 100.0)
+                        .tint(theme.accent)
+                }
+            }
+            .padding(25)
+            .frame(minHeight: 180)
+            .background(theme.elevated)
+            .cornerRadius(theme.radiusCard)
+            .overlay(
+                RoundedRectangle(cornerRadius: theme.radiusCard)
+                    .stroke(
+                        isSelected ? theme.accent : (isHovered ? theme.accent.opacity(0.3) : theme.border), 
+                        lineWidth: isSelected ? 2 : 1
+                    )
+            )
+            .scaleEffect(isHovered ? 1.02 : 1.0)
+            .animation(.spring(response: 0.3), value: isHovered)
+            .onHover { hovering in isHovered = hovering }
+            
+            // 選取指示器
+            if isSelectionMode {
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 24, weight: .medium))
+                    .foregroundColor(isSelected ? theme.accent : theme.textMuted)
+                    .padding(12)
+                    .background(
+                        Circle()
+                            .fill(theme.card)
+                            .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+                    )
+                    .padding(8)
             }
         }
-        .padding(25)
-        .frame(minHeight: 180)
-        .background(theme.elevated)
-        .cornerRadius(theme.radiusCard)
-        .overlay(
-            RoundedRectangle(cornerRadius: theme.radiusCard)
-                .stroke(isHovered ? theme.accent.opacity(0.3) : theme.border, lineWidth: 1)
-        )
-        .scaleEffect(isHovered ? 1.02 : 1.0)
-        .animation(.spring(response: 0.3), value: isHovered)
-        .onHover { hovering in isHovered = hovering }
     }
     
     private var progress: Int {

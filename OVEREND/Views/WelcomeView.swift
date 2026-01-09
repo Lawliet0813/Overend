@@ -24,6 +24,10 @@ struct WelcomeView: View {
     
     // 番茄鐘狀態
     @State private var showPomodoro = false
+
+    // 金句輪播
+    @State private var currentQuoteIndex = 0
+    @State private var quoteTimer: Timer?
     
     var body: some View {
         ScrollView {
@@ -33,9 +37,12 @@ struct WelcomeView: View {
                 
                 // 主要內容區
                 VStack(spacing: 32) {
+                    // 金句卡片
+                    inspirationalQuoteSection
+
                     // 快速操作卡片（主要功能第一排）
                     quickActionsSection
-                    
+
                     // 最近的專案（第二排）
                     recentProjectsSection
                 }
@@ -163,6 +170,156 @@ struct WelcomeView: View {
     private func fetchLibraryCount() -> Int {
         let request = NSFetchRequest<Entry>(entityName: "Entry")
         return (try? viewContext.count(for: request)) ?? 0
+    }
+
+    // MARK: - 金句庫存
+
+    private let inspirationalQuotes: [(text: String, author: String)] = [
+        ("研究的目的不在於證明自己是對的，而在於發現真理。", "卡爾·波普爾"),
+        ("在科學研究中，問對問題比找到答案更重要。", "愛因斯坦"),
+        ("學術寫作是思想的建築，每一句話都是支撐論點的磚石。", "溫貝托·艾可"),
+        ("優秀的論文不是一次完成的，而是反覆打磨的結果。", "海明威"),
+        ("研究者的使命是站在前人的肩膀上，看得更遠。", "牛頓"),
+        ("批判性思考是學術研究的靈魂。", "約翰·杜威"),
+        ("文獻回顧不是堆砌資料，而是建構對話。", "韋恩·布斯"),
+        ("寫作是思考的過程，而非思考的記錄。", "E.M.佛斯特"),
+        ("每一個偉大的研究都始於一個小小的好奇。", "瑪麗·居里"),
+        ("論文的價值在於其對知識體系的貢獻，而非篇幅。", "威廉·斯特倫克"),
+        ("學術誠信是研究者最寶貴的資產。", "羅伯特·默頓"),
+        ("數據不會說話，但研究者必須讓數據說出有意義的故事。", "愛德華·塔夫特"),
+        ("研究方法是通往真理的地圖，選對方法才能到達目的地。", "查爾斯·達爾文"),
+        ("引用不僅是致敬，更是將個人研究置於學術傳統之中。", "米歇爾·傅柯"),
+        ("寫論文如同登山，每一步都要踏實，最終才能登頂。", "艾德蒙·希拉里"),
+        ("好的研究問題值得用一生去探索。", "漢娜·鄂蘭"),
+        ("學術寫作需要清晰、精確、優雅三者兼具。", "史蒂芬·平克"),
+        ("研究的過程比結果更能塑造一個學者。", "托馬斯·庫恩"),
+        ("每一份文獻都是前人智慧的結晶，值得尊重與學習。", "本傑明·富蘭克林"),
+        ("論文的邏輯如同音樂的旋律，必須和諧流暢。", "路德維希·維根斯坦"),
+        ("學術研究是一場馬拉松，而非短跑。", "村上春樹"),
+        ("資料分析如同偵探辦案，細節中藏著真相。", "夏洛克·福爾摩斯"),
+        ("寫作的第一步是克服空白頁的恐懼。", "安妮·拉莫特"),
+        ("創新來自於對既有知識的質疑與重組。", "史蒂夫·賈伯斯"),
+        ("研究倫理不是限制，而是保護研究價值的盾牌。", "艾莉絲·沃克")
+    ]
+
+    // MARK: - 金句區塊
+
+    private var inspirationalQuoteSection: some View {
+        let quote = inspirationalQuotes[currentQuoteIndex]
+
+        return HStack(spacing: 0) {
+            // 左側裝飾線
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        colors: [theme.accent, theme.accent.opacity(0.5)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .frame(width: 4)
+
+            // 金句內容
+            VStack(alignment: .leading, spacing: 16) {
+                // 引號圖示
+                HStack {
+                    Image(systemName: "quote.opening")
+                        .font(.system(size: 24))
+                        .foregroundColor(theme.accent.opacity(0.6))
+
+                    Spacer()
+
+                    // 切換按鈕
+                    HStack(spacing: 8) {
+                        Button(action: previousQuote) {
+                            Image(systemName: "chevron.left.circle.fill")
+                                .font(.system(size: 20))
+                                .foregroundColor(theme.accent.opacity(0.6))
+                        }
+                        .buttonStyle(.plain)
+                        .help("上一句")
+
+                        Button(action: nextQuote) {
+                            Image(systemName: "chevron.right.circle.fill")
+                                .font(.system(size: 20))
+                                .foregroundColor(theme.accent.opacity(0.6))
+                        }
+                        .buttonStyle(.plain)
+                        .help("下一句")
+                    }
+                }
+
+                // 金句文字
+                Text(quote.text)
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundColor(theme.textPrimary)
+                    .lineSpacing(6)
+                    .transition(.opacity)
+                    .id("quote-\(currentQuoteIndex)")
+
+                // 作者
+                HStack {
+                    Spacer()
+                    Text("— \(quote.author)")
+                        .font(.system(size: 14))
+                        .foregroundColor(theme.textSecondary)
+                        .italic()
+                }
+
+                // 進度指示器
+                HStack(spacing: 4) {
+                    ForEach(0..<min(inspirationalQuotes.count, 10), id: \.self) { index in
+                        Circle()
+                            .fill(index == currentQuoteIndex % 10 ? theme.accent : theme.textMuted.opacity(0.3))
+                            .frame(width: 6, height: 6)
+                    }
+                }
+            }
+            .padding(24)
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(theme.card)
+                .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(theme.accent.opacity(0.2), lineWidth: 1)
+        )
+        .onAppear {
+            startQuoteRotation()
+        }
+        .onDisappear {
+            stopQuoteRotation()
+        }
+    }
+
+    // MARK: - 金句控制方法
+
+    private func startQuoteRotation() {
+        // 每30秒自動切換金句
+        quoteTimer = Timer.scheduledTimer(withTimeInterval: 30.0, repeats: true) { _ in
+            withAnimation(.easeInOut(duration: 0.5)) {
+                nextQuote()
+            }
+        }
+    }
+
+    private func stopQuoteRotation() {
+        quoteTimer?.invalidate()
+        quoteTimer = nil
+    }
+
+    private func nextQuote() {
+        withAnimation(.easeInOut(duration: 0.3)) {
+            currentQuoteIndex = (currentQuoteIndex + 1) % inspirationalQuotes.count
+        }
+    }
+
+    private func previousQuote() {
+        withAnimation(.easeInOut(duration: 0.3)) {
+            currentQuoteIndex = (currentQuoteIndex - 1 + inspirationalQuotes.count) % inspirationalQuotes.count
+        }
     }
     
     // MARK: - 最近的專案

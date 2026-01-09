@@ -18,6 +18,9 @@ struct DataManagementView: View {
     @State private var exportURL: URL?
     @State private var showExportSuccess = false
     @State private var showAnalyticsSheet = false
+    @State private var showClearDataAlert = false
+    @State private var showClearConfirmation = false
+    @State private var clearDataText = ""
     
     var body: some View {
         ScrollView {
@@ -73,6 +76,66 @@ struct DataManagementView: View {
                 .background(
                     RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.medium)
                         .fill(theme.card)
+                )
+                
+                // 危險操作區域
+                VStack(alignment: .leading, spacing: 16) {
+                    HStack {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(.red)
+                        Text("危險區域")
+                            .font(.system(size: DesignTokens.Typography.headline, weight: .semibold))
+                            .foregroundColor(.red)
+                    }
+                    
+                    Text("以下操作無法復原，請謹慎使用")
+                        .font(.system(size: DesignTokens.Typography.caption))
+                        .foregroundColor(theme.textMuted)
+                    
+                    Divider()
+                    
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("清空所有資料")
+                                    .font(.system(size: DesignTokens.Typography.body, weight: .semibold))
+                                    .foregroundColor(theme.textPrimary)
+                                
+                                Text("刪除所有文獻、文稿、分組、標籤和提取記錄")
+                                    .font(.system(size: DesignTokens.Typography.caption))
+                                    .foregroundColor(theme.textMuted)
+                            }
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                showClearDataAlert = true
+                            }) {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "trash.fill")
+                                    Text("清空資料")
+                                }
+                                .font(.system(size: DesignTokens.Typography.body, weight: .medium))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.small)
+                                        .fill(Color.red)
+                                )
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+                .padding(16)
+                .background(
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.medium)
+                        .fill(Color.red.opacity(0.05))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.medium)
+                                .stroke(Color.red.opacity(0.2), lineWidth: 1)
+                        )
                 )
                 
                 // 準確率分析
@@ -149,6 +212,26 @@ struct DataManagementView: View {
             AnalyticsDetailSheet(summary: summary)
                 .environmentObject(theme)
         }
+        .alert("確認清空所有資料", isPresented: $showClearDataAlert) {
+            TextField("輸入 DELETE 以確認", text: $clearDataText)
+            Button("取消", role: .cancel) {
+                clearDataText = ""
+            }
+            Button("永久刪除", role: .destructive) {
+                if clearDataText.uppercased() == "DELETE" {
+                    clearAllData()
+                    clearDataText = ""
+                }
+            }
+            .disabled(clearDataText.uppercased() != "DELETE")
+        } message: {
+            Text("此操作將刪除所有文獻、文稿、分組、標籤和AI提取記錄。\n\n請輸入 DELETE 以確認此操作（不可復原）。")
+        }
+        .alert("清空完成", isPresented: $showClearConfirmation) {
+            Button("確定", role: .cancel) {}
+        } message: {
+            Text("所有資料已成功清空。應用程式將重新啟動。")
+        }
     }
     
     private func loadAnalytics() {
@@ -173,6 +256,24 @@ struct DataManagementView: View {
                     ToastManager.shared.showError("匯出失敗")
                 }
             }
+        }
+    }
+    
+    private func clearAllData() {
+        // 清空所有 Core Data 資料
+        PersistenceController.shared.deleteAll()
+        
+        // 顯示確認訊息
+        showClearConfirmation = true
+        
+        // 重新載入統計
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            loadAnalytics()
+        }
+        
+        // 通知使用者重新啟動應用程式
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            NSApplication.shared.terminate(nil)
         }
     }
 }

@@ -24,18 +24,68 @@ enum Constants {
 
     // MARK: - BibTeX
     enum BibTeX {
+        /// 支援的書目類型（24 種）
         static let supportedTypes = [
+            // 原有 14 種
             "article", "book", "booklet", "inbook", "incollection",
             "inproceedings", "conference", "manual", "mastersthesis",
-            "phdthesis", "proceedings", "techreport", "unpublished", "misc"
+            "phdthesis", "proceedings", "techreport", "unpublished", "misc",
+            // 新增 10 種高優先級類型
+            "webpage", "website", "online",      // 網路資源
+            "dataset", "software", "preprint",   // 數位/學術資源
+            "report", "patent", "standard", "video"  // 其他
         ]
 
+        /// 必填欄位（14 種類型有驗證）
         static let requiredFields: [String: [String]] = [
+            // 學術論文
             "article": ["author", "title", "journal", "year"],
+            "inproceedings": ["author", "title", "booktitle", "year"],
+            "phdthesis": ["author", "title", "school", "year"],
+            "mastersthesis": ["author", "title", "school", "year"],
+            "techreport": ["author", "title", "institution", "year"],
+            "preprint": ["author", "title", "year"],
+            // 書籍
             "book": ["author", "title", "publisher", "year"],
-            "inproceedings": ["author", "title", "booktitle", "year"]
+            "incollection": ["author", "title", "booktitle", "publisher", "year"],
+            "inbook": ["author", "title", "publisher", "year"],
+            // 網路資源
+            "webpage": ["title", "url"],
+            "website": ["title", "url"],
+            "online": ["title", "url"],
+            // 數位資源
+            "dataset": ["author", "title", "year"],
+            "software": ["author", "title"],
+            // 其他
+            "manual": ["title"],
+            "proceedings": ["title", "year"],
+            "report": ["author", "title", "institution", "year"],
+            "patent": ["author", "title", "number", "year"],
+            "standard": ["title", "organization", "year"]
+        ]
+        
+        /// A 級核心欄位（立即需要）
+        static let coreFields = [
+            "title", "author", "year", "journal", "booktitle", "publisher",
+            "volume", "number", "pages", "doi", "url", "abstract", "keywords", "language"
+        ]
+        
+        /// 中文支援欄位
+        static let chineseFields = [
+            "title_zh", "author_zh", "abstract_zh", "institution_zh"
+        ]
+        
+        /// 識別碼欄位
+        static let identifierFields = [
+            "doi", "isbn", "issn", "pmid", "arxiv", "url"
+        ]
+        
+        /// 論文特有欄位（台灣學術需求）
+        static let thesisFields = [
+            "school", "advisor", "degree", "department"
         ]
     }
+
 
     // MARK: - 檔案
     enum Files {

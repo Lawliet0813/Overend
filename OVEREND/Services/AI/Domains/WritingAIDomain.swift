@@ -146,8 +146,10 @@ public class WritingAIDomain {
         
         service.startProcessing()
         defer { service.endProcessing() }
-        
-        let truncatedText = String(text.prefix(3000))
+
+        // Apple Intelligence 上下文窗口較小，限制為 1000 字符
+        let maxLength = 1000
+        let truncatedText = String(text.prefix(maxLength))
         
         // 策略 1: Tool Calling
         do {
@@ -268,9 +270,11 @@ public class WritingAIDomain {
         
         service.startProcessing()
         defer { service.endProcessing() }
-        
+
         let session = service.createSession()
-        let truncatedText = String(text.prefix(4000))
+        // Apple Intelligence 上下文窗口較小，限制為 1200 字符
+        let maxLength = 1200
+        let truncatedText = String(text.prefix(maxLength))
         
         let prompt = """
         請檢查以下繁體中文學術文本的行文風格問題。
@@ -336,15 +340,19 @@ public class WritingAIDomain {
         
         service.startProcessing()
         defer { service.endProcessing() }
-        
+
         let session = service.createSession()
-        
+
+        // Apple Intelligence 上下文窗口較小，限制為 800 字符
+        let maxLength = 800
+        let truncatedText = String(text.prefix(maxLength))
+
         let prompt = """
         請改寫以下文字，\(style.promptInstruction)。
-        
+
         原文：
         ---
-        \(text)
+        \(truncatedText)
         ---
         
         要求：
@@ -383,16 +391,20 @@ public class WritingAIDomain {
         
         service.startProcessing()
         defer { service.endProcessing() }
-        
+
         let session = service.createSession()
-        let targetLength = Int(Double(text.count) * targetRatio)
-        
+
+        // Apple Intelligence 上下文窗口較小，限制為 1000 字符
+        let maxLength = 1000
+        let truncatedText = String(text.prefix(maxLength))
+        let targetLength = Int(Double(truncatedText.count) * targetRatio)
+
         let prompt = """
-        請精簡以下文字，目標長度約 \(targetLength) 字（原文 \(text.count) 字）。
-        
+        請精簡以下文字，目標長度約 \(targetLength) 字（原文 \(truncatedText.count) 字）。
+
         原文：
         ---
-        \(text)
+        \(truncatedText)
         ---
         
         要求：

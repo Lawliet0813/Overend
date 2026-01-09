@@ -515,3 +515,451 @@ class CitationService {
         return Double(chineseCharCount) / Double(text.count) > 0.3
     }
 }
+
+// MARK: - APA 7th 台灣學術規範擴充
+
+extension CitationService {
+    
+    // MARK: - 碩博士論文格式（台灣）
+    
+    /// 中文碩博士論文格式
+    /// 格式：作者（年份）。*論文名稱*〔碩士/博士論文，學校〕。系統名稱。URL
+    static func formatAPAThesisChinese(
+        authors: String,
+        year: String,
+        title: String,
+        fields: [String: String],
+        isPhD: Bool
+    ) -> String {
+        let school = fields["school"] ?? ""
+        let department = fields["department"] ?? ""
+        let advisor = fields["advisor"] ?? ""
+        let url = fields["url"] ?? ""
+        
+        let thesisType = isPhD ? "博士論文" : "碩士論文"
+        
+        var citation = "\(authors)（\(year)）。*\(title)*"
+        
+        // 論文類型與學校
+        if !school.isEmpty {
+            citation += "〔\(thesisType)，\(school)"
+            if !department.isEmpty {
+                citation += "\(department)"
+            }
+            citation += "〕"
+        } else {
+            citation += "〔\(thesisType)〕"
+        }
+        
+        citation += "。"
+        
+        // 指導教授（可選，非標準但常見）
+        if !advisor.isEmpty {
+            citation += "指導教授：\(advisor)。"
+        }
+        
+        // URL
+        if !url.isEmpty {
+            citation += " \(url)"
+        }
+        
+        return citation
+    }
+    
+    // MARK: - 政府文件格式
+    
+    /// 政府文件格式
+    /// 格式：機關名稱（年份）。*文件名稱*（文號）。URL
+    static func formatAPAGovernmentChinese(
+        institution: String,
+        year: String,
+        title: String,
+        fields: [String: String]
+    ) -> String {
+        let documentNumber = fields["document_number"] ?? fields["number"] ?? ""
+        let url = fields["url"] ?? ""
+        
+        var citation = "\(institution)（\(year)）。*\(title)*"
+        
+        if !documentNumber.isEmpty {
+            citation += "（\(documentNumber)）"
+        }
+        
+        citation += "。"
+        
+        if !url.isEmpty {
+            citation += " \(url)"
+        }
+        
+        return citation
+    }
+    
+    // MARK: - 法規判例格式
+    
+    /// 法規格式
+    /// 格式：法規名稱（公布或修正日期）
+    static func formatAPALegalStatute(
+        title: String,
+        fields: [String: String]
+    ) -> String {
+        let date = fields["regulation_date"] ?? fields["year"] ?? ""
+        let number = fields["regulation_number"] ?? ""
+        
+        var citation = "\(title)"
+        
+        if !date.isEmpty {
+            citation += "（\(date)"
+            if !number.isEmpty {
+                citation += "，\(number)"
+            }
+            citation += "）"
+        }
+        
+        return citation
+    }
+    
+    /// 判例格式
+    /// 格式：案件名稱，法院，案號（判決日期）
+    static func formatAPALegalCase(
+        title: String,
+        fields: [String: String]
+    ) -> String {
+        let court = fields["court"] ?? ""
+        let caseNumber = fields["case_number"] ?? fields["number"] ?? ""
+        let judgmentDate = fields["judgment_date"] ?? ""
+        
+        var citation = title
+        
+        if !court.isEmpty {
+            citation += "，\(court)"
+        }
+        
+        if !caseNumber.isEmpty {
+            citation += "，\(caseNumber)"
+        }
+        
+        if !judgmentDate.isEmpty {
+            citation += "（\(judgmentDate)）"
+        }
+        
+        return citation
+    }
+    
+    // MARK: - 中文書籍格式（含出版地）
+    
+    /// 中文書籍格式（含出版地）
+    /// 格式：作者（年份）。*書名*（版次）。出版地：出版社。
+    static func formatAPABookChineseFull(
+        authors: String,
+        year: String,
+        title: String,
+        fields: [String: String]
+    ) -> String {
+        let publisher = fields["publisher"] ?? ""
+        let place = fields["place"] ?? fields["address"] ?? ""
+        let edition = fields["edition"] ?? ""
+        let doi = fields["doi"] ?? ""
+        
+        var citation = "\(authors)（\(year)）。*\(title)*"
+        
+        // 版次
+        if !edition.isEmpty {
+            citation += "（\(edition)）"
+        }
+        
+        citation += "。"
+        
+        // 出版地與出版社
+        if !place.isEmpty && !publisher.isEmpty {
+            citation += "\(place)：\(publisher)。"
+        } else if !publisher.isEmpty {
+            citation += "\(publisher)。"
+        }
+        
+        // DOI
+        if !doi.isEmpty {
+            citation += " https://doi.org/\(doi)"
+        }
+        
+        return citation
+    }
+    
+    // MARK: - 標點符號轉換
+    
+    /// 中英文標點轉換
+    /// - Parameters:
+    ///   - text: 原始文字
+    ///   - toChinese: true = 轉為中文標點，false = 轉為英文標點
+    static func convertPunctuation(_ text: String, toChinese: Bool) -> String {
+        var result = text
+        
+        let punctuationMap: [(chinese: String, english: String)] = [
+            ("，", ","),
+            ("。", "."),
+            ("：", ":"),
+            ("；", ";"),
+            ("「", "\""),
+            ("」", "\""),
+            ("『", "'"),
+            ("』", "'"),
+            ("（", "("),
+            ("）", ")"),
+            ("【", "["),
+            ("】", "]"),
+            ("？", "?"),
+            ("！", "!")
+        ]
+        
+        for (chinese, english) in punctuationMap {
+            if toChinese {
+                result = result.replacingOccurrences(of: english, with: chinese)
+            } else {
+                result = result.replacingOccurrences(of: chinese, with: english)
+            }
+        }
+        
+        return result
+    }
+}
+
+// MARK: - 參考文獻列表生成
+
+extension CitationService {
+    
+    /// 排序方式
+    enum BibliographySortOrder {
+        case author      // 依作者姓氏
+        case year        // 依年份
+        case title       // 依標題
+    }
+    
+    /// 引用格式
+    enum CitationFormat: String, CaseIterable {
+        case apa7 = "APA 7th"
+        case mla9 = "MLA 9th"
+        case chicago = "Chicago"
+    }
+    
+    /// 自動生成參考文獻列表
+    /// - Parameters:
+    ///   - entries: 書目列表
+    ///   - format: 引用格式
+    ///   - sortBy: 排序方式
+    /// - Returns: 格式化的參考文獻列表
+    static func generateBibliography(
+        entries: [Entry],
+        format: CitationFormat = .apa7,
+        sortBy: BibliographySortOrder = .author
+    ) -> String {
+        guard !entries.isEmpty else { return "" }
+        
+        // 排序
+        let sortedEntries = sortEntries(entries, by: sortBy)
+        
+        // 生成引用
+        var bibliography = "參考文獻\n\n"
+        
+        for entry in sortedEntries {
+            let citation: String
+            switch format {
+            case .apa7:
+                citation = generateAPA(entry: entry)
+            case .mla9:
+                citation = generateMLA(entry: entry)
+            case .chicago:
+                citation = generateChicago(entry: entry)
+            }
+            bibliography += citation + "\n\n"
+        }
+        
+        return bibliography.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+    /// 排序書目
+    private static func sortEntries(_ entries: [Entry], by order: BibliographySortOrder) -> [Entry] {
+        switch order {
+        case .author:
+            return entries.sorted { e1, e2 in
+                let author1 = e1.fields["author"] ?? ""
+                let author2 = e2.fields["author"] ?? ""
+                let result = author1.localizedCaseInsensitiveCompare(author2)
+                if result == .orderedSame {
+                    // 同作者依年份排序
+                    let year1 = e1.fields["year"] ?? ""
+                    let year2 = e2.fields["year"] ?? ""
+                    return year1 < year2
+                }
+                return result == .orderedAscending
+            }
+        case .year:
+            return entries.sorted { e1, e2 in
+                let year1 = e1.fields["year"] ?? ""
+                let year2 = e2.fields["year"] ?? ""
+                return year1 < year2
+            }
+        case .title:
+            return entries.sorted { e1, e2 in
+                let title1 = e1.fields["title"] ?? ""
+                let title2 = e2.fields["title"] ?? ""
+                return title1.localizedCaseInsensitiveCompare(title2) == .orderedAscending
+            }
+        }
+    }
+    
+    /// Chicago 格式（簡化版）
+    static func generateChicago(entry: Entry) -> String {
+        let fields = entry.fields
+        let authors = formatAuthorsChicago(fields["author"] ?? "Unknown")
+        let title = fields["title"] ?? "Untitled"
+        let year = fields["year"] ?? ""
+        
+        switch entry.entryType {
+        case "article":
+            let journal = fields["journal"] ?? ""
+            let volume = fields["volume"] ?? ""
+            let pages = fields["pages"] ?? ""
+            
+            var citation = "\(authors). \"\(title).\" "
+            if !journal.isEmpty {
+                citation += "*\(journal)*"
+                if !volume.isEmpty {
+                    citation += " \(volume)"
+                }
+                if !pages.isEmpty {
+                    citation += ": \(pages)"
+                }
+                citation += " (\(year))."
+            }
+            return citation
+            
+        case "book":
+            let publisher = fields["publisher"] ?? ""
+            let place = fields["place"] ?? fields["address"] ?? ""
+            
+            var citation = "\(authors). *\(title)*."
+            if !place.isEmpty {
+                citation += " \(place):"
+            }
+            if !publisher.isEmpty {
+                citation += " \(publisher),"
+            }
+            citation += " \(year)."
+            return citation
+            
+        default:
+            return "\(authors). \"\(title).\" \(year)."
+        }
+    }
+    
+    /// Chicago 格式作者處理
+    private static func formatAuthorsChicago(_ authorString: String) -> String {
+        let authors = authorString.components(separatedBy: " and ")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+        
+        if authors.count == 1 {
+            return authors[0]
+        } else if authors.count == 2 {
+            return "\(authors[0]) and \(authors[1])"
+        } else {
+            return "\(authors[0]) et al."
+        }
+    }
+}
+
+// MARK: - 行內引用格式
+
+extension CitationService {
+    
+    /// 行內引用格式
+    struct InlineCitation {
+        let text: String           // 顯示文字
+        let fullCitation: String   // 完整引用
+        let entries: [Entry]       // 相關書目
+    }
+    
+    /// 生成行內引用（Author, Year）
+    /// - Parameters:
+    ///   - entries: 書目列表（支援多重引用）
+    ///   - pageNumber: 頁碼（可選）
+    /// - Returns: 行內引用
+    static func generateInlineCitation(
+        entries: [Entry],
+        pageNumber: String? = nil
+    ) -> InlineCitation {
+        guard !entries.isEmpty else {
+            return InlineCitation(text: "", fullCitation: "", entries: [])
+        }
+        
+        if entries.count == 1 {
+            let entry = entries[0]
+            let text = formatSingleInlineCitation(entry: entry, pageNumber: pageNumber)
+            return InlineCitation(
+                text: text,
+                fullCitation: generateAPA(entry: entry),
+                entries: entries
+            )
+        } else {
+            // 多重引用
+            let text = formatMultipleInlineCitation(entries: entries)
+            let fullCitation = entries.map { generateAPA(entry: $0) }.joined(separator: "\n\n")
+            return InlineCitation(
+                text: text,
+                fullCitation: fullCitation,
+                entries: entries
+            )
+        }
+    }
+    
+    /// 格式化單一行內引用
+    private static func formatSingleInlineCitation(entry: Entry, pageNumber: String?) -> String {
+        let author = entry.fields["author"] ?? "Unknown"
+        let year = entry.fields["year"] ?? "n.d."
+        
+        // 提取姓氏
+        let lastName: String
+        if isChinese(author) {
+            // 中文：取整個姓名
+            lastName = author.components(separatedBy: "、").first?
+                .trimmingCharacters(in: .whitespaces) ?? author
+        } else {
+            // 英文：取姓氏
+            let parts = author.components(separatedBy: " and ").first?
+                .trimmingCharacters(in: .whitespaces)
+                .components(separatedBy: " ") ?? []
+            lastName = parts.last ?? author
+        }
+        
+        var citation = "(\(lastName), \(year)"
+        
+        if let page = pageNumber, !page.isEmpty {
+            citation += ", p. \(page)"
+        }
+        
+        citation += ")"
+        
+        return citation
+    }
+    
+    /// 格式化多重行內引用
+    private static func formatMultipleInlineCitation(entries: [Entry]) -> String {
+        let citations = entries.map { entry -> String in
+            let author = entry.fields["author"] ?? "Unknown"
+            let year = entry.fields["year"] ?? "n.d."
+            
+            let lastName: String
+            if isChinese(author) {
+                lastName = author.components(separatedBy: "、").first?
+                    .trimmingCharacters(in: .whitespaces) ?? author
+            } else {
+                let parts = author.components(separatedBy: " and ").first?
+                    .trimmingCharacters(in: .whitespaces)
+                    .components(separatedBy: " ") ?? []
+                lastName = parts.last ?? author
+            }
+            
+            return "\(lastName), \(year)"
+        }
+        
+        return "(" + citations.joined(separator: "; ") + ")"
+    }
+}

@@ -8,6 +8,7 @@
 import SwiftUI
 import AppKit
 import UniformTypeIdentifiers
+import FoundationModels
 
 // MARK: - 主編輯器視圖
 
@@ -25,6 +26,12 @@ struct DocumentEditorView: View {
     @State private var showCitationSidebar = true
     @State private var showAIPanel = false
     @State private var isAIProcessing = false
+    @State private var canUndo = false
+    @State private var canRedo = false
+    @State private var currentFont: String = "Helvetica"
+    
+    // 引用插入面板
+    @State private var showCitationInsertionPanel = false
     
     // 文獻庫
     @FetchRequest(
@@ -48,6 +55,9 @@ struct DocumentEditorView: View {
                 onImport: { showImportSheet = true },
                 onExport: { showExportMenu = true },
                 isPandocAvailable: isPandocAvailable,
+                onUndo: { performUndo() },
+                onRedo: { performRedo() },
+                onFontChange: { fontName in applyFont(fontName) },
                 onBold: { applyFormat(.bold) },
                 onItalic: { applyFormat(.italic) },
                 onUnderline: { applyFormat(.underline) },
@@ -58,7 +68,16 @@ struct DocumentEditorView: View {
                 onDecreaseFontSize: { adjustFontSize(by: -2) },
                 onLineSpacing: { spacing in applyLineSpacing(spacing) },
                 onTextColor: { color in applyTextColor(color) },
+                onHighlight: { color in applyHighlight(color) },
+                onHeading: { level in applyHeading(level) },
+                onList: { type in applyList(type) },
+                onInsert: { type in insertElement(type) },
+                onChineseOptimization: { type in applyChineseOptimization(type) },
                 onAI: { showAIPanel = true },
+                onInsertCitationShortcut: { showCitationInsertionPanel = true },
+                canUndo: $canUndo,
+                canRedo: $canRedo,
+                currentFont: $currentFont,
                 showCitationSidebar: $showCitationSidebar
             )
             .environmentObject(theme)
@@ -132,10 +151,24 @@ struct DocumentEditorView: View {
                 }
             }
         }
+        .sheet(isPresented: $showCitationInsertionPanel) {
+            CitationInsertionPanel(
+                isPresented: $showCitationInsertionPanel,
+                onInsertCitation: { citationText, entries in
+                    insertMultipleCitations(citationText, entries: entries)
+                }
+            )
+            .environmentObject(theme)
+        }
         .onAppear {
             // 預設選擇第一個文獻庫
             if selectedLibrary == nil {
                 selectedLibrary = libraries.first
+            }
+
+            // 啟動定時器更新 undo/redo 狀態
+            Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
+                updateUndoRedoState()
             }
         }
     }
@@ -152,11 +185,127 @@ struct DocumentEditorView: View {
     // MARK: - Formatting Types
     
     enum FormatStyle {
-        case bold, italic, underline
+        case bold, italic, underline, strikethrough
     }
     
-    // MARK: - Formatting Methods
+    enum HeadingLevel: Int, CaseIterable, Identifiable {
+        case normal = 0
+        case h1 = 1
+        case h2 = 2
+        case h3 = 3
+        
+        var id: Int { rawValue }
+        
+        var displayName: String {
+            switch self {
+            case .normal: return "內文"
+            case .h1: return "標題 1"
+            case .h2: return "標題 2"
+            case .h3: return "標題 3"
+            }
+        }
+        
+        var fontSize: CGFloat {
+            switch self {
+            case .normal: return 12
+            case .h1: return 24
+            case .h2: return 18
+            case .h3: return 14
+            }
+        }
+    }
     
+    enum ListType {
+        case bullet
+        case numbered
+    }
+    
+    enum InsertType {
+        case image
+        case table
+        case footnote
+    }
+    
+    enum ChineseOptimizationType {
+        case punctuation
+        case spacing
+        case toTraditional
+        case toSimplified
+        case terminology
+    }
+    
+    // MARK: - Undo/Redo Methods
+
+    private func performUndo() {
+        guard let textView = textViewRef else { return }
+        textView.undoManager?.undo()
+        updateUndoRedoState()
+    }
+
+    private func performRedo() {
+        guard let textView = textViewRef else { return }
+        textView.undoManager?.redo()
+        updateUndoRedoState()
+    }
+
+    private func updateUndoRedoState() {
+        guard let undoManager = textViewRef?.undoManager else { return }
+        canUndo = undoManager.canUndo
+        canRedo = undoManager.canRedo
+
+        // 更新當前字體顯示
+        if let textView = textViewRef,
+           let font = textView.typingAttributes[.font] as? NSFont {
+            currentFont = font.fontName
+        }
+    }
+
+    // MARK: - Formatting Methods
+
+    private func applyFont(_ fontName: String) {
+        guard let textView = textViewRef else { return }
+        let range = textView.selectedRange()
+        guard range.length > 0 else {
+            // 如果沒有選取文字，更新預設字體
+            currentFont = fontName
+            if let font = NSFont(name: fontName, size: 12) {
+                textView.typingAttributes[.font] = font
+            }
+            return
+        }
+
+        guard let textStorage = textView.textStorage else { return }
+
+        textStorage.beginEditing()
+        textStorage.enumerateAttribute(.font, in: range, options: []) { value, attrRange, _ in
+            guard let currentFont = value as? NSFont else { return }
+
+            // 保持原有字體大小和特性
+            let fontSize = currentFont.pointSize
+            let traits = currentFont.fontDescriptor.symbolicTraits
+
+            // 創建新字體
+            if let newFont = NSFont(name: fontName, size: fontSize) {
+                var finalFont = newFont
+
+                // 保留粗體和斜體特性
+                if traits.contains(.bold) {
+                    finalFont = NSFontManager.shared.convert(finalFont, toHaveTrait: .boldFontMask)
+                }
+                if traits.contains(.italic) {
+                    finalFont = NSFontManager.shared.convert(finalFont, toHaveTrait: .italicFontMask)
+                }
+
+                textStorage.addAttribute(.font, value: finalFont, range: attrRange)
+            }
+        }
+        textStorage.endEditing()
+
+        currentFont = fontName
+        attributedText = textView.attributedString()
+        saveDocument()
+    }
+
     private func applyFormat(_ style: FormatStyle) {
         guard let textView = textViewRef else { return }
         let range = textView.selectedRange()
@@ -192,6 +341,14 @@ struct DocumentEditorView: View {
                     textStorage.removeAttribute(.underlineStyle, range: attrRange)
                 } else {
                     textStorage.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: attrRange)
+                }
+                return
+            case .strikethrough:
+                let hasStrikethrough = textStorage.attribute(.strikethroughStyle, at: attrRange.location, effectiveRange: nil) != nil
+                if hasStrikethrough {
+                    textStorage.removeAttribute(.strikethroughStyle, range: attrRange)
+                } else {
+                    textStorage.addAttribute(.strikethroughStyle, value: NSUnderlineStyle.single.rawValue, range: attrRange)
                 }
                 return
             }
@@ -320,8 +477,8 @@ struct DocumentEditorView: View {
         let citationAttributed = NSAttributedString(
             string: "(\(entry.author), \(entry.year.isEmpty ? "n.d." : entry.year))",
             attributes: [
-                .foregroundColor: NSColor.white,
-                .font: NSFont.systemFont(ofSize: 14)
+                .foregroundColor: NSColor.black,
+                .font: NSFont.systemFont(ofSize: 12)
             ]
         )
         
@@ -333,12 +490,195 @@ struct DocumentEditorView: View {
         ToastManager.shared.showSuccess("已插入引用")
     }
     
+    /// 插入多重引用（從 CitationInsertionPanel）
+    private func insertMultipleCitations(_ citationText: String, entries: [Entry]) {
+        guard let textView = textViewRef else { return }
+        
+        let insertionPoint = textView.selectedRange().location
+        guard let textStorage = textView.textStorage else { return }
+        
+        let citationAttributed = NSAttributedString(
+            string: citationText,
+            attributes: [
+                .foregroundColor: NSColor.black,
+                .font: NSFont.systemFont(ofSize: 12)
+            ]
+        )
+        
+        textStorage.insert(citationAttributed, at: insertionPoint)
+        
+        attributedText = textView.attributedString()
+        saveDocument()
+        
+        ToastManager.shared.showSuccess("已插入 \(entries.count) 篇引用")
+    }
+    
+    private func applyHighlight(_ color: NSColor) {
+        guard let textView = textViewRef else { return }
+        let range = textView.selectedRange()
+        guard range.length > 0 else { return }
+        
+        guard let textStorage = textView.textStorage else { return }
+        
+        textStorage.beginEditing()
+        if color == .clear {
+            textStorage.removeAttribute(.backgroundColor, range: range)
+        } else {
+            textStorage.addAttribute(.backgroundColor, value: color, range: range)
+        }
+        textStorage.endEditing()
+        
+        attributedText = textView.attributedString()
+        saveDocument()
+    }
+    
+    private func applyHeading(_ level: HeadingLevel) {
+        guard let textView = textViewRef else { return }
+        let range = textView.selectedRange()
+        // Apply to the paragraph
+        let paragraphRange = (textView.string as NSString).paragraphRange(for: range)
+        
+        guard let textStorage = textView.textStorage else { return }
+        
+        textStorage.beginEditing()
+        
+        // Set Font
+        let font = NSFont.systemFont(ofSize: level.fontSize, weight: level == .normal ? .regular : .bold)
+        textStorage.addAttribute(.font, value: font, range: paragraphRange)
+        
+        // Reset paragraph style if normal, or set specific spacing for headings
+        let paragraphStyle = NSMutableParagraphStyle()
+        if level != .normal {
+            paragraphStyle.paragraphSpacing = 12
+            paragraphStyle.paragraphSpacingBefore = 6
+        }
+        textStorage.addAttribute(.paragraphStyle, value: paragraphStyle, range: paragraphRange)
+        
+        textStorage.endEditing()
+        
+        attributedText = textView.attributedString()
+        saveDocument()
+    }
+    
+    private func applyList(_ type: ListType) {
+        guard let textView = textViewRef else { return }
+        let range = textView.selectedRange()
+        let paragraphRange = (textView.string as NSString).paragraphRange(for: range)
+        
+        guard let textStorage = textView.textStorage else { return }
+        
+        let marker = type == .bullet ? "•\t" : "1.\t"
+        
+        textStorage.beginEditing()
+        
+        // Check if already has list marker
+        let currentText = (textView.string as NSString).substring(with: paragraphRange)
+        if currentText.hasPrefix("•\t") || currentText.range(of: #"^\d+\.\t"#, options: .regularExpression) != nil {
+            // Remove list (simplified logic: just remove prefix)
+            // In a real app, we'd use NSTextList, but for this simplified editor, we toggle prefix
+            // This is a placeholder for robust list handling
+            // For now, let's just insert the marker if not present
+        } else {
+            textStorage.insert(NSAttributedString(string: marker), at: paragraphRange.location)
+            
+            // Set indentation
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.headIndent = 20
+            paragraphStyle.firstLineHeadIndent = 0
+            paragraphStyle.tabStops = [NSTextTab(textAlignment: .left, location: 20, options: [:])]
+            
+            // We need to apply this to the new range including the marker
+            let newRange = NSRange(location: paragraphRange.location, length: paragraphRange.length + marker.count)
+            textStorage.addAttribute(.paragraphStyle, value: paragraphStyle, range: newRange)
+        }
+        
+        textStorage.endEditing()
+        
+        attributedText = textView.attributedString()
+        saveDocument()
+    }
+    
+    private func insertElement(_ type: InsertType) {
+        guard let textView = textViewRef else { return }
+        
+        switch type {
+        case .image:
+            let panel = NSOpenPanel()
+            panel.allowedContentTypes = [.image]
+            panel.begin { response in
+                if response == .OK, let url = panel.url, let image = NSImage(contentsOf: url) {
+                    let attachment = NSTextAttachment()
+                    attachment.image = image
+                    // Resize to fit width if needed (simplified)
+                    attachment.bounds = CGRect(x: 0, y: 0, width: 300, height: 300 * (image.size.height / image.size.width))
+                    
+                    let attrString = NSAttributedString(attachment: attachment)
+                    textView.textStorage?.insert(attrString, at: textView.selectedRange().location)
+                    self.saveDocument()
+                }
+            }
+        case .table:
+            // Simplified table insertion (placeholder)
+            let tablePlaceholder = "\n| Column 1 | Column 2 |\n| -------- | -------- |\n| Cell 1   | Cell 2   |\n"
+            textView.insertText(tablePlaceholder, replacementRange: textView.selectedRange())
+            saveDocument()
+        case .footnote:
+            // Simplified footnote
+            let footnote = " [^1]"
+            textView.insertText(footnote, replacementRange: textView.selectedRange())
+            saveDocument()
+        }
+    }
+    
+    private func applyChineseOptimization(_ type: ChineseOptimizationType) {
+        guard let textView = textViewRef else { return }
+        let range = textView.selectedRange()
+        let replaceRange = range.length > 0 ? range : NSRange(location: 0, length: textView.string.count)
+        
+        guard let textStorage = textView.textStorage else { return }
+        let currentText = (textView.string as NSString).substring(with: replaceRange)
+        var newText = currentText
+        
+        switch type {
+        case .punctuation:
+            newText = ChineseOptimizationService.shared.convertToFullWidthPunctuation(currentText)
+        case .spacing:
+            newText = ChineseOptimizationService.shared.adjustSpacing(currentText)
+        case .toTraditional:
+            newText = ChineseOptimizationService.shared.convertScript(currentText, to: .traditional)
+        case .toSimplified:
+            newText = ChineseOptimizationService.shared.convertScript(currentText, to: .simplified)
+        case .terminology:
+            let suggestions = ChineseOptimizationService.shared.checkTerminology(currentText)
+            if suggestions.isEmpty {
+                ToastManager.shared.showSuccess("未發現需修正的術語")
+                return
+            }
+            // 簡單實作：自動替換第一個建議（實際應用應顯示列表供選擇）
+            for suggestion in suggestions {
+                newText = newText.replacingOccurrences(of: suggestion.original, with: suggestion.suggestion)
+            }
+            ToastManager.shared.showSuccess("已修正 \(suggestions.count) 個術語")
+        }
+        
+        if newText != currentText {
+            textStorage.beginEditing()
+            textStorage.replaceCharacters(in: replaceRange, with: newText)
+            textStorage.endEditing()
+            
+            attributedText = textView.attributedString()
+            saveDocument()
+            ToastManager.shared.showSuccess("中文優化完成")
+        }
+    }
+    
     // MARK: - Methods
     
     private func saveDocument() {
         document.attributedString = attributedText
         document.updatedAt = Date()
         try? viewContext.save()
+        updateUndoRedoState()
     }
     
     private func handleImport(_ url: URL) {
@@ -371,11 +711,11 @@ struct DocumentEditorView: View {
                     )
                 }
                 
-                // 將所有文字顏色改為白色（適應深色主題）
+                // 將所有文字顏色改為黑色（適應白色紙張）
                 let mutableImported = NSMutableAttributedString(attributedString: imported)
                 mutableImported.addAttribute(
                     .foregroundColor,
-                    value: NSColor.white,
+                    value: NSColor.black,
                     range: NSRange(location: 0, length: mutableImported.length)
                 )
                 
@@ -491,6 +831,9 @@ struct EditorToolbar: View {
     let isPandocAvailable: Bool
     
     // 格式化回調
+    var onUndo: (() -> Void)?
+    var onRedo: (() -> Void)?
+    var onFontChange: ((String) -> Void)?
     var onBold: (() -> Void)?
     var onItalic: (() -> Void)?
     var onUnderline: (() -> Void)?
@@ -501,7 +844,18 @@ struct EditorToolbar: View {
     var onDecreaseFontSize: (() -> Void)?
     var onLineSpacing: ((CGFloat) -> Void)?
     var onTextColor: ((NSColor) -> Void)?
+    var onHighlight: ((NSColor) -> Void)?
+    var onHeading: ((DocumentEditorView.HeadingLevel) -> Void)?
+    var onList: ((DocumentEditorView.ListType) -> Void)?
+    var onInsert: ((DocumentEditorView.InsertType) -> Void)?
+    var onChineseOptimization: ((DocumentEditorView.ChineseOptimizationType) -> Void)?
     var onAI: (() -> Void)?
+    var onInsertCitationShortcut: (() -> Void)?
+
+    // Undo/Redo 狀態
+    @Binding var canUndo: Bool
+    @Binding var canRedo: Bool
+    @Binding var currentFont: String
     
     // 側邊欄控制
     @Binding var showCitationSidebar: Bool
@@ -509,127 +863,403 @@ struct EditorToolbar: View {
     // 狀態
     @State private var showColorPicker = false
     @State private var selectedColor: Color = .black
+    @State private var selectedHighlightColor: Color = .clear
+    @State private var currentHeading: DocumentEditorView.HeadingLevel = .normal
+
+    // 可用字體列表
+    struct FontOption: Hashable {
+        let name: String
+        let displayName: String
+    }
+
+    let availableFonts: [FontOption] = [
+        FontOption(name: "PMingLiU", displayName: "新細明體"),
+        FontOption(name: "Times New Roman", displayName: "Times New Roman"),
+        FontOption(name: "Arial", displayName: "Arial"),
+        FontOption(name: "Helvetica", displayName: "Helvetica"),
+        FontOption(name: "PingFang TC", displayName: "蘋方-繁"),
+        FontOption(name: "Heiti TC", displayName: "黑體-繁"),
+        FontOption(name: "Kaiti TC", displayName: "楷體-繁"),
+        FontOption(name: "Georgia", displayName: "Georgia"),
+        FontOption(name: "Courier New", displayName: "Courier New"),
+        FontOption(name: "Verdana", displayName: "Verdana")
+    ]
+
+    func getFontDisplayName(_ fontName: String) -> String {
+        availableFonts.first { $0.name == fontName }?.displayName ?? fontName
+    }
     
     var body: some View {
-        VStack(spacing: 0) {
-            // 主工具列
-            HStack(spacing: 16) {
-                // 標題
-                Text(document.title)
-                    .font(.headline)
-                    .foregroundColor(theme.textPrimary)
-                
-                Spacer()
-                
-                // AI 調整
-                Button(action: { onAI?() }) {
-                    Label("AI 調整", systemImage: "sparkles")
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(.purple)
-                
-                // 引用側邊欄切換
-                Button(action: { showCitationSidebar.toggle() }) {
-                    Label("參考文獻", systemImage: showCitationSidebar ? "sidebar.right" : "sidebar.left")
-                }
-                .buttonStyle(.bordered)
-                
-                Divider().frame(height: 20)
-                
-                // 匯入
-                Button(action: onImport) {
-                    Label("匯入 DOCX", systemImage: "square.and.arrow.down")
-                }
-                .buttonStyle(.bordered)
-                
-                // 匯出
-                Button(action: onExport) {
-                    Label("匯出", systemImage: "square.and.arrow.up")
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(theme.accent)
-            }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
-            .background(theme.elevated)
+        GeometryReader { geometry in
+            let isCompact = geometry.size.width < 1200
             
-            Divider()
-            
-            // 格式化工具列
-            HStack(spacing: 8) {
-                // 字體樣式組
-                HStack(spacing: 4) {
-                    FormatButton(icon: "bold", tooltip: "粗體 ⌘B", action: onBold)
-                    FormatButton(icon: "italic", tooltip: "斜體 ⌘I", action: onItalic)
-                    FormatButton(icon: "underline", tooltip: "底線 ⌘U", action: onUnderline)
-                }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(theme.elevated.opacity(0.5))
-                .cornerRadius(6)
-                
-                Divider().frame(height: 20)
-                
-                // 字體大小
-                HStack(spacing: 4) {
-                    FormatButton(icon: "textformat.size.smaller", tooltip: "縮小字體", action: onDecreaseFontSize)
-                    FormatButton(icon: "textformat.size.larger", tooltip: "放大字體", action: onIncreaseFontSize)
-                }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(theme.elevated.opacity(0.5))
-                .cornerRadius(6)
-                
-                Divider().frame(height: 20)
-                
-                // 對齊組
-                HStack(spacing: 4) {
-                    FormatButton(icon: "text.alignleft", tooltip: "靠左對齊", action: onAlignLeft)
-                    FormatButton(icon: "text.aligncenter", tooltip: "置中對齊", action: onAlignCenter)
-                    FormatButton(icon: "text.alignright", tooltip: "靠右對齊", action: onAlignRight)
-                }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(theme.elevated.opacity(0.5))
-                .cornerRadius(6)
-                
-                Divider().frame(height: 20)
-                
-                // 行距選單
-                Menu {
-                    Button("單行 (1.0)") { onLineSpacing?(1.0) }
-                    Button("1.15 倍") { onLineSpacing?(1.15) }
-                    Button("1.5 倍") { onLineSpacing?(1.5) }
-                    Button("雙倍 (2.0)") { onLineSpacing?(2.0) }
-                } label: {
-                    Label("行距", systemImage: "text.line.spacing")
-                        .font(.system(size: 14, weight: .medium))
-                        .frame(height: 28)
-                }
-                .menuStyle(.borderlessButton)
-                .frame(width: 60)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(theme.elevated.opacity(0.5))
-                .cornerRadius(6)
-                .help("行距")
-                
-                // 字體顏色
-                ColorPicker("", selection: $selectedColor, supportsOpacity: false)
-                    .labelsHidden()
-                    .frame(width: 28, height: 28)
-                    .help("字體顏色")
-                    .onChange(of: selectedColor) { newColor in
-                        onTextColor?(NSColor(newColor))
+            VStack(spacing: 0) {
+                // 主工具列
+                HStack(spacing: 16) {
+                    // 標題
+                    Text(document.title)
+                        .font(.headline)
+                        .foregroundColor(theme.textPrimary)
+                    
+                    Spacer()
+                    
+                    // AI 調整
+                    Button(action: { onAI?() }) {
+                        Label("AI 調整", systemImage: "sparkles")
                     }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.purple)
+                    
+                    // 引用側邊欄切換
+                    Button(action: { showCitationSidebar.toggle() }) {
+                        Label("參考文獻", systemImage: showCitationSidebar ? "sidebar.right" : "sidebar.left")
+                    }
+                    .buttonStyle(.bordered)
+                    
+                    Divider().frame(height: 20)
+                    
+                    // 匯入
+                    Button(action: onImport) {
+                        Label("匯入 DOCX", systemImage: "square.and.arrow.down")
+                    }
+                    .buttonStyle(.bordered)
+                    
+                    // 匯出
+                    Button(action: onExport) {
+                        Label("匯出", systemImage: "square.and.arrow.up")
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(theme.accent)
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+                .background(theme.elevated)
                 
-                Spacer()
+                Divider()
+                
+                // 格式化工具列
+                HStack(spacing: 8) {
+                    // 1. 復原/重作 (Always Visible)
+                    SwiftUI.Group {
+                        HStack(spacing: 4) {
+                            FormatButton(icon: "arrow.uturn.backward", tooltip: "復原 (⌘Z)", action: onUndo, disabled: !canUndo)
+                            FormatButton(icon: "arrow.uturn.forward", tooltip: "重作 (⇧⌘Z)", action: onRedo, disabled: !canRedo)
+                        }
+                        .padding(4)
+                        .background(theme.elevated.opacity(0.5))
+                        .cornerRadius(6)
+                        
+                        Divider().frame(height: 20)
+                    }
+                    
+                    // 2. 標題樣式 (Always Visible)
+                    Menu {
+                        ForEach(DocumentEditorView.HeadingLevel.allCases) { level in
+                            Button(action: { 
+                                currentHeading = level
+                                onHeading?(level) 
+                            }) {
+                                HStack {
+                                    Text(level.displayName)
+                                        .font(.system(size: level.fontSize))
+                                    if currentHeading == level {
+                                        Image(systemName: "checkmark")
+                                    }
+                                }
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text(currentHeading.displayName)
+                                .font(.system(size: 12, weight: .medium))
+                                .frame(width: 50, alignment: .leading)
+                            Image(systemName: "chevron.down")
+                                .font(.system(size: 10))
+                        }
+                        .padding(6)
+                        .background(theme.elevated.opacity(0.5))
+                        .cornerRadius(6)
+                    }
+                    .menuStyle(.borderlessButton)
+                    .help("標題樣式")
+                    
+                    Divider().frame(height: 20)
+                    
+                    // 3. 字體與大小 (Compact: Move to More)
+                    if !isCompact {
+                        fontControls
+                        Divider().frame(height: 20)
+                    }
+                    
+                    // 4. 基本格式 (Bold/Italic/Underline) (Always Visible)
+                    HStack(spacing: 4) {
+                        FormatButton(icon: "bold", tooltip: "粗體 (⌘B)", action: onBold)
+                        FormatButton(icon: "italic", tooltip: "斜體 (⌘I)", action: onItalic)
+                        FormatButton(icon: "underline", tooltip: "底線 (⌘U)", action: onUnderline)
+                    }
+                    .padding(4)
+                    .background(theme.elevated.opacity(0.5))
+                    .cornerRadius(6)
+                    
+                    Divider().frame(height: 20)
+                    
+                    // 5. 顏色與螢光筆 (Compact: Simplified)
+                    HStack(spacing: 4) {
+                        // 文字顏色
+                        ColorPicker("", selection: $selectedColor, supportsOpacity: false)
+                            .labelsHidden()
+                            .frame(width: 24, height: 24)
+                            .help("文字顏色")
+                            .onChange(of: selectedColor) { newColor in
+                                onTextColor?(NSColor(newColor))
+                            }
+                        
+                        // 螢光筆
+                        Menu {
+                            Button(action: { onHighlight?(.clear) }) {
+                                Label("無", systemImage: "slash.circle")
+                            }
+                            Button(action: { onHighlight?(.yellow) }) {
+                                Label("黃色", systemImage: "circle.fill").foregroundColor(.yellow)
+                            }
+                            Button(action: { onHighlight?(.green) }) {
+                                Label("綠色", systemImage: "circle.fill").foregroundColor(.green)
+                            }
+                            Button(action: { onHighlight?(.cyan) }) {
+                                Label("藍色", systemImage: "circle.fill").foregroundColor(.cyan)
+                            }
+                            Button(action: { onHighlight?(.magenta) }) {
+                                Label("粉紅", systemImage: "circle.fill").foregroundColor(.pink)
+                            }
+                        } label: {
+                            Image(systemName: "highlighter")
+                                .font(.system(size: 14))
+                                .foregroundColor(theme.textPrimary)
+                                .frame(width: 24, height: 24)
+                        }
+                        .menuStyle(.borderlessButton)
+                        .help("螢光筆")
+                    }
+                    .padding(4)
+                    .background(theme.elevated.opacity(0.5))
+                    .cornerRadius(6)
+                    
+                    Divider().frame(height: 20)
+                    
+                    // 6. 清單與對齊 (Compact: Move to More)
+                    if !isCompact {
+                        listAndAlignControls
+                        Divider().frame(height: 20)
+                    }
+                    
+                    // 7. 插入與引用 (Always Visible)
+                    HStack(spacing: 4) {
+                        // 插入引用快捷鈕
+                        Button(action: { onInsertCitationShortcut?() }) {
+                            Image(systemName: "text.quote")
+                                .font(.system(size: 14))
+                        }
+                        .buttonStyle(.plain)
+                        .frame(width: 28, height: 28)
+                        .background(theme.elevated.opacity(0.5))
+                        .cornerRadius(6)
+                        .help("插入引用 (⌘⇧C)")
+                        
+                        // 插入選單
+                        Menu {
+                            Button(action: { onInsert?(.image) }) {
+                                Label("圖片", systemImage: "photo")
+                            }
+                            Button(action: { onInsert?(.table) }) {
+                                Label("表格", systemImage: "tablecells")
+                            }
+                            Button(action: { onInsert?(.footnote) }) {
+                                Label("腳註", systemImage: "text.alignleft")
+                            }
+                        } label: {
+                            HStack(spacing: 2) {
+                                Text("插入")
+                                    .font(.system(size: 12))
+                                Image(systemName: "chevron.down")
+                                    .font(.system(size: 8))
+                            }
+                            .padding(6)
+                            .background(theme.elevated.opacity(0.5))
+                            .cornerRadius(6)
+                        }
+                        .menuStyle(.borderlessButton)
+                    }
+                    
+                    // 8. 中文優化 (Compact: Move to More)
+                    if !isCompact {
+                        Divider().frame(height: 20)
+                        chineseOptimizationMenu
+                    }
+                    
+                    Spacer()
+                    
+                    // 9. 更多選單 (Compact Only)
+                    if isCompact {
+                        Menu {
+                            // 字體控制
+                            Section("字體") {
+                                Button("放大字體") { onIncreaseFontSize?() }
+                                Button("縮小字體") { onDecreaseFontSize?() }
+                                Menu("選擇字體") {
+                                    ForEach(availableFonts, id: \.self) { font in
+                                        Button(font.displayName) { onFontChange?(font.name) }
+                                    }
+                                }
+                            }
+                            
+                            // 段落控制
+                            Section("段落") {
+                                Button("靠左對齊") { onAlignLeft?() }
+                                Button("置中對齊") { onAlignCenter?() }
+                                Button("靠右對齊") { onAlignRight?() }
+                                Button("項目符號") { onList?(.bullet) }
+                                Button("編號清單") { onList?(.numbered) }
+                            }
+                            
+                            // 中文優化
+                            Section("中文優化") {
+                                Button("全形標點轉換") { onChineseOptimization?(.punctuation) }
+                                Button("中英文間距") { onChineseOptimization?(.spacing) }
+                                Button("轉繁體") { onChineseOptimization?(.toTraditional) }
+                                Button("轉簡體") { onChineseOptimization?(.toSimplified) }
+                                Button("台灣學術用語檢查") { onChineseOptimization?(.terminology) }
+                            }
+                        } label: {
+                            Image(systemName: "ellipsis.circle")
+                                .font(.title2)
+                                .foregroundColor(theme.textPrimary)
+                        }
+                        .menuStyle(.borderlessButton)
+                        .padding(.trailing, 8)
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(theme.elevated)
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 8)
-            .background(theme.background)
+        }
+        .frame(height: 100)
+    }
+    
+    // MARK: - Subviews
+    
+    private var fontControls: some View {
+        HStack(spacing: 8) {
+            // 字體選擇器
+            Menu {
+                ForEach(availableFonts, id: \.self) { font in
+                    Button(action: { onFontChange?(font.name) }) {
+                        HStack {
+                            Text(font.displayName)
+                                .font(.custom(font.name, size: 14))
+                            if currentFont == font.name {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                }
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "textformat")
+                        .font(.system(size: 12))
+                    Text(getFontDisplayName(currentFont))
+                        .font(.system(size: 12))
+                        .lineLimit(1)
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 10))
+                }
+                .foregroundColor(.white)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+            }
+            .menuStyle(.borderlessButton)
+            .frame(width: 140)
+            .background(theme.elevated.opacity(0.5))
+            .cornerRadius(6)
+            .help("字體")
+
+            // 字體大小
+            HStack(spacing: 4) {
+                FormatButton(icon: "textformat.size.smaller", tooltip: "縮小字體", action: onDecreaseFontSize)
+                FormatButton(icon: "textformat.size.larger", tooltip: "放大字體", action: onIncreaseFontSize)
+            }
+            .padding(4)
+            .background(theme.elevated.opacity(0.5))
+            .cornerRadius(6)
         }
     }
+    
+    private var listAndAlignControls: some View {
+        HStack(spacing: 8) {
+            // 對齊
+            HStack(spacing: 4) {
+                FormatButton(icon: "text.alignleft", tooltip: "靠左對齊", action: onAlignLeft)
+                FormatButton(icon: "text.aligncenter", tooltip: "置中對齊", action: onAlignCenter)
+                FormatButton(icon: "text.alignright", tooltip: "靠右對齊", action: onAlignRight)
+            }
+            .padding(4)
+            .background(theme.elevated.opacity(0.5))
+            .cornerRadius(6)
+            
+            // 清單
+            HStack(spacing: 4) {
+                FormatButton(icon: "list.bullet", tooltip: "項目符號", action: { onList?(.bullet) })
+                FormatButton(icon: "list.number", tooltip: "編號清單", action: { onList?(.numbered) })
+            }
+            .padding(4)
+            .background(theme.elevated.opacity(0.5))
+            .cornerRadius(6)
+            
+            // 行距
+            Menu {
+                Button("單行 (1.0)") { onLineSpacing?(1.0) }
+                Button("1.15 倍") { onLineSpacing?(1.15) }
+                Button("1.5 倍") { onLineSpacing?(1.5) }
+                Button("雙倍 (2.0)") { onLineSpacing?(2.0) }
+            } label: {
+                Label("行距", systemImage: "text.line.spacing")
+                    .font(.system(size: 14, weight: .medium))
+                    .frame(height: 28)
+            }
+            .menuStyle(.borderlessButton)
+            .frame(width: 60)
+            .padding(4)
+            .background(theme.elevated.opacity(0.5))
+            .cornerRadius(6)
+            .help("行距")
+        }
+    }
+    
+    private var chineseOptimizationMenu: some View {
+        Menu {
+            Button("全形標點轉換") { 
+                onChineseOptimization?(.punctuation)
+            }
+            Button("中英文間距自動調整") { 
+                onChineseOptimization?(.spacing)
+            }
+            Menu("繁簡轉換") {
+                Button("轉繁體") { onChineseOptimization?(.toTraditional) }
+                Button("轉簡體") { onChineseOptimization?(.toSimplified) }
+            }
+            Button("台灣學術用語檢查") { 
+                onChineseOptimization?(.terminology)
+            }
+        } label: {
+            Label("中文優化", systemImage: "character.book.closed.zh")
+                .font(.system(size: 12))
+                .padding(6)
+                .background(theme.elevated.opacity(0.5))
+                .cornerRadius(6)
+        }
+        .menuStyle(.borderlessButton)
+    }
+
 }
 
 // MARK: - 格式化按鈕
@@ -638,9 +1268,10 @@ struct FormatButton: View {
     let icon: String
     let tooltip: String
     var action: (() -> Void)?
-    
+    var disabled: Bool = false
+
     @State private var isHovered = false
-    
+
     var body: some View {
         Button(action: { action?() }) {
             Image(systemName: icon)
@@ -650,8 +1281,9 @@ struct FormatButton: View {
                 .cornerRadius(4)
         }
         .buttonStyle(.plain)
-        .foregroundColor(.white)
+        .foregroundColor(disabled ? .gray : .white)
         .help(tooltip)
+        .disabled(disabled)
         .onHover { hovering in
             isHovered = hovering
         }
@@ -690,6 +1322,7 @@ struct RichTextEditorView: NSViewRepresentable {
             height: .greatestFiniteMagnitude
         ))
         textContainer.widthTracksTextView = false
+        textContainer.heightTracksTextView = false
         
         let layoutManager = NSLayoutManager()
         layoutManager.addTextContainer(textContainer)
@@ -701,9 +1334,9 @@ struct RichTextEditorView: NSViewRepresentable {
             x: Self.a4Margin,
             y: Self.a4Margin,
             width: Self.a4Width - (Self.a4Margin * 2),
-            height: 600
+            height: 842 - (Self.a4Margin * 2)
         ), textContainer: textContainer)
-        
+
         textView.delegate = context.coordinator
         textView.isRichText = true
         textView.allowsUndo = true
@@ -712,7 +1345,9 @@ struct RichTextEditorView: NSViewRepresentable {
         textView.isSelectable = true
         textView.isVerticallyResizable = true
         textView.isHorizontallyResizable = false
-        textView.autoresizingMask = [.height]
+        textView.autoresizingMask = []
+        textView.maxSize = NSSize(width: Self.a4Width - (Self.a4Margin * 2), height: .greatestFiniteMagnitude)
+        textView.minSize = NSSize(width: Self.a4Width - (Self.a4Margin * 2), height: 842 - (Self.a4Margin * 2))
         
         // 紙張樣式 - 白色背景配深色文字
         textView.backgroundColor = .white
@@ -749,9 +1384,26 @@ struct RichTextEditorView: NSViewRepresentable {
         // 初始內容
         textView.textStorage?.setAttributedString(attributedText)
         
-        // 儲存參考
+        // 儲存參考並初始化 undo/redo 狀態
         DispatchQueue.main.async {
             self.textViewRef = textView
+        }
+
+        // 監聽 undo manager 通知
+        NotificationCenter.default.addObserver(
+            forName: .NSUndoManagerDidUndoChange,
+            object: textView.undoManager,
+            queue: .main
+        ) { _ in
+            // 觸發文字變更以更新狀態
+        }
+
+        NotificationCenter.default.addObserver(
+            forName: .NSUndoManagerDidRedoChange,
+            object: textView.undoManager,
+            queue: .main
+        ) { _ in
+            // 觸發文字變更以更新狀態
         }
         
         return scrollView
@@ -760,36 +1412,58 @@ struct RichTextEditorView: NSViewRepresentable {
     func updateNSView(_ nsView: NSScrollView, context: Context) {
         guard let paperView = nsView.documentView,
               let textView = paperView.subviews.first as? NSTextView else { return }
-        
+
         // 只在內容真正改變時更新
         if textView.attributedString() != attributedText {
             let selectedRanges = textView.selectedRanges
             textView.textStorage?.setAttributedString(attributedText)
             textView.selectedRanges = selectedRanges
         }
-        
-        // 更新紙張高度以適應內容
-        textView.sizeToFit()
-        let contentHeight = max(842, textView.frame.height + Self.a4Margin * 2)
-        paperView.frame.size.height = contentHeight
-        textView.frame.origin.y = Self.a4Margin
-        textView.frame.size.height = contentHeight - Self.a4Margin * 2
+
+        // 讓 textView 自動調整大小以適應內容
+        if let layoutManager = textView.layoutManager,
+           let textContainer = textView.textContainer {
+            layoutManager.ensureLayout(for: textContainer)
+            let usedRect = layoutManager.usedRect(for: textContainer)
+            let contentHeight = max(842, usedRect.height + Self.a4Margin * 2)
+
+            // 更新紙張和 textView 的高度
+            paperView.frame.size = NSSize(width: Self.a4Width, height: contentHeight)
+            textView.frame = NSRect(
+                x: Self.a4Margin,
+                y: Self.a4Margin,
+                width: Self.a4Width - (Self.a4Margin * 2),
+                height: contentHeight - Self.a4Margin * 2
+            )
+
+            // 通知 scrollView 內容大小已改變
+            nsView.documentView?.needsLayout = true
+        }
     }
     
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
-    
+
     class Coordinator: NSObject, NSTextViewDelegate {
         var parent: RichTextEditorView
-        
+
         init(_ parent: RichTextEditorView) {
             self.parent = parent
         }
-        
+
         func textDidChange(_ notification: Notification) {
             guard let textView = notification.object as? NSTextView else { return }
             parent.attributedText = textView.attributedString()
+            parent.onTextChange()
+        }
+
+        // 監聽 undo/redo 狀態變化
+        func undoManagerDidUndo(_ notification: Notification) {
+            parent.onTextChange()
+        }
+
+        func undoManagerDidRedo(_ notification: Notification) {
             parent.onTextChange()
         }
     }
@@ -1067,35 +1741,37 @@ struct AIFormattingPanel: View {
     let text: String
     let onApplyRewrite: (String) -> Void
     let onClose: () -> Void
-    
-    @State private var selectedMode: AIMode = .autoLayout
+
+    @State private var selectedMode: AIMode = .rewrite
+    @State private var selectedRewriteStyle: RewriteStyle = .academic
     @State private var isProcessing = false
     @State private var resultText: String?
     @State private var errorMessage: String?
-    
+    @State private var suggestions: WritingSuggestions?
+
     enum AIMode: String, CaseIterable, Identifiable {
-        case autoLayout = "自動排版"
-        case academic = "學術格式化"
-        case rewrite = "重寫優化"
-        case proofread = "潤飾文字"
-        
+        case rewrite = "改寫優化"
+        case proofread = "寫作建議"
+        case academicStyle = "學術風格檢查"
+        case condense = "精簡文字"
+
         var id: String { rawValue }
-        
+
         var icon: String {
             switch self {
-            case .autoLayout: return "text.alignleft"
-            case .academic: return "graduationcap"
             case .rewrite: return "pencil.and.outline"
             case .proofread: return "checkmark.circle"
+            case .academicStyle: return "graduationcap"
+            case .condense: return "text.alignleft"
             }
         }
-        
+
         var description: String {
             switch self {
-            case .autoLayout: return "自動調整標題層級、段落縮排"
-            case .academic: return "符合 APA/MLA 論文格式規範"
-            case .rewrite: return "改寫選取的文字，使其更流暢"
-            case .proofread: return "修正文法、拼寫、標點"
+            case .rewrite: return "改寫選取的文字，多種風格可選"
+            case .proofread: return "檢查語法、風格、邏輯問題"
+            case .academicStyle: return "檢查學術寫作規範"
+            case .condense: return "精簡冗長的文字內容"
             }
         }
     }
@@ -1125,7 +1801,12 @@ struct AIFormattingPanel: View {
                 // 左側：模式選擇
                 VStack(spacing: 8) {
                     ForEach(AIMode.allCases) { mode in
-                        Button(action: { selectedMode = mode; resultText = nil }) {
+                        Button(action: {
+                            selectedMode = mode
+                            resultText = nil
+                            suggestions = nil
+                            errorMessage = nil
+                        }) {
                             HStack {
                                 Image(systemName: mode.icon)
                                     .frame(width: 24)
@@ -1136,7 +1817,7 @@ struct AIFormattingPanel: View {
                                     Text(mode.description)
                                         .font(.caption)
                                         .foregroundColor(theme.textSecondary)
-                                        .lineLimit(1)
+                                        .lineLimit(2)
                                 }
                                 Spacer()
                             }
@@ -1150,10 +1831,39 @@ struct AIFormattingPanel: View {
                         }
                         .buttonStyle(.plain)
                     }
+
+                    Divider()
+                        .padding(.vertical, 8)
+
+                    // 改寫風格選擇（僅在改寫模式下顯示）
+                    if selectedMode == .rewrite {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("改寫風格")
+                                .font(.caption)
+                                .foregroundColor(theme.textSecondary)
+
+                            ForEach(RewriteStyle.allCases, id: \.self) { style in
+                                Button(action: { selectedRewriteStyle = style }) {
+                                    HStack {
+                                        Image(systemName: selectedRewriteStyle == style ? "checkmark.circle.fill" : "circle")
+                                            .foregroundColor(selectedRewriteStyle == style ? theme.accent : theme.textSecondary)
+                                        Text(style.displayName)
+                                            .font(.caption)
+                                        Spacer()
+                                    }
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                        .padding(8)
+                        .background(theme.background.opacity(0.5))
+                        .cornerRadius(6)
+                    }
+
                     Spacer()
                 }
                 .padding()
-                .frame(width: 250)
+                .frame(width: 280)
                 .background(theme.elevated.opacity(0.3))
                 
                 Divider()
@@ -1161,27 +1871,139 @@ struct AIFormattingPanel: View {
                 // 右側：預覽與執行
                 VStack {
                     if isProcessing {
-                        ProgressView("AI 正在思考中...")
-                            .scaleEffect(1.2)
+                        VStack(spacing: 16) {
+                            ProgressView()
+                                .scaleEffect(1.5)
+                            Text("AI 正在處理中...")
+                                .font(.headline)
+                            Text("使用 Apple Intelligence")
+                                .font(.caption)
+                                .foregroundColor(theme.textSecondary)
+
+                            Button("檢查 AI 狀態") {
+                                checkAIStatus()
+                            }
+                            .buttonStyle(.bordered)
+                            .font(.caption)
+                        }
+                        .frame(maxHeight: .infinity)
+                    } else if let error = errorMessage {
+                        VStack(spacing: 16) {
+                            Image(systemName: "exclamationmark.triangle")
+                                .font(.system(size: 48))
+                                .foregroundColor(.orange)
+                            Text("處理失敗")
+                                .font(.headline)
+                            Text(error)
+                                .font(.caption)
+                                .foregroundColor(theme.textSecondary)
+                                .multilineTextAlignment(.center)
+                            Button("重試") {
+                                errorMessage = nil
+                                runAIAnalysis()
+                            }
+                            .buttonStyle(.borderedProminent)
+                        }
+                        .padding()
+                        .frame(maxHeight: .infinity)
+                    } else if let suggestions = suggestions {
+                        // 顯示寫作建議
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 16) {
+                                Text("AI 建議")
+                                    .font(.headline)
+
+                                if !suggestions.grammarIssues.isEmpty {
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        Label("語法問題 (\(suggestions.grammarIssues.count))", systemImage: "exclamationmark.circle")
+                                            .font(.subheadline)
+                                            .foregroundColor(.red)
+                                        ForEach(suggestions.grammarIssues) { issue in
+                                            AISuggestionRow(
+                                                original: issue.original,
+                                                suggestion: issue.suggestion,
+                                                explanation: issue.explanation,
+                                                color: .red
+                                            )
+                                        }
+                                    }
+                                }
+
+                                if !suggestions.styleIssues.isEmpty {
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        Label("風格問題 (\(suggestions.styleIssues.count))", systemImage: "paintbrush")
+                                            .font(.subheadline)
+                                            .foregroundColor(.orange)
+                                        ForEach(suggestions.styleIssues) { issue in
+                                            AISuggestionRow(
+                                                original: issue.original,
+                                                suggestion: issue.suggestion,
+                                                explanation: issue.reason,
+                                                color: .orange
+                                            )
+                                        }
+                                    }
+                                }
+
+                                if !suggestions.logicIssues.isEmpty {
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        Label("邏輯問題 (\(suggestions.logicIssues.count))", systemImage: "arrow.triangle.branch")
+                                            .font(.subheadline)
+                                            .foregroundColor(.blue)
+                                        ForEach(suggestions.logicIssues) { issue in
+                                            AISuggestionRow(
+                                                original: issue.description,
+                                                suggestion: issue.suggestion,
+                                                explanation: "",
+                                                color: .blue
+                                            )
+                                        }
+                                    }
+                                }
+
+                                if !suggestions.overallFeedback.isEmpty {
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        Text("整體評價")
+                                            .font(.subheadline)
+                                            .fontWeight(.semibold)
+                                        Text(suggestions.overallFeedback)
+                                            .font(.caption)
+                                            .foregroundColor(theme.textSecondary)
+                                    }
+                                    .padding()
+                                    .background(theme.elevated.opacity(0.5))
+                                    .cornerRadius(8)
+                                }
+
+                                Button("返回") {
+                                    self.suggestions = nil
+                                }
+                                .buttonStyle(.bordered)
+                            }
+                            .padding()
+                        }
                     } else if let result = resultText {
-                        VStack(alignment: .leading) {
-                            Text("建議修改結果：")
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("AI 結果")
                                 .font(.headline)
                                 .padding(.bottom, 8)
-                            
+
                             ScrollView {
                                 Text(result)
                                     .font(.system(size: 14))
                                     .padding()
                                     .background(theme.background)
                                     .cornerRadius(8)
+                                    .textSelection(.enabled)
                             }
-                            
+
                             HStack {
-                                Button("取消") { resultText = nil }
-                                    .keyboardShortcut(.cancelAction)
+                                Button("取消") {
+                                    resultText = nil
+                                }
+                                .keyboardShortcut(.cancelAction)
                                 Spacer()
-                                Button("套用修改") {
+                                Button("套用到文件") {
                                     onApplyRewrite(result)
                                     onClose()
                                 }
@@ -1189,7 +2011,6 @@ struct AIFormattingPanel: View {
                                 .tint(theme.accent)
                                 .keyboardShortcut(.defaultAction)
                             }
-                            .padding(.top)
                         }
                         .padding()
                     } else {
@@ -1197,22 +2018,69 @@ struct AIFormattingPanel: View {
                             Image(systemName: selectedMode.icon)
                                 .font(.system(size: 48))
                                 .foregroundColor(theme.accent)
-                            
+
                             Text("準備執行 \(selectedMode.rawValue)")
                                 .font(.title3)
-                            
+
                             Text(selectedMode.description)
                                 .foregroundColor(theme.textSecondary)
                                 .multilineTextAlignment(.center)
-                            
-                            Button("開始分析") {
-                                runAIAnalysis()
+                                .padding(.horizontal)
+
+                            // 文字長度顯示
+                            VStack(spacing: 8) {
+                                HStack {
+                                    Image(systemName: "doc.text")
+                                        .foregroundColor(theme.textSecondary)
+                                    Text("\(text.count) 字符")
+                                        .font(.caption)
+                                        .foregroundColor(theme.textSecondary)
+                                }
+
+                                // 長度警告
+                                let maxLength = getMaxLength(for: selectedMode)
+                                if text.count > maxLength {
+                                    HStack {
+                                        Image(systemName: "exclamationmark.triangle.fill")
+                                            .foregroundColor(.orange)
+                                        Text("文字過長，將自動截取前 \(maxLength) 字符")
+                                            .font(.caption2)
+                                            .foregroundColor(.orange)
+                                    }
+                                    .padding(8)
+                                    .background(Color.orange.opacity(0.1))
+                                    .cornerRadius(6)
+                                }
                             }
-                            .buttonStyle(.borderedProminent)
-                            .controlSize(.large)
-                            .tint(.purple)
+
+                            if selectedMode == .rewrite {
+                                Text("風格：\(selectedRewriteStyle.displayName)")
+                                    .font(.caption)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 6)
+                                    .background(theme.accent.opacity(0.2))
+                                    .cornerRadius(12)
+                            }
+
+                            VStack(spacing: 12) {
+                                Button("開始分析") {
+                                    runAIAnalysis()
+                                }
+                                .buttonStyle(.borderedProminent)
+                                .controlSize(.large)
+                                .tint(.purple)
+                                .disabled(text.isEmpty)
+
+                                Button("測試 AI 連線") {
+                                    checkAIStatus()
+                                }
+                                .buttonStyle(.bordered)
+                                .controlSize(.small)
+                                .foregroundColor(theme.textSecondary)
+                            }
                         }
                         .padding()
+                        .frame(maxHeight: .infinity)
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -1222,29 +2090,165 @@ struct AIFormattingPanel: View {
     }
     
     private func runAIAnalysis() {
+        guard !text.isEmpty else {
+            errorMessage = "請輸入或選擇文字"
+            return
+        }
+
         isProcessing = true
         errorMessage = nil
-        
+        resultText = nil
+        suggestions = nil
+
         Task {
-            // 模擬 AI 處理延遲
-            try? await Task.sleep(nanoseconds: 1_500_000_000)
-            
-            await MainActor.run {
-                // 這裡應該呼叫真實的 AI 服務
-                // 暫時使用模擬回應
-                switch selectedMode {
-                case .autoLayout:
-                    resultText = text // 實際應回傳排版後的文字
-                case .academic:
-                    resultText = "根據學術規範，建議調整以下格式..."
-                case .rewrite:
-                    resultText = "這是經過 AI 優化後的文字內容，語氣更加流暢..."
-                case .proofread:
-                    resultText = "未發現明顯的文法錯誤。"
+            do {
+                // 檢查 macOS 版本
+                if #available(macOS 26.0, *) {
+                    print("🔍 開始 AI 處理，模式：\(selectedMode.rawValue)")
+
+                    let aiService = UnifiedAIService.shared
+
+                    // 檢查服務可用性
+                    if !aiService.isAvailable {
+                        print("⚠️ Apple Intelligence 不可用")
+                        throw AIServiceError.notAvailable
+                    }
+
+                    switch selectedMode {
+                    case .rewrite:
+                        print("📝 開始改寫，風格：\(selectedRewriteStyle.displayName)")
+                        let result = try await aiService.writing.rewrite(text: text, style: selectedRewriteStyle)
+                        print("✅ 改寫完成，長度：\(result.count)")
+                        await MainActor.run {
+                            resultText = result
+                            isProcessing = false
+                        }
+
+                    case .proofread:
+                        print("✍️ 開始寫作建議分析")
+                        let options = WritingOptions()
+                        let result = try await aiService.writing.getSuggestions(for: text, options: options)
+                        print("✅ 分析完成，問題數：\(result.totalIssueCount)")
+                        await MainActor.run {
+                            suggestions = result
+                            isProcessing = false
+                        }
+
+                    case .academicStyle:
+                        print("🎓 開始學術風格檢查")
+                        let styleIssues = try await aiService.writing.checkAcademicStyle(text: text)
+                        print("✅ 檢查完成，問題數：\(styleIssues.count)")
+                        await MainActor.run {
+                            suggestions = WritingSuggestions(
+                                grammarIssues: [],
+                                styleIssues: styleIssues,
+                                logicIssues: [],
+                                overallFeedback: styleIssues.isEmpty ? "✅ 未發現學術風格問題" : "發現 \(styleIssues.count) 個學術風格問題"
+                            )
+                            isProcessing = false
+                        }
+
+                    case .condense:
+                        print("✂️ 開始精簡文字")
+                        let result = try await aiService.writing.condense(text: text, targetRatio: 0.7)
+                        print("✅ 精簡完成，原長度：\(text.count)，新長度：\(result.count)")
+                        await MainActor.run {
+                            resultText = result
+                            isProcessing = false
+                        }
+                    }
+                } else {
+                    await MainActor.run {
+                        errorMessage = "需要 macOS 26.0 或更新版本才能使用 Apple Intelligence"
+                        isProcessing = false
+                    }
                 }
-                isProcessing = false
+            } catch let error as AIServiceError {
+                await MainActor.run {
+                    errorMessage = "AI 服務錯誤：\(error.localizedDescription ?? "未知錯誤")\n\n建議：請確認您的裝置支援 Apple Intelligence"
+                    isProcessing = false
+                    print("❌ AI 處理失敗 (AIServiceError): \(error)")
+                }
+            } catch {
+                await MainActor.run {
+                    errorMessage = "處理失敗：\(error.localizedDescription)\n\n技術細節：\(error)"
+                    isProcessing = false
+                    print("❌ AI 處理失敗 (未知錯誤): \(error)")
+                }
             }
         }
+    }
+
+    // MARK: - 輔助方法
+
+    private func getMaxLength(for mode: AIMode) -> Int {
+        switch mode {
+        case .rewrite: return 800
+        case .proofread: return 1000
+        case .academicStyle: return 1200
+        case .condense: return 1000
+        }
+    }
+
+    // MARK: - AI 狀態檢查
+
+    private func checkAIStatus() {
+        isProcessing = true
+        errorMessage = nil
+
+        Task {
+            if #available(macOS 26.0, *) {
+                let (available, message) = await AppleAITest.testAvailability()
+                await MainActor.run {
+                    if available {
+                        resultText = message
+                    } else {
+                        errorMessage = message
+                    }
+                    isProcessing = false
+                }
+            } else {
+                await MainActor.run {
+                    errorMessage = "需要 macOS 26.0 或更新版本"
+                    isProcessing = false
+                }
+            }
+        }
+    }
+}
+
+// MARK: - AI 建議行視圖
+
+struct AISuggestionRow: View {
+    let original: String
+    let suggestion: String
+    let explanation: String
+    let color: Color
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .top) {
+                Image(systemName: "arrow.right")
+                    .foregroundColor(color)
+                    .font(.caption)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("原文：\(original)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Text("建議：\(suggestion)")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                    if !explanation.isEmpty {
+                        Text(explanation)
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+        }
+        .padding(8)
+        .background(Color.white.opacity(0.05))
+        .cornerRadius(6)
     }
 }
 

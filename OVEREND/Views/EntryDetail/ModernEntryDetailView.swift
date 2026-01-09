@@ -37,6 +37,9 @@ struct ModernEntryDetailView: View {
     @State private var showUnsavedAlert: Bool = false
     @State private var isExtractingMetadata: Bool = false
     
+    // AI 標籤建議
+    @State private var showSmartTagSuggestion = false
+    
     var body: some View {
         VStack(spacing: 0) {
             // 頂部工具列
@@ -297,6 +300,26 @@ struct ModernEntryDetailView: View {
                 
                 Spacer()
                 
+                Button(action: { showSmartTagSuggestion = true }) {
+                    Label("AI 建議", systemImage: "sparkles")
+                        .font(.system(size: 12))
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.mini)
+                .tint(.purple)
+                .popover(isPresented: $showSmartTagSuggestion) {
+                    SmartTagSuggestionView(
+                        entryTitle: entry.title,
+                        onAccept: { tags in
+                            addSuggestedTags(tags)
+                            showSmartTagSuggestion = false
+                        },
+                        onCancel: {
+                            showSmartTagSuggestion = false
+                        }
+                    )
+                }
+                
                 Button(action: { isAddingTag = true }) {
                     Image(systemName: "plus")
                         .font(.system(size: 14))
@@ -418,6 +441,38 @@ struct ModernEntryDetailView: View {
         try? viewContext.save()
     }
 
+    private func addSuggestedTags(_ tagNames: [String]) {
+        guard let library = entry.library else { return }
+        var currentTags = entry.tags as? Set<Tag> ?? []
+        var updated = false
+        
+        for name in tagNames {
+            // Check if tag exists in library
+            let request: NSFetchRequest<Tag> = Tag.fetchRequest()
+            request.predicate = NSPredicate(format: "name == %@ AND library == %@", name, library)
+            
+            if let existingTag = try? viewContext.fetch(request).first {
+                if !currentTags.contains(existingTag) {
+                    currentTags.insert(existingTag)
+                    updated = true
+                }
+            } else {
+                // Create new tag
+                let newTag = Tag(context: viewContext, name: name, library: library)
+                let colors = ["#FF3B30", "#FF9500", "#FFCC00", "#4CD964", "#5AC8FA", "#007AFF", "#5856D6", "#FF2D55"]
+                newTag.colorHex = colors.randomElement() ?? "#007AFF"
+                currentTags.insert(newTag)
+                updated = true
+            }
+        }
+        
+        if updated {
+            entry.tags = currentTags
+            try? viewContext.save()
+            ToastManager.shared.showSuccess("已加入 \(tagNames.count) 個標籤")
+        }
+    }
+
     private func createNewTag(name: String) {
         guard let library = entry.library else { return }
         let newTag = Tag(context: viewContext, name: name, library: library)
@@ -430,6 +485,10 @@ struct ModernEntryDetailView: View {
         entry.tags = currentTags
         
         try? viewContext.save()
+        
+        // 觸發學習
+        LearningService.shared.learnTagging(title: entry.title, tags: [newTag.name])
+        
         newTagSearchText = ""
     }
     

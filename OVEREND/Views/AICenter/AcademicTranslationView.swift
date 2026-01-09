@@ -30,6 +30,10 @@ struct AcademicTranslationView: View {
     @State private var errorMessage: String?
     @State private var showCopiedToast: Bool = false
     @State private var showLibraryImport: Bool = false
+    @State private var showExportSheet: Bool = false
+
+    // Core Data
+    @Environment(\.managedObjectContext) private var viewContext
     
     var body: some View {
         ScrollView {
@@ -67,6 +71,15 @@ struct AcademicTranslationView: View {
             LibraryEntryPicker { content in
                 inputText = content
             }
+            .environmentObject(theme)
+        }
+        .sheet(isPresented: $showExportSheet) {
+            ExportToDocumentSheet(
+                translatedText: showBilingual ? (bilingualResult?.translated ?? translatedText) : translatedText,
+                onExport: { documentTitle in
+                    exportToDocument(title: documentTitle)
+                }
+            )
             .environmentObject(theme)
         }
     }
@@ -309,7 +322,18 @@ struct AcademicTranslationView: View {
                     .foregroundColor(theme.textPrimary)
                 
                 Spacer()
-                
+
+                // 匯出到文稿按鈕
+                Button(action: { showExportSheet = true }) {
+                    HStack(spacing: DesignTokens.Spacing.xs) {
+                        Image(systemName: "square.and.arrow.up")
+                        Text("匯入文稿")
+                    }
+                    .font(.system(size: DesignTokens.Typography.caption))
+                    .foregroundColor(theme.accent)
+                }
+                .buttonStyle(.plain)
+
                 // 複製按鈕
                 Button(action: copyTranslation) {
                     HStack(spacing: DesignTokens.Spacing.xs) {
@@ -573,5 +597,153 @@ struct AcademicTranslationView: View {
         bilingualResult = nil
         showBilingual = false
         errorMessage = nil
+    }
+
+    private func exportToDocument(title: String) {
+        let document = Document(context: viewContext)
+        document.id = UUID()
+        document.title = title
+        document.createdAt = Date()
+        document.updatedAt = Date()
+
+        // 創建帶格式的文字
+        let attributedString = NSMutableAttributedString()
+
+        if showBilingual, let result = bilingualResult {
+            // 雙語版本
+            let titleAttr = NSAttributedString(
+                string: "【原文 - \(result.sourceLanguage.displayName)】\n",
+                attributes: [
+                    .font: NSFont.boldSystemFont(ofSize: 16),
+                    .foregroundColor: NSColor.black
+                ]
+            )
+            attributedString.append(titleAttr)
+
+            let originalAttr = NSAttributedString(
+                string: "\(result.original)\n\n",
+                attributes: [
+                    .font: NSFont.systemFont(ofSize: 12),
+                    .foregroundColor: NSColor.black
+                ]
+            )
+            attributedString.append(originalAttr)
+
+            let translationTitle = NSAttributedString(
+                string: "【譯文 - \(result.targetLanguage.displayName)】\n",
+                attributes: [
+                    .font: NSFont.boldSystemFont(ofSize: 16),
+                    .foregroundColor: NSColor.black
+                ]
+            )
+            attributedString.append(translationTitle)
+
+            let translatedAttr = NSAttributedString(
+                string: result.translated,
+                attributes: [
+                    .font: NSFont.systemFont(ofSize: 12),
+                    .foregroundColor: NSColor.black
+                ]
+            )
+            attributedString.append(translatedAttr)
+        } else {
+            // 單語版本
+            let textAttr = NSAttributedString(
+                string: translatedText,
+                attributes: [
+                    .font: NSFont.systemFont(ofSize: 12),
+                    .foregroundColor: NSColor.black
+                ]
+            )
+            attributedString.append(textAttr)
+        }
+
+        document.attributedString = attributedString
+
+        do {
+            try viewContext.save()
+            showExportSheet = false
+
+            // 顯示成功提示
+            withAnimation {
+                showCopiedToast = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                withAnimation {
+                    showCopiedToast = false
+                }
+            }
+        } catch {
+            errorMessage = "匯出失敗：\(error.localizedDescription)"
+        }
+    }
+}
+
+// MARK: - 匯出到文稿表單
+
+struct ExportToDocumentSheet: View {
+    @EnvironmentObject var theme: AppTheme
+    @Environment(\.dismiss) private var dismiss
+
+    let translatedText: String
+    let onExport: (String) -> Void
+
+    @State private var documentTitle: String = "翻譯文稿 - \(Date().formatted(date: .abbreviated, time: .omitted))"
+
+    var body: some View {
+        VStack(spacing: 20) {
+            // 標題
+            Text("匯入到文稿")
+                .font(.system(size: 20, weight: .bold))
+                .foregroundColor(theme.textPrimary)
+
+            // 預覽
+            VStack(alignment: .leading, spacing: 8) {
+                Text("內容預覽")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(theme.textPrimary)
+
+                ScrollView {
+                    Text(translatedText.prefix(200) + (translatedText.count > 200 ? "..." : ""))
+                        .font(.system(size: 12))
+                        .foregroundColor(theme.textSecondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .frame(height: 100)
+                .padding(12)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(theme.background)
+                )
+            }
+
+            // 文稿標題輸入
+            VStack(alignment: .leading, spacing: 8) {
+                Text("文稿標題")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(theme.textPrimary)
+
+                TextField("輸入文稿標題", text: $documentTitle)
+                    .textFieldStyle(.roundedBorder)
+            }
+
+            // 按鈕
+            HStack(spacing: 12) {
+                Button("取消") {
+                    dismiss()
+                }
+                .buttonStyle(.bordered)
+
+                Button("匯入") {
+                    onExport(documentTitle)
+                    dismiss()
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(theme.accent)
+                .disabled(documentTitle.isEmpty)
+            }
+        }
+        .padding(24)
+        .frame(width: 400)
     }
 }
