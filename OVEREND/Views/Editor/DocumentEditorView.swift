@@ -32,6 +32,7 @@ struct DocumentEditorView: View {
     
     // 引用插入面板
     @State private var showCitationInsertionPanel = false
+    @State private var showCoverInputSheet = false
     
     // 文獻庫
     @FetchRequest(
@@ -73,6 +74,8 @@ struct DocumentEditorView: View {
                 onList: { type in applyList(type) },
                 onInsert: { type in insertElement(type) },
                 onChineseOptimization: { type in applyChineseOptimization(type) },
+                onApplyNCCUFormat: { applyNCCUFormat() },
+                onInsertCover: { showCoverInputSheet = true },
                 onAI: { showAIPanel = true },
                 onInsertCitationShortcut: { showCitationInsertionPanel = true },
                 canUndo: $canUndo,
@@ -129,6 +132,11 @@ struct DocumentEditorView: View {
             .environmentObject(theme)
             .frame(minWidth: 500, minHeight: 400)
         }
+        .sheet(isPresented: $showCoverInputSheet) {
+            NCCUCoverInputSheet(isPresented: $showCoverInputSheet, onInsert: handleInsertCover)
+                .environmentObject(theme)
+        }
+
         .confirmationDialog("匯出格式", isPresented: $showExportMenu) {
             Button("匯出 DOCX") { exportDocument(format: .docx) }
             Button("匯出 PDF") { exportDocument(format: .pdf) }
@@ -672,6 +680,33 @@ struct DocumentEditorView: View {
         }
     }
     
+    private func applyNCCUFormat() {
+        guard let textView = textViewRef, let textStorage = textView.textStorage else { return }
+        
+        NCCUFormatService.shared.applyFormat(to: textStorage)
+        // NCCUFormatService.shared.applyPageSettings(to: textView)
+        
+        attributedText = textView.attributedString()
+        saveDocument()
+        ToastManager.shared.showSuccess("已套用政大論文格式")
+    }
+    
+    private func handleInsertCover(_ info: NCCUCoverInfo) {
+        guard let textView = textViewRef, let textStorage = textView.textStorage else { return }
+        
+        let cover = NCCUFormatService.shared.generateCover(info: info)
+        
+        textStorage.beginEditing()
+        textStorage.insert(cover, at: 0)
+        textStorage.endEditing()
+        
+        attributedText = textView.attributedString()
+        saveDocument()
+        ToastManager.shared.showSuccess("已插入封面")
+    }
+    
+
+    
     // MARK: - Methods
     
     private func saveDocument() {
@@ -849,6 +884,8 @@ struct EditorToolbar: View {
     var onList: ((DocumentEditorView.ListType) -> Void)?
     var onInsert: ((DocumentEditorView.InsertType) -> Void)?
     var onChineseOptimization: ((DocumentEditorView.ChineseOptimizationType) -> Void)?
+    var onApplyNCCUFormat: (() -> Void)?
+    var onInsertCover: (() -> Void)?
     var onAI: (() -> Void)?
     var onInsertCitationShortcut: (() -> Void)?
 
@@ -1094,6 +1131,9 @@ struct EditorToolbar: View {
                     if !isCompact {
                         Divider().frame(height: 20)
                         chineseOptimizationMenu
+                        
+                        Divider().frame(height: 20)
+                        nccuTemplateButton
                     }
                     
                     Spacer()
@@ -1259,6 +1299,23 @@ struct EditorToolbar: View {
         }
         .menuStyle(.borderlessButton)
     }
+    
+    private var nccuTemplateButton: some View {
+        Menu {
+            Button("套用格式") { onApplyNCCUFormat?() }
+            Button("插入封面") { onInsertCover?() }
+        } label: {
+            Label("政大模版", systemImage: "doc.text.image")
+                .font(.system(size: 12))
+                .padding(6)
+                .background(theme.elevated.opacity(0.5))
+                .cornerRadius(6)
+        }
+        .menuStyle(.borderlessButton)
+        .help("政大論文模版工具")
+    }
+    
+
 
 }
 

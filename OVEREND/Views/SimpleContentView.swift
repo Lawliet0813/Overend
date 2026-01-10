@@ -82,16 +82,35 @@ struct SimpleContentView: View {
                 }
                 
                 // 專案管理
-                Section("當前專案") {
-                    ForEach(documents.prefix(5)) { doc in
+                Section("一般文稿") {
+                    ForEach(documents.filter { $0.type == .general }.prefix(5)) { doc in
                         NavigationLink(value: "doc_\(doc.id.uuidString)") {
                             Label(doc.title, systemImage: "doc.text.fill")
                         }
                     }
                     
-                    if documents.isEmpty {
-                        Label("尚無專案", systemImage: "plus.circle.dashed")
+                    if documents.filter({ $0.type == .general }).isEmpty {
+                        Label("尚無文稿", systemImage: "plus.circle.dashed")
                             .foregroundColor(theme.textTertiary)
+                            .onTapGesture {
+                                createNewDocument(type: .general)
+                            }
+                    }
+                }
+                
+                Section("筆記摘要") {
+                    ForEach(documents.filter { $0.type == .note }.prefix(5)) { doc in
+                        NavigationLink(value: "doc_\(doc.id.uuidString)") {
+                            Label(doc.title, systemImage: "note.text")
+                        }
+                    }
+                    
+                    if documents.filter({ $0.type == .note }).isEmpty {
+                        Label("尚無筆記", systemImage: "plus.circle.dashed")
+                            .foregroundColor(theme.textTertiary)
+                            .onTapGesture {
+                                createNewDocument(type: .note)
+                            }
                     }
                 }
                 
@@ -123,14 +142,15 @@ struct SimpleContentView: View {
                             selectedDocument = doc
                             selection = "doc_\(doc.id.uuidString)"
                         },
-                        onNewProject: createNewDocument
+                        onNewProject: { createNewDocument(type: .general) }
                     )
                     .environmentObject(theme)
                     
                 case "library":
                     AcademicLibraryView(
                         entries: Array(entries),
-                        onImportPDF: { showImportOptions = true }
+                        onImportPDF: { showImportOptions = true },
+                        onCreateNote: createNote
                     )
                     .environmentObject(theme)
                     
@@ -199,12 +219,31 @@ struct SimpleContentView: View {
     
     // MARK: - 方法
     
-    private func createNewDocument() {
-        let doc = Document(context: viewContext, title: "新文稿")
+    private func createNewDocument(type: Document.DocumentType = .general) {
+        let title = type == .general ? "新文稿" : "新筆記"
+        let doc = Document(context: viewContext, title: title)
+        doc.type = type
         try? viewContext.save()
         selectedDocument = doc
         selection = "doc_\(doc.id.uuidString)"
-        ToastManager.shared.showSuccess("已建立新文稿")
+        ToastManager.shared.showSuccess("已建立\(type.displayName)")
+    }
+    
+    private func createNote(for entry: Entry?) {
+        let title = entry != nil ? "筆記：\(entry!.title)" : "新筆記"
+        let doc = Document(context: viewContext, title: title)
+        doc.type = .note
+        
+        if let entry = entry {
+            var currentCitations = doc.citations ?? []
+            currentCitations.insert(entry)
+            doc.citations = currentCitations
+        }
+        
+        try? viewContext.save()
+        selectedDocument = doc
+        selection = "doc_\(doc.id.uuidString)"
+        ToastManager.shared.showSuccess("已建立筆記")
     }
     
     private func handleDrop(providers: [NSItemProvider]) -> Bool {
@@ -299,7 +338,8 @@ struct SimpleContentView: View {
         processingStartTime = Date()
         
         Task {
-            let (metadata, logs) = await PDFMetadataExtractor.extractMetadata(from: url)
+            let useGemini = UserDefaults.standard.bool(forKey: "useGeminiForPDF")
+            let (metadata, logs) = await PDFMetadataExtractor.extractMetadata(from: url, useGemini: useGemini)
             
             var pdfText: String? = nil
             if let (_, extractedText) = try? PDFService.extractPDFMetadata(from: url) {
@@ -326,41 +366,85 @@ struct SimpleContentView: View {
     
     private func batchImportPDFs(urls: [URL], into library: Library) {
         let totalCount = urls.count
-        var successCount = 0
-        var failedCount = 0
+        let libraryID = library.objectID // Get ID for background context
         
-        ToastManager.shared.showInfo("正在處理 \(totalCount) 個 PDF 文件...")
+        ToastManager.shared.showInfo("正在背景處理 \(totalCount) 個 PDF 文件...")
         
-        Task {
-            for url in urls {
-                let startTime = Date()
-                let (metadata, logs) = await PDFMetadataExtractor.extractMetadata(from: url)
-                
+        // Use detached task for background execution
+        Task.detached(priority: .userInitiated) {
+            let container = PersistenceController.shared.container
+            let backgroundContext = container.newBackgroundContext()
+            backgroundContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+            
+            var successCount = 0
+            var failedCount = 0
+            
+            // Retrieve library in background context
+            guard let backgroundLibrary = try? backgroundContext.existingObject(with: libraryID) as? Library else {
                 await MainActor.run {
+                    ToastManager.shared.showError("無法在背景存取文獻庫")
+                }
+                return
+            }
+            
+            for (index, url) in urls.enumerated() {
+                let startTime = Date()
+                let useGemini = UserDefaults.standard.bool(forKey: "useGeminiForPDF")
+                
+                // Extract metadata (this is already async and safe)
+                let (metadata, logs) = await PDFMetadataExtractor.extractMetadata(from: url, useGemini: useGemini)
+                
+                // Perform database operations on background context
+                await backgroundContext.perform {
                     do {
-                        try self.savePDFEntry(metadata: metadata, pdfURL: url, library: library)
+                        try self.savePDFEntry(metadata: metadata, pdfURL: url, library: backgroundLibrary, context: backgroundContext)
                         successCount += 1
                         
-                        // Notion 同步 - 僅開發版本
-                        #if DEBUG
-                        if NotionConfig.isAutoCreateEnabled {
-                            let duration = Date().timeIntervalSince(startTime)
-                            Task {
-                                try? await NotionService.shared.createRecord(
-                                    metadata: metadata,
-                                    fileURL: url,
-                                    processingTime: duration,
-                                    logs: logs
-                                )
-                            }
+                        // Incremental save every 5 items to reduce memory pressure
+                        if (index + 1) % 5 == 0 {
+                            try backgroundContext.save()
                         }
-                        #endif
                     } catch {
                         failedCount += 1
+                        #if DEBUG
+                        print("匯入失敗: \(error)")
+                        #endif
+                    }
+                }
+                
+                // Notion Sync (Optional, keep simple for now or dispatch to another detached task if needed)
+                // For now, we skip Notion sync in background batch import to avoid complexity, 
+                // or we could implement it if strictly required. 
+                // Given the user request is about "Crash", stability is priority.
+                // Let's keep it but ensure it doesn't block the batch loop significantly.
+                #if DEBUG
+                if NotionConfig.isAutoCreateEnabled {
+                    let duration = Date().timeIntervalSince(startTime)
+                    Task {
+                        try? await NotionService.shared.createRecord(
+                            metadata: metadata,
+                            fileURL: url,
+                            processingTime: duration,
+                            logs: logs
+                        )
+                    }
+                }
+                #endif
+                
+                // Update progress occasionally on main thread
+                if (index + 1) % 5 == 0 {
+                    await MainActor.run {
+                        ToastManager.shared.showInfo("已處理 \(index + 1)/\(totalCount)...")
                     }
                 }
             }
             
+            // Final save
+            await backgroundContext.perform {
+                try? backgroundContext.save()
+            }
+            
+            // Final UI update
             await MainActor.run {
                 if failedCount == 0 {
                     ToastManager.shared.showSuccess("成功匯入 \(successCount) 個 PDF")
@@ -371,8 +455,8 @@ struct SimpleContentView: View {
         }
     }
     
-    private func savePDFEntry(metadata: PDFMetadata, pdfURL: URL, library: Library) throws {
-        let entry = Entry(context: viewContext)
+    private func savePDFEntry(metadata: PDFMetadata, pdfURL: URL, library: Library, context: NSManagedObjectContext) throws {
+        let entry = Entry(context: context)
         entry.id = UUID()
         entry.entryType = metadata.entryType
         entry.citationKey = generateCitationKey(from: metadata)
@@ -389,7 +473,7 @@ struct SimpleContentView: View {
         
         entry.fields = fields
         entry.bibtexRaw = PDFMetadataExtractor.generateBibTeX(from: metadata, citationKey: entry.citationKey)
-        try PDFService.addPDFAttachment(from: pdfURL, to: entry, context: viewContext)
+        try PDFService.addPDFAttachment(from: pdfURL, to: entry, context: context)
     }
     
     private func generateCitationKey(from metadata: PDFMetadata) -> String {
@@ -628,8 +712,8 @@ struct SimpleDashboardView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 60)
                 } else {
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 300), spacing: 25)], spacing: 25) {
-                        ForEach(documents.prefix(6)) { document in
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 300), spacing: 25)], spacing: 25) {
+                        ForEach(documents.filter { !$0.isDeleted }.prefix(6)) { document in
                             EnhancedProjectCard(
                                 document: document, 
                                 theme: theme,
@@ -670,23 +754,63 @@ struct SimpleDashboardView: View {
     }
     
     private func batchDeleteDocuments() {
-        let documentsToDelete = documents.filter { selectedDocumentIDs.contains($0.id) }
+        // 1. 先收集要刪除的 ObjectIDs（比直接持有對象更安全）
+        let idsToDelete = selectedDocumentIDs
+        let objectIDs = documents
+            .filter { idsToDelete.contains($0.id) }
+            .map { $0.objectID }
         
-        viewContext.performAndWait {
-            for document in documentsToDelete {
-                viewContext.delete(document)
-            }
-            
-            do {
-                try viewContext.save()
-                ToastManager.shared.showSuccess("已刪除 \(documentsToDelete.count) 個專案")
-            } catch {
-                ToastManager.shared.showError("刪除失敗：\(error.localizedDescription)")
-            }
+        let deleteCount = objectIDs.count
+        
+        guard deleteCount > 0 else {
+            selectedDocumentIDs.removeAll()
+            isSelectionMode = false
+            return
         }
         
+        // 2. 清空選取狀態（防止 UI 持有已刪除對象）
         selectedDocumentIDs.removeAll()
         isSelectionMode = false
+        
+        // 3. 在背景線程執行刪除
+        let container = PersistenceController.shared.container
+        
+        Task.detached(priority: .userInitiated) {
+            let backgroundContext = container.newBackgroundContext()
+            backgroundContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+            
+            var success = true
+            
+            await backgroundContext.perform {
+                for objectID in objectIDs {
+                    do {
+                        let document = try backgroundContext.existingObject(with: objectID)
+                        backgroundContext.delete(document)
+                    } catch {
+                        // 對象可能已被刪除,忽略此錯誤
+                        continue
+                    }
+                }
+                
+                do {
+                    try backgroundContext.save()
+                } catch {
+                    success = false
+                    #if DEBUG
+                    print("批次刪除失敗：\(error)")
+                    #endif
+                }
+            }
+            
+            // 4. 回到主線程更新 UI
+            await MainActor.run {
+                if success {
+                    ToastManager.shared.showSuccess("已刪除 \(deleteCount) 個專案")
+                } else {
+                    ToastManager.shared.showError("刪除失敗")
+                }
+            }
+        }
     }
     
     private var greeting: String {
@@ -1028,55 +1152,60 @@ struct EnhancedProjectCard: View {
     @State private var isHovered = false
     
     var body: some View {
-        ZStack(alignment: .topTrailing) {
-            VStack(alignment: .leading, spacing: 20) {
-                Image(systemName: "doc.text.fill")
-                    .foregroundColor(theme.accent)
-                    .font(.title2)
-                
-                Text(document.title)
-                    .font(.headline)
-                    .foregroundColor(theme.textPrimary)
-                    .lineLimit(2)
-                
-                Spacer()
-                
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("最後編輯：\(formatDate(document.updatedAt))")
-                        .font(.caption)
-                        .foregroundColor(theme.textSecondary)
+        // Guard against deleted Core Data objects
+        if document.isDeleted || document.managedObjectContext == nil {
+            EmptyView()
+        } else {
+            ZStack(alignment: .topTrailing) {
+                VStack(alignment: .leading, spacing: 20) {
+                    Image(systemName: "doc.text.fill")
+                        .foregroundColor(theme.accent)
+                        .font(.title2)
                     
-                    ProgressView(value: Double(progress) / 100.0)
-                        .tint(theme.accent)
+                    Text(document.title)
+                        .font(.headline)
+                        .foregroundColor(theme.textPrimary)
+                        .lineLimit(2)
+                    
+                    Spacer()
+                    
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("最後編輯：\(formatDate(document.updatedAt))")
+                            .font(.caption)
+                            .foregroundColor(theme.textSecondary)
+                        
+                        ProgressView(value: Double(progress) / 100.0)
+                            .tint(theme.accent)
+                    }
                 }
-            }
-            .padding(25)
-            .frame(minHeight: 180)
-            .background(theme.elevated)
-            .cornerRadius(theme.radiusCard)
-            .overlay(
-                RoundedRectangle(cornerRadius: theme.radiusCard)
-                    .stroke(
-                        isSelected ? theme.accent : (isHovered ? theme.accent.opacity(0.3) : theme.border), 
-                        lineWidth: isSelected ? 2 : 1
-                    )
-            )
-            .scaleEffect(isHovered ? 1.02 : 1.0)
-            .animation(.spring(response: 0.3), value: isHovered)
-            .onHover { hovering in isHovered = hovering }
-            
-            // 選取指示器
-            if isSelectionMode {
-                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 24, weight: .medium))
-                    .foregroundColor(isSelected ? theme.accent : theme.textMuted)
-                    .padding(12)
-                    .background(
-                        Circle()
-                            .fill(theme.card)
-                            .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
-                    )
-                    .padding(8)
+                .padding(25)
+                .frame(minHeight: 180)
+                .background(theme.elevated)
+                .cornerRadius(theme.radiusCard)
+                .overlay(
+                    RoundedRectangle(cornerRadius: theme.radiusCard)
+                        .stroke(
+                            isSelected ? theme.accent : (isHovered ? theme.accent.opacity(0.3) : theme.border), 
+                            lineWidth: isSelected ? 2 : 1
+                        )
+                )
+                .scaleEffect(isHovered ? 1.02 : 1.0)
+                .animation(.spring(response: 0.3), value: isHovered)
+                .onHover { hovering in isHovered = hovering }
+                
+                // 選取指示器
+                if isSelectionMode {
+                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                        .font(.system(size: 24, weight: .medium))
+                        .foregroundColor(isSelected ? theme.accent : theme.textMuted)
+                        .padding(12)
+                        .background(
+                            Circle()
+                                .fill(theme.card)
+                                .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+                        )
+                        .padding(8)
+                }
             }
         }
     }

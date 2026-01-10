@@ -212,7 +212,8 @@ public class WritingAIDomain {
         }
         
         // 策略 2: Prompt 方式降級
-        let session = service.createSession()
+        let session = service.acquireSession()
+        defer { service.releaseSession(session) }
         
         let prompt = """
         請審閱以下\(options.academicMode ? "學術" : "")寫作內容，並提供改進建議。
@@ -271,7 +272,8 @@ public class WritingAIDomain {
         service.startProcessing()
         defer { service.endProcessing() }
 
-        let session = service.createSession()
+        let session = service.acquireSession()
+        defer { service.releaseSession(session) }
         // Apple Intelligence 上下文窗口較小，限制為 1200 字符
         let maxLength = 1200
         let truncatedText = String(text.prefix(maxLength))
@@ -341,7 +343,14 @@ public class WritingAIDomain {
         service.startProcessing()
         defer { service.endProcessing() }
 
-        let session = service.createSession()
+        // 檢查快取
+        let cacheKey = service.cacheKey(operation: "rewrite_\(style.rawValue)", input: text)
+        if let cached = service.getCachedResult(for: cacheKey) {
+            return cached
+        }
+        
+        let session = service.acquireSession()
+        defer { service.releaseSession(session) }
 
         // Apple Intelligence 上下文窗口較小，限制為 800 字符
         let maxLength = 800
@@ -366,7 +375,9 @@ public class WritingAIDomain {
         
         do {
             let response = try await session.respond(to: prompt)
-            return response.content.trimmingCharacters(in: .whitespacesAndNewlines)
+            let result = response.content.trimmingCharacters(in: .whitespacesAndNewlines)
+            service.cacheResult(result, for: cacheKey)
+            return result
         } catch {
             throw AIServiceError.writingSuggestionFailed(error.localizedDescription)
         }
@@ -392,7 +403,14 @@ public class WritingAIDomain {
         service.startProcessing()
         defer { service.endProcessing() }
 
-        let session = service.createSession()
+        // 檢查快取
+        let cacheKey = service.cacheKey(operation: "condense_\(targetRatio)", input: text)
+        if let cached = service.getCachedResult(for: cacheKey) {
+            return cached
+        }
+        
+        let session = service.acquireSession()
+        defer { service.releaseSession(session) }
 
         // Apple Intelligence 上下文窗口較小，限制為 1000 字符
         let maxLength = 1000
@@ -418,7 +436,9 @@ public class WritingAIDomain {
         
         do {
             let response = try await session.respond(to: prompt)
-            return response.content.trimmingCharacters(in: .whitespacesAndNewlines)
+            let result = response.content.trimmingCharacters(in: .whitespacesAndNewlines)
+            service.cacheResult(result, for: cacheKey)
+            return result
         } catch {
             throw AIServiceError.writingSuggestionFailed(error.localizedDescription)
         }

@@ -67,12 +67,40 @@ class PDFMetadataExtractor {
     /// 從PDF提取元數據（使用多層策略）
     /// 
     /// 提取策略（按優先順序）：
+    /// 0. Gemini Files API - 使用 Gemini 直接分析 PDF（如啟用）
     /// 1. Apple Intelligence - 使用 AI 智慧判讀 PDF 內容（優先）
     /// 2. 正則表達式 - 第二層方案，使用規則提取
     /// 3. DOI 查詢 - 最後降級方案，用 DOI 查詢完整書目
-    static func extractMetadata(from url: URL) async -> (PDFMetadata, String) {
+    /// 
+    /// - Parameters:
+    ///   - url: PDF 檔案路徑
+    ///   - useGemini: 是否優先使用 Gemini API（預設 false）
+    static func extractMetadata(from url: URL, useGemini: Bool = false) async -> (PDFMetadata, String) {
         let logger = ExtractionLogger()
         logger.log("\n📄 開始提取 PDF 元數據: \(url.lastPathComponent)")
+        
+        // ========================================
+        // 策略 0️⃣: Gemini Files API 提取（如啟用）
+        // ========================================
+        if useGemini && GeminiService.shared.isConfigured {
+            logger.log("🤖 使用 Gemini Files API 分析...")
+            
+            do {
+                let extracted = try await GeminiService.shared.extractPDFMetadata(from: url)
+                
+                if !extracted.title.isEmpty {
+                    logger.log("✅ Gemini 提取成功")
+                    
+                    var metadata = convertGeminiToPDFMetadata(extracted)
+                    metadata.strategy = "Gemini Files API"
+                    return (metadata, logger.logString)
+                } else {
+                    logger.log("⚠️ Gemini 提取資料不完整，嘗試其他方法")
+                }
+            } catch {
+                logger.log("❌ Gemini 失敗: \(error.localizedDescription)")
+            }
+        }
         
         // ========================================
         // 策略 1️⃣: Apple Intelligence 提取（優先）
@@ -241,6 +269,36 @@ class PDFMetadataExtractor {
             pages: nil,
             entryType: extracted.entryType ?? "misc",
             confidence: pdfConfidence
+        )
+    }
+    
+    /// 轉換 Gemini ExtractedBibTeX 為 PDFMetadata
+    private static func convertGeminiToPDFMetadata(_ extracted: ExtractedBibTeX) -> PDFMetadata {
+        // Gemini 直接分析 PDF，信心度較高
+        let confidence: PDFMetadata.MetadataConfidence = {
+            if !extracted.doi.isEmpty { return .high }
+            if !extracted.author.isEmpty && !extracted.year.isEmpty { return .high }
+            if !extracted.title.isEmpty { return .medium }
+            return .low
+        }()
+        
+        // 解析作者字串為陣列
+        let authors = extracted.author
+            .components(separatedBy: " and ")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+        
+        return PDFMetadata(
+            title: extracted.title.isEmpty ? "Untitled" : extracted.title,
+            authors: authors,
+            year: extracted.year.isEmpty ? nil : extracted.year,
+            doi: extracted.doi.isEmpty ? nil : extracted.doi,
+            abstract: extracted.abstract.isEmpty ? nil : extracted.abstract,
+            journal: extracted.journal.isEmpty ? nil : extracted.journal,
+            volume: extracted.volume.isEmpty ? nil : extracted.volume,
+            pages: extracted.pages.isEmpty ? nil : extracted.pages,
+            entryType: extracted.entryType,
+            confidence: confidence
         )
     }
     

@@ -65,7 +65,9 @@ extension Tag {
         do {
             return try context.fetch(request)
         } catch {
+            #if DEBUG
             print("Failed to fetch tags: \(error)")
+            #endif
             return []
         }
     }

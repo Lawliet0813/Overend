@@ -50,7 +50,8 @@ public class FormulaAIDomain {
         service.startProcessing()
         defer { service.endProcessing() }
         
-        let session = service.createSession()
+        let session = service.acquireSession()
+        defer { service.releaseSession(session) }
         
         let prompt = """
         請將以下數學概念或公式描述轉換為正確的 LaTeX 語法。
@@ -113,7 +114,8 @@ public class FormulaAIDomain {
         service.startProcessing()
         defer { service.endProcessing() }
         
-        let session = service.createSession()
+        let session = service.acquireSession()
+        defer { service.releaseSession(session) }
         
         let prompt = """
         請檢查並優化以下 LaTeX 公式：
@@ -159,7 +161,8 @@ public class FormulaAIDomain {
         service.startProcessing()
         defer { service.endProcessing() }
         
-        let session = service.createSession()
+        let session = service.acquireSession()
+        defer { service.releaseSession(session) }
         
         let prompt = """
         請解釋以下 LaTeX 數學公式的含義：

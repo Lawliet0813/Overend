@@ -162,7 +162,8 @@ public class DocumentAIDomain {
         }
         
         // 策略 2: Prompt 方式降級
-        let session = service.createSession()
+        let session = service.acquireSession()
+        defer { service.releaseSession(session) }
         
         let prompt = """
         請為以下學術文獻生成一段簡潔的中文摘要（約 100-150 字）：
@@ -221,7 +222,8 @@ public class DocumentAIDomain {
         }
         
         // 策略 2: Prompt 方式降級
-        let session = service.createSession()
+        let session = service.acquireSession()
+        defer { service.releaseSession(session) }
         
         let prompt = """
         請從以下學術文獻中提取 5-8 個關鍵詞，用逗號分隔：
@@ -265,7 +267,8 @@ public class DocumentAIDomain {
         service.startProcessing()
         defer { service.endProcessing() }
         
-        let session = service.createSession()
+        let session = service.acquireSession()
+        defer { service.releaseSession(session) }
         
         let groupList = existingGroups.isEmpty
             ? "（目前沒有現有分組）"
@@ -368,7 +371,8 @@ public class DocumentAIDomain {
             throw AIServiceError.notAvailable
         }
         
-        let session = service.createSession()
+        let session = service.acquireSession()
+        defer { service.releaseSession(session) }
         
         let preDetectedDOI = detectDOI(in: text)
         let preDetectedYear = detectYear(in: text)
@@ -472,7 +476,8 @@ public class DocumentAIDomain {
         service.startProcessing()
         defer { service.endProcessing() }
         
-        let session = service.createSession()
+        let session = service.acquireSession()
+        defer { service.releaseSession(session) }
         let truncatedText = String(plainText.prefix(3000))
         
         let prompt = buildFormattingPrompt(for: type, with: truncatedText)

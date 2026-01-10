@@ -16,6 +16,7 @@ struct AcademicLibraryView: View {
     
     let entries: [Entry]
     var onImportPDF: () -> Void
+    var onCreateNote: ((Entry?) -> Void)?
     
     // Fetch groups and tags for batch operations
     @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Group.name, ascending: true)])
@@ -141,6 +142,17 @@ struct AcademicLibraryView: View {
                     .buttonStyle(.plain)
                     .foregroundColor(theme.accent)
                     .help("匯入文獨")
+                    
+                    // 建立筆記
+                    Button {
+                        onCreateNote?(selectedEntry)
+                    } label: {
+                        Image(systemName: "square.and.pencil")
+                            .font(.title2)
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundColor(theme.accent)
+                    .help("建立筆記摘要")
                 }
                 .padding(20)
                 .background(.ultraThinMaterial)
@@ -209,6 +221,13 @@ struct AcademicLibraryView: View {
                             theme.accent.opacity(0.1) : Color.clear
                         )
                         .listRowInsets(EdgeInsets(top: 10, leading: 15, bottom: 10, trailing: 15))
+                        .contextMenu {
+                            Button {
+                                onCreateNote?(entry)
+                            } label: {
+                                Label("建立筆記摘要", systemImage: "square.and.pencil")
+                            }
+                        }
                         .onTapGesture {
                             if !isSelectionMode {
                                 selectedEntry = entry

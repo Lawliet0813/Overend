@@ -71,7 +71,9 @@ extension Library {
         do {
             return try context.fetch(request)
         } catch {
+            #if DEBUG
             print("Failed to fetch libraries: \\(error)")
+            #endif
             return []
         }
     }
@@ -85,7 +87,9 @@ extension Library {
         do {
             return try context.fetch(request).first
         } catch {
+            #if DEBUG
             print("Failed to fetch default library: \\(error)")
+            #endif
             return nil
         }
     }

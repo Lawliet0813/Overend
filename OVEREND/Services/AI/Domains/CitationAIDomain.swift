@@ -159,7 +159,8 @@ public class CitationAIDomain {
         }
         
         // 策略 2: Prompt 方式降級
-        let session = service.createSession()
+        let session = service.acquireSession()
+        defer { service.releaseSession(session) }
         
         let prompt = """
         你是台灣學術引用格式專家。請檢查以下文本的引用格式是否符合 \(style.displayName) 規範。
@@ -229,7 +230,8 @@ public class CitationAIDomain {
         service.startProcessing()
         defer { service.endProcessing() }
         
-        let session = service.createSession()
+        let session = service.acquireSession()
+        defer { service.releaseSession(session) }
         
         let prompt = """
         請將以下文字中的引用格式修正為 \(style.promptDescription)。
@@ -282,7 +284,8 @@ public class CitationAIDomain {
         service.startProcessing()
         defer { service.endProcessing() }
         
-        let session = service.createSession()
+        let session = service.acquireSession()
+        defer { service.releaseSession(session) }
         
         let prompt = """
         請將以下引用從 \(from.displayName) 格式轉換為 \(to.displayName) 格式。
@@ -335,7 +338,8 @@ public class CitationAIDomain {
         service.startProcessing()
         defer { service.endProcessing() }
         
-        let session = service.createSession()
+        let session = service.acquireSession()
+        defer { service.releaseSession(session) }
         
         var metadataInfo = """
         標題：\(title)
@@ -423,7 +427,8 @@ public class CitationAIDomain {
         service.startProcessing()
         defer { service.endProcessing() }
         
-        let session = service.createSession()
+        let session = service.acquireSession()
+        defer { service.releaseSession(session) }
         let truncatedText = String(text.prefix(2000))
         
         let prompt = """

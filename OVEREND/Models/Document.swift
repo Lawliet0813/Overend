@@ -30,6 +30,31 @@ public class Document: NSManagedObject, Identifiable {
         case notion = "notion"
     }
     
+    // MARK: - 文稿類型枚舉
+    
+    public enum DocumentType: String {
+        case general = "general"
+        case note = "note"
+        
+        var displayName: String {
+            switch self {
+            case .general: return "一般文稿"
+            case .note: return "筆記摘要"
+            }
+        }
+    }
+    
+    @NSManaged public var documentType: String?
+    
+    var type: DocumentType {
+        get {
+            DocumentType(rawValue: documentType ?? "general") ?? .general
+        }
+        set {
+            documentType = newValue.rawValue
+        }
+    }
+    
     var currentEditorMode: EditorMode {
         get {
             EditorMode(rawValue: editorMode ?? "rich") ?? .richText
@@ -56,7 +81,9 @@ public class Document: NSManagedObject, Identifiable {
                     documentAttributes: nil
                 )
             } catch {
+                #if DEBUG
                 print("Failed to load RTF: \\(error)")
+                #endif
                 return NSAttributedString(string: "")
             }
         }
@@ -69,7 +96,9 @@ public class Document: NSManagedObject, Identifiable {
                 rtfData = data
                 updatedAt = Date()
             } catch {
+                #if DEBUG
                 print("Failed to save RTF: \\(error)")
+                #endif
             }
         }
     }
@@ -105,7 +134,9 @@ extension Document {
         do {
             return try context.fetch(request)
         } catch {
+            #if DEBUG
             print("Failed to fetch documents: \\(error)")
+            #endif
             return []
         }
     }
@@ -158,6 +189,13 @@ extension Document {
         editorModeAttr.isOptional = true
         editorModeAttr.defaultValue = "rich"
         properties.append(editorModeAttr)
+        
+        let documentTypeAttr = NSAttributeDescription()
+        documentTypeAttr.name = "documentType"
+        documentTypeAttr.attributeType = .stringAttributeType
+        documentTypeAttr.isOptional = true
+        documentTypeAttr.defaultValue = "general"
+        properties.append(documentTypeAttr)
 
         entity.properties = properties
         return entity

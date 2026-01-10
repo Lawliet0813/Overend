@@ -141,16 +141,31 @@ struct AICenterView: View {
             }
             
         case .citationCheck:
-            Text("引用檢查功能（開發中）")
-                .foregroundColor(theme.textMuted)
+            if #available(macOS 26.0, *) {
+                CitationCheckView()
+                    .environmentObject(theme)
+            } else {
+                Text("此功能需要 macOS 26.0 或更新版本")
+                    .foregroundColor(theme.textMuted)
+            }
             
         case .structureAnalysis:
-            Text("結構分析功能（開發中）")
-                .foregroundColor(theme.textMuted)
+            if #available(macOS 26.0, *) {
+                StructureAnalysisView()
+                    .environmentObject(theme)
+            } else {
+                Text("此功能需要 macOS 26.0 或更新版本")
+                    .foregroundColor(theme.textMuted)
+            }
             
         case .literatureQA:
-            Text("文獻問答功能（即將推出）")
-                .foregroundColor(theme.textMuted)
+            if #available(macOS 26.0, *) {
+                LiteratureQAView()
+                    .environmentObject(theme)
+            } else {
+                Text("此功能需要 macOS 26.0 或更新版本")
+                    .foregroundColor(theme.textMuted)
+            }
         }
     }
 }
@@ -207,36 +222,18 @@ enum AIFeature: String, CaseIterable, Identifiable {
     }
     
     var isAvailable: Bool {
-        switch self {
-        case .recommendations, .academicTranslation, .standardsCheck:
-            return true  // 可用功能
-        case .citationCheck, .structureAnalysis:
-            return false // 開發中
-        case .literatureQA:
-            return false // 即將推出
-        }
+        // 所有功能均已可用
+        return true
     }
     
     var statusBadge: String {
-        switch self {
-        case .recommendations, .academicTranslation, .standardsCheck:
-            return "可用"
-        case .citationCheck, .structureAnalysis:
-            return "開發中"
-        case .literatureQA:
-            return "即將推出"
-        }
+        // 所有功能均已可用
+        return "可用"
     }
     
     var badgeColor: Color {
-        switch self {
-        case .recommendations, .academicTranslation, .standardsCheck:
-            return .green
-        case .citationCheck, .structureAnalysis:
-            return .orange
-        case .literatureQA:
-            return .gray
-        }
+        // 所有功能均已可用
+        return .green
     }
 }
 

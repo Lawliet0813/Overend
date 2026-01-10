@@ -124,7 +124,9 @@ extension ExtractionLog {
         do {
             return try context.fetch(request)
         } catch {
+            #if DEBUG
             print("Failed to fetch rated extraction logs: \(error)")
+            #endif
             return []
         }
     }
@@ -138,7 +140,9 @@ extension ExtractionLog {
         do {
             return try context.fetch(request)
         } catch {
+            #if DEBUG
             print("Failed to fetch corrected extraction logs: \(error)")
+            #endif
             return []
         }
     }
@@ -154,7 +158,9 @@ extension ExtractionLog {
         do {
             return try context.fetch(request)
         } catch {
+            #if DEBUG
             print("Failed to fetch extraction logs: \(error)")
+            #endif
             return []
         }
     }
@@ -168,7 +174,9 @@ extension ExtractionLog {
         do {
             return try context.fetch(request)
         } catch {
+            #if DEBUG
             print("Failed to fetch extraction logs by method: \(error)")
+            #endif
             return []
         }
     }

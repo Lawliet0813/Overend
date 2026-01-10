@@ -25,7 +25,7 @@ class AppleAITest {
             print("📤 發送測試請求：\(testPrompt)")
 
             let response = try await session.respond(to: testPrompt)
-            print("📥 收到回應：\(response.content)")
+            AppLogger.aiLog(" 收到回應：\(response.content)")
 
             return (true, "✅ Apple Intelligence 可用\n回應：\(response.content)")
 

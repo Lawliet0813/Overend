@@ -965,7 +965,7 @@ struct ModernEntryDetailView: View {
                     .environmentObject(theme)
                     
                     EditableMetadataRow(
-                        label: "摘要",
+                        label: "摘要 (abstract)",
                         value: Binding(
                             get: { editedFields["abstract"] ?? "" },
                             set: { editedFields["abstract"] = $0; hasUnsavedChanges = true }
@@ -974,30 +974,126 @@ struct ModernEntryDetailView: View {
                         placeholder: "請輸入摘要"
                     )
                     .environmentObject(theme)
+                    
+                    // 書籍/會議相關
+                    EditableMetadataRow(
+                        label: "出版社 (publisher)",
+                        value: Binding(
+                            get: { editedFields["publisher"] ?? "" },
+                            set: { editedFields["publisher"] = $0; hasUnsavedChanges = true }
+                        ),
+                        placeholder: "出版社名稱"
+                    )
+                    .environmentObject(theme)
+                    
+                    EditableMetadataRow(
+                        label: "書名/會議名 (booktitle)",
+                        value: Binding(
+                            get: { editedFields["booktitle"] ?? "" },
+                            set: { editedFields["booktitle"] = $0; hasUnsavedChanges = true }
+                        ),
+                        placeholder: "收錄該文章的書籍或會議名稱"
+                    )
+                    .environmentObject(theme)
+                    
+                    // 碩博士論文相關
+                    EditableMetadataRow(
+                        label: "學校 (school)",
+                        value: Binding(
+                            get: { editedFields["school"] ?? "" },
+                            set: { editedFields["school"] = $0; hasUnsavedChanges = true }
+                        ),
+                        placeholder: "授予學位的學校"
+                    )
+                    .environmentObject(theme)
+                    
+                    EditableMetadataRow(
+                        label: "指導教授 (advisor)",
+                        value: Binding(
+                            get: { editedFields["advisor"] ?? "" },
+                            set: { editedFields["advisor"] = $0; hasUnsavedChanges = true }
+                        ),
+                        placeholder: "指導教授姓名"
+                    )
+                    .environmentObject(theme)
+                    
+                    EditableMetadataRow(
+                        label: "科系 (department)",
+                        value: Binding(
+                            get: { editedFields["department"] ?? "" },
+                            set: { editedFields["department"] = $0; hasUnsavedChanges = true }
+                        ),
+                        placeholder: "研究所/科系名稱"
+                    )
+                    .environmentObject(theme)
+                    
+                    // 識別碼
+                    EditableMetadataRow(
+                        label: "網址 (url)",
+                        value: Binding(
+                            get: { editedFields["url"] ?? "" },
+                            set: { editedFields["url"] = $0; hasUnsavedChanges = true }
+                        ),
+                        placeholder: "https://..."
+                    )
+                    .environmentObject(theme)
+                    
+                    EditableMetadataRow(
+                        label: "關鍵詞 (keywords)",
+                        value: Binding(
+                            get: { editedFields["keywords"] ?? "" },
+                            set: { editedFields["keywords"] = $0; hasUnsavedChanges = true }
+                        ),
+                        placeholder: "以逗號分隔"
+                    )
+                    .environmentObject(theme)
                 }
             } else {
                 VStack(spacing: 12) {
                     if let year = entry.fields["year"], !year.isEmpty {
-                        DetailMetadataRow(label: "年份", value: year)
+                        DetailMetadataRow(label: "年份 (year)", value: year)
                     }
                     
                     if let journal = entry.fields["journal"], !journal.isEmpty {
-                        DetailMetadataRow(label: "期刊", value: journal)
+                        DetailMetadataRow(label: "期刊 (journal)", value: journal)
                     }
                     
                     if let volume = entry.fields["volume"], !volume.isEmpty {
-                        DetailMetadataRow(label: "卷期", value: volume)
+                        DetailMetadataRow(label: "卷期 (volume)", value: volume)
                     }
                     
                     if let pages = entry.fields["pages"], !pages.isEmpty {
-                        DetailMetadataRow(label: "頁碼", value: pages)
+                        DetailMetadataRow(label: "頁碼 (pages)", value: pages)
                     }
                     
                     if let doi = entry.fields["doi"], !doi.isEmpty {
                         DetailMetadataRow(label: "DOI", value: doi, isLink: true)
                     }
                     
-                    DetailMetadataRow(label: "引用鍵", value: entry.citationKey)
+                    // 碩博論文相關欄位顯示
+                    if let school = entry.fields["school"], !school.isEmpty {
+                        DetailMetadataRow(label: "學校 (school)", value: school)
+                    }
+                    
+                    if let advisor = entry.fields["advisor"], !advisor.isEmpty {
+                        DetailMetadataRow(label: "指導教授 (advisor)", value: advisor)
+                    }
+                    
+                    if let booktitle = entry.fields["booktitle"], !booktitle.isEmpty {
+                        DetailMetadataRow(label: "書名/會議 (booktitle)", value: booktitle)
+                    }
+                    
+                    if let publisher = entry.fields["publisher"], !publisher.isEmpty {
+                        DetailMetadataRow(label: "出版社 (publisher)", value: publisher)
+                    }
+                    
+                    if let url = entry.fields["url"], !url.isEmpty {
+                        DetailMetadataRow(label: "網址 (url)", value: url, isLink: true)
+                    }
+                    
+                    DetailMetadataRow(label: "引用鍵 (citation key)", value: entry.citationKey)
+                    
+                    DetailMetadataRow(label: "書目類型 (entry type)", value: Constants.BibTeX.displayName(for: entry.entryType))
                 }
             }
         }

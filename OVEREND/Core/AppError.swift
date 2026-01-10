@@ -144,17 +144,27 @@ class ErrorLogger {
     /// 記錄錯誤
     func log(_ error: Error, context: String? = nil) {
         if let appError = error as? AppError {
+            #if DEBUG
             print("[\(appError.category.rawValue.uppercased())] [\(appError.code)] \(appError.userMessage)")
+            #endif
             if let details = appError.technicalDetails {
+                #if DEBUG
                 print("  詳細: \(details)")
+                #endif
             }
             if let context = context {
+                #if DEBUG
                 print("  上下文: \(context)")
+                #endif
             }
         } else {
+            #if DEBUG
             print("[ERROR] \(error.localizedDescription)")
+            #endif
             if let context = context {
+                #if DEBUG
                 print("  上下文: \(context)")
+                #endif
             }
         }
     }

@@ -73,6 +73,9 @@ struct OVERENDApp: App {
     
     // Splash Screen 狀態
     @State private var showSplash = true
+    
+    // 主題狀態
+    @StateObject private var appTheme = AppTheme()
 
     var body: some Scene {
         WindowGroup {
@@ -80,6 +83,7 @@ struct OVERENDApp: App {
                 // 主內容 - 使用簡潔版 UI
                 SimpleContentView()
                     .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                    .environmentObject(appTheme) // 注入主題
                     .opacity(showSplash ? 0 : 1)
                 
                 // Splash Screen
@@ -136,6 +140,8 @@ struct OVERENDApp: App {
         // 設置視窗
         Settings {
             SettingsView()
+                .environmentObject(appTheme) // 注入主題
+                .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
     

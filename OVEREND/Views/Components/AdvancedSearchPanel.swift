@@ -209,6 +209,7 @@ struct AdvancedSearchPanel: View {
     /// 書目類型切換
     private func typeToggle(_ type: String) -> some View {
         let isSelected = filter.entryTypes.contains(type)
+        let displayName = Constants.BibTeX.displayName(for: type)
         
         return Button {
             if isSelected {
@@ -217,7 +218,7 @@ struct AdvancedSearchPanel: View {
                 filter.entryTypes.insert(type)
             }
         } label: {
-            Text(type)
+            Text(displayName)
                 .font(.system(size: 11))
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)

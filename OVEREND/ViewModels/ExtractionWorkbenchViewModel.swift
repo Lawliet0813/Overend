@@ -234,7 +234,9 @@ class ExtractionWorkbenchViewModel: ObservableObject {
             
             return fileURL
         } catch {
+            #if DEBUG
             print("匯出訓練資料失敗：\(error)")
+            #endif
             return nil
         }
     }

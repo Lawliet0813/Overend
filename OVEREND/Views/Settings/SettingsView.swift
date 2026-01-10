@@ -41,6 +41,11 @@ struct SettingsView: View {
                     Label("Notion", systemImage: "tablecells")
                 }
             #endif
+            
+            AISettingsView()
+                .tabItem {
+                    Label("AI", systemImage: "apple.intelligence")
+                }
         }
         .frame(width: 650, height: 500)
     }

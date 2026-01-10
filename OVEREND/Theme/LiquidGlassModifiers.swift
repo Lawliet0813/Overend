@@ -65,16 +65,9 @@ struct LiquidGlassSidebar: ViewModifier {
         content
             .background(.ultraThinMaterial)
             .background(
-                // 微妙漸層底色
-                LinearGradient(
-                    colors: [
-                        theme.accent.opacity(0.02),
-                        Color.clear,
-                        Color.blue.opacity(0.01)
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
+                // 使用主題定義的液態漸層
+                theme.liquidGradient
+                    .opacity(theme.isPrideMode ? 0.1 : 1.0) // Pride 模式下稍微降低不透明度以免太花
             )
     }
 }
@@ -91,8 +84,13 @@ struct LiquidGlassButton: ViewModifier {
             .background(
                 ZStack {
                     if isActive {
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(theme.accent)
+                        if theme.isPrideMode {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(theme.prideGradient)
+                        } else {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(theme.accent)
+                        }
                     } else {
                         RoundedRectangle(cornerRadius: 10)
                             .fill(theme.cardGlass)
@@ -126,7 +124,7 @@ struct LiquidGlassButton: ViewModifier {
                         lineWidth: 1
                     )
             )
-            .shadow(color: isActive ? theme.accent.opacity(0.4) : .clear, radius: 8, x: 0, y: 4)
+            .shadow(color: isActive ? (theme.isPrideMode ? Color.purple.opacity(0.4) : theme.accent.opacity(0.4)) : .clear, radius: 8, x: 0, y: 4)
     }
 }
 

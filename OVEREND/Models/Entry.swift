@@ -273,7 +273,9 @@ extension Entry {
         do {
             return try context.fetch(request)
         } catch {
+            #if DEBUG
             print("Failed to fetch entries: \(error)")
+            #endif
             return []
         }
     }
@@ -303,7 +305,9 @@ extension Entry {
         do {
             return try context.fetch(request)
         } catch {
+            #if DEBUG
             print("Failed to search entries: \(error)")
+            #endif
             return []
         }
     }
@@ -317,7 +321,9 @@ extension Entry {
         do {
             return try context.fetch(request).first
         } catch {
+            #if DEBUG
             print("Failed to find entry: \(error)")
+            #endif
             return nil
         }
     }

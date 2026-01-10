@@ -35,15 +35,16 @@ class AppTheme: ObservableObject {
         ("🏳️‍🌈 彩虹驕傲", "#E40303", true)
     ]
     
-    /// Pride 漸層顏色
+    /// Pride 漸層顏色 (更鮮豔的霓虹色系)
     static let prideGradientColors: [Color] = [
-        Color(hex: "#E40303"),
-        Color(hex: "#FF8C00"),
-        Color(hex: "#FFED00"),
-        Color(hex: "#008026"),
-        Color(hex: "#24408E"),
-        Color(hex: "#732982"),
-        Color(hex: "#E40303")
+        Color(hex: "#FF3B30"), // System Red
+        Color(hex: "#FF9500"), // System Orange
+        Color(hex: "#FFCC00"), // System Yellow
+        Color(hex: "#28CD41"), // System Green
+        Color(hex: "#007AFF"), // System Blue
+        Color(hex: "#AF52DE"), // System Purple
+        Color(hex: "#FF2D55"), // System Pink
+        Color(hex: "#FF3B30")  // Loop back to Red
     ]
     
     /// 是否使用彩虹驕傲模式
@@ -241,15 +242,25 @@ class AppTheme: ObservableObject {
     
     /// 液態漸層
     var liquidGradient: LinearGradient {
-        LinearGradient(
-            colors: [
-                accent.opacity(0.15),
-                Color(hex: "#28C840").opacity(0.1),
-                accent.opacity(0.05)
-            ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
+        if isPrideMode {
+            // 彩虹模式使用全彩漸層
+            return LinearGradient(
+                colors: Self.prideGradientColors.map { $0.opacity(0.15) },
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        } else {
+            // 一般模式使用單色漸層
+            return LinearGradient(
+                colors: [
+                    accent.opacity(0.15),
+                    Color(hex: "#28C840").opacity(0.1),
+                    accent.opacity(0.05)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        }
     }
     
     // MARK: - 向後兼容

@@ -148,6 +148,12 @@ public class TranslationAIDomain {
             throw AIServiceError.sameLanguage
         }
         
+        // 檢查快取
+        let cacheKey = service.cacheKey(operation: "translate_\(from.rawValue)_\(to.rawValue)", input: text)
+        if let cached = service.getCachedResult(for: cacheKey) {
+            return cached
+        }
+        
         service.startProcessing()
         defer { service.endProcessing() }
         
@@ -176,6 +182,7 @@ public class TranslationAIDomain {
             
             if let result = tool.result {
                 print("✅ Tool Calling 翻譯成功")
+                service.cacheResult(result.translatedText, for: cacheKey)
                 return result.translatedText
             }
         } catch {
@@ -183,7 +190,8 @@ public class TranslationAIDomain {
         }
         
         // 策略 2: Prompt 方式降級
-        let session = service.createSession()
+        let session = service.acquireSession()
+        defer { service.releaseSession(session) }
         
         var fieldContext = ""
         if let field = options.field {
@@ -238,7 +246,9 @@ public class TranslationAIDomain {
         
         do {
             let response = try await session.respond(to: prompt)
-            return response.content.trimmingCharacters(in: .whitespacesAndNewlines)
+            let result = response.content.trimmingCharacters(in: .whitespacesAndNewlines)
+            service.cacheResult(result, for: cacheKey)
+            return result
         } catch {
             throw AIServiceError.translationFailed(error.localizedDescription)
         }
@@ -269,7 +279,8 @@ public class TranslationAIDomain {
         service.startProcessing()
         defer { service.endProcessing() }
         
-        let session = service.createSession()
+        let session = service.acquireSession()
+        defer { service.releaseSession(session) }
         
         let prompt: String
         
@@ -350,7 +361,8 @@ public class TranslationAIDomain {
         service.startProcessing()
         defer { service.endProcessing() }
         
-        let session = service.createSession()
+        let session = service.acquireSession()
+        defer { service.releaseSession(session) }
         
         var fieldContext = ""
         if let field = field {

@@ -385,34 +385,71 @@ struct ModernEntryListView: View {
     }
     
     private func batchDeleteEntries() {
-        let deleteCount = selectedEntryIDs.count
+        // 1. 收集要刪除的 ObjectIDs（比直接持有對象更安全）
+        let idsToDelete = selectedEntryIDs
+        let objectIDs = entries
+            .filter { idsToDelete.contains($0.id) }
+            .map { $0.objectID }
         
-        // 先收集要刪除的文獻，避免在迭代過程中修改集合
-        let entriesToDelete = entries.filter { selectedEntryIDs.contains($0.id) }
+        let deleteCount = objectIDs.count
         
-        // 使用 performAndWait 確保在主執行緒上同步執行
-        viewContext.performAndWait {
-            for entry in entriesToDelete {
-                // 刪除附件文件
-                for attachment in entry.attachmentArray {
-                    try? PDFService.deleteAttachment(attachment, context: viewContext)
-                }
-                // 刪除 Entry
-                viewContext.delete(entry)
-            }
-            
-            do {
-                try viewContext.save()
-            } catch {
-                print("批次刪除失敗：\(error)")
-                viewContext.rollback()
-            }
+        guard deleteCount > 0 else {
+            exitSelectionMode()
+            return
         }
         
-        // 在主執行緒上更新 UI
-        DispatchQueue.main.async {
-            ToastManager.shared.showSuccess("已刪除 \(deleteCount) 篇文獻")
-            self.exitSelectionMode()
+        // 2. 先清空選取狀態（防止 UI 持有已刪除對象）
+        exitSelectionMode()
+        
+        // 3. 在背景線程執行刪除
+        let container = PersistenceController.shared.container
+        
+        Task.detached(priority: .userInitiated) {
+            let backgroundContext = container.newBackgroundContext()
+            backgroundContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+            
+            var success = true
+            
+            await backgroundContext.perform {
+                for objectID in objectIDs {
+                    do {
+                        let entry = try backgroundContext.existingObject(with: objectID) as? Entry
+                        
+                        // 刪除附件文件
+                        if let entry = entry {
+                            for attachment in entry.attachmentArray {
+                                try? FileManager.default.removeItem(atPath: attachment.filePath)
+                            }
+                        }
+                        
+                        // 刪除 Entry
+                        if let entry = entry {
+                            backgroundContext.delete(entry)
+                        }
+                    } catch {
+                        // 對象可能已被刪除,忽略此錯誤
+                        continue
+                    }
+                }
+                
+                do {
+                    try backgroundContext.save()
+                } catch {
+                    success = false
+                    #if DEBUG
+                    print("批次刪除失敗：\(error)")
+                    #endif
+                }
+            }
+            
+            // 4. 回到主線程更新 UI
+            await MainActor.run {
+                if success {
+                    ToastManager.shared.showSuccess("已刪除 \(deleteCount) 篇文獻")
+                } else {
+                    ToastManager.shared.showError("刪除失敗")
+                }
+            }
         }
     }
     

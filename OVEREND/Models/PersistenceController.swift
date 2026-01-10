@@ -55,7 +55,9 @@ struct PersistenceController {
         do {
             try viewContext.save()
         } catch {
+            #if DEBUG
             print("Preview data creation failed: \\(error)")
+            #endif
         }
 
         return controller
@@ -106,7 +108,9 @@ struct PersistenceController {
             do {
                 try context.save()
             } catch let nsError as NSError {
+                #if DEBUG
                 print("Core Data 儲存錯誤: \(nsError), \(nsError.userInfo)")
+                #endif
             }
         }
     }
@@ -130,7 +134,9 @@ struct PersistenceController {
                 try container.viewContext.execute(deleteRequest)
                 try container.viewContext.save()
             } catch {
+                #if DEBUG
                 print("Failed to delete \\(entityName): \\(error)")
+                #endif
             }
         }
     }

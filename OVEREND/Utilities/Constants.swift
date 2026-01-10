@@ -84,6 +84,43 @@ enum Constants {
         static let thesisFields = [
             "school", "advisor", "degree", "department"
         ]
+        
+        /// 書目類型中文名稱
+        static let typeDisplayNames: [String: String] = [
+            "article": "期刊論文",
+            "book": "書籍",
+            "booklet": "手冊",
+            "inbook": "書籍章節",
+            "incollection": "文集論文",
+            "inproceedings": "會議論文",
+            "conference": "研討會",
+            "manual": "技術手冊",
+            "mastersthesis": "碩士論文",
+            "phdthesis": "博士論文",
+            "proceedings": "會議論文集",
+            "techreport": "技術報告",
+            "unpublished": "未出版",
+            "misc": "其他",
+            "webpage": "網頁",
+            "website": "網站",
+            "online": "線上資源",
+            "dataset": "資料集",
+            "software": "軟體",
+            "preprint": "預印本",
+            "report": "報告",
+            "patent": "專利",
+            "standard": "標準",
+            "video": "影片"
+        ]
+        
+        /// 取得類型中文名稱（含英文對照）
+        static func displayName(for type: String) -> String {
+            let lowercased = type.lowercased()
+            if let chinese = typeDisplayNames[lowercased] {
+                return "\(chinese) (\(lowercased))"
+            }
+            return type
+        }
     }
 
 

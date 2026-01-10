@@ -183,13 +183,19 @@ class LoggingServiceDecorator<S: ExecutableService>: ExecutableService {
     }
 
     func execute(_ input: Input) async throws -> Output {
+        #if DEBUG
         print("[\(S.serviceName)] 開始執行")
+        #endif
         do {
             let result = try await wrappedService.execute(input)
+            #if DEBUG
             print("[\(S.serviceName)] 執行成功")
+            #endif
             return result
         } catch {
+            #if DEBUG
             print("[\(S.serviceName)] 執行失敗: \(error.localizedDescription)")
+            #endif
             throw error
         }
     }
