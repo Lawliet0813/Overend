@@ -43,6 +43,9 @@ public class GeminiService: ObservableObject {
     
     /// 設定 API Key
     func configure(apiKey: String) {
+        // 防止儲存遮蔽字串
+        guard apiKey != "••••••••••••••••" else { return }
+        
         self.apiKey = apiKey
         self.isConfigured = !apiKey.isEmpty
         saveAPIKey()
@@ -51,8 +54,15 @@ public class GeminiService: ObservableObject {
     /// 從 Keychain 載入 API Key
     private func loadAPIKey() {
         if let key = KeychainHelper.load(key: "gemini_api_key") {
-            self.apiKey = key
-            self.isConfigured = !key.isEmpty
+            // 檢查是否為無效的遮蔽字串
+            if key == "••••••••••••••••" {
+                self.apiKey = ""
+                self.isConfigured = false
+                KeychainHelper.delete(key: "gemini_api_key")
+            } else {
+                self.apiKey = key
+                self.isConfigured = !key.isEmpty
+            }
         }
     }
     
