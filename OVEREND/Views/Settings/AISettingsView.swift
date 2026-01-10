@@ -64,7 +64,7 @@ struct AISettingsView: View {
                     Button("儲存") {
                         geminiService.configure(apiKey: apiKey)
                     }
-                    .disabled(apiKey.isEmpty)
+                    .disabled(apiKey.isEmpty || apiKey == "••••••••••••••••")
                     
                     Button("測試連線") {
                         testConnection()
@@ -79,9 +79,9 @@ struct AISettingsView: View {
                 if geminiService.isConfigured {
                     HStack {
                         Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.green)
+                        .foregroundColor(.green)
                         Text("API Key 已設定")
-                            .foregroundColor(.green)
+                        .foregroundColor(.green)
                     }
                 }
             }
@@ -173,7 +173,11 @@ struct AISettingsView: View {
     
     private func testConnection() {
         testStatus = .testing
-        geminiService.configure(apiKey: apiKey)
+        
+        // 只有當 API Key 不是遮蔽字串時才更新配置
+        if apiKey != "••••••••••••••••" {
+            geminiService.configure(apiKey: apiKey)
+        }
         
         Task {
             do {
