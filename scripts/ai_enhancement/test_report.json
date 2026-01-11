@@ -1,0 +1,111 @@
+{
+  "test_date": "2026-01-11",
+  "improvements_applied": [
+    "Chain-of-Thought 推理步驟",
+    "Few-shot 範例",
+    "佔位符過濾邏輯"
+  ],
+  "pdf_extraction_tests": [
+    {
+      "name": "期刊文章 - 清晰資訊",
+      "status": "待實機測試",
+      "expected": {
+        "title": "Attention Is All You Need",
+        "authors": [
+          "Ashish Vaswani",
+          "Noam Shazeer",
+          "Niki Parmar",
+          "Jakob Uszkoreit",
+          "Llion Jones",
+          "Aidan N. Gomez",
+          "Lukasz Kaiser",
+          "Illia Polosukhin"
+        ],
+        "year": "2017",
+        "documentType": "inproceedings"
+      }
+    },
+    {
+      "name": "中文論文",
+      "status": "待實機測試",
+      "expected": {
+        "title": "人工智慧在教育領域的應用與挑戰",
+        "authors": [
+          "陳明志",
+          "林雅婷",
+          "王建國"
+        ],
+        "year": "2024",
+        "journal": "教育科技期刊",
+        "doi": "10.6178/JETS.202403.15(3).001",
+        "documentType": "article"
+      }
+    },
+    {
+      "name": "資訊缺失情況",
+      "status": "待實機測試",
+      "expected": {
+        "title": "",
+        "authors": [],
+        "year": null,
+        "documentType": "misc"
+      }
+    }
+  ],
+  "writing_analysis_tests": [
+    {
+      "name": "學術寫作 - 多處問題",
+      "status": "待實機測試",
+      "expected_issues": {
+        "styleIssues": [
+          {
+            "original": "我認為",
+            "suggestion": "本研究認為"
+          },
+          {
+            "original": "很棒",
+            "suggestion": "具有重要意義"
+          },
+          {
+            "original": "我們的",
+            "suggestion": "本研究的"
+          },
+          {
+            "original": "大家都知道",
+            "suggestion": "普遍認為"
+          },
+          {
+            "original": "最好的",
+            "suggestion": "較為有效的"
+          }
+        ]
+      }
+    },
+    {
+      "name": "學術寫作 - 無問題",
+      "status": "待實機測試",
+      "expected_issues": {
+        "styleIssues": [],
+        "grammarIssues": [],
+        "logicIssues": []
+      }
+    },
+    {
+      "name": "語法問題",
+      "status": "待實機測試",
+      "expected_issues": {
+        "grammarIssues": [
+          {
+            "original": "。。",
+            "suggestion": "。"
+          },
+          {
+            "original": "，，",
+            "suggestion": "，"
+          }
+        ]
+      }
+    }
+  ],
+  "notes": "這些測試案例需要在實際 macOS 26.0 環境中用 Apple Intelligence 驗證"
+}

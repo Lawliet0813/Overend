@@ -302,9 +302,11 @@ public class DocumentAIDomain {
     // MARK: - 提取 PDF 元數據
     
     /// 從 PDF 文字中提取元數據（使用 Tool Calling）
-    /// - Parameter pdfText: PDF 提取的文字
+    /// - Parameters:
+    ///   - pdfText: PDF 提取的文字
+    ///   - filename: 原始檔名（可選，用於輔助驗證）
     /// - Returns: 識別出的元數據
-    public func extractMetadata(from pdfText: String) async throws -> ExtractedDocumentMetadata {
+    public func extractMetadata(from pdfText: String, filename: String? = nil) async throws -> ExtractedDocumentMetadata {
         guard let service = service else {
             throw AIServiceError.notAvailable
         }
@@ -321,7 +323,7 @@ public class DocumentAIDomain {
         // 策略 1️⃣: Tool Calling（優先）
         // ========================================
         do {
-            let result = try await extractMetadataWithToolCalling(text: truncatedText)
+            let result = try await extractMetadataWithToolCalling(text: truncatedText, filename: filename)
             if result.hasData {
                 print("✅ Tool Calling 提取成功")
                 return augmentMetadata(result, with: truncatedText)
@@ -334,19 +336,24 @@ public class DocumentAIDomain {
         // ========================================
         // 策略 2️⃣: Prompt 方式（降級）
         // ========================================
-        return try await extractMetadataWithPrompt(text: truncatedText)
+        return try await extractMetadataWithPrompt(text: truncatedText, filename: filename)
     }
     
     // MARK: - Tool Calling 提取
     
     /// 使用 Tool Calling 提取元數據
-    private func extractMetadataWithToolCalling(text: String) async throws -> ExtractedDocumentMetadata {
+    private func extractMetadataWithToolCalling(text: String, filename: String?) async throws -> ExtractedDocumentMetadata {
         let tool = ExtractPDFMetadataTool()
         let session = ExtractPDFMetadataTool.createSession(with: tool)
         
-        let prompt = """
-        分析以下學術文獻的內容，提取書目資訊後調用 extractPDFMetadata 工具：
+        var prompt = "分析以下學術文獻的內容，提取書目資訊後調用 extractPDFMetadata 工具：\n\n"
         
+        if let filename = filename {
+            prompt += "檔名：\(filename)\n"
+            prompt += "注意：若是掃描檔或文字難以識別，請直接使用檔名作為標題（去除副檔名）。\n\n"
+        }
+        
+        prompt += """
         ---
         \(text)
         ---
@@ -366,7 +373,7 @@ public class DocumentAIDomain {
     // MARK: - Prompt 方式提取（降級）
     
     /// 使用傳統 Prompt + JSON 解析方式提取元數據
-    private func extractMetadataWithPrompt(text: String) async throws -> ExtractedDocumentMetadata {
+    private func extractMetadataWithPrompt(text: String, filename: String?) async throws -> ExtractedDocumentMetadata {
         guard let service = service else {
             throw AIServiceError.notAvailable
         }
@@ -382,6 +389,7 @@ public class DocumentAIDomain {
         if let d = preDetectedDOI { detectedInfo += "\n偵測到 DOI：\(d)" }
         if let y = preDetectedYear { detectedInfo += "\n偵測到年份：\(y)" }
         if let t = preDetectedTitle { detectedInfo += "\n偵測到可能標題：\(t)" }
+        if let f = filename { detectedInfo += "\n原始檔名：\(f)" }
         
         let prompt = """
         請分析以下學術文獻 PDF 的文字內容，提取書目資訊，並以『純 JSON』回覆（不要任何解釋、不要包含 ``` 區塊）。
@@ -391,12 +399,12 @@ public class DocumentAIDomain {
         \(text)
         ---
 
-        附加線索（若與內容矛盾，以內容為準）：
+        附加線索（若與內容矛盾，以內容為準；但若為掃描檔，請優先參考檔名）：
         \(detectedInfo.isEmpty ? "(無)" : detectedInfo)
 
         請回覆以下 JSON（鍵名固定，值允許為 null）：
         {
-          "title": null,          // 完整標題字串
+          "title": null,          // 完整標題字串。若內容模糊或為掃描檔，請使用檔名。
           "authors": [],          // 作者陣列（每位作者為字串；中文保留原順序；英文建議 "Last, F."）
           "year": null,           // 四位數年份（如 2024）
           "journal": null,        // 期刊或出版社
@@ -411,6 +419,7 @@ public class DocumentAIDomain {
         4. doi 請輸出標準 DOI（例如：10.1145/3368089.3409690），不要包含 https://doi.org/ 或 doi: 前綴。
         5. type 僅能為 article/book/inproceedings/thesis/misc。
         6. 請使用繁體中文語境判斷（若可）。
+        7. **若是掃描檔或文字難以識別，標題請直接使用檔名（去除副檔名）。**
         """
         
         do {

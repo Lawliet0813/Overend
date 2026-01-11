@@ -485,7 +485,7 @@ struct ProjectCard: View {
                 }
                 
                 // 標題
-                Text(document.title ?? "未命名文稿")
+                Text(document.title)
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(theme.textPrimary)
                     .lineLimit(2)

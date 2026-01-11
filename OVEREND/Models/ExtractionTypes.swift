@@ -91,7 +91,7 @@ struct PromptSuggestion: Identifiable {
 
 /// 訓練資料匯出格式
 struct TrainingDataExport: Codable {
-    let version: String = "1.0"
+    var version: String = "1.0"
     let exportDate: String
     let totalSamples: Int
     let samples: [TrainingSample]

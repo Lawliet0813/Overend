@@ -118,7 +118,7 @@ struct DocumentEditorView: View {
             )
             .environmentObject(theme)
         }
-        .background(theme.background)
+        .background(Color.clear)
         .sheet(isPresented: $showImportSheet) {
             ImportDocumentSheet(onImport: handleImport)
                 .environmentObject(theme)
@@ -931,23 +931,26 @@ struct EditorToolbar: View {
             let isCompact = geometry.size.width < 1200
             
             VStack(spacing: 0) {
-                // 主工具列
+                // 主工具列 - 放大優化
                 HStack(spacing: 16) {
-                    // 標題
+                    // 標題 - 放大
                     Text(document.title)
-                        .font(.headline)
+                        .font(theme.fontDisplaySmall)  // 20pt
+                        .fontWeight(.semibold)
                         .foregroundColor(theme.textPrimary)
                     
                     Spacer()
                     
-                    // AI 調整
+                    // AI 調整 - 增大
                     Button(action: { onAI?() }) {
                         Label("AI 調整", systemImage: "sparkles")
+                            .font(theme.fontButton)
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(.purple)
+                    .controlSize(.large)
                     
-                    // 引用側邊欄切換
+                    // 引用側邊欄切換 - 增大
                     Button(action: { showCitationSidebar.toggle() }) {
                         Label("參考文獻", systemImage: showCitationSidebar ? "sidebar.right" : "sidebar.left")
                     }
@@ -970,7 +973,7 @@ struct EditorToolbar: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 12)
-                .background(theme.elevated)
+                .background(theme.toolbarGlass)
                 
                 Divider()
                 
@@ -1180,7 +1183,9 @@ struct EditorToolbar: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
-                .background(theme.elevated)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(theme.toolbarGlass)
             }
         }
         .frame(height: 100)
@@ -1366,7 +1371,8 @@ struct RichTextEditorView: NSViewRepresentable {
         scrollView.hasVerticalScroller = true
         scrollView.hasHorizontalScroller = true
         scrollView.autohidesScrollers = true
-        scrollView.backgroundColor = NSColor.darkGray.withAlphaComponent(0.3)
+        scrollView.autohidesScrollers = true
+        scrollView.backgroundColor = theme.isPrideMode ? .clear : NSColor.darkGray.withAlphaComponent(0.3)
         scrollView.drawsBackground = true
         
         // 創建 A4 紙張容器
@@ -1406,10 +1412,16 @@ struct RichTextEditorView: NSViewRepresentable {
         textView.maxSize = NSSize(width: Self.a4Width - (Self.a4Margin * 2), height: .greatestFiniteMagnitude)
         textView.minSize = NSSize(width: Self.a4Width - (Self.a4Margin * 2), height: 842 - (Self.a4Margin * 2))
         
-        // 紙張樣式 - 白色背景配深色文字
-        textView.backgroundColor = .white
-        textView.textColor = .black
-        textView.insertionPointColor = .black
+        // 紙張樣式 - 根據主題調整
+        if theme.isPrideMode {
+            textView.backgroundColor = .clear
+            textView.textColor = .white
+            textView.insertionPointColor = .white
+        } else {
+            textView.backgroundColor = .white
+            textView.textColor = .black
+            textView.insertionPointColor = .black
+        }
         textView.font = .systemFont(ofSize: 12)
         
         // 預設輸入屬性
@@ -1421,18 +1433,21 @@ struct RichTextEditorView: NSViewRepresentable {
         // 紙張視圖
         let paperView = NSView(frame: NSRect(x: 0, y: 0, width: Self.a4Width, height: 842))
         paperView.wantsLayer = true
-        paperView.layer?.backgroundColor = NSColor.white.cgColor
-        paperView.layer?.shadowColor = NSColor.black.cgColor
-        paperView.layer?.shadowOffset = CGSize(width: 0, height: -2)
-        paperView.layer?.shadowRadius = 8
-        paperView.layer?.shadowOpacity = 0.3
+        paperView.layer?.backgroundColor = theme.isPrideMode ? NSColor.clear.cgColor : NSColor.white.cgColor
+        
+        if !theme.isPrideMode {
+            paperView.layer?.shadowColor = NSColor.black.cgColor
+            paperView.layer?.shadowOffset = CGSize(width: 0, height: -2)
+            paperView.layer?.shadowRadius = 8
+            paperView.layer?.shadowOpacity = 0.3
+        }
         
         paperView.addSubview(textView)
         
         // 設置紙張居中的剪輯視圖
         let clipView = CenteredClipView()
         clipView.documentView = paperView
-        clipView.backgroundColor = NSColor.darkGray.withAlphaComponent(0.3)
+        clipView.backgroundColor = theme.isPrideMode ? .clear : NSColor.darkGray.withAlphaComponent(0.3)
         clipView.drawsBackground = true
         
         scrollView.contentView = clipView
@@ -1495,6 +1510,27 @@ struct RichTextEditorView: NSViewRepresentable {
 
             // 通知 scrollView 內容大小已改變
             nsView.documentView?.needsLayout = true
+        }
+        
+        // 更新主題相關樣式
+        nsView.backgroundColor = theme.isPrideMode ? .clear : NSColor.darkGray.withAlphaComponent(0.3)
+        if let clipView = nsView.contentView as? CenteredClipView {
+            clipView.backgroundColor = theme.isPrideMode ? .clear : NSColor.darkGray.withAlphaComponent(0.3)
+        }
+        
+        if let paperView = nsView.documentView {
+            paperView.layer?.backgroundColor = theme.isPrideMode ? NSColor.clear.cgColor : NSColor.white.cgColor
+            if theme.isPrideMode {
+                paperView.layer?.shadowOpacity = 0.0
+            } else {
+                paperView.layer?.shadowOpacity = 0.3
+            }
+        }
+        
+        if let textView = (nsView.documentView?.subviews.first as? NSTextView) {
+            textView.backgroundColor = theme.isPrideMode ? .clear : .white
+            textView.textColor = theme.isPrideMode ? .white : .black
+            textView.insertionPointColor = theme.isPrideMode ? .white : .black
         }
     }
     
@@ -1565,7 +1601,9 @@ struct EditorStatusBar: View {
         .foregroundColor(theme.textSecondary)
         .padding(.horizontal, 20)
         .padding(.vertical, 8)
-        .background(theme.elevated)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 8)
+        .background(theme.toolbarGlass)
     }
 }
 

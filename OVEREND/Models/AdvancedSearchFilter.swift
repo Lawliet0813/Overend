@@ -300,8 +300,9 @@ extension AdvancedSearchFilter {
         // 6. 標籤篩選
         if !tagNames.isEmpty {
             result = result.filter { entry in
-                let entryTags = Set(entry.tagArray)
-                return !entryTags.isDisjoint(with: tagNames)
+                guard let tags = entry.tags as? Set<Tag> else { return false }
+                let entryTagNames = Set(tags.map { $0.name })
+                return !entryTagNames.isDisjoint(with: tagNames)
             }
         }
         

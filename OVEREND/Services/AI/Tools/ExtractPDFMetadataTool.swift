@@ -198,11 +198,41 @@ public final class ExtractPDFMetadataTool: Tool {
 extension ExtractPDFMetadataTool {
     
     /// 建立用於元數據提取的 Session
+    /// 
+    /// 基於 tw-function-call-reasoning-10k 資料集分析優化的推理模式
     public static func createSession(with tool: ExtractPDFMetadataTool) -> LanguageModelSession {
         return LanguageModelSession(
             tools: [tool],
             instructions: Instructions {
                 "你是學術文獻書目識別專家。你的任務是從 PDF 文字內容中識別並提取真實的書目資訊。"
+                
+                """
+                📋 推理步驟（Chain-of-Thought）：
+                
+                1. 首先，仔細閱讀 PDF 內容，識別文獻的結構。
+                   - 找出標題區域（通常在文件開頭，字體較大或加粗）
+                   - 找出作者區域（通常在標題下方）
+                   - 找出出版資訊區域（可能包含年份、期刊名稱、DOI）
+                
+                2. 然後，逐一提取各個欄位：
+                   - 標題：找到實際的完整標題文字
+                   - 作者：列出所有作者的真實姓名
+                   - 年份：找到四位數的出版年份
+                   - 期刊/會議：找到發表來源名稱
+                   - DOI：找到以 10. 開頭的識別碼
+                
+                3. 接著，驗證提取的資訊：
+                   - 確認標題不是佔位符（如「論文標題」「Paper Title」）
+                   - 確認作者不是假名（如「作者1」「張三」「John Doe」）
+                   - 確認年份是合理的（通常在 1900-2026 之間）
+                
+                4. 最後，判斷文獻類型並調用工具：
+                   - article: 期刊文章（有期刊名稱、卷期頁碼）
+                   - inproceedings: 會議論文（有會議名稱）
+                   - thesis: 學位論文（有學校名稱、學位類型）
+                   - book: 書籍（有出版社、ISBN）
+                   - misc: 無法確定類型
+                """
                 
                 """
                 ⚠️ 絕對禁止的行為（違反將導致失敗）：
@@ -216,18 +246,29 @@ extension ExtractPDFMetadataTool {
                 ✅ 正確的提取方式：
                 - 仔細閱讀 PDF 內容，找出實際的標題、作者、年份等資訊
                 - 如果某個欄位無法從 PDF 內容中確定，請填入 null 或空值
-                - 標題通常出現在文獻開頭，字體較大或加粗
-                - 作者名稱通常出現在標題下方
-                - 年份可能出現在日期、版權聲明或引用資訊中
-                - DOI 通常以 10. 開頭
+                """
                 
-                提取規則：
-                - title: 從 PDF 中找到的實際標題（如果找不到就填空字串）
-                - authors: 從 PDF 中找到的真實作者名單（如果找不到就填空陣列 []）
-                - year: 四位數出版年份（如果找不到就填 null）
-                - journal: 期刊、會議或出版社名稱（如果找不到就填 null）
-                - doi: DOI 識別碼（如果找不到就填 null）
-                - documentType: 根據內容判斷文獻類型
+                """
+                📝 範例（Few-shot）：
+                
+                範例 1 - 期刊文章提取：
+                輸入：「Deep Learning for Natural Language Processing: A Survey
+                       Authors: John Smith, Mary Johnson
+                       Published in: Journal of AI Research, 2023
+                       DOI: 10.1016/j.jair.2023.01.001」
+                思考：這是一篇期刊文章，標題是「Deep Learning for Natural Language Processing: A Survey」，
+                      作者有兩位 John Smith 和 Mary Johnson，發表於 2023 年的 Journal of AI Research。
+                結果：title="Deep Learning for Natural Language Processing: A Survey",
+                      authors=["John Smith", "Mary Johnson"], year="2023",
+                      journal="Journal of AI Research", doi="10.1016/j.jair.2023.01.001",
+                      documentType=article
+                
+                範例 2 - 資訊缺失處理：
+                輸入：「研究方法論探討
+                       （文件內容模糊，無法辨識作者和出版資訊）」
+                思考：只能識別到標題，其他資訊無法確定，應該填入空值而非猜測。
+                結果：title="研究方法論探討", authors=[], year=null,
+                      journal=null, doi=null, documentType=misc
                 """
                 
                 "分析完成後，立即調用 extractPDFMetadata 工具回報結果，不要輸出其他文字。"

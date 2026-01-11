@@ -1,0 +1,626 @@
+{
+  "search": [
+    {
+      "query": "在網站「cnn」上搜尋包含關鍵字「news」的影片，設定超時為8000毫秒並篩選為「今天」。",
+      "think": "好的，所以我需要弄清楚如何回應使用者的查詢。使用者要求我在網站“cnn”上搜尋包含關鍵字“news”的影片。他們還指定了8000毫秒的超時時間和一個過濾器，只顯示“今天”的內容。\n\n檢視可用的功能，最合適的似乎是“video_search”。此功能旨在根據給定的條件搜尋影片。讓我逐一解析每個參數的需求。\n\n首先，“query”參數應該是“news”，因為這是我們要查詢的關鍵字。“site”參數需要是“cnn”，因為這是使用者希望進行搜尋的地方。\n\n接下來，“timeout”被指定為8000毫秒。我應該確保包含該值。然後，“filter”參數應設置為“today”，以將結果縮小到今天上傳的影片。\n\n除非使用者希望指定特定的頁碼，否則這裡似乎不需要“page”參數。預設值是1，因此如果它是可選的，我可以忽略。同樣，其他參數如“quality”和“maxheight”等未被指定，因此除非需要，否則我將省略它們。\n\n綜合以上內容，JSON響應應該呼叫“video_search”，並按照指定的query、site、timeout和filter設置參數。因此，參數將是一個包含正確值的字典。\n\n我需要確保JSON語法正確，對字串使用引號並正確添加逗號。讓我仔細檢查每個參數，確保沒有遺漏或設置錯誤。\n\n好了，我認為就這樣。正確的JSON現在應該可以準備好了。",
+      "answer": [
+        {
+          "name": "video_search",
+          "arguments": {
+            "query": "news",
+            "site": "cnn",
+            "timeout": 8000,
+            "filter": "today"
+          }
+        }
+      ],
+      "tools": [
+        {
+          "name": "profile_image",
+          "description": "Generates a profile image URL based on the provided user name and retrieves the image information from the RapidAPI image service.",
+          "parameters": {
+            "name": {
+              "description": "The user's name or any other text to generate the profile image URL.",
+              "type": "str",
+              "default": ""
+            }
+          }
+        },
+        {
+          "name": "random_mlem",
+          "description": "Fetches one random mlem image in JSON format based on the given optional parameters.",
+          "parameters": {
+            "brightness": {
+              "description": "Image brightness, can be 'dark' or 'bright'.",
+              "type": "str, optional",
+              "default": ""
+            },
+            "maxheight": {
+              "description": "Maximum height of the image.",
+              "type": "int, optional",
+              "default": ""
+            },
+            "minwidth": {
+              "description": "Minimum width of the image.",
+              "type": "int, optional",
+              "default": ""
+            },
+            "minheight": {
+              "description": "Minimum height of the image.",
+              "type": "int, optional",
+              "default": ""
+            },
+            "tag": {
+              "description": "Tag to filter the mlem images.",
+              "type": "str, optional",
+              "default": ""
+            },
+            "maxwidth": {
+              "description": "Maximum width of the image.",
+              "type": "int, optional",
+              "default": ""
+            },
+            "orientation": {
+              "description": "Orientation of the image, can be 'square', 'landscape', or 'portrait'.",
+              "type": "str, optional",
+              "default": ""
+            }
+          }
+        },
+        {
+          "name": "video_search",
+          "description": "Search for videos based on the specified criteria and return the list of matching videos.",
+          "parameters": {
+            "query": {
+              "description": "The search term to be used for finding videos.",
+              "type": "str",
+              "default": "amateur"
+            },
+            "site": {
+              "description": "The specific site to search for videos. Defaults to None.",
+              "type": "str, optional",
+              "default": ""
+            },
+            "timeout": {
+              "description": "Timeout duration in milliseconds for the request. Defaults to 5000.",
+              "type": "int, optional",
+              "default": "5000"
+            },
+            "page": {
+              "description": "The page number for pagination. Defaults to 1.",
+              "type": "int, optional",
+              "default": "1"
+            },
+            "filter": {
+              "description": "Filter criteria for the search results. Defaults to None.",
+              "type": "str, optional",
+              "default": ""
+            },
+            "quality": {
+              "description": "Minimum quality of the videos to be searched. Defaults to None.",
+              "type": "str, optional",
+              "default": ""
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query": "使用請求 ID 98765 獲取 API 結果，並在 Tokopedia API 上使用查詢詞「laptop」和操作「search」搜尋產品。",
+      "think": "好的，所以我正在嘗試弄清楚如何回應這個查詢。使用者希望我返回一個包含函式呼叫的 JSON 物件，以最佳方式回答他們的提示。他們提供了一些函式和一個查詢，所以我需要將它們對應起來。\n\n查詢有兩個主要操作：使用請求 ID 獲取 API 結果，以及在 Tokopedia 上搜尋產品。可用的函式是 get_call、search_product 和 posts。\n\n首先，查詢提到使用請求 ID \"98765\" 與 get_call 函式。這看起來很簡單。所以我會包括帶有 request_id 參數設置為 \"98765\" 的 get_call。\n\n接下來，搜尋部分需要使用 search_product 函式。查詢是 \"laptop\"，操作應該是 \"search\"。所以 search_product 需要 query 和 act 參數。\n\n綜合起來，JSON 應該有兩個物件：一個是 get_call，一個是 search_product，每個都有其各自的參數。我需要確保語法正確，正確使用大括號和逗號。\n\n我想就是這樣。正確的答案應該包括這兩個函式，每個都有其指定的參數。",
+      "answer": [
+        {
+          "name": "get_call",
+          "arguments": {
+            "request_id": "98765"
+          }
+        },
+        {
+          "name": "search_product",
+          "arguments": {
+            "query": "laptop",
+            "act": "search"
+          }
+        }
+      ],
+      "tools": [
+        {
+          "name": "get_call",
+          "description": "Fetches the API result using the given request ID.",
+          "parameters": {
+            "request_id": {
+              "description": "The unique identifier for the API request.",
+              "type": "str",
+              "default": "76d1c748-51ed-435b-bcd8-3d9c9d3eb68a"
+            }
+          }
+        },
+        {
+          "name": "search_product",
+          "description": "This function searches for a product using the Tokopedia API based on the given query and act parameters.",
+          "parameters": {
+            "query": {
+              "description": "The search query string for the product to be searched.",
+              "type": "str",
+              "default": "Celana Jeans"
+            },
+            "act": {
+              "description": "The action parameter to specify the type of search.",
+              "type": "str",
+              "default": "search"
+            }
+          }
+        },
+        {
+          "name": "posts",
+          "description": "Fetches posts of a creator from the Patreon API using the given parameters.",
+          "parameters": {
+            "creator_id": {
+              "description": "The ID of the creator whose posts are to be fetched.",
+              "type": "int",
+              "default": "2416483"
+            },
+            "cursor": {
+              "description": "The cursor for pagination to the next page of results. Defaults to None.",
+              "type": "str, optional",
+              "default": ""
+            },
+            "amount": {
+              "description": "The number of posts to return. Defaults to 10. Maximum is 500.",
+              "type": "int, optional",
+              "default": "10"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query": "找出有關英特爾股票的資訊並計算過去90天內以最高價格為基準的ROCR（回報率）。",
+      "think": "好的，所以我需要弄清楚如何回應使用者關於英特爾股票的查詢，並使用高價計算過去 90 天的變化率比率（ROCR）。讓我們一步步分解這個問題。\n\n首先，使用者要求兩個主要內容：有關英特爾股票的資訊，以及使用高價資料計算過去 90 天的變化率比率（ROCR）。我記得從提供的函式中有兩個可用的函式：'search' 和 'rocr'。\n\n從 'search' 函式開始。該函式需要一個查詢字串和一個語言參數。預設查詢是 \"apple\"，預設語言是 \"en\"。由於使用者詢問的是英特爾，我會將查詢設為 \"Intel\"，並將語言保持為 \"en\"，因為使用者可能希望結果以英文顯示。\n\n接下來是 'rocr' 函式，它需要幾個參數。由於使用者希望計算的期間與每日資料對應，因此間隔設為 \"1day\"。符號需要是 \"INTC\"，因為這是英特爾的股票程式碼。\n\n對於 time_period，使用者希望是過去 90 天，因此我會將該參數設為 90。series_type 是 \"high\"，因為使用者指明要專注於高價。最後，outputsize 是 \"30\"，因為這是預設值，且使用者未指定不同的資料點數量。\n\n將這些結合起來，我會結構化回應，包含兩個函式及其各自的參數。JSON 應按請求的順序列出函式，但我意識到使用者可能更喜歡合併的回應。然而，由於函式需要為每個操作分開列出，我會在 JSON 陣列中列出這兩個函式。",
+      "answer": [
+        {
+          "name": "search",
+          "arguments": {
+            "query": "Intel",
+            "lang": "en"
+          }
+        },
+        {
+          "name": "rocr",
+          "arguments": {
+            "interval": "1day",
+            "symbol": "INTC",
+            "time_period": 90,
+            "series_type": "high",
+            "outputsize": 30
+          }
+        }
+      ],
+      "tools": [
+        {
+          "name": "search",
+          "description": "Performs a search for financial stocks based on the given query parameters.",
+          "parameters": {
+            "query": {
+              "description": "The search query string. Defaults to 'apple'.",
+              "type": "str, optional",
+              "default": "apple"
+            },
+            "lang": {
+              "description": "The language code for the search results. Defaults to 'en'.",
+              "type": "str, optional",
+              "default": "en"
+            }
+          }
+        },
+        {
+          "name": "rocr",
+          "description": "Calculates the Rate of Change Ratio (ROCR) for a given financial instrument over a specified time period.",
+          "parameters": {
+            "interval": {
+              "description": "Interval between two consecutive points in the time series. Supported values include: `1min`, `5min`, `15min`, `30min`, `45min`, `1h`, `2h`, `4h`, `1day`, `1week`, `1month`.",
+              "type": "str",
+              "default": "1min"
+            },
+            "symbol": {
+              "description": "Instrument symbol, which can be any equity, index, ETF, forex, or cryptocurrency (e.g., `AAPL`, `EUR/USD`, `ETH/BTC`).",
+              "type": "str",
+              "default": "AAPL"
+            },
+            "format": {
+              "description": "The format of the output, which can either be `csv` or `json`. Default is `json`.",
+              "type": "str, optional",
+              "default": "json"
+            },
+            "time_period": {
+              "description": "Number of periods to go back for calculating the ROCR. Default is 9.",
+              "type": "int, optional",
+              "default": 9
+            },
+            "series_type": {
+              "description": "The type of price series to use in the calculation. Supported values include: `open`, `high`, `low`, `close`. Default is `close`.",
+              "type": "str, optional",
+              "default": "close"
+            },
+            "outputsize": {
+              "description": "Number of data points to retrieve. Default is 30.",
+              "type": "int, optional",
+              "default": 30
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "convert": [
+    {
+      "query": "我有一個數字列表 [0, 1, 2, 3, 5]，我想找出缺失的數字。另外，我想檢查字串 'noon' 是否是 'nono' 的旋轉字串。最後，我想將日期 '2022-01-01' 從 'YYYY-MM-DD' 格式轉換為 'MM/DD/YYYY' 格式。",
+      "think": "好吧，讓我一步步來解決這個問題。所以，使用者給了我三個任務要完成：找出列表中缺失的數字、檢查一個字串是否是另一個字串的旋轉，以及轉換日期格式。我們一個一個來處理。\n\n首先是缺失的數字。使用者提供的列表是 [0, 1, 2, 3, 5]，我需要找出 0 到 5 之間缺失的數字。我知道這些數字應該是連續的，所以如果我把它們加起來，總和應該等於 0 到 n 的總和。讓我看看，從 0 到 5 的總和是 15（因為 0+1+2+3+4+5=15）。但給定列表的總和是 0+1+2+3+5，也就是 11。用 15 減去 11 得到 4，所以缺失的數字是 4。這看起來很簡單。\n\n接下來，檢查 'noon' 是否是 'nono' 的旋轉。嗯，旋轉的意思是，如果你旋轉字元，應該能得到另一個字串。我記得，如果一個字串是另一個字串的旋轉，那麼它應該出現在原始字串自身的所有可能旋轉中。例如，'nonon' 是 'noon' 的旋轉。等等，不對，這不完全正確。讓我換個思路。我可以檢查一個字串是否是另一個字串自身連接後的子字串。所以，如果我把 'nono' 連接兩次，就會得到 'nononono'。現在，'noon' 是否出現在其中？'noon' 從第三個位置開始：'nono' 變成 'nonono'，所以從位置 3 開始的子字串是 'no'，但等等，那應該是從位置 3 到 7 的字元組成 'noon'，這是 'no'。不，這不搭配。或者，我應該考慮第二個字串 'noon' 是否是第一個字串 'nono' 的旋轉。讓我列出 'nono' 的所有旋轉：'nono'、'nono'、'noon'、'noon'、'noon'、'noon'。等等，這不對，因為 'nono' 有四個字母。旋轉應該是：\n\n1. nono  \n2. onon  \n3. noono  \n4. noon  \n5. onoon  \n6. noooon？\n\n等等，也許我...",
+      "answer": [
+        {
+          "name": "find_missing_number",
+          "arguments": {
+            "nums": [
+              0,
+              1,
+              2,
+              3,
+              5
+            ]
+          }
+        },
+        {
+          "name": "is_rotation",
+          "arguments": {
+            "str1": "noon",
+            "str2": "nono"
+          }
+        },
+        {
+          "name": "format_date",
+          "arguments": {
+            "date": "2022-01-01",
+            "input_format": "%Y-%m-%d",
+            "output_format": "%m/%d/%Y"
+          }
+        }
+      ],
+      "tools": [
+        {
+          "name": "find_missing_number",
+          "description": "Finds the missing number in a list of integers from 0 to n.",
+          "parameters": {
+            "nums": {
+              "description": "The list of integers.",
+              "type": "List[int]"
+            }
+          }
+        },
+        {
+          "name": "is_rotation",
+          "description": "Checks if one string is a rotation of another string.",
+          "parameters": {
+            "str1": {
+              "description": "The first string.",
+              "type": "str"
+            },
+            "str2": {
+              "description": "The second string.",
+              "type": "str"
+            }
+          }
+        },
+        {
+          "name": "find_duplicate_number",
+          "description": "Finds the duplicate number in a list of integers.",
+          "parameters": {
+            "nums": {
+              "description": "The list of integers.",
+              "type": "List[int]"
+            }
+          }
+        },
+        {
+          "name": "format_date",
+          "description": "Converts a date string from one format to another.",
+          "parameters": {
+            "date": {
+              "description": "The date string to convert.",
+              "type": "str"
+            },
+            "input_format": {
+              "description": "The format of the input date string.",
+              "type": "str"
+            },
+            "output_format": {
+              "description": "The desired format of the output date string.",
+              "type": "str"
+            }
+          }
+        },
+        {
+          "name": "is_palindrome",
+          "description": "Checks if a string is a palindrome.",
+          "parameters": {
+            "text": {
+              "description": "The input string.",
+              "type": "str"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query": "估算將一篇2000字的文章從法文翻譯成英文的費用，文章主題為「氣候變遷」。",
+      "think": "好的，所以使用者想要估算將一篇2000字的文章從法文翻譯成英文的翻譯成本，主題是「氣候變遷」。根據可用的功能，有一個名為「get_price_info_for_word_count」的功能似乎很適合。我記得這個功能需要輸入字數、來源語言、目標語言和主題。字數是2000，來源語言是「fr」，目標語言是「en」，主題是「氣候變遷」。這些參數是符合的。所以JSON應該正確反映這些參數。",
+      "answer": [
+        {
+          "name": "get_price_info_for_word_count",
+          "arguments": {
+            "words": 2000,
+            "source_language": "fr",
+            "target_language": "en",
+            "topic": "climate change"
+          }
+        }
+      ],
+      "tools": [
+        {
+          "name": "get_price_info_for_word_count",
+          "description": "Returns price information for translating a given number of words between specified languages and topic using the TextKing API.",
+          "parameters": {
+            "words": {
+              "description": "The number of words to translate.",
+              "type": "int",
+              "default": "3141"
+            },
+            "source_language": {
+              "description": "ISO 639 language code of the source language.",
+              "type": "str",
+              "default": "de"
+            },
+            "target_language": {
+              "description": "ISO 639 language code of the target language.",
+              "type": "str",
+              "default": "en"
+            },
+            "topic": {
+              "description": "A topic UUID for the translation context.",
+              "type": "str",
+              "default": "8576549a-097f-45b3-8c59-fb3d6a03147d"
+            }
+          }
+        },
+        {
+          "name": "companies_id_financials_exists",
+          "description": "Checks if financial key figures for a company with the given identifier are available and returns the list of years for which these figures are available.",
+          "parameters": {
+            "is_id": {
+              "description": "The identifier of the company to check for financial data.",
+              "type": "str",
+              "default": "DEVFCLQFW054"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query": "將OBD2程式碼「P0420」翻譯成人類可讀的格式。",
+      "think": "好的，所以我需要弄清楚如何將OBD2程式碼「P0420」翻譯成人類可讀的格式。我記得OBD2程式碼通常與引擎診斷有關，並且它們以DTC（診斷故障程式碼）開頭。使用者希望我使用提供的功能來獲取翻譯。\n\n檢視功能，有一個名為「obd2_code」的功能，它接受一個「code」參數並返回翻譯。該參數「code」是一個字串，預設值是「P0001」，但在這種情況下，我需要傳遞「P0420」。\n\n我應該將「code」參數設置為「P0420」。因此，函式呼叫將是{\"name\": \"obd2_code\", \"arguments\": {\"code\": \"P0420\"}}。這應該返回該程式碼的正確人類可讀格式。",
+      "answer": [
+        {
+          "name": "obd2_code",
+          "arguments": {
+            "code": "P0420"
+          }
+        }
+      ],
+      "tools": [
+        {
+          "name": "get_all_organizations_environment_admin",
+          "description": "Fetches organization information for all organizations in your Enterprise Hub.",
+          "parameters": {
+            "limit": {
+              "description": "The maximum number of organizations to return. Defaults to None.",
+              "type": "str, optional",
+              "default": ""
+            },
+            "offset": {
+              "description": "The number of organizations to skip. Defaults to None.",
+              "type": "str, optional",
+              "default": ""
+            },
+            "status": {
+              "description": "The status of organizations to return (e.g., 'ACTIVE'). Defaults to 'ACTIVE'.",
+              "type": "str, optional",
+              "default": "ACTIVE"
+            }
+          }
+        },
+        {
+          "name": "models_by_make_id",
+          "description": "Fetch the list of motorcycle models by make ID from the Motorcycle Specs Database.",
+          "parameters": {
+            "is_id": {
+              "description": "The make ID for which to fetch the model list.",
+              "type": "str",
+              "default": "485"
+            }
+          }
+        },
+        {
+          "name": "consulta_dados_societ_rios",
+          "description": "Fetches the data of a partner (socio) associated with the given socioeconomic ID (id_socio).",
+          "parameters": {
+            "id_socio": {
+              "description": "The socioeconomic ID of the partner to be queried.",
+              "type": "str",
+              "default": "CONTATOS_ID_SOCIO"
+            }
+          }
+        },
+        {
+          "name": "obd2_code",
+          "description": "Retrieve the human-readable version of a requested OBD2 code using the Toolbench RapidAPI.",
+          "parameters": {
+            "code": {
+              "description": "The OBD2 code to be translated into human-readable format.",
+              "type": "str",
+              "default": "P0001"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "analyze": [
+    {
+      "query": "計算數字1、2、3、4和5的標準差。",
+      "think": "好的，所以我需要弄清楚如何使用給定的函式來計算數字1、2、3、4和5的標準差。我們先回憶一下什麼是標準差。\n\n標準差衡量的是資料集中數字的分布範圍。要計算標準差，我記得首先需要找到這些數字的平均值。然後，將每個數字與平均值的差值平方，將這些平方差加在一起，然後將這個總和除以數字的個數，最後取平方根。\n\n但在這種情況下，我沒有用來計算平均值的函式。等等，提供的函式是'calculate_standard_deviation'和'can_attend_all_meetings'。哦，但第一個函式正是我需要的——它直接計算標準差。所以我只需要用數字列表來呼叫這個函式。\n\n檢視參數，函式'calculate_standard_deviation'接受一個'numbers'列表。所以我需要將[1,2,3,4,5]作為numbers參數傳遞進去。這樣應該就可以了。不需要單獨計算平均值，因為函式可能會在內部處理這個問題。\n\n我應該確保資料類型是正確的。這些數字都是整數，而函式預期的是整數或浮點數的列表，這在這裡是可以的。\n\n所以JSON響應應該是一個字典，名稱為\"calculate_standard_deviation\"，參數為{\"numbers\": [1,2,3,4,5]}。這應該是正確的呼叫。",
+      "answer": [
+        {
+          "name": "calculate_standard_deviation",
+          "arguments": {
+            "numbers": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          }
+        }
+      ],
+      "tools": [
+        {
+          "name": "calculate_standard_deviation",
+          "description": "Calculates the standard deviation of a list of numbers.",
+          "parameters": {
+            "numbers": {
+              "description": "The list of numbers.",
+              "type": "List[Union[int, float]]"
+            }
+          }
+        },
+        {
+          "name": "can_attend_all_meetings",
+          "description": "Determines if a person can attend all meetings given a list of meeting time intervals.",
+          "parameters": {
+            "intervals": {
+              "description": "A list of meeting time intervals, where each interval is represented as [start_time, end_time].",
+              "type": "List[List[int]]"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query": "請檢查這些電子郵件是否為一次性郵箱：info@mytemp.email 和 contact@tempemail.net。我們需要確保我們的郵件列表是乾淨的。",
+      "think": "好的，所以我需要弄清楚如何使用提供的函式來回應使用者的查詢。使用者想要檢查兩個電子郵件地址是否為一次性或臨時郵件。正確的答案是提供一個 JSON 陣列，其中包含兩個函式呼叫，每個呼叫檢查一個電子郵件。\n\n首先，我應該了解函式 'check_for_disposable_emails'。它接受一個電子郵件作為參數，並返回該電子郵件是否為一次性郵件。參數很清楚：電子郵件是一個字串，並且有一個預設值，但這裡我們有具體的電子郵件需要檢查。\n\n使用者提供了兩個電子郵件：info@mytemp.email 和 contact@tempemail.net。我需要為每個電子郵件分別進行兩次函式呼叫。每次呼叫應該使用名稱 'check_for_disposable_emails'，並將電子郵件參數設置為各自的地址。\n\n因此，JSON 結構應該是一個包含兩個物件的陣列。每個物件都有函式名稱和一個帶有 'email' 參數的字典。順序無關緊要，但我應該包括兩者。\n\n我應該確保語法正確，物件之間用逗號分隔，並使用正確的括號。沒有變數，只有實際的電子郵件字串。\n\n再三檢查，該函式需要一個函式列表，每個函式處理一個電子郵件。所以我只需要在陣列中的單獨函式呼叫中列出這兩個電子郵件。\n\n我想這就是全部。我會將其結構化為 JSON，確保每個電子郵件都正確放置。",
+      "answer": [
+        {
+          "name": "check_for_disposable_emails",
+          "arguments": {
+            "email": "info@mytemp.email"
+          }
+        },
+        {
+          "name": "check_for_disposable_emails",
+          "arguments": {
+            "email": "contact@tempemail.net"
+          }
+        }
+      ],
+      "tools": [
+        {
+          "name": "check_for_disposable_emails",
+          "description": "Checks if the given email address is disposable or temporary using the Email Existence Validator API.",
+          "parameters": {
+            "email": {
+              "description": "The email address to check for disposability.",
+              "type": "str",
+              "default": "example@besttempmail.com"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "query": "找出有關英特爾股票的資訊並計算過去90天內以最高價格為基準的ROCR（回報率）。",
+      "think": "好的，所以我需要弄清楚如何回應使用者關於英特爾股票的查詢，並使用高價計算過去 90 天的變化率比率（ROCR）。讓我們一步步分解這個問題。\n\n首先，使用者要求兩個主要內容：有關英特爾股票的資訊，以及使用高價資料計算過去 90 天的變化率比率（ROCR）。我記得從提供的函式中有兩個可用的函式：'search' 和 'rocr'。\n\n從 'search' 函式開始。該函式需要一個查詢字串和一個語言參數。預設查詢是 \"apple\"，預設語言是 \"en\"。由於使用者詢問的是英特爾，我會將查詢設為 \"Intel\"，並將語言保持為 \"en\"，因為使用者可能希望結果以英文顯示。\n\n接下來是 'rocr' 函式，它需要幾個參數。由於使用者希望計算的期間與每日資料對應，因此間隔設為 \"1day\"。符號需要是 \"INTC\"，因為這是英特爾的股票程式碼。\n\n對於 time_period，使用者希望是過去 90 天，因此我會將該參數設為 90。series_type 是 \"high\"，因為使用者指明要專注於高價。最後，outputsize 是 \"30\"，因為這是預設值，且使用者未指定不同的資料點數量。\n\n將這些結合起來，我會結構化回應，包含兩個函式及其各自的參數。JSON 應按請求的順序列出函式，但我意識到使用者可能更喜歡合併的回應。然而，由於函式需要為每個操作分開列出，我會在 JSON 陣列中列出這兩個函式。",
+      "answer": [
+        {
+          "name": "search",
+          "arguments": {
+            "query": "Intel",
+            "lang": "en"
+          }
+        },
+        {
+          "name": "rocr",
+          "arguments": {
+            "interval": "1day",
+            "symbol": "INTC",
+            "time_period": 90,
+            "series_type": "high",
+            "outputsize": 30
+          }
+        }
+      ],
+      "tools": [
+        {
+          "name": "search",
+          "description": "Performs a search for financial stocks based on the given query parameters.",
+          "parameters": {
+            "query": {
+              "description": "The search query string. Defaults to 'apple'.",
+              "type": "str, optional",
+              "default": "apple"
+            },
+            "lang": {
+              "description": "The language code for the search results. Defaults to 'en'.",
+              "type": "str, optional",
+              "default": "en"
+            }
+          }
+        },
+        {
+          "name": "rocr",
+          "description": "Calculates the Rate of Change Ratio (ROCR) for a given financial instrument over a specified time period.",
+          "parameters": {
+            "interval": {
+              "description": "Interval between two consecutive points in the time series. Supported values include: `1min`, `5min`, `15min`, `30min`, `45min`, `1h`, `2h`, `4h`, `1day`, `1week`, `1month`.",
+              "type": "str",
+              "default": "1min"
+            },
+            "symbol": {
+              "description": "Instrument symbol, which can be any equity, index, ETF, forex, or cryptocurrency (e.g., `AAPL`, `EUR/USD`, `ETH/BTC`).",
+              "type": "str",
+              "default": "AAPL"
+            },
+            "format": {
+              "description": "The format of the output, which can either be `csv` or `json`. Default is `json`.",
+              "type": "str, optional",
+              "default": "json"
+            },
+            "time_period": {
+              "description": "Number of periods to go back for calculating the ROCR. Default is 9.",
+              "type": "int, optional",
+              "default": 9
+            },
+            "series_type": {
+              "description": "The type of price series to use in the calculation. Supported values include: `open`, `high`, `low`, `close`. Default is `close`.",
+              "type": "str, optional",
+              "default": "close"
+            },
+            "outputsize": {
+              "description": "Number of data points to retrieve. Default is 30.",
+              "type": "int, optional",
+              "default": 30
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
