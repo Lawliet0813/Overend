@@ -1,7 +1,7 @@
 # OVEREND 開發日記
 
 > **整合自 DOCS 資料夾所有開發文件**  
-> **最後更新：** 2026-01-05 (23:48)  
+> **最後更新：** 2026-01-11 (15:00)  
 > **專案進度：** 約 99%
 
 ---
@@ -471,9 +471,58 @@ if let htmlData = htmlData,
 
 ## 編譯狀態
 
-✅ **BUILD SUCCEEDED** (2026-01-05 23:48)
+✅ **BUILD SUCCEEDED** (2026-01-11 15:00)
 
 ---
+
+### 2026-01-11：Emerald UI 重新設計與程式碼清理
+
+**重點工作：**
+
+1. **Emerald UI 系統完成**
+   - 新增 8 個 Emerald 視圖元件：
+     - `EmeraldLibraryView.swift` (711 行) - 文獻庫視圖
+     - `EmeraldDashboardView.swift` (612 行) - 儀表板視圖
+     - `EmeraldAIAssistantView.swift` (525 行) - AI 助手視圖
+     - `EmeraldHomeView.swift` (421 行) - 首頁視圖
+     - `EmeraldSettingsView.swift` (594 行) - 設定視圖
+     - `EmeraldReaderView.swift` (656 行) - 閱讀器視圖
+     - `EmeraldTheme.swift` (334 行) - 主題定義
+     - `EmeraldComponents.swift` (383 行) - 共用元件
+
+2. **Legacy UI 清理**
+   - 刪除 6 個重複/未使用的檔案：
+     - `AcademicLibraryView.swift` (778 行)
+     - `LearningDashboardView.swift` (281 行)
+     - `AIAssistantView.swift` (273 行)
+     - `BatchActionBar.swift` (144 行)
+     - `BatchTagInputView.swift` (179 行)
+     - `LaTeXRenderer.swift` (150 行)
+
+3. **程式碼瘦身統計**
+
+   | 指標 | 初始 | 最終 | 變化 |
+   |------|------|------|------|
+   | Swift 檔案 | 188 | 182 | -6 |
+   | 程式碼行數 | 55,653 | 53,844 | -1,809 |
+
+4. **Bug 修復**
+   - `ModernEntryListView.swift`: 修復 `CitationService.generateCitation` 方法調用錯誤
+   - `AdvancedSearchFilter.swift`: 修復 `entry.tagArray` 不存在的編譯錯誤
+   - `SimpleContentView.swift`: 批次刪除崩潰修復（Core Data 物件生命週期）
+
+**Git 合併：**
+
+```bash
+feature/emerald-ui-redesign → main (Fast-forward)
+64 files changed, +11,369 / -1,986
+```
+
+**專案狀態：**
+
+- Emerald UI 系統完成並整合到主分支。
+- 移除舊的標準視圖，統一使用 Emerald 設計語言。
+- 編譯通過 (Build Succeeded)。
 
 ## 相關文件索引
 
