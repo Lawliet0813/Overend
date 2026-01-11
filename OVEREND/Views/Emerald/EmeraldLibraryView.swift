@@ -262,7 +262,10 @@ struct LibraryMainContent: View {
         guard let library = selectedLibrary,
               let entrySet = library.entries as? Set<Entry> else { return [] }
         
-        var result = Array(entrySet)
+        // 安全過濾：排除已刪除或無效的物件
+        var result = entrySet.filter { entry in
+            !entry.isDeleted && entry.managedObjectContext != nil
+        }
         
         if !searchText.isEmpty {
             result = result.filter { entry in
@@ -271,7 +274,7 @@ struct LibraryMainContent: View {
             }
         }
         
-        return result.sorted { $0.title < $1.title }
+        return Array(result).sorted { $0.title < $1.title }
     }
     
     var body: some View {

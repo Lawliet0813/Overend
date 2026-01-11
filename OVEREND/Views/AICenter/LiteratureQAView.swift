@@ -39,9 +39,10 @@ struct LiteratureQAView: View {
     @EnvironmentObject var theme: AppTheme
     @Environment(\.managedObjectContext) private var viewContext
     
-    // 獲取所有文獻
+    // 獲取所有文獻（排除已刪除）
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Entry.createdAt, ascending: false)],
+        predicate: NSPredicate(format: "isDeleted == NO"),
         animation: .default
     )
     private var entries: FetchedResults<Entry>
