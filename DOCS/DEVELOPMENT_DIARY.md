@@ -1,7 +1,7 @@
 # OVEREND 開發日記
 
 > **整合自 DOCS 資料夾所有開發文件**  
-> **最後更新：** 2026-01-11 (15:00)  
+> **最後更新：** 2026-01-14 (07:50)  
 > **專案進度：** 約 99%
 
 ---
@@ -835,3 +835,69 @@ feature/emerald-ui-redesign → main (Fast-forward)
 - AI 夥伴核心系統完成。
 - 待整合至主視圖與事件觸發。
 - 編譯通過 (Build Succeeded)。
+
+### 2026-01-14：學術寫作功能整合（研究報告實作）
+
+**重點工作：**
+
+根據「繁體中文優先之學術寫作與書目管理系統架構深度研究報告」，整合多項學術寫作功能：
+
+1. **Zotero 橋接 UI 整合**
+   - 新增 `ZoteroBridgeView.swift` (~660 行)，提供完整的 Zotero 連接管理介面
+   - 連線狀態指示器、即時搜尋、批次匯入功能
+   - Better BibTeX 插件安裝指南
+
+2. **PDF 版面分析視覺化**
+   - 新增 `PDFLayoutAnalysisView.swift` (~575 行)
+   - XY-Cut 演算法視覺化，顯示區塊邊界與閱讀順序
+   - 依閱讀順序提取多欄文字
+
+3. **RIS 匯入介面強化**
+   - 新增 `RISImportView.swift` (~530 行)
+   - 自動編碼偵測（UTF-8、Big5）並顯示信心度
+   - 解析預覽與批次匯入功能
+   - 更新 `ImportOptionsSheet.swift` 新增 RIS 匯入選項
+
+4. **App Intents 整合**
+   - 新增 `AcademicPhrasebankIntents.swift` (~235 行)
+   - 4 個學術語料庫快捷指令：搜尋句型、複製句型、取得建議、瀏覽分類
+   - 整合至 `OVERENDShortcuts` provider
+
+5. **AI 中心功能擴展**
+   - 更新 `AICenterView.swift`，新增 Zotero 連接與 PDF 智慧分析功能卡片
+
+6. **編譯錯誤修復**
+   - 修復 `ZoteroBridge.swift` 泛型類型推斷問題
+   - 修復 `ImportSource` 重複定義
+   - 新增缺少的 Combine imports
+   - 修復 Preview 中的 AppTheme 引用
+
+**新增檔案（6 個）：**
+
+| 檔案 | 說明 |
+|------|------|
+| `Views/AICenter/ZoteroBridgeView.swift` | Zotero 連接 UI 🆕 |
+| `Views/AICenter/RISImportView.swift` | RIS 匯入 UI 🆕 |
+| `Views/Components/PDFLayoutAnalysisView.swift` | PDF 版面分析 🆕 |
+| `App/Intents/AcademicPhrasebankIntents.swift` | 學術句型快捷指令 🆕 |
+| `Services/AcademicPhrasebank.swift` | 學術語料庫服務 🆕 |
+| `Services/TerminologyFirewall.swift` | 術語防火牆 🆕 |
+
+**新增 Siri 語音指令：**
+
+| 指令 | 功能 |
+|------|------|
+| "用 OVEREND 搜尋學術句型" | 搜尋語料庫 |
+| "用 OVEREND 複製學術句型" | 複製句型到剪貼簿 |
+| "用 OVEREND 取得句型建議" | 智慧推薦 |
+| "用 OVEREND 瀏覽句型分類" | 分類瀏覽 |
+
+**程式碼統計：**
+
+- 新增約 2,200 行程式碼
+- 修改 10+ 個檔案
+
+**專案狀態：**
+
+- 編譯通過 (Build Succeeded)
+- Git 提交：29 檔案變更，+8,535 / -155 行
