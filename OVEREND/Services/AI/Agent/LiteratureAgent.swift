@@ -15,6 +15,7 @@ import Foundation
 import SwiftUI
 import Combine
 import CoreData
+import PDFKit
 import FoundationModels
 
 // MARK: - Agent 任務類型
@@ -28,6 +29,7 @@ public enum AgentTask: Identifiable, Equatable {
     case generateSummaries([Entry])
     case findDuplicates(Library)
     case batchProcess([Entry])
+    case extractPDFMetadata(URL)  // 新增：PDF 元數據提取
     
     public var id: String {
         switch self {
@@ -45,6 +47,8 @@ public enum AgentTask: Identifiable, Equatable {
             return "duplicates-\(library.id)"
         case .batchProcess(let entries):
             return "batch-\(entries.count)"
+        case .extractPDFMetadata(let url):
+            return "pdf-\(url.lastPathComponent)"
         }
     }
     
@@ -64,6 +68,8 @@ public enum AgentTask: Identifiable, Equatable {
             return "尋找重複"
         case .batchProcess:
             return "批次處理"
+        case .extractPDFMetadata:
+            return "PDF 提取"
         }
     }
     
@@ -83,6 +89,8 @@ public enum AgentTask: Identifiable, Equatable {
             return "doc.on.doc"
         case .batchProcess:
             return "square.stack.3d.up"
+        case .extractPDFMetadata:
+            return "doc.viewfinder"
         }
     }
     
@@ -227,6 +235,14 @@ public class LiteratureAgent: ObservableObject {
         UnifiedAIService.shared
     }
     
+    /// Adapter 管理器 - 取得 Custom Adapter Session
+    private var adapterManager: AdapterManager {
+        AdapterManager.shared
+    }
+    
+    /// 是否使用 Custom Adapter（如果已載入）
+    @Published public var useCustomAdapter: Bool = true
+    
     private let taskQueue = AgentTaskQueue()
     private var cancellables = Set<AnyCancellable>()
     
@@ -234,6 +250,21 @@ public class LiteratureAgent: ObservableObject {
     
     private init() {
         AppLogger.success("🤖 LiteratureAgent: 初始化完成")
+        
+        // 檢查是否有可用的 Adapter
+        if adapterManager.hasAdapter(.literature) {
+            AppLogger.success("🔌 文獻專用 Adapter 已載入")
+        }
+    }
+    
+    // MARK: - Adapter Session
+    
+    /// 取得 Session（優先使用 Custom Adapter）
+    private func getSession() -> LanguageModelSession {
+        if useCustomAdapter && adapterManager.hasAdapter(.literature) {
+            return adapterManager.createLiteratureSession()
+        }
+        return aiService.acquireSession()
     }
     
     // MARK: - 任務執行
@@ -276,6 +307,10 @@ public class LiteratureAgent: ObservableObject {
                 
             case .batchProcess(let entries):
                 result = try await batchProcessTask(entries)
+                
+            case .extractPDFMetadata(let url):
+                state = .analyzing
+                result = try await extractPDFMetadataTask(url)
             }
             
             let duration = Date().timeIntervalSince(startTime)
@@ -571,6 +606,159 @@ public class LiteratureAgent: ObservableObject {
             message: "批次處理完成，產生 \(allSuggestions.count) 個建議",
             suggestions: allSuggestions
         )
+    }
+    
+    // MARK: - PDF 元數據提取
+    
+    /// PDF 提取結果（供外部使用）
+    public struct PDFExtractionResult {
+        public let title: String
+        public let authors: [String]
+        public let year: String?
+        public let journal: String?
+        public let doi: String?
+        public let abstract: String?
+        public let entryType: String
+        public let confidence: Double
+        
+        /// 轉換為 Entry 欄位字典
+        public var fields: [String: String] {
+            var result: [String: String] = ["title": title]
+            if !authors.isEmpty {
+                result["author"] = authors.joined(separator: " and ")
+            }
+            if let year = year { result["year"] = year }
+            if let journal = journal { result["journal"] = journal }
+            if let doi = doi { result["doi"] = doi }
+            if let abstract = abstract { result["abstract"] = abstract }
+            return result
+        }
+    }
+    
+    /// 最近的 PDF 提取結果
+    @Published public var lastExtractionResult: PDFExtractionResult?
+    
+    /// Agent 驅動的 PDF 元數據提取
+    private func extractPDFMetadataTask(_ url: URL) async throws -> AgentResult {
+        progressMessage = "正在分析 PDF: \(url.lastPathComponent)"
+        
+        // 1. 開啟 PDF 並提取文字
+        progress = 0.1
+        guard let document = PDFKit.PDFDocument(url: url) else {
+            throw AgentError.taskFailed("無法開啟 PDF 文件")
+        }
+        
+        // 提取前 3 頁文字
+        var fullText = ""
+        let maxPages = min(3, document.pageCount)
+        for i in 0..<maxPages {
+            if let page = document.page(at: i), let text = page.string {
+                fullText += text + "\n"
+            }
+        }
+        
+        guard !fullText.isEmpty else {
+            throw AgentError.taskFailed("無法從 PDF 提取文字")
+        }
+        
+        progress = 0.3
+        progressMessage = "使用 AI 分析元數據..."
+        
+        // 2. 使用 AI 分析元數據
+        let session = getSession()
+        
+        let prompt = """
+        請分析以下學術文獻文字，提取書目元數據。請以 JSON 格式回傳，包含以下欄位：
+        - title: 標題
+        - authors: 作者陣列
+        - year: 出版年份
+        - journal: 期刊名稱（如果是期刊論文）
+        - doi: DOI（如果有）
+        - entryType: 類型（article, book, thesis, conference, misc 等）
+        - abstract: 摘要（如果有，限 300 字內）
+        
+        文獻內容（前 3 頁）：
+        \(String(fullText.prefix(4000)))
+        
+        請只回傳 JSON，不要其他說明文字。
+        """
+        
+        progress = 0.5
+        
+        do {
+            let response = try await session.respond(to: prompt)
+            let jsonString = response.content
+            
+            progress = 0.8
+            progressMessage = "解析 AI 回應..."
+            
+            // 3. 解析 AI 回應
+            if let data = jsonString.data(using: .utf8),
+               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                
+                let title = json["title"] as? String ?? url.deletingPathExtension().lastPathComponent
+                let authors = json["authors"] as? [String] ?? []
+                let year = json["year"] as? String
+                let journal = json["journal"] as? String
+                let doi = json["doi"] as? String
+                let abstract = json["abstract"] as? String
+                let entryType = json["entryType"] as? String ?? "misc"
+                
+                let result = PDFExtractionResult(
+                    title: title,
+                    authors: authors,
+                    year: year,
+                    journal: journal,
+                    doi: doi,
+                    abstract: abstract,
+                    entryType: entryType,
+                    confidence: 0.85
+                )
+                
+                lastExtractionResult = result
+                progress = 1.0
+                
+                return AgentResult(
+                    task: .extractPDFMetadata(url),
+                    success: true,
+                    message: "成功提取元數據: \(title)",
+                    suggestions: []
+                )
+            } else {
+                // JSON 解析失敗，使用文件名降級
+                let result = PDFExtractionResult(
+                    title: url.deletingPathExtension().lastPathComponent,
+                    authors: [],
+                    year: nil,
+                    journal: nil,
+                    doi: nil,
+                    abstract: nil,
+                    entryType: "misc",
+                    confidence: 0.3
+                )
+                
+                lastExtractionResult = result
+                
+                return AgentResult(
+                    task: .extractPDFMetadata(url),
+                    success: true,
+                    message: "AI 無法解析，使用文件名",
+                    suggestions: []
+                )
+            }
+            
+        } catch {
+            throw AgentError.taskFailed("AI 分析失敗: \(error.localizedDescription)")
+        }
+    }
+    
+    /// 便捷方法：使用 Agent 提取 PDF 元數據
+    public func extractPDFMetadata(from url: URL) async throws -> PDFExtractionResult {
+        let _ = try await execute(task: .extractPDFMetadata(url))
+        guard let result = lastExtractionResult else {
+            throw AgentError.taskFailed("無法取得提取結果")
+        }
+        return result
     }
     
     // MARK: - 便捷方法

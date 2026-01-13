@@ -24,14 +24,16 @@ struct DocumentEditorView: View {
     @State private var isPandocAvailable = PandocService.isAvailable
     @State private var textViewRef: NSTextView?
     @State private var showCitationSidebar = true
-    @State private var showAIPanel = false
     @State private var isAIProcessing = false
+    
+    // AI 寫作助手（預設關閉）
+    @State private var showWritingAssistant = false
+    @State private var cursorPosition: Int = 0
     @State private var canUndo = false
     @State private var canRedo = false
     @State private var currentFont: String = "Helvetica"
     
-    // 引用插入面板
-    @State private var showCitationInsertionPanel = false
+    // 封面輸入
     @State private var showCoverInputSheet = false
     
     // 文獻庫
@@ -76,8 +78,6 @@ struct DocumentEditorView: View {
                 onChineseOptimization: { type in applyChineseOptimization(type) },
                 onApplyNCCUFormat: { applyNCCUFormat() },
                 onInsertCover: { showCoverInputSheet = true },
-                onAI: { showAIPanel = true },
-                onInsertCitationShortcut: { showCitationInsertionPanel = true },
                 canUndo: $canUndo,
                 canRedo: $canRedo,
                 currentFont: $currentFont,
@@ -85,16 +85,39 @@ struct DocumentEditorView: View {
             )
             .environmentObject(theme)
             
-            // 主編輯區域 + 引用側邊欄
+            // 主編輯區域 + 引用側邊欄 + AI 助手
             HSplitView {
                 // 編輯區域
-                RichTextEditorView(
-                    attributedText: $attributedText,
-                    textViewRef: $textViewRef,
-                    onTextChange: saveDocument
-                )
-                .environmentObject(theme)
+                ZStack(alignment: .bottomTrailing) {
+                    RichTextEditorView(
+                        attributedText: $attributedText,
+                        textViewRef: $textViewRef,
+                        onTextChange: {
+                            saveDocument()
+                            updateCursorPosition()
+                        }
+                    )
+                    .environmentObject(theme)
+                    
+                    // AI 助手浮動按鈕（預設關閉）
+                    if #available(macOS 26.0, *) {
+                        aiToggleButton
+                    }
+                }
                 .frame(minWidth: 400)
+                
+                // AI 寫作助手側邊欄（使用者手動開啟）
+                if #available(macOS 26.0, *) {
+                    if showWritingAssistant {
+                        WritingAssistantView(
+                            documentText: attributedText.string,
+                            cursorPosition: $cursorPosition,
+                            isPresented: $showWritingAssistant,
+                            selectedLibrary: selectedLibrary
+                        )
+                        .environmentObject(theme)
+                    }
+                }
                 
                 // 引用側邊欄
                 if showCitationSidebar {
@@ -123,15 +146,6 @@ struct DocumentEditorView: View {
             ImportDocumentSheet(onImport: handleImport)
                 .environmentObject(theme)
         }
-        .sheet(isPresented: $showAIPanel) {
-            AIFormattingPanel(
-                text: attributedText.string,
-                onApplyRewrite: { newText in applyAIRewrite(newText) },
-                onClose: { showAIPanel = false }
-            )
-            .environmentObject(theme)
-            .frame(minWidth: 500, minHeight: 400)
-        }
         .sheet(isPresented: $showCoverInputSheet) {
             NCCUCoverInputSheet(isPresented: $showCoverInputSheet, onInsert: handleInsertCover)
                 .environmentObject(theme)
@@ -159,21 +173,9 @@ struct DocumentEditorView: View {
                 }
             }
         }
-        .sheet(isPresented: $showCitationInsertionPanel) {
-            CitationInsertionPanel(
-                isPresented: $showCitationInsertionPanel,
-                onInsertCitation: { citationText, entries in
-                    insertMultipleCitations(citationText, entries: entries)
-                }
-            )
-            .environmentObject(theme)
-        }
         .onAppear {
-            // 預設選擇第一個文獻庫
-            if selectedLibrary == nil {
-                selectedLibrary = libraries.first
-            }
-
+            // 不預設選擇文獻庫，由使用者手動選擇
+            
             // 啟動定時器更新 undo/redo 狀態
             Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
                 updateUndoRedoState()
@@ -188,6 +190,43 @@ struct DocumentEditorView: View {
         let words = text.components(separatedBy: .whitespacesAndNewlines)
             .filter { !$0.isEmpty }
         return words.count
+    }
+    
+    // MARK: - AI 助手開關按鈕
+    
+    @available(macOS 26.0, *)
+    private var aiToggleButton: some View {
+        Button {
+            withAnimation(.spring(response: 0.3)) {
+                showWritingAssistant.toggle()
+            }
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: showWritingAssistant ? "sparkles" : "sparkles")
+                    .font(.body)
+                if !showWritingAssistant {
+                    Text("AI 助手")
+                        .font(.caption)
+                }
+            }
+            .foregroundStyle(showWritingAssistant ? .white : theme.textPrimary)
+            .padding(.horizontal, showWritingAssistant ? 10 : 12)
+            .padding(.vertical, 8)
+            .background(
+                showWritingAssistant ? theme.accent : theme.elevated,
+                in: Capsule()
+            )
+            .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
+        }
+        .buttonStyle(.plain)
+        .padding()
+        .help(showWritingAssistant ? "關閉 AI 助手" : "開啟 AI 助手（預設關閉）")
+    }
+    
+    /// 更新游標位置
+    private func updateCursorPosition() {
+        guard let textView = textViewRef else { return }
+        cursorPosition = textView.selectedRange().location
     }
     
     // MARK: - Formatting Types
@@ -886,7 +925,6 @@ struct EditorToolbar: View {
     var onChineseOptimization: ((DocumentEditorView.ChineseOptimizationType) -> Void)?
     var onApplyNCCUFormat: (() -> Void)?
     var onInsertCover: (() -> Void)?
-    var onAI: (() -> Void)?
     var onInsertCitationShortcut: (() -> Void)?
 
     // Undo/Redo 狀態
@@ -940,15 +978,6 @@ struct EditorToolbar: View {
                         .foregroundColor(theme.textPrimary)
                     
                     Spacer()
-                    
-                    // AI 調整 - 增大
-                    Button(action: { onAI?() }) {
-                        Label("AI 調整", systemImage: "sparkles")
-                            .font(theme.fontButton)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.purple)
-                    .controlSize(.large)
                     
                     // 引用側邊欄切換 - 增大
                     Button(action: { showCitationSidebar.toggle() }) {
@@ -1267,7 +1296,7 @@ struct EditorToolbar: View {
                 Button("1.5 倍") { onLineSpacing?(1.5) }
                 Button("雙倍 (2.0)") { onLineSpacing?(2.0) }
             } label: {
-                Label("行距", systemImage: "text.line.spacing")
+                Label("行距", systemImage: "line.3.horizontal")
                     .font(.system(size: 14, weight: .medium))
                     .frame(height: 28)
             }
@@ -1717,51 +1746,69 @@ struct CitationSidebarView: View {
             
             Divider()
             
-            // 文獻庫選擇
-            if libraries.count > 1 {
-                Picker("文獻庫", selection: $selectedLibrary) {
-                    ForEach(libraries, id: \.id) { library in
-                        Text(library.name).tag(library as Library?)
-                    }
-                }
-                .pickerStyle(.menu)
-                .padding(.horizontal)
-                .padding(.vertical, 8)
-                
-                Divider()
-            }
-            
-            // 搜尋
-            HStack {
-                Image(systemName: "magnifyingglass")
-                    .foregroundColor(theme.textTertiary)
-                TextField("搜尋文獻...", text: $searchText)
-                    .textFieldStyle(.plain)
-                
-                if !searchText.isEmpty {
-                    Button(action: { searchText = "" }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(theme.textTertiary)
-                    }
-                    .buttonStyle(.plain)
+            // 文獻庫選擇（必須選擇）
+            Picker("選擇文獻庫", selection: $selectedLibrary) {
+                Text("選擇文獻庫...").tag(nil as Library?)
+                ForEach(libraries, id: \.id) { library in
+                    Text(library.name).tag(library as Library?)
                 }
             }
-            .padding(10)
-            .background(theme.elevated.opacity(0.5))
-            .cornerRadius(8)
-            .padding()
+            .pickerStyle(.menu)
+            .padding(.horizontal)
+            .padding(.vertical, 8)
             
-            // 文獻列表
-            if filteredEntries.isEmpty {
-                VStack(spacing: 12) {
+            Divider()
+            
+            // 搜尋（只有選擇文獻庫後才顯示）
+            if selectedLibrary != nil {
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(theme.textTertiary)
+                    TextField("搜尋文獻...", text: $searchText)
+                        .textFieldStyle(.plain)
+                    
+                    if !searchText.isEmpty {
+                        Button(action: { searchText = "" }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(theme.textTertiary)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(10)
+                .background(theme.elevated.opacity(0.5))
+                .cornerRadius(8)
+                .padding()
+            }
+            
+            // 文獻列表或空狀態
+            if selectedLibrary == nil {
+                // 空狀態：未選擇文獻庫
+                VStack(spacing: 16) {
                     Image(systemName: "books.vertical")
+                        .font(.system(size: 48))
+                        .foregroundColor(theme.textTertiary)
+                    Text("請選擇文獻庫")
+                        .font(.headline)
+                        .foregroundColor(theme.textPrimary)
+                    Text("從上方選單選擇要使用的文獻庫")
+                        .font(.caption)
+                        .foregroundColor(theme.textSecondary)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxHeight: .infinity)
+            } else if filteredEntries.isEmpty {
+                // 空狀態：無文獻
+                VStack(spacing: 12) {
+                    Image(systemName: "doc.text.magnifyingglass")
                         .font(.system(size: 32))
                         .foregroundColor(theme.textTertiary)
-                    Text(selectedLibrary == nil ? "請選擇文獻庫" : "無符合的文獻")
+                    Text("無符合的文獻")
                         .foregroundColor(theme.textSecondary)
                 }
                 .frame(maxHeight: .infinity)
             } else {
+                // 文獻列表
                 ScrollView {
                     LazyVStack(spacing: 8) {
                         ForEach(filteredEntries, id: \.id) { entry in
@@ -1785,15 +1832,26 @@ struct CitationEntryRow: View {
     let onInsert: (Entry) -> Void
     
     @State private var isHovered = false
+    @State private var selectedFormat: CitationFormat = .apa
+    
+    enum CitationFormat: String, CaseIterable, Identifiable {
+        case apa = "APA 7th"
+        case mla = "MLA 9th"
+        case chicago = "Chicago"
+        
+        var id: String { rawValue }
+    }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 8) {
+            // 標題
             Text(entry.title)
                 .font(.subheadline)
                 .fontWeight(.medium)
                 .foregroundColor(theme.textPrimary)
                 .lineLimit(2)
             
+            // 作者和年份
             HStack {
                 Text(entry.author)
                     .font(.caption)
@@ -1807,13 +1865,28 @@ struct CitationEntryRow: View {
                 }
                 
                 Spacer()
+            }
+            
+            // 格式選擇 + 插入按鈕
+            HStack(spacing: 8) {
+                Picker("格式", selection: $selectedFormat) {
+                    ForEach(CitationFormat.allCases) { format in
+                        Text(format.rawValue).tag(format)
+                    }
+                }
+                .pickerStyle(.menu)
+                .frame(width: 100)
                 
-                Button(action: { onInsert(entry) }) {
+                Button(action: { 
+                    // TODO: 根據 selectedFormat 生成對應格式的引用
+                    onInsert(entry) 
+                }) {
                     Label("插入", systemImage: "plus.circle")
                         .font(.caption)
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(.borderedProminent)
                 .controlSize(.small)
+                .tint(theme.accent)
             }
         }
         .padding(12)

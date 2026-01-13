@@ -15,6 +15,7 @@ struct ImportOptionsSheet: View {
     
     let onImportBibTeX: () -> Void
     let onImportPDF: () -> Void
+    var onImportRIS: (() -> Void)? = nil
     
     var body: some View {
         VStack(spacing: 24) {
@@ -31,6 +32,18 @@ struct ImportOptionsSheet: View {
                     dismiss()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         onImportBibTeX()
+                    }
+                }
+                
+                // RIS 匯入
+                ImportOptionCard(
+                    icon: "doc.badge.arrow.up",
+                    title: "RIS",
+                    description: "匯入 .ris 書目檔案\n支援 Big5 編碼"
+                ) {
+                    dismiss()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        onImportRIS?()
                     }
                 }
                 

@@ -210,7 +210,14 @@ class AcademicLanguageService: ObservableObject {
         
         do {
             let response = try await session.respond(to: prompt)
-            return response.content.trimmingCharacters(in: .whitespacesAndNewlines)
+            var result = response.content.trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            // 如果目標語言是中文，套用術語防火牆校正
+            if to == .chinese {
+                result = TerminologyFirewall.shared.quickCorrect(result, field: nil)
+            }
+            
+            return result
         } catch {
             throw AcademicLanguageError.translationFailed(error.localizedDescription)
         }
@@ -304,7 +311,14 @@ class AcademicLanguageService: ObservableObject {
         
         do {
             let response = try await session.respond(to: prompt)
-            return response.content.trimmingCharacters(in: .whitespacesAndNewlines)
+            var result = response.content.trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            // 如果目標語言是中文，套用術語防火牆校正（帶學科領域上下文）
+            if to == .chinese {
+                result = TerminologyFirewall.shared.quickCorrect(result, field: options.fieldContext)
+            }
+            
+            return result
         } catch {
             throw AcademicLanguageError.translationFailed(error.localizedDescription)
         }
