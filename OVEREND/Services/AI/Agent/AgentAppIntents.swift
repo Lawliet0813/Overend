@@ -216,6 +216,7 @@ struct GenerateSummariesIntent: AppIntent {
 struct OVERENDShortcuts: AppShortcutsProvider {
     
     static var appShortcuts: [AppShortcut] {
+        // MARK: - 文獻管理快捷指令
         AppShortcut(
             intent: OrganizeLibraryIntent(),
             phrases: [
@@ -269,6 +270,49 @@ struct OVERENDShortcuts: AppShortcutsProvider {
             ],
             shortTitle: "生成摘要",
             systemImageName: "doc.plaintext"
+        )
+        
+        // MARK: - 學術語料庫快捷指令
+        AppShortcut(
+            intent: SearchAcademicPhrasesIntent(),
+            phrases: [
+                "用 \(.applicationName) 搜尋學術句型",
+                "在 \(.applicationName) 搜尋句型",
+                "用 \(.applicationName) 查找學術寫作句型"
+            ],
+            shortTitle: "搜尋句型",
+            systemImageName: "text.magnifyingglass"
+        )
+        
+        AppShortcut(
+            intent: CopyAcademicPhraseIntent(),
+            phrases: [
+                "用 \(.applicationName) 複製學術句型",
+                "用 \(.applicationName) 複製句型"
+            ],
+            shortTitle: "複製句型",
+            systemImageName: "doc.on.clipboard"
+        )
+        
+        AppShortcut(
+            intent: GetPhraseSuggestionsIntent(),
+            phrases: [
+                "用 \(.applicationName) 取得句型建議",
+                "讓 \(.applicationName) 幫我選句型",
+                "用 \(.applicationName) 推薦學術句型"
+            ],
+            shortTitle: "句型建議",
+            systemImageName: "wand.and.stars"
+        )
+        
+        AppShortcut(
+            intent: BrowsePhraseCategoryIntent(),
+            phrases: [
+                "用 \(.applicationName) 瀏覽句型分類",
+                "看看 \(.applicationName) 有什麼句型"
+            ],
+            shortTitle: "瀏覽分類",
+            systemImageName: "list.bullet"
         )
     }
 }

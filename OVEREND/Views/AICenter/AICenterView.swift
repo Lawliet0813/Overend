@@ -12,9 +12,13 @@ import CoreData
 struct AICenterView: View {
     @EnvironmentObject var theme: AppTheme
     @EnvironmentObject var viewState: MainViewState
+    @Environment(\.managedObjectContext) private var viewContext
     
     // 功能狀態
     @State private var selectedFeature: AIFeature?
+    
+    // 目標文獻庫（用於 Zotero 匯入）
+    var targetLibrary: Library?
     
     var body: some View {
         ZStack {
@@ -108,20 +112,9 @@ struct AICenterView: View {
         }
     }
     
-    /// 功能詳情視圖
     @ViewBuilder
     private func featureDetailView(for feature: AIFeature) -> some View {
         switch feature {
-        case .recommendations:
-            if #available(macOS 26.0, *) {
-                CitationRecommendationView()
-                    .environmentObject(theme)
-                    .environmentObject(viewState)
-            } else {
-                Text("此功能需要 macOS 26.0 或更新版本")
-                    .foregroundColor(theme.textMuted)
-            }
-            
         case .academicTranslation:
             if #available(macOS 26.0, *) {
                 AcademicTranslationView()
@@ -140,27 +133,37 @@ struct AICenterView: View {
                     .foregroundColor(theme.textMuted)
             }
             
-        case .citationCheck:
+        case .phrasebank:
             if #available(macOS 26.0, *) {
-                CitationCheckView()
+                AcademicPhrasebankView()
                     .environmentObject(theme)
             } else {
                 Text("此功能需要 macOS 26.0 或更新版本")
                     .foregroundColor(theme.textMuted)
             }
             
-        case .structureAnalysis:
+        case .terminologyCheck:
             if #available(macOS 26.0, *) {
-                StructureAnalysisView()
+                TerminologyCheckView()
                     .environmentObject(theme)
             } else {
                 Text("此功能需要 macOS 26.0 或更新版本")
                     .foregroundColor(theme.textMuted)
             }
             
-        case .literatureQA:
+        case .zoteroConnect:
             if #available(macOS 26.0, *) {
-                LiteratureQAView()
+                ZoteroBridgeView(targetLibrary: targetLibrary)
+                    .environmentObject(theme)
+                    .environment(\.managedObjectContext, viewContext)
+            } else {
+                Text("此功能需要 macOS 26.0 或更新版本")
+                    .foregroundColor(theme.textMuted)
+            }
+            
+        case .pdfAnalysis:
+            if #available(macOS 26.0, *) {
+                PDFLayoutAnalysisView()
                     .environmentObject(theme)
             } else {
                 Text("此功能需要 macOS 26.0 或更新版本")
@@ -174,12 +177,12 @@ struct AICenterView: View {
 
 /// AI 功能類型
 enum AIFeature: String, CaseIterable, Identifiable {
-    case recommendations = "智慧推薦"
     case academicTranslation = "學術翻譯"
     case standardsCheck = "規範檢查"
-    case citationCheck = "引用檢查"
-    case structureAnalysis = "結構分析"
-    case literatureQA = "文獻問答"
+    case phrasebank = "學術語料庫"
+    case terminologyCheck = "術語檢查"
+    case zoteroConnect = "Zotero 連接"
+    case pdfAnalysis = "PDF 智慧分析"
     
     var id: String { rawValue }
     
@@ -189,51 +192,64 @@ enum AIFeature: String, CaseIterable, Identifiable {
     
     var icon: String {
         switch self {
-        case .recommendations:
-            return "sparkles"
         case .academicTranslation:
             return "character.book.closed"
         case .standardsCheck:
             return "checkmark.seal"
-        case .citationCheck:
-            return "quote.closing"
-        case .structureAnalysis:
-            return "chart.bar.doc.horizontal"
-        case .literatureQA:
-            return "message.badge.filled.fill"
+        case .phrasebank:
+            return "text.book.closed"
+        case .terminologyCheck:
+            return "character.textbox"
+        case .zoteroConnect:
+            return "link.circle"
+        case .pdfAnalysis:
+            return "doc.viewfinder"
         }
     }
     
     var description: String {
         switch self {
-        case .recommendations:
-            return "根據您的寫作內容，智慧推薦相關文獻"
         case .academicTranslation:
             return "中英文學術表達轉換，保持學術嚴謹性"
         case .standardsCheck:
             return "檢查台灣學術規範，包含用語與格式"
-        case .citationCheck:
-            return "檢查引用品質與相關性，提供改進建議"
-        case .structureAnalysis:
-            return "分析論文結構，提供章節優化建議"
-        case .literatureQA:
-            return "與文獻對話，快速提取關鍵資訊"
+        case .phrasebank:
+            return "學術寫作句型庫，提供標準學術表達"
+        case .terminologyCheck:
+            return "繁簡術語校正，確保符合台灣用語規範"
+        case .zoteroConnect:
+            return "連接 Zotero 文獻庫，快速匯入書目"
+        case .pdfAnalysis:
+            return "智慧分析 PDF 版面，精準提取多欄文字"
         }
     }
     
     var isAvailable: Bool {
-        // 所有功能均已可用
         return true
     }
     
     var statusBadge: String {
-        // 所有功能均已可用
-        return "可用"
+        switch self {
+        case .phrasebank, .terminologyCheck:
+            return "新功能"
+        case .zoteroConnect, .pdfAnalysis:
+            return "新功能"
+        default:
+            return "可用"
+        }
     }
     
     var badgeColor: Color {
-        // 所有功能均已可用
-        return .green
+        switch self {
+        case .phrasebank, .terminologyCheck:
+            return .purple
+        case .zoteroConnect:
+            return .blue
+        case .pdfAnalysis:
+            return .orange
+        default:
+            return .green
+        }
     }
 }
 

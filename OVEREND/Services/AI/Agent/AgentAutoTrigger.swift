@@ -43,6 +43,8 @@ public enum ImportSource: String {
     case pdf = "pdf"
     case manual = "manual"
     case doi = "doi"
+    case ris = "ris"
+    case zotero = "zotero"
 }
 
 // MARK: - Agent 自動觸發器

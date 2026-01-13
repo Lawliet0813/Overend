@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreData
+import UniformTypeIdentifiers
 
 // MARK: - 主視圖
 
@@ -22,8 +23,22 @@ struct EmeraldLibraryView: View {
     
     @State private var selectedLibrary: Library?
     @State private var selectedEntry: Entry?
+    @State private var selectedEntries: Set<UUID> = []  // 多選
     @State private var searchText = ""
     @State private var showAddReference = false
+    
+    // 新增狀態
+    @State private var showNewLibrarySheet = false
+    @State private var showImportPDFPanel = false
+    @State private var showImportBibTeXPanel = false
+    @State private var showDeleteConfirm = false
+    @State private var entryToDelete: Entry?
+    @State private var showEditEntry = false
+    @State private var smartGroupFilter: SmartGroupType = .all
+    
+    enum SmartGroupType {
+        case all, recent, favorites, missingDOI
+    }
     
     var body: some View {
         HStack(spacing: 0) {
@@ -31,22 +46,37 @@ struct EmeraldLibraryView: View {
             LibrarySidebar(
                 libraries: Array(libraries),
                 selectedLibrary: $selectedLibrary,
-                searchText: $searchText
+                searchText: $searchText,
+                smartGroupFilter: $smartGroupFilter,
+                onNewLibrary: { showNewLibrarySheet = true }
             )
             .frame(width: 280)
             
             // 中間主內容
             LibraryMainContent(
                 selectedLibrary: selectedLibrary,
+                allLibraries: Array(libraries),
                 selectedEntry: $selectedEntry,
+                selectedEntries: $selectedEntries,
                 searchText: searchText,
-                onAddReference: { showAddReference = true }
+                smartGroupFilter: smartGroupFilter,
+                onAddReference: { showImportPDFPanel = true },
+                onImportBibTeX: { showImportBibTeXPanel = true }
             )
             
             // 右側 Inspector
             if let entry = selectedEntry {
-                LibraryInspector(entry: entry)
-                    .frame(width: 380)
+                LibraryInspector(
+                    entry: entry,
+                    onEdit: { showEditEntry = true },
+                    onDelete: {
+                        entryToDelete = entry
+                        showDeleteConfirm = true
+                    },
+                    onOpenPDF: { openPDF(for: entry) },
+                    onOpenDOI: { openDOI(for: entry) }
+                )
+                .frame(width: 380)
             }
         }
         .background(EmeraldTheme.backgroundDark)
@@ -55,6 +85,208 @@ struct EmeraldLibraryView: View {
                 selectedLibrary = libraries.first
             }
         }
+        // 新增文獻庫 Sheet
+        .sheet(isPresented: $showNewLibrarySheet) {
+            NewLibrarySheet(libraryVM: LibraryViewModel())
+                .environmentObject(theme)
+        }
+        // 匯入 PDF Panel
+        .fileImporter(
+            isPresented: $showImportPDFPanel,
+            allowedContentTypes: [.pdf],
+            allowsMultipleSelection: true
+        ) { result in
+            handlePDFImport(result)
+        }
+        // 匯入 BibTeX Panel
+        .fileImporter(
+            isPresented: $showImportBibTeXPanel,
+            allowedContentTypes: [.text, .init(filenameExtension: "bib")!],
+            allowsMultipleSelection: false
+        ) { result in
+            handleBibTeXImport(result)
+        }
+        // 刪除確認
+        .alert("確定刪除這篇文獻？", isPresented: $showDeleteConfirm) {
+            Button("取消", role: .cancel) {}
+            Button("刪除", role: .destructive) {
+                if let entry = entryToDelete {
+                    deleteEntry(entry)
+                }
+            }
+        } message: {
+            Text("刪除後無法復原。")
+        }
+    }
+    
+    // MARK: - 功能方法
+    
+    private func openPDF(for entry: Entry) {
+        guard let attachment = entry.attachments?.first else {
+            ToastManager.shared.showError("找不到 PDF 附件")
+            return
+        }
+        
+        // 使用 filePath 開啟 PDF
+        let fileURL = URL(fileURLWithPath: attachment.filePath)
+        if FileManager.default.fileExists(atPath: attachment.filePath) {
+            NSWorkspace.shared.open(fileURL)
+        } else {
+            ToastManager.shared.showError("PDF 文件不存在")
+        }
+    }
+    
+    private func openDOI(for entry: Entry) {
+        guard let doi = entry.fields["doi"], !doi.isEmpty else {
+            ToastManager.shared.showError("此文獻沒有 DOI")
+            return
+        }
+        
+        let cleanDOI = doi.replacingOccurrences(of: "https://doi.org/", with: "")
+        if let url = URL(string: "https://doi.org/\(cleanDOI)") {
+            NSWorkspace.shared.open(url)
+        }
+    }
+    
+    private func deleteEntry(_ entry: Entry) {
+        // 先清除選擇，避免 UI 引用已刪除的物件
+        let entryToRemove = entry
+        selectedEntry = nil
+        entryToDelete = nil
+        
+        // 延遲刪除，讓 UI 先更新
+        DispatchQueue.main.async {
+            viewContext.delete(entryToRemove)
+            do {
+                try viewContext.save()
+                ToastManager.shared.showSuccess("已刪除文獻")
+            } catch {
+                ToastManager.shared.showError("刪除失敗: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    private func handlePDFImport(_ result: Result<[URL], Error>) {
+        guard let library = selectedLibrary else {
+            ToastManager.shared.showError("請先選擇文獻庫")
+            return
+        }
+        
+        switch result {
+        case .success(let urls):
+            for url in urls {
+                guard url.startAccessingSecurityScopedResource() else { continue }
+                defer { url.stopAccessingSecurityScopedResource() }
+                
+                // 使用 SimpleContentView 的 PDF 匯入邏輯
+                Task {
+                    if #available(macOS 26.0, *) {
+                        do {
+                            let agent = LiteratureAgent.shared
+                            let metadata = try await agent.extractPDFMetadata(from: url)
+                            
+                            await MainActor.run {
+                                createEntry(from: metadata, pdfURL: url, library: library)
+                            }
+                        } catch {
+                            await MainActor.run {
+                                ToastManager.shared.showError("匯入失敗: \(error.localizedDescription)")
+                            }
+                        }
+                    } else {
+                        let (metadata, _) = await PDFMetadataExtractor.extractMetadata(from: url, useGemini: false)
+                        await MainActor.run {
+                            createEntryFromPDFMetadata(metadata, pdfURL: url, library: library)
+                        }
+                    }
+                }
+            }
+            ToastManager.shared.showInfo("正在處理 \(urls.count) 個 PDF...")
+            
+        case .failure(let error):
+            ToastManager.shared.showError("匯入失敗: \(error.localizedDescription)")
+        }
+    }
+    
+    @available(macOS 26.0, *)
+    private func createEntry(from result: LiteratureAgent.PDFExtractionResult, pdfURL: URL, library: Library) {
+        let entry = Entry(context: viewContext)
+        entry.id = UUID()
+        entry.entryType = result.entryType
+        entry.citationKey = generateCitationKey(title: result.title, author: result.authors.first, year: result.year)
+        entry.createdAt = Date()
+        entry.updatedAt = Date()
+        entry.library = library
+        entry.fields = result.fields
+        
+        // 附加 PDF（使用 PDFService）
+        try? PDFService.addPDFAttachment(from: pdfURL, to: entry, context: viewContext)
+        
+        try? viewContext.save()
+        ToastManager.shared.showSuccess("已匯入: \(result.title)")
+    }
+    
+    private func createEntryFromPDFMetadata(_ metadata: PDFMetadata, pdfURL: URL, library: Library) {
+        let entry = Entry(context: viewContext)
+        entry.id = UUID()
+        entry.entryType = metadata.entryType
+        entry.citationKey = generateCitationKey(title: metadata.title, author: metadata.authors.first, year: metadata.year)
+        entry.createdAt = Date()
+        entry.updatedAt = Date()
+        entry.library = library
+        
+        var fields: [String: String] = ["title": metadata.title]
+        if !metadata.authors.isEmpty { fields["author"] = metadata.authors.joined(separator: " and ") }
+        if let year = metadata.year { fields["year"] = year }
+        if let doi = metadata.doi { fields["doi"] = doi }
+        if let journal = metadata.journal { fields["journal"] = journal }
+        if let abstract = metadata.abstract { fields["abstract"] = abstract }
+        entry.fields = fields
+        
+        // 附加 PDF（使用 PDFService）
+        try? PDFService.addPDFAttachment(from: pdfURL, to: entry, context: viewContext)
+        
+        try? viewContext.save()
+        ToastManager.shared.showSuccess("已匯入: \(metadata.title)")
+    }
+    
+    private func handleBibTeXImport(_ result: Result<[URL], Error>) {
+        guard let library = selectedLibrary else {
+            ToastManager.shared.showError("請先選擇文獻庫")
+            return
+        }
+        
+        switch result {
+        case .success(let urls):
+            guard let url = urls.first else { return }
+            guard url.startAccessingSecurityScopedResource() else { return }
+            defer { url.stopAccessingSecurityScopedResource() }
+            
+            do {
+                let entries = try BibTeXParser.parseFile(at: url)
+                let count = try BibTeXParser.importEntries(entries, into: library, context: viewContext)
+                ToastManager.shared.showSuccess("成功匯入 \(count) 筆書目")
+            } catch {
+                ToastManager.shared.showError("匯入失敗: \(error.localizedDescription)")
+            }
+            
+        case .failure(let error):
+            ToastManager.shared.showError("匯入失敗: \(error.localizedDescription)")
+        }
+    }
+    
+    private func generateCitationKey(title: String, author: String?, year: String?) -> String {
+        var key = ""
+        if let author = author {
+            let lastName = author.components(separatedBy: " ").last ?? author
+            key = lastName.lowercased()
+        }
+        if let year = year { key += year }
+        let titleWords = title.components(separatedBy: .whitespaces).prefix(2).map { $0.lowercased() }.joined()
+        key += titleWords
+        key = key.components(separatedBy: CharacterSet.alphanumerics.inverted).joined()
+        if key.isEmpty { key = "entry\(Int(Date().timeIntervalSince1970))" }
+        return key
     }
 }
 
@@ -64,6 +296,8 @@ struct LibrarySidebar: View {
     let libraries: [Library]
     @Binding var selectedLibrary: Library?
     @Binding var searchText: String
+    @Binding var smartGroupFilter: EmeraldLibraryView.SmartGroupType
+    var onNewLibrary: () -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -93,10 +327,33 @@ struct LibrarySidebar: View {
                     .padding(.horizontal, 16)
                     .padding(.bottom, 8)
                 
-                SmartGroupButton(icon: "library_books", title: "所有文獻", count: totalEntryCount, isSelected: true)
-                SmartGroupButton(icon: "schedule", title: "最近新增", count: 15, isSelected: false)
-                SmartGroupButton(icon: "star", title: "收藏", count: 42, isSelected: false)
-                SmartGroupButton(icon: "warning", title: "缺少 DOI", count: 3, isSelected: false)
+                SmartGroupButton(
+                    icon: "library_books",
+                    title: "所有文獻",
+                    count: totalEntryCount,
+                    isSelected: smartGroupFilter == .all
+                ) { smartGroupFilter = .all }
+                
+                SmartGroupButton(
+                    icon: "schedule",
+                    title: "最近新增",
+                    count: recentCount,
+                    isSelected: smartGroupFilter == .recent
+                ) { smartGroupFilter = .recent }
+                
+                SmartGroupButton(
+                    icon: "star",
+                    title: "收藏",
+                    count: favoritesCount,
+                    isSelected: smartGroupFilter == .favorites
+                ) { smartGroupFilter = .favorites }
+                
+                SmartGroupButton(
+                    icon: "warning",
+                    title: "缺少 DOI",
+                    count: missingDOICount,
+                    isSelected: smartGroupFilter == .missingDOI
+                ) { smartGroupFilter = .missingDOI }
             }
             .padding(.top, 8)
             
@@ -111,10 +368,11 @@ struct LibrarySidebar: View {
                     
                     Spacer()
                     
-                    Button(action: {}) {
+                    Button(action: onNewLibrary) {
                         MaterialIcon(name: "add", size: 14, color: EmeraldTheme.textMuted)
                     }
                     .buttonStyle(.plain)
+                    .help("新增文獻庫")
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 24)
@@ -173,6 +431,24 @@ struct LibrarySidebar: View {
     private var totalEntryCount: Int {
         libraries.reduce(0) { $0 + ($1.entries?.count ?? 0) }
     }
+    
+    private var recentCount: Int {
+        let weekAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
+        return libraries.flatMap { ($0.entries as? Set<Entry>) ?? [] }
+            .filter { $0.createdAt >= weekAgo }
+            .count
+    }
+    
+    private var favoritesCount: Int {
+        // Entry 目前沒有 isFavorite 屬性，暫時返回 0
+        return 0
+    }
+    
+    private var missingDOICount: Int {
+        libraries.flatMap { ($0.entries as? Set<Entry>) ?? [] }
+            .filter { $0.fields["doi"]?.isEmpty ?? true }
+            .count
+    }
 }
 
 // MARK: - Smart Group 按鈕
@@ -182,11 +458,12 @@ struct SmartGroupButton: View {
     let title: String
     let count: Int
     let isSelected: Bool
+    var action: () -> Void
     
     @State private var isHovered = false
     
     var body: some View {
-        Button(action: {}) {
+        Button(action: action) {
             HStack(spacing: 12) {
                 MaterialIcon(
                     name: icon,
@@ -259,19 +536,56 @@ struct LibraryRowButton: View {
 
 struct LibraryMainContent: View {
     let selectedLibrary: Library?
+    let allLibraries: [Library]  // 新增：所有文獻庫
     @Binding var selectedEntry: Entry?
+    @Binding var selectedEntries: Set<UUID>  // 多選
     let searchText: String
+    let smartGroupFilter: EmeraldLibraryView.SmartGroupType
     let onAddReference: () -> Void
+    let onImportBibTeX: () -> Void
+    
+    private var isAllSelected: Bool {
+        !entries.isEmpty && entries.allSatisfy { selectedEntries.contains($0.id) }
+    }
     
     private var entries: [Entry] {
-        guard let library = selectedLibrary,
-              let entrySet = library.entries as? Set<Entry> else { return [] }
+        var result: Set<Entry> = []
+        
+        // 根據智慧群組決定來源
+        switch smartGroupFilter {
+        case .all:
+            // 顯示所有文獻庫的所有文獻
+            for library in allLibraries {
+                if let entrySet = library.entries as? Set<Entry> {
+                    result.formUnion(entrySet)
+                }
+            }
+        case .recent:
+            // 最近 7 天新增的
+            let weekAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
+            for library in allLibraries {
+                if let entrySet = library.entries as? Set<Entry> {
+                    result.formUnion(entrySet.filter { $0.createdAt >= weekAgo })
+                }
+            }
+        case .favorites:
+            // Entry 目前沒有 isFavorite 屬性，暫時返回空
+            break
+        case .missingDOI:
+            // 缺少 DOI 的文獻
+            for library in allLibraries {
+                if let entrySet = library.entries as? Set<Entry> {
+                    result.formUnion(entrySet.filter { $0.fields["doi"]?.isEmpty ?? true })
+                }
+            }
+        }
         
         // 安全過濾：排除已刪除或無效的物件
-        var result = entrySet.filter { entry in
+        result = result.filter { entry in
             !entry.isDeleted && entry.managedObjectContext != nil
         }
         
+        // 搜尋過濾
         if !searchText.isEmpty {
             result = result.filter { entry in
                 entry.title.localizedCaseInsensitiveContains(searchText) ||
@@ -287,14 +601,24 @@ struct LibraryMainContent: View {
             // 工具列
             HStack {
                 HStack(spacing: 8) {
-                    ToolbarButton(icon: "tune")
-                    ToolbarButton(icon: "sort")
+                    // 匯入 BibTeX 按鈕
+                    Button(action: onImportBibTeX) {
+                        MaterialIcon(name: "article", size: 22, color: EmeraldTheme.textSecondary)
+                            .frame(width: 40, height: 40)
+                            .background(Color.clear)
+                            .cornerRadius(8)
+                    }
+                    .buttonStyle(.plain)
+                    .help("匯入 BibTeX")
                     
                     Divider()
                         .frame(height: 20)
                         .background(Color.white.opacity(0.1))
                     
-                    ToolbarButton(icon: "ios_share")
+                    // 顯示數量提示
+                    Text("\(entries.count) 篇文獻")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(EmeraldTheme.textMuted)
                 }
                 
                 Spacer()
@@ -302,7 +626,7 @@ struct LibraryMainContent: View {
                 Button(action: onAddReference) {
                     HStack(spacing: 8) {
                         MaterialIcon(name: "add", size: 18, color: EmeraldTheme.backgroundDark)
-                        Text("新增文獻")
+                        Text("匯入 PDF")
                             .font(.system(size: 13, weight: .bold))
                     }
                     .padding(.horizontal, 16)
@@ -329,8 +653,18 @@ struct LibraryMainContent: View {
                 LazyVStack(spacing: 0) {
                     // 表頭
                     HStack {
-                        CheckboxView(isChecked: false)
-                            .frame(width: 40)
+                        // 全選按鈕
+                        Button {
+                            if isAllSelected {
+                                selectedEntries.removeAll()
+                            } else {
+                                selectedEntries = Set(entries.map { $0.id })
+                            }
+                        } label: {
+                            CheckboxView(isChecked: isAllSelected)
+                        }
+                        .buttonStyle(.plain)
+                        .frame(width: 40)
                         
                         Text("標題")
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -522,6 +856,10 @@ struct LibraryEntryTableRow: View {
 
 struct LibraryInspector: View {
     let entry: Entry
+    var onEdit: () -> Void
+    var onDelete: () -> Void
+    var onOpenPDF: () -> Void
+    var onOpenDOI: () -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -553,15 +891,17 @@ struct LibraryInspector: View {
                 Spacer()
                 
                 HStack(spacing: 12) {
-                    Button(action: {}) {
+                    Button(action: onEdit) {
                         MaterialIcon(name: "edit", size: 20, color: EmeraldTheme.textSecondary)
                     }
                     .buttonStyle(.plain)
+                    .help("編輯文獻")
                     
-                    Button(action: {}) {
-                        MaterialIcon(name: "delete", size: 20, color: EmeraldTheme.textSecondary)
+                    Button(action: onDelete) {
+                        MaterialIcon(name: "delete", size: 20, color: .red.opacity(0.8))
                     }
                     .buttonStyle(.plain)
+                    .help("刪除文獻")
                 }
             }
             
@@ -630,10 +970,11 @@ struct LibraryInspector: View {
                 
                 Spacer()
                 
-                Button(action: {}) {
-                    MaterialIcon(name: "download", size: 18, color: EmeraldTheme.textSecondary)
+                Button(action: onOpenPDF) {
+                    MaterialIcon(name: "launch", size: 18, color: EmeraldTheme.primary)
                 }
                 .buttonStyle(.plain)
+                .help("開啟 PDF")
             }
             .padding(12)
             .background(EmeraldTheme.backgroundDark)
@@ -677,10 +1018,11 @@ struct LibraryInspector: View {
                     
                     Spacer()
                     
-                    Button(action: {}) {
-                        MaterialIcon(name: "link", size: 18, color: EmeraldTheme.textSecondary)
+                    Button(action: onOpenDOI) {
+                        MaterialIcon(name: "launch", size: 18, color: EmeraldTheme.primary)
                     }
                     .buttonStyle(.plain)
+                    .help("在瀏覽器中開啟 DOI")
                 }
                 .padding(12)
                 .background(EmeraldTheme.surfaceDark)

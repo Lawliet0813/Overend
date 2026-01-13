@@ -13,10 +13,28 @@ import CoreData
 /// 文獻導入內容選項
 enum LibraryImportContentType: String, CaseIterable, Identifiable {
     case abstract = "摘要"
+    case introduction = "引言"
+    case methodology = "方法"
+    case results = "結果"
+    case discussion = "討論"
+    case conclusion = "結論"
     case notes = "筆記"
-    case bibtex = "BibTeX"
+    case fullText = "全文"
     
     var id: String { rawValue }
+    
+    var sectionKeywords: [String] {
+        switch self {
+        case .abstract: return ["abstract", "摘要"]
+        case .introduction: return ["introduction", "引言", "緒論", "背景", "background"]
+        case .methodology: return ["method", "methodology", "材料與方法", "研究方法", "materials and methods"]
+        case .results: return ["result", "results", "結果", "findings"]
+        case .discussion: return ["discussion", "討論"]
+        case .conclusion: return ["conclusion", "結論", "總結", "summary"]
+        case .notes: return []
+        case .fullText: return []
+        }
+    }
 }
 
 // MARK: - 文獻選擇器
@@ -169,19 +187,34 @@ struct LibraryEntryPicker: View {
     
     private var contentTypeSelector: some View {
         HStack(spacing: DesignTokens.Spacing.md) {
+            Image(systemName: "doc.text.below.ecg")
+                .foregroundColor(theme.accent)
+            
             Text("導入內容")
                 .font(.system(size: DesignTokens.Typography.caption))
                 .foregroundColor(theme.textMuted)
             
             Picker("內容類型", selection: $selectedContentType) {
-                ForEach(LibraryImportContentType.allCases) { type in
-                    Text(type.rawValue).tag(type)
-                }
+                Text("📋 摘要").tag(LibraryImportContentType.abstract)
+                Divider()
+                Text("📖 引言").tag(LibraryImportContentType.introduction)
+                Text("🔬 方法").tag(LibraryImportContentType.methodology)
+                Text("📊 結果").tag(LibraryImportContentType.results)
+                Text("💬 討論").tag(LibraryImportContentType.discussion)
+                Text("✅ 結論").tag(LibraryImportContentType.conclusion)
+                Divider()
+                Text("📝 筆記").tag(LibraryImportContentType.notes)
+                Text("📄 全文").tag(LibraryImportContentType.fullText)
             }
-            .pickerStyle(.segmented)
-            .frame(maxWidth: 250)
+            .pickerStyle(.menu)
+            .frame(width: 150)
             
             Spacer()
+            
+            // 提示
+            Text("從 PDF 中提取指定章節")
+                .font(.system(size: 10))
+                .foregroundColor(theme.textMuted)
         }
         .padding(.horizontal, DesignTokens.Spacing.lg)
         .padding(.vertical, DesignTokens.Spacing.md)
@@ -327,9 +360,66 @@ struct LibraryEntryPicker: View {
             return entry.fields["abstract"] ?? ""
         case .notes:
             return entry.userNotes ?? ""
-        case .bibtex:
-            return entry.bibtexRaw ?? ""
+        case .fullText:
+            return extractFullTextFromPDF(entry: entry) ?? ""
+        case .introduction, .methodology, .results, .discussion, .conclusion:
+            return extractSectionFromPDF(entry: entry, sectionType: selectedContentType) ?? ""
         }
+    }
+    
+    private func extractFullTextFromPDF(entry: Entry) -> String? {
+        guard let attachment = entry.attachments?.first else { return nil }
+        return attachment.extractedText
+    }
+    
+    private func extractSectionFromPDF(entry: Entry, sectionType: LibraryImportContentType) -> String? {
+        guard let fullText = extractFullTextFromPDF(entry: entry), !fullText.isEmpty else {
+            return nil
+        }
+        
+        let keywords = sectionType.sectionKeywords
+        let lines = fullText.components(separatedBy: .newlines)
+        var inSection = false
+        var sectionContent: [String] = []
+        
+        let allSectionKeywords = LibraryImportContentType.allCases.flatMap { $0.sectionKeywords }
+        
+        for line in lines {
+            let trimmedLine = line.trimmingCharacters(in: .whitespaces)
+            let lowerLine = trimmedLine.lowercased()
+            
+            // 檢查是否進入目標章節
+            let isTargetSection = keywords.contains { keyword in
+                lowerLine.hasPrefix(keyword.lowercased()) ||
+                lowerLine.contains("\\(keyword.lowercased())") ||
+                lowerLine.range(of: "^\\d*\\.?\\s*\(keyword)", options: [.regularExpression, .caseInsensitive]) != nil
+            }
+            
+            if isTargetSection {
+                inSection = true
+                continue // 跳過章節標題本身
+            }
+            
+            // 如果已經在目標章節中，檢查是否遇到新章節
+            if inSection {
+                let isNewSection = allSectionKeywords.contains { keyword in
+                    !keywords.contains(keyword) && (
+                        lowerLine.hasPrefix(keyword.lowercased()) ||
+                        lowerLine.range(of: "^\\d*\\.?\\s*\(keyword)", options: [.regularExpression, .caseInsensitive]) != nil
+                    )
+                }
+                
+                if isNewSection {
+                    break // 遇到新章節，停止
+                }
+                
+                if !trimmedLine.isEmpty {
+                    sectionContent.append(trimmedLine)
+                }
+            }
+        }
+        
+        return sectionContent.isEmpty ? nil : sectionContent.joined(separator: "\n")
     }
     
     private func selectEntry(_ entry: Entry) {
@@ -337,6 +427,8 @@ struct LibraryEntryPicker: View {
         if !content.isEmpty {
             onSelect(content)
             dismiss()
+        } else {
+            // 顯示提示：無法找到指定章節
         }
     }
 }

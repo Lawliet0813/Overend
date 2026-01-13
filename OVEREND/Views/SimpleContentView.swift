@@ -409,6 +409,55 @@ struct SimpleContentView: View {
         processingStartTime = Date()
         
         Task {
+            // 優先使用 Agent 提取（macOS 26.0+）
+            if #available(macOS 26.0, *) {
+                do {
+                    let agent = LiteratureAgent.shared
+                    let agentResult = try await agent.extractPDFMetadata(from: url)
+                    
+                    // 將 Agent 結果轉換為 PDFMetadata
+                    let metadata = PDFMetadata(
+                        title: agentResult.title,
+                        authors: agentResult.authors,
+                        year: agentResult.year,
+                        doi: agentResult.doi,
+                        abstract: agentResult.abstract,
+                        journal: agentResult.journal,
+                        volume: nil,
+                        pages: nil,
+                        entryType: agentResult.entryType,
+                        confidence: agentResult.confidence > 0.7 ? .high : (agentResult.confidence > 0.4 ? .medium : .low)
+                    )
+                    
+                    var pdfText: String? = nil
+                    if let (_, extractedText) = try? PDFService.extractPDFMetadata(from: url) {
+                        pdfText = extractedText
+                    }
+                    
+                    await MainActor.run {
+                        let vm = ExtractionWorkbenchViewModel(context: viewContext, library: library)
+                        vm.addPendingExtraction(
+                            metadata: metadata,
+                            pdfURL: url,
+                            pdfText: pdfText,
+                            logs: "🤖 Agent 驅動提取完成\n信心度: \(String(format: "%.0f", agentResult.confidence * 100))%"
+                        )
+                        
+                        extractionWorkbenchVM = vm
+                        isExtractingMetadata = false
+                        showExtractionWorkbench = true
+                        extractedMetadata = metadata
+                        currentExtractionLogs = "Agent 提取完成"
+                    }
+                    return
+                    
+                } catch {
+                    // Agent 失敗，降級使用傳統方法
+                    AppLogger.warning("Agent 提取失敗，使用傳統方法: \(error.localizedDescription)")
+                }
+            }
+            
+            // 傳統方法（降級方案）
             let useGemini = UserDefaults.standard.bool(forKey: "useGeminiForPDF")
             let (metadata, logs) = await PDFMetadataExtractor.extractMetadata(from: url, useGemini: useGemini)
             
