@@ -507,7 +507,7 @@ extension FormatTemplate {
     
     /// 會議論文
     static var conference: FormatTemplate {
-        var template = nccu
+        let template = nccu
         // Modify for Conference
         return FormatTemplate(
             name: "會議論文",

@@ -252,75 +252,92 @@ struct ModernEntryListView: View {
         .animation(AnimationSystem.Easing.spring, value: selectedEntry?.id)
     }
     
-    // MARK: - 批次操作工具列
+    // MARK: - 批次操作工具列（增強版）
     
     private var batchOperationToolbar: some View {
-        HStack(spacing: DesignTokens.Spacing.lg) {
+        HStack(spacing: theme.spacingLG) {
             if isSelectionMode {
-                // 全選/取消全選按鈕 - 遵循 44pt 最小觸控區域
+                // 全選/取消全選按鈕
                 Button(action: toggleSelectAll) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: 10) {
                         Image(systemName: selectedEntryIDs.count == sortedEntries.count ? "checkmark.circle.fill" : "circle")
-                            .font(.system(size: 18, weight: .medium))
+                            .font(.system(size: 20, weight: .semibold))
                         Text(selectedEntryIDs.count == sortedEntries.count ? "取消全選" : "全選")
-                            .font(.system(size: 15, weight: .medium))
+                            .font(theme.fontButton)
                     }
                     .foregroundColor(theme.accent)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 10)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
                     .background(
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: theme.cornerRadiusMD)
                             .fill(theme.accentLight)
+                            .shadow(color: theme.accent.opacity(0.2), radius: 4, x: 0, y: 2)
                     )
                 }
                 .buttonStyle(.plain)
                 .frame(minHeight: 44)
                 
-                // 已選取數量標籤
-                Text("已選取 \(selectedEntryIDs.count) 項")
-                    .font(.system(size: 15, weight: .medium))
-                    .foregroundColor(theme.textMuted)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(theme.tableRowHover)
-                    )
+                // 已選取數量標籤 - 更顯眼
+                HStack(spacing: 8) {
+                    Image(systemName: "checkmark.seal.fill")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(theme.accent)
+                    Text("已選取 \(selectedEntryIDs.count) 項")
+                        .font(theme.fontBodyMedium)
+                        .fontWeight(.semibold)
+                        .foregroundColor(theme.textPrimary)
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: theme.cornerRadiusMD)
+                        .fill(theme.accent.opacity(0.08))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: theme.cornerRadiusMD)
+                                .stroke(theme.accent.opacity(0.2), lineWidth: 1.5)
+                        )
+                )
                 
                 Spacer()
                 
-                // 刪除按鈕 - 遵循 44pt 最小觸控區域
+                // 刪除按鈕 - 更醒目
                 if !selectedEntryIDs.isEmpty {
                     Button(action: { showBatchDeleteConfirm = true }) {
-                        HStack(spacing: 8) {
-                            Image(systemName: "trash")
-                                .font(.system(size: 16, weight: .medium))
+                        HStack(spacing: 10) {
+                            Image(systemName: "trash.fill")
+                                .font(.system(size: 18, weight: .semibold))
                             Text("刪除選取項目")
-                                .font(.system(size: 15, weight: .semibold))
+                                .font(theme.fontButton)
+                                .fontWeight(.bold)
                         }
                         .foregroundColor(.white)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 12)
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 14)
                         .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(theme.destructive)
+                            LinearGradient(
+                                colors: [theme.destructive, theme.destructive.opacity(0.8)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                            .clipShape(RoundedRectangle(cornerRadius: theme.cornerRadiusMD))
                         )
-                        .shadow(color: theme.destructive.opacity(0.3), radius: 4, x: 0, y: 2)
+                        .shadow(color: theme.destructive.opacity(0.4), radius: 8, x: 0, y: 4)
                     }
                     .buttonStyle(.plain)
                     .frame(minHeight: 44)
                 }
                 
-                // 完成按鈕 - 遵循 44pt 最小觸控區域
+                // 完成按鈕 - 更清晰
                 Button(action: exitSelectionMode) {
                     Text("完成")
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(theme.fontButton)
+                        .fontWeight(.bold)
                         .foregroundColor(theme.accent)
-                        .padding(.horizontal, 20)
+                        .padding(.horizontal, 24)
                         .padding(.vertical, 12)
                         .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(theme.accent, lineWidth: 1.5)
+                            RoundedRectangle(cornerRadius: theme.cornerRadiusMD)
+                                .stroke(theme.accent, lineWidth: 2)
                         )
                 }
                 .buttonStyle(.plain)
@@ -328,29 +345,51 @@ struct ModernEntryListView: View {
             } else {
                 Spacer()
                 
-                // 進入選取模式按鈕 - 遵循 44pt 最小觸控區域
+                // 進入選取模式按鈕 - 更顯眼
                 Button(action: { isSelectionMode = true }) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "checkmark.circle")
-                            .font(.system(size: 18, weight: .medium))
-                        Text("選取")
-                            .font(.system(size: 15, weight: .medium))
+                    HStack(spacing: 10) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 20, weight: .semibold))
+                        Text("批次選取")
+                            .font(theme.fontButton)
+                            .fontWeight(.semibold)
                     }
                     .foregroundColor(theme.accent)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 10)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
                     .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(theme.accentLight)
+                        RoundedRectangle(cornerRadius: theme.cornerRadiusMD)
+                            .fill(
+                                LinearGradient(
+                                    colors: [theme.accentLight, theme.accentLight.opacity(0.5)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: theme.cornerRadiusMD)
+                                    .stroke(theme.accent.opacity(0.3), lineWidth: 1.5)
+                            )
                     )
+                    .shadow(color: theme.accent.opacity(0.15), radius: 4, x: 0, y: 2)
                 }
                 .buttonStyle(.plain)
                 .frame(minHeight: 44)
             }
         }
-        .padding(.horizontal, DesignTokens.Spacing.lg)
-        .padding(.vertical, DesignTokens.Spacing.md)
-        .background(theme.card)
+        .padding(.horizontal, theme.spacingXL)
+        .padding(.vertical, theme.spacingLG)
+        .background(
+            theme.card
+                .overlay(
+                    LinearGradient(
+                        colors: [Color.white.opacity(0.02), Color.clear],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+        )
+        .cornerRadius(theme.cornerRadiusMD)
         .alert("確定刪除 \(selectedEntryIDs.count) 篇文獻？", isPresented: $showBatchDeleteConfirm) {
             Button("取消", role: .cancel) {}
             Button("刪除", role: .destructive) {
@@ -696,85 +735,107 @@ struct EntryTableRow: View {
                 // 原有的 HStack 內容
                 HStack(spacing: 0) {
                     // 標題
-                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.xxs) {
+                    VStack(alignment: .leading, spacing: 4) {
                         Text(entry.fields["title"] ?? "無標題")
-                            .font(.system(size: DesignTokens.Typography.body, weight: .semibold))
+                            .font(theme.fontBodyLarge)  // 17pt，更大更清晰
+                            .fontWeight(.semibold)
                             .foregroundColor(isSelected ? theme.accent : theme.textPrimary)
-                            .lineLimit(1)
+                            .lineLimit(2)  // 允許兩行顯示
+                            .fixedSize(horizontal: false, vertical: true)
 
                         // 期刊/來源
                         if let journal = entry.fields["journal"], !journal.isEmpty {
                             Text(journal)
-                                .font(.system(size: DesignTokens.Typography.caption))
-                                .foregroundColor(theme.textMuted)
+                                .font(theme.fontBodySmall)  // 13pt
+                                .foregroundColor(theme.textSecondary)
+                                .italic()
                                 .lineLimit(1)
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.trailing, theme.spacingMD)
 
-                    // Tags
+                    // Tags - 優化樣式
                     if let tags = entry.tags as? Set<Tag>, !tags.isEmpty {
-                        HStack(spacing: 4) {
-                            ForEach(Array(tags).sorted(by: { $0.name < $1.name })) { tag in
+                        HStack(spacing: 6) {
+                            ForEach(Array(tags).sorted(by: { $0.name < $1.name }).prefix(3)) { tag in
                                 Text(tag.name)
-                                    .font(.system(size: 10, weight: .medium))
+                                    .font(theme.fontLabel)  // 12pt
                                     .foregroundColor(.white)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(tag.color)
-                                    .cornerRadius(4)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(
+                                        Capsule()
+                                            .fill(tag.color.opacity(0.9))
+                                    )
+                                    .shadow(color: tag.color.opacity(0.3), radius: 2, x: 0, y: 1)
+                            }
+                            if tags.count > 3 {
+                                Text("+\(tags.count - 3)")
+                                    .font(theme.fontLabel)
+                                    .foregroundColor(theme.textTertiary)
                             }
                         }
-                        .padding(.trailing, 8)
+                        .padding(.trailing, theme.spacingMD)
                     }
 
-                    // 作者 / 年份
+                    // 作者 / 年份 - 放大字體
                     Text(authorYearText)
-                        .font(.system(size: DesignTokens.Typography.body))
-                        .foregroundColor(theme.textMuted)
+                        .font(theme.fontBodyMedium)  // 15pt
+                        .foregroundColor(theme.textSecondary)
                         .lineLimit(1)
-                        .frame(width: 150, alignment: .leading)
+                        .frame(width: 180, alignment: .leading)
 
-                    // 附件數量
-                    HStack(spacing: DesignTokens.Spacing.xxs) {
+                    // 附件數量 - 更清晰的視覺
+                    HStack(spacing: 4) {
                         if !entry.attachmentArray.isEmpty {
                             Image(systemName: "paperclip")
-                                .font(.system(size: DesignTokens.IconSize.small))
+                                .font(.system(size: 14, weight: .medium))
                             Text("\(entry.attachmentArray.count)")
-                                .font(.system(size: DesignTokens.Typography.body))
+                                .font(theme.fontBodyMedium)
                         }
                     }
-                    .foregroundColor(theme.textMuted)
-                    .frame(width: 50)
+                    .foregroundColor(entry.attachmentArray.isEmpty ? theme.textTertiary : theme.accent)
+                    .frame(width: 60)
 
-                    // 類型標籤
+                    // 類型標籤 - 更精緻
                     Text(entry.entryType)
-                        .font(.system(size: DesignTokens.Typography.caption, weight: .medium))
+                        .font(theme.fontLabel)
+                        .fontWeight(.semibold)
                         .foregroundColor(theme.accent)
-                        .padding(.horizontal, DesignTokens.Spacing.xs)
-                        .padding(.vertical, DesignTokens.Spacing.xxs)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
                         .background(
-                            RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.small)
+                            RoundedRectangle(cornerRadius: theme.cornerRadiusSM)
                                 .fill(theme.accentLight)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: theme.cornerRadiusSM)
+                                        .stroke(theme.accent.opacity(0.2), lineWidth: 1)
+                                )
                         )
-                        .frame(width: 70)
+                        .frame(width: 80)
 
-                    // 刪除按鈕（非選擇模式下顯示）
+                    // 刪除按鈕（非選擇模式下顯示）- 優化交互
                     if !isSelectionMode {
                         Button(action: { showDeleteConfirm = true }) {
                             Image(systemName: "trash")
-                                .font(.system(size: DesignTokens.IconSize.small))
-                                .foregroundColor(isHovered ? theme.destructive : theme.textMuted.opacity(0.5))
+                                .font(.system(size: 15, weight: .medium))
+                                .foregroundColor(isHovered ? theme.destructive : .clear)
+                                .frame(width: 32, height: 32)
+                                .background(
+                                    Circle()
+                                        .fill(isHovered ? theme.destructive.opacity(0.1) : .clear)
+                                )
                         }
                         .buttonStyle(.plain)
-                        .frame(width: 40)
+                        .frame(width: 44)  // 觸控區域
                         .opacity(isHovered ? 1 : 0)
                     } else {
-                        Color.clear.frame(width: 40)
+                        Color.clear.frame(width: 44)
                     }
                 }
-                .padding(.horizontal, DesignTokens.Spacing.md)
-                .padding(.vertical, DesignTokens.Spacing.sm)
+                .padding(.horizontal, theme.spacingLG)
+                .padding(.vertical, theme.spacingMD)  // 增加內間距
             }
             .background(backgroundColor)
             .overlay(alignment: .bottom) {
@@ -784,20 +845,76 @@ struct EntryTableRow: View {
             }
         }
         .buttonStyle(.plain)
-        .scaleEffect(isHovered && !isSelected ? 1.005 : 1.0)
+        .scaleEffect(isHovered && !isSelected ? 1.01 : 1.0)  // 微妙的縮放
         .shadow(
-            color: isHovered && !isSelected ? .black.opacity(0.05) : .clear,
-            radius: isHovered ? 4 : 0,
+            color: isSelected ? theme.accent.opacity(0.1) : (isHovered ? .black.opacity(0.08) : .clear),
+            radius: isHovered || isSelected ? 6 : 0,
             x: 0,
-            y: isHovered ? 2 : 0
+            y: isHovered || isSelected ? 3 : 0
         )
-        .animation(AnimationSystem.Easing.spring, value: isSelected)
-        .animation(AnimationSystem.Easing.quick, value: isHovered)
+        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: isSelected)
+        .animation(.easeOut(duration: 0.15), value: isHovered)
         .onHover { hovering in
             withAnimation(AnimationSystem.Easing.quick) {
                 isHovered = hovering
             }
             onHover?(hovering)
+        }
+        // 🎯 新增：右鍵選單
+        .contextMenu {
+            // 編輯書目
+            Button(action: {
+                // TODO: 觸發編輯模式
+                print("編輯書目：\(entry.title)")
+            }) {
+                Label("編輯書目", systemImage: "pencil")
+            }
+            
+            Divider()
+            
+            // 複製引用
+            Button(action: {
+                let citation = CitationService.generateAPA(entry: entry)
+                NSPasteboard.general.clearContents()
+                NSPasteboard.general.setString(citation, forType: .string)
+            }) {
+                Label("複製 APA 引用", systemImage: "doc.on.doc")
+            }
+            
+            Button(action: {
+                let citation = CitationService.generateMLA(entry: entry)
+                NSPasteboard.general.clearContents()
+                NSPasteboard.general.setString(citation, forType: .string)
+            }) {
+                Label("複製 MLA 引用", systemImage: "doc.on.doc")
+            }
+            
+            Button(action: {
+                NSPasteboard.general.clearContents()
+                NSPasteboard.general.setString(entry.citationKey, forType: .string)
+            }) {
+                Label("複製 Citation Key", systemImage: "key")
+            }
+            
+            Divider()
+            
+            // 開啟 PDF
+            if !entry.attachmentArray.isEmpty {
+                Button(action: {
+                    if let firstPDF = entry.attachmentArray.first {
+                        NSWorkspace.shared.open(URL(fileURLWithPath: firstPDF.filePath))
+                    }
+                }) {
+                    Label("開啟 PDF", systemImage: "doc.fill")
+                }
+            }
+            
+            Divider()
+            
+            // 刪除
+            Button(role: .destructive, action: { showDeleteConfirm = true }) {
+                Label("刪除", systemImage: "trash")
+            }
         }
         .contextMenu {
             // MARK: - 開啟操作

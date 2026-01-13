@@ -1,7 +1,7 @@
 # OVEREND 開發日記
 
 > **整合自 DOCS 資料夾所有開發文件**  
-> **最後更新：** 2026-01-05 (23:48)  
+> **最後更新：** 2026-01-11 (15:00)  
 > **專案進度：** 約 99%
 
 ---
@@ -471,9 +471,58 @@ if let htmlData = htmlData,
 
 ## 編譯狀態
 
-✅ **BUILD SUCCEEDED** (2026-01-05 23:48)
+✅ **BUILD SUCCEEDED** (2026-01-11 15:00)
 
 ---
+
+### 2026-01-11：Emerald UI 重新設計與程式碼清理
+
+**重點工作：**
+
+1. **Emerald UI 系統完成**
+   - 新增 8 個 Emerald 視圖元件：
+     - `EmeraldLibraryView.swift` (711 行) - 文獻庫視圖
+     - `EmeraldDashboardView.swift` (612 行) - 儀表板視圖
+     - `EmeraldAIAssistantView.swift` (525 行) - AI 助手視圖
+     - `EmeraldHomeView.swift` (421 行) - 首頁視圖
+     - `EmeraldSettingsView.swift` (594 行) - 設定視圖
+     - `EmeraldReaderView.swift` (656 行) - 閱讀器視圖
+     - `EmeraldTheme.swift` (334 行) - 主題定義
+     - `EmeraldComponents.swift` (383 行) - 共用元件
+
+2. **Legacy UI 清理**
+   - 刪除 6 個重複/未使用的檔案：
+     - `AcademicLibraryView.swift` (778 行)
+     - `LearningDashboardView.swift` (281 行)
+     - `AIAssistantView.swift` (273 行)
+     - `BatchActionBar.swift` (144 行)
+     - `BatchTagInputView.swift` (179 行)
+     - `LaTeXRenderer.swift` (150 行)
+
+3. **程式碼瘦身統計**
+
+   | 指標 | 初始 | 最終 | 變化 |
+   |------|------|------|------|
+   | Swift 檔案 | 188 | 182 | -6 |
+   | 程式碼行數 | 55,653 | 53,844 | -1,809 |
+
+4. **Bug 修復**
+   - `ModernEntryListView.swift`: 修復 `CitationService.generateCitation` 方法調用錯誤
+   - `AdvancedSearchFilter.swift`: 修復 `entry.tagArray` 不存在的編譯錯誤
+   - `SimpleContentView.swift`: 批次刪除崩潰修復（Core Data 物件生命週期）
+
+**Git 合併：**
+
+```bash
+feature/emerald-ui-redesign → main (Fast-forward)
+64 files changed, +11,369 / -1,986
+```
+
+**專案狀態：**
+
+- Emerald UI 系統完成並整合到主分支。
+- 移除舊的標準視圖，統一使用 Emerald 設計語言。
+- 編譯通過 (Build Succeeded)。
 
 ## 相關文件索引
 
@@ -736,4 +785,53 @@ if let htmlData = htmlData,
 
 - 測試覆蓋率大幅提升（新增 78 個測試案例）。
 - Notion 功能已設定為僅開發版本可用。
+- 編譯通過 (Build Succeeded)。
+
+### 2026-01-13：AI 夥伴角色系統 (Companion System)
+
+**重點工作：**
+
+1. **AI 夥伴角色系統完整實作**
+   - 新增 8 個核心檔案，打造類似「迴紋針小助手」的 AI 夥伴體驗
+   - 預設角色「小研 (Yen)」：翡翠綠貓頭鷹，戴眼鏡和學士帽
+   - 支援用戶用自然語言生成專屬 AI 角色
+
+2. **等級與成長系統**
+   - Lv.1 研究新手 → Lv.50 學術大師
+   - 匯入文獻 (+10 XP)、寫作 1000 字 (+20 XP)、採納 AI 建議 (+15 XP) 等
+   - 等級解鎖對應功能（智慧分類、批次工作流、研究洞察引擎等）
+
+3. **成就與每日任務**
+   - 15+ 個成就徽章（破萬引用、筆耕不輟、格式潔癖等）
+   - 每日隨機 3 個挑戰任務
+   - 連續使用獎勵機制
+
+4. **智慧對話系統**
+   - 時間感知問候（早/中/晚/深夜不同對話）
+   - 行為觸發對話（PDF 匯入後、寫作進度、久未引用提醒）
+   - 閒置鼓勵訊息
+
+**新增檔案（8 個）：**
+
+| 檔案 | 說明 |
+|------|------|
+| `Models/Companion/Companion.swift` | 角色數據模型 🆕 |
+| `Models/Companion/CompanionLevel.swift` | 等級與經驗值系統 🆕 |
+| `Models/Companion/CompanionAchievement.swift` | 成就與每日任務 🆕 |
+| `Views/AICompanion/CompanionDialogues.swift` | 對話內容庫 🆕 |
+| `Services/CompanionService.swift` | 核心服務（事件處理） 🆕 |
+| `Views/AICompanion/CompanionView.swift` | 浮動角色 + 對話氣泡 🆕 |
+| `Views/AICompanion/CompanionPanelView.swift` | 等級/任務/成就面板 🆕 |
+| `Views/AICompanion/CompanionGeneratorView.swift` | AI 角色生成器 🆕 |
+
+**技術決策：**
+
+- **資料持久化**：使用 UserDefaults + Codable 儲存用戶進度與角色資料
+- **表情狀態**：6 種狀態（idle/excited/reading/celebrating/sleepy/thinking）
+- **動畫技術**：預留 Lottie 整合接口，目前使用 SwiftUI 動畫 + Emoji
+
+**專案狀態：**
+
+- AI 夥伴核心系統完成。
+- 待整合至主視圖與事件觸發。
 - 編譯通過 (Build Succeeded)。

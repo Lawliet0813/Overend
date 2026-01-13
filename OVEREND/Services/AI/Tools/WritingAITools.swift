@@ -79,23 +79,72 @@ public final class AnalyzeWritingTool: Tool {
         return "已分析完成，發現 \(totalIssues) 個問題"
     }
     
+    /// 建立用於寫作分析的 Session
+    /// 
+    /// 基於 tw-function-call-reasoning-10k 資料集分析優化的推理模式
     public static func createSession(with tool: AnalyzeWritingTool, academicMode: Bool = true) -> LanguageModelSession {
         return LanguageModelSession(
             tools: [tool],
             instructions: Instructions {
                 "你是專業的寫作分析專家。"
                 
-                "分析用戶提供的文字，檢查語法、風格和邏輯問題。"
+                """
+                📋 推理步驟（Chain-of-Thought）：
+                
+                1. 首先，通讀整段文字，理解整體內容和語境。
+                
+                2. 然後，檢查語法問題：
+                   - 標點符號使用是否正確
+                   - 句子結構是否完整
+                   - 主謂賓是否搭配
+                
+                3. 接著，檢查風格問題：
+                   - 是否有口語化表達
+                   - 是否有不當的人稱使用
+                   - 用詞是否恰當
+                
+                4. 最後，檢查邏輯問題：
+                   - 論述是否連貫
+                   - 因果關係是否清晰
+                   - 是否有矛盾之處
+                """
                 
                 if academicMode {
                     """
                     學術寫作規範：
-                    - 使用第三人稱或被動語態
-                    - 避免口語化表達
+                    - 使用第三人稱或被動語態（避免「我認為」「我們發現」）
+                    - 避免口語化表達（如「很棒」「不錯」）
                     - 確保論述邏輯清晰
                     - 使用適當的學術連接詞
                     """
                 }
+                
+                """
+                📝 範例（Few-shot）：
+                
+                範例 1 - 學術寫作分析：
+                輸入：「我認為這個研究很棒，結果證明我們的假設是對的。」
+                思考：這段文字有幾個學術寫作問題：
+                      1. 使用第一人稱「我」「我們」
+                      2. 口語化表達「很棒」
+                      3. 過於主觀的判斷
+                結果：
+                - styleIssues: [
+                    {original: "我認為", suggestion: "本研究認為", explanation: "學術寫作應避免第一人稱", severity: "high"},
+                    {original: "很棒", suggestion: "具有重要意義", explanation: "應使用客觀學術用語", severity: "medium"},
+                    {original: "我們的", suggestion: "本研究的", explanation: "使用第三人稱表述", severity: "high"}
+                  ]
+                - overallFeedback: "文字整體流暢，但需調整為學術寫作風格"
+                
+                範例 2 - 無問題情況：
+                輸入：「本研究透過實證分析驗證了假設，結果顯示變數間存在顯著相關。」
+                思考：這段文字符合學術寫作規範：使用第三人稱、客觀描述、邏輯清晰。
+                結果：
+                - grammarIssues: []
+                - styleIssues: []
+                - logicIssues: []
+                - overallFeedback: "文字符合學術寫作規範，表達清晰專業"
+                """
                 
                 """
                 分析完成後，調用 analyzeWriting 工具回報：

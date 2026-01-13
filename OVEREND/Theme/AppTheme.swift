@@ -35,16 +35,15 @@ class AppTheme: ObservableObject {
         ("🏳️‍🌈 彩虹驕傲", "#E40303", true)
     ]
     
-    /// Pride 漸層顏色 (更鮮豔的霓虹色系)
+    /// Pride 漸層顏色 (更鮮豔的霓虹色系 - 參考圖示)
     static let prideGradientColors: [Color] = [
-        Color(hex: "#FF3B30"), // System Red
-        Color(hex: "#FF9500"), // System Orange
-        Color(hex: "#FFCC00"), // System Yellow
-        Color(hex: "#28CD41"), // System Green
-        Color(hex: "#007AFF"), // System Blue
-        Color(hex: "#AF52DE"), // System Purple
-        Color(hex: "#FF2D55"), // System Pink
-        Color(hex: "#FF3B30")  // Loop back to Red
+        Color(hex: "#FF0000"), // Red
+        Color(hex: "#FF7F00"), // Orange
+        Color(hex: "#FFFF00"), // Yellow
+        Color(hex: "#00FF00"), // Green
+        Color(hex: "#0000FF"), // Blue
+        Color(hex: "#4B0082"), // Indigo
+        Color(hex: "#9400D3")  // Violet
     ]
     
     /// 是否使用彩虹驕傲模式
@@ -149,6 +148,69 @@ class AppTheme: ObservableObject {
     // MARK: - 語義化顏色
 
     var success: Color { Color(hex: "#39D353") }  // 使用學術綠
+    
+    // MARK: - 字體系統 (Typography System)
+    
+    /// 超大標題 - 頁面主標題
+    var fontDisplayLarge: Font { .system(size: 32, weight: .bold) }
+    
+    /// 大標題 - 區域標題
+    var fontDisplayMedium: Font { .system(size: 24, weight: .bold) }
+    
+    /// 中標題 - 卡片標題
+    var fontDisplaySmall: Font { .system(size: 20, weight: .semibold) }
+    
+    /// 正文大 - 重要內容
+    var fontBodyLarge: Font { .system(size: 17, weight: .regular) }
+    
+    /// 正文中 - 一般內容
+    var fontBodyMedium: Font { .system(size: 15, weight: .regular) }
+    
+    /// 正文小 - 輔助內容
+    var fontBodySmall: Font { .system(size: 13, weight: .regular) }
+    
+    /// 標籤 - 小型標籤、徽章
+    var fontLabel: Font { .system(size: 12, weight: .medium) }
+    
+    /// 側邊欄項目
+    var fontSidebarItem: Font { .system(size: 14, weight: .medium) }
+    
+    /// 按鈕文字
+    var fontButton: Font { .system(size: 14, weight: .semibold) }
+    
+    // MARK: - 間距系統 (Spacing System)
+    
+    /// 極小間距 (4pt)
+    var spacingXS: CGFloat { 4 }
+    
+    /// 小間距 (8pt)
+    var spacingSM: CGFloat { 8 }
+    
+    /// 中間距 (12pt)
+    var spacingMD: CGFloat { 12 }
+    
+    /// 大間距 (16pt)
+    var spacingLG: CGFloat { 16 }
+    
+    /// 超大間距 (24pt)
+    var spacingXL: CGFloat { 24 }
+    
+    /// 超超大間距 (32pt)
+    var spacing2XL: CGFloat { 32 }
+    
+    // MARK: - 圓角系統 (Corner Radius)
+    
+    /// 小圓角 - 按鈕、標籤
+    var cornerRadiusSM: CGFloat { 6 }
+    
+    /// 中圓角 - 卡片
+    var cornerRadiusMD: CGFloat { 10 }
+    
+    /// 大圓角 - 面板
+    var cornerRadiusLG: CGFloat { 12 }
+    
+    /// 超大圓角 - Modal
+    var cornerRadiusXL: CGFloat { 16 }
     var successBackground: Color { success.opacity(0.1) }
 
     var warning: Color { Color(hex: "#FEBC2E") }  // 系統黃
@@ -243,9 +305,9 @@ class AppTheme: ObservableObject {
     /// 液態漸層
     var liquidGradient: LinearGradient {
         if isPrideMode {
-            // 彩虹模式使用全彩漸層
+            // 彩虹模式使用全彩漸層 - 增強不透明度以匹配參考圖
             return LinearGradient(
-                colors: Self.prideGradientColors.map { $0.opacity(0.15) },
+                colors: Self.prideGradientColors.map { $0.opacity(0.3) },
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
@@ -262,6 +324,32 @@ class AppTheme: ObservableObject {
             )
         }
     }
+    
+    // MARK: - Emerald Settings 設計系統
+    
+    /// Emerald 主色 (翠綠)
+    static let emeraldPrimary = "#25f49d"
+    
+    /// Emerald 背景色 (深綠)
+    static let emeraldBackground = "#10221a"
+    
+    /// Emerald 主色
+    var emerald: Color { Color(hex: Self.emeraldPrimary) }
+    
+    /// Emerald 背景
+    var emeraldBg: Color { Color(hex: Self.emeraldBackground) }
+    
+    /// 玻璃面板背景
+    var glassPanel: Color { Color(hex: Self.emeraldBackground).opacity(0.75) }
+    
+    /// 玻璃面板邊框
+    var glassPanelBorder: Color { Color(hex: Self.emeraldPrimary).opacity(0.2) }
+    
+    /// Emerald 選中狀態背景
+    var emeraldSelected: Color { Color(hex: Self.emeraldPrimary).opacity(0.1) }
+    
+    /// Emerald 選中狀態邊框
+    var emeraldSelectedBorder: Color { Color(hex: Self.emeraldPrimary).opacity(0.2) }
     
     // MARK: - 向後兼容
     

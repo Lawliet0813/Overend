@@ -91,6 +91,9 @@ public class UnifiedAIService: ObservableObject {
     /// 公式 AI 領域
     public lazy var formula: FormulaAIDomain = FormulaAIDomain(service: self)
     
+    /// 文獻 Agent - 自動化文獻整理、分類與標籤
+    public lazy var agent: LiteratureAgent = LiteratureAgent.shared
+    
     // MARK: - 初始化
     
     /// Gemini 服務 - 作為 Apple Intelligence 的後備

@@ -58,44 +58,111 @@ struct SimpleContentView: View {
             List(selection: $selection) {
                 
                 // 核心導航
-                Section("研究中心") {
+                Section {
                     NavigationLink(value: "dashboard") {
-                        Label("寫作首頁", systemImage: "house.fill")
+                        HStack(spacing: theme.spacingMD) {
+                            Image(systemName: "house.fill")
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundColor(selection == "dashboard" ? theme.accent : theme.textSecondary)
+                                .frame(width: 24)
+                            
+                            Text("寫作首頁")
+                                .font(theme.fontSidebarItem)  // 14pt
+                                .foregroundColor(selection == "dashboard" ? theme.textPrimary : theme.textSecondary)
+                        }
+                        .padding(.vertical, 2)
                     }
+                    
                     NavigationLink(value: "library") {
-                        HStack {
-                            Label("文獻庫", systemImage: "books.vertical.fill")
+                        HStack(spacing: theme.spacingMD) {
+                            Image(systemName: "books.vertical.fill")
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundColor(selection == "library" ? theme.accent : theme.textSecondary)
+                                .frame(width: 24)
+                            
+                            Text("文獻庫")
+                                .font(theme.fontSidebarItem)
+                                .foregroundColor(selection == "library" ? theme.textPrimary : theme.textSecondary)
+                            
                             Spacer()
+                            
                             if entries.count > 0 {
                                 Text("\(entries.count)")
-                                    .font(.caption2)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(Capsule().fill(theme.accent.opacity(0.2)))
+                                    .font(.system(size: 11, weight: .bold))
                                     .foregroundColor(theme.accent)
+                                    .padding(.horizontal, 7)
+                                    .padding(.vertical, 3)
+                                    .background(
+                                        Capsule()
+                                            .fill(theme.accent.opacity(0.15))
+                                    )
                             }
                         }
+                        .padding(.vertical, 2)
                     }
+                    
                     NavigationLink(value: "aiCenter") {
-                        Label("AI 智慧中心", systemImage: "apple.intelligence")
+                        HStack(spacing: theme.spacingMD) {
+                            Image(systemName: "apple.intelligence")
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundColor(selection == "aiCenter" ? theme.accent : theme.textSecondary)
+                                .frame(width: 24)
+                            
+                            Text("AI 智慧中心")
+                                .font(theme.fontSidebarItem)
+                                .foregroundColor(selection == "aiCenter" ? theme.textPrimary : theme.textSecondary)
+                        }
+                        .padding(.vertical, 2)
                     }
+                } header: {
+                    Text("研究中心")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(theme.textTertiary)
+                        .textCase(.uppercase)
+                        .padding(.top, theme.spacingSM)
                 }
                 
                 // 專案管理
-                Section("一般文稿") {
+                Section {
                     ForEach(documents.filter { $0.type == .general }.prefix(5)) { doc in
                         NavigationLink(value: "doc_\(doc.id.uuidString)") {
-                            Label(doc.title, systemImage: "doc.text.fill")
+                            HStack(spacing: theme.spacingMD) {
+                                Image(systemName: "doc.text.fill")
+                                    .font(.system(size: 16, weight: .medium))
+                                    .foregroundColor(theme.textSecondary)
+                                    .frame(width: 24)
+                                
+                                Text(doc.title)
+                                    .font(theme.fontBodySmall)  // 13pt
+                                    .foregroundColor(theme.textPrimary)
+                                    .lineLimit(1)
+                            }
+                            .padding(.vertical, 1)
                         }
                     }
                     
                     if documents.filter({ $0.type == .general }).isEmpty {
-                        Label("尚無文稿", systemImage: "plus.circle.dashed")
-                            .foregroundColor(theme.textTertiary)
-                            .onTapGesture {
-                                createNewDocument(type: .general)
+                        Button(action: { createNewDocument(type: .general) }) {
+                            HStack(spacing: theme.spacingMD) {
+                                Image(systemName: "plus.circle.dashed")
+                                    .font(.system(size: 16, weight: .medium))
+                                    .foregroundColor(theme.textTertiary)
+                                    .frame(width: 24)
+                                
+                                Text("建立文稿")
+                                    .font(theme.fontBodySmall)
+                                    .foregroundColor(theme.textTertiary)
                             }
+                            .padding(.vertical, 1)
+                        }
+                        .buttonStyle(.plain)
                     }
+                } header: {
+                    Text("一般文稿")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(theme.textTertiary)
+                        .textCase(.uppercase)
+                        .padding(.top, theme.spacingMD)
                 }
                 
                 Section("筆記摘要") {
@@ -129,6 +196,8 @@ struct SimpleContentView: View {
                 }
             }
             .listStyle(.sidebar)
+            .scrollContentBackground(.hidden)
+            .background(theme.sidebarGlass)
             .navigationTitle("OVEREND")
             
         } detail: {
@@ -147,11 +216,7 @@ struct SimpleContentView: View {
                     .environmentObject(theme)
                     
                 case "library":
-                    AcademicLibraryView(
-                        entries: Array(entries),
-                        onImportPDF: { showImportOptions = true },
-                        onCreateNote: createNote
-                    )
+                    EmeraldLibraryView()
                     .environmentObject(theme)
                     
                 case "aiCenter":
@@ -173,8 +238,14 @@ struct SimpleContentView: View {
                     WelcomeEmptyState(theme: theme)
                 }
             }
-            .background(theme.background)
+            .background(Color.clear) // Clear background for detail view to let window background show
         }
+        .background(
+            ZStack {
+                theme.background
+                theme.liquidGradient.ignoresSafeArea()
+            }
+        )
         .frame(minWidth: 1000, minHeight: 700)
         .preferredColorScheme(.dark)
         .withToast()
@@ -713,7 +784,7 @@ struct SimpleDashboardView: View {
                     .padding(.vertical, 60)
                 } else {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 300), spacing: 25)], spacing: 25) {
-                        ForEach(documents.filter { !$0.isDeleted }.prefix(6)) { document in
+                        ForEach(documents.filter { !$0.isDeleted && $0.managedObjectContext != nil }.prefix(6)) { document in
                             EnhancedProjectCard(
                                 document: document, 
                                 theme: theme,
@@ -1211,10 +1282,18 @@ struct EnhancedProjectCard: View {
     }
     
     private var progress: Int {
-        min(Int(Double(document.attributedString.string.count) / 50.0), 100)
+        // Guard against deleted Core Data objects
+        guard !document.isDeleted, document.managedObjectContext != nil else {
+            return 0
+        }
+        return min(Int(Double(document.attributedString.string.count) / 50.0), 100)
     }
     
     private func formatDate(_ date: Date) -> String {
+        // Guard against deleted Core Data objects
+        guard !document.isDeleted, document.managedObjectContext != nil else {
+            return ""
+        }
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .abbreviated
         formatter.locale = Locale(identifier: "zh_TW")

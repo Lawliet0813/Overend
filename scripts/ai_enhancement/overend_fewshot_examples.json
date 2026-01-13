@@ -1,0 +1,111 @@
+[
+  {
+    "query_zhtw": "請分析這段學術寫作，檢查是否有語法或風格問題：「我認為這個研究很棒，結果證明我們的假設是對的。」",
+    "tools": [
+      {
+        "name": "analyzeWriting",
+        "description": "分析學術寫作內容，檢查語法、風格和邏輯問題",
+        "parameters": {
+          "text": {
+            "description": "要分析的文本",
+            "type": "str"
+          },
+          "academicMode": {
+            "description": "是否使用學術模式",
+            "type": "bool",
+            "default": true
+          }
+        }
+      },
+      {
+        "name": "rewriteText",
+        "description": "改寫文本，可選擇不同風格：formal、academic、concise、elaborate",
+        "parameters": {
+          "text": {
+            "description": "原始文本",
+            "type": "str"
+          },
+          "style": {
+            "description": "改寫風格",
+            "type": "str",
+            "default": "academic"
+          }
+        }
+      }
+    ],
+    "think": "\n好的，使用者想要分析一段學術寫作的語法和風格問題。\n\n首先，我需要確認可用的工具。我看到有 \"analyzeWriting\" 這個工具，它可以分析學術寫作內容，檢查語法、風格和邏輯問題。\n\n檢視參數：\n- text: 需要提供要分析的文本，就是使用者給的那段話\n- academicMode: 因為這是學術寫作，應該設為 true\n\n使用者明確說這是「學術寫作」，所以我應該啟用學術模式。這個工具會檢查：\n1. 語法問題（如標點符號）\n2. 風格問題（如「我認為」這種第一人稱用法在學術寫作中不太適合）\n3. 邏輯問題\n\n因此，我將呼叫 analyzeWriting 工具，設定 academicMode 為 true。\n",
+    "answer": [
+      {
+        "name": "analyzeWriting",
+        "arguments": {
+          "text": "我認為這個研究很棒，結果證明我們的假設是對的。",
+          "academicMode": true
+        }
+      }
+    ]
+  },
+  {
+    "query_zhtw": "我需要將這段中文摘要翻譯成英文，並且保持學術風格：「本研究探討人工智慧在教育領域的應用，透過量化分析驗證其效果。」",
+    "tools": [
+      {
+        "name": "translateAcademic",
+        "description": "進行學術翻譯，保留專業術語",
+        "parameters": {
+          "text": {
+            "description": "要翻譯的文本",
+            "type": "str"
+          },
+          "sourceLang": {
+            "description": "來源語言",
+            "type": "str"
+          },
+          "targetLang": {
+            "description": "目標語言",
+            "type": "str"
+          }
+        }
+      }
+    ],
+    "think": "\n使用者需要進行學術翻譯，將中文翻譯成英文。\n\n檢視可用的工具，有 \"translateAcademic\" 這個功能專門用於學術翻譯，可以保留專業術語。\n\n參數設定：\n- text: 需要翻譯的中文摘要\n- sourceLang: 來源語言是中文，應該用 \"zh-TW\" 或 \"Chinese\"\n- targetLang: 目標語言是英文，應該用 \"en\" 或 \"English\"\n\n這個工具很適合這個任務，因為它會保持學術風格並正確處理術語如「量化分析」、「人工智慧」等。\n",
+    "answer": [
+      {
+        "name": "translateAcademic",
+        "arguments": {
+          "text": "本研究探討人工智慧在教育領域的應用，透過量化分析驗證其效果。",
+          "sourceLang": "zh-TW",
+          "targetLang": "en"
+        }
+      }
+    ]
+  },
+  {
+    "query_zhtw": "請將這段文字改寫得更正式：「這篇論文寫得不錯，但有些地方可以更好。」",
+    "tools": [
+      {
+        "name": "rewriteText",
+        "description": "改寫文本，可選擇不同風格：formal、academic、concise、elaborate",
+        "parameters": {
+          "text": {
+            "description": "原始文本",
+            "type": "str"
+          },
+          "style": {
+            "description": "改寫風格",
+            "type": "str",
+            "default": "academic"
+          }
+        }
+      }
+    ],
+    "think": "\n使用者想要將一段比較口語化的評論改寫成更正式的版本。\n\n查看可用工具，\"rewriteText\" 可以改寫文本，並支持不同風格。\n\n參數分析：\n- text: 原始文本就是使用者給的那句話\n- style: 使用者說要「更正式」，所以應該選擇 \"formal\" 或 \"academic\"\n\n由於使用者明確要求「正式」，我選擇 style = \"formal\"。這會將口語化的表達（如「不錯」、「可以更好」）轉換為正式的書面語。\n",
+    "answer": [
+      {
+        "name": "rewriteText",
+        "arguments": {
+          "text": "這篇論文寫得不錯，但有些地方可以更好。",
+          "style": "formal"
+        }
+      }
+    ]
+  }
+]

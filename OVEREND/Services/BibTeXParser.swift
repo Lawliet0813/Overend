@@ -196,16 +196,17 @@ extension BibTeXParser {
         context: NSManagedObjectContext
     ) throws -> Int {
         var importedCount = 0
+        var importedEntryIDs: [UUID] = []
 
         for bibEntry in entries {
             // 檢查是否已存在相同 Citation Key
             if Entry.find(byCitationKey: bibEntry.citationKey, in: context) != nil {
-                print("跳過重複書目: \\(bibEntry.citationKey)")
+                print("跳過重複書目: \(bibEntry.citationKey)")
                 continue
             }
 
             // 創建新書目
-            _ = Entry(
+            let newEntry = Entry(
                 context: context,
                 citationKey: bibEntry.citationKey,
                 entryType: bibEntry.type,
@@ -214,10 +215,22 @@ extension BibTeXParser {
             )
 
             importedCount += 1
+            importedEntryIDs.append(newEntry.id)
         }
 
         // 保存
         try context.save()
+        
+        // 發送匯入通知，觸發 Agent 自動分析
+        if !importedEntryIDs.isEmpty {
+            if #available(macOS 26.0, *) {
+                AgentAutoTrigger.notifyImport(
+                    entryIDs: importedEntryIDs,
+                    libraryID: library.id,
+                    source: .bibtex
+                )
+            }
+        }
 
         return importedCount
     }

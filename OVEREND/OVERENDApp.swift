@@ -137,9 +137,9 @@ struct OVERENDApp: App {
             }
         }
 
-        // 設置視窗
+        // 設置視窗 - 使用 Emerald 設計
         Settings {
-            SettingsView()
+            EmeraldSettingsView()
                 .environmentObject(appTheme) // 注入主題
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }

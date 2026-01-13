@@ -121,7 +121,10 @@ class PDFMetadataExtractor {
                 logger.log("🍎 使用 Apple Intelligence 分析...")
                 
                 do {
-                    let aiMetadata = try await UnifiedAIService.shared.document.extractMetadata(from: fullText)
+                    let aiMetadata = try await UnifiedAIService.shared.document.extractMetadata(
+                        from: fullText,
+                        filename: url.lastPathComponent
+                    )
                     
                     // 檢查 AI 結果品質
                     if aiMetadata.hasData {
