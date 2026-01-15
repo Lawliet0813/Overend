@@ -1,0 +1,1085 @@
+//
+//  EmeraldLibrarySubviews.swift
+//  OVEREND
+//
+//  EmeraldLibraryView 子視圖 - 從主檔案拆分
+//
+
+import SwiftUI
+import CoreData
+
+// MARK: - 側邊欄
+
+struct LibrarySidebar: View {
+    let libraries: [Library]
+    @Binding var selectedLibrary: Library?
+    @Binding var searchText: String
+    @Binding var smartGroupFilter: EmeraldLibraryView.SmartGroupType
+    var onNewLibrary: () -> Void
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            // 搜尋框
+            HStack {
+                MaterialIcon(name: "search", size: 18, color: EmeraldTheme.textMuted)
+                TextField("搜尋文獻庫...", text: $searchText)
+                    .textFieldStyle(.plain)
+                    .foregroundColor(.white)
+            }
+            .padding(12)
+            .background(EmeraldTheme.surfaceDark)
+            .cornerRadius(8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(EmeraldTheme.border, lineWidth: 1)
+            )
+            .padding()
+            
+            // Smart Groups
+            VStack(alignment: .leading, spacing: 4) {
+                Text("智慧群組")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(EmeraldTheme.textMuted)
+                    .textCase(.uppercase)
+                    .tracking(1)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 8)
+                
+                SmartGroupButton(
+                    icon: "library_books",
+                    title: "所有文獻",
+                    count: totalEntryCount,
+                    isSelected: smartGroupFilter == .all
+                ) { smartGroupFilter = .all }
+                
+                SmartGroupButton(
+                    icon: "schedule",
+                    title: "最近新增",
+                    count: recentCount,
+                    isSelected: smartGroupFilter == .recent
+                ) { smartGroupFilter = .recent }
+                
+                SmartGroupButton(
+                    icon: "star",
+                    title: "收藏",
+                    count: favoritesCount,
+                    isSelected: smartGroupFilter == .favorites
+                ) { smartGroupFilter = .favorites }
+                
+                SmartGroupButton(
+                    icon: "warning",
+                    title: "缺少 DOI",
+                    count: missingDOICount,
+                    isSelected: smartGroupFilter == .missingDOI
+                ) { smartGroupFilter = .missingDOI }
+            }
+            .padding(.top, 8)
+            
+            // 文獻庫列表
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text("我的文獻庫")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(EmeraldTheme.textMuted)
+                        .textCase(.uppercase)
+                        .tracking(1)
+                    
+                    Spacer()
+                    
+                    Button(action: onNewLibrary) {
+                        MaterialIcon(name: "add", size: 14, color: EmeraldTheme.textMuted)
+                    }
+                    .buttonStyle(.plain)
+                    .help("新增文獻庫")
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 24)
+                .padding(.bottom, 8)
+                
+                ForEach(libraries) { library in
+                    LibraryRowButton(
+                        library: library,
+                        isSelected: selectedLibrary?.id == library.id
+                    ) {
+                        selectedLibrary = library
+                    }
+                }
+            }
+            
+            Spacer()
+            
+            // AI 助理區塊
+            if #available(macOS 26.0, *) {
+                AgentSidebarSection(libraries: libraries)
+            }
+            
+            // 同步狀態
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 8) {
+                    MaterialIcon(name: "cloud_sync", size: 18, color: EmeraldTheme.primary)
+                    Text("同步狀態")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(EmeraldTheme.primary)
+                        .textCase(.uppercase)
+                }
+                
+                Text("最後同步於 2 分鐘前。所有變更已儲存。")
+                    .font(.system(size: 11))
+                    .foregroundColor(EmeraldTheme.textSecondary)
+            }
+            .padding(16)
+            .background(
+                LinearGradient(
+                    colors: [EmeraldTheme.elevated, EmeraldTheme.backgroundDark],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(Color.white.opacity(0.1), lineWidth: 1)
+            )
+            .cornerRadius(12)
+            .padding()
+        }
+        .emeraldGlassBackground()
+        .emeraldRightBorder()
+    }
+    
+    private var totalEntryCount: Int {
+        libraries.reduce(0) { $0 + ($1.entries?.count ?? 0) }
+    }
+    
+    private var recentCount: Int {
+        let weekAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
+        return libraries.flatMap { ($0.entries as? Set<Entry>) ?? [] }
+            .filter { $0.createdAt >= weekAgo }
+            .count
+    }
+    
+    private var favoritesCount: Int {
+        return 0
+    }
+    
+    private var missingDOICount: Int {
+        libraries.flatMap { ($0.entries as? Set<Entry>) ?? [] }
+            .filter { $0.fields["doi"]?.isEmpty ?? true }
+            .count
+    }
+}
+
+// MARK: - Smart Group 按鈕
+
+struct SmartGroupButton: View {
+    let icon: String
+    let title: String
+    let count: Int
+    let isSelected: Bool
+    var action: () -> Void
+    
+    @State private var isHovered = false
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                MaterialIcon(
+                    name: icon,
+                    size: 18,
+                    color: isSelected ? EmeraldTheme.primary : EmeraldTheme.textSecondary
+                )
+                
+                Text(title)
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(isSelected ? .white : EmeraldTheme.textSecondary)
+                
+                Spacer()
+                
+                Text("\(count)")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundColor(isSelected ? EmeraldTheme.primary : EmeraldTheme.textMuted)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .background(isSelected ? EmeraldTheme.primary.opacity(0.1) : (isHovered ? Color.white.opacity(0.05) : .clear))
+            .cornerRadius(8)
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, 8)
+        .onHover { hovering in
+            isHovered = hovering
+        }
+    }
+}
+
+// MARK: - 文獻庫行按鈕
+
+struct LibraryRowButton: View {
+    let library: Library
+    let isSelected: Bool
+    let action: () -> Void
+    
+    @State private var isHovered = false
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                MaterialIcon(
+                    name: "folder",
+                    size: 18,
+                    color: isSelected ? .white : EmeraldTheme.textSecondary
+                )
+                
+                Text(library.name)
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(isSelected ? .white : EmeraldTheme.textSecondary)
+                    .lineLimit(1)
+                
+                Spacer()
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .background(isHovered ? Color.white.opacity(0.05) : .clear)
+            .cornerRadius(8)
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, 8)
+        .onHover { hovering in
+            isHovered = hovering
+        }
+    }
+}
+
+// MARK: - 主內容區
+
+struct LibraryMainContent: View {
+    let selectedLibrary: Library?
+    let allLibraries: [Library]
+    @Binding var selectedEntry: Entry?
+    @Binding var selectedEntries: Set<UUID>
+    let searchText: String
+    let smartGroupFilter: EmeraldLibraryView.SmartGroupType
+    let onAddReference: () -> Void
+    let onImportBibTeX: () -> Void
+    var onBatchDelete: ((Set<UUID>) -> Void)?  // 批量刪除回調
+    
+    @State private var cachedEntries: [Entry] = []
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    private func isEntrySelected(_ entry: Entry) -> Bool {
+        selectedEntries.contains(entry.id) || selectedEntry?.id == entry.id
+    }
+    
+    private func toggleEntrySelection(_ entry: Entry) {
+        if selectedEntries.contains(entry.id) {
+            selectedEntries.remove(entry.id)
+        } else {
+            selectedEntries.insert(entry.id)
+        }
+    }
+    
+    private var isAllSelected: Bool {
+        !cachedEntries.isEmpty && cachedEntries.allSatisfy { selectedEntries.contains($0.id) }
+    }
+    
+    private func computeEntries() -> [Entry] {
+        var result: Set<Entry> = []
+        
+        switch smartGroupFilter {
+        case .all:
+            for library in allLibraries {
+                if let entrySet = library.entries as? Set<Entry> {
+                    result.formUnion(entrySet)
+                }
+            }
+        case .recent:
+            let weekAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
+            for library in allLibraries {
+                if let entrySet = library.entries as? Set<Entry> {
+                    result.formUnion(entrySet.filter { $0.createdAt >= weekAgo })
+                }
+            }
+        case .favorites:
+            break
+        case .missingDOI:
+            for library in allLibraries {
+                if let entrySet = library.entries as? Set<Entry> {
+                    result.formUnion(entrySet.filter { $0.fields["doi"]?.isEmpty ?? true })
+                }
+            }
+        }
+        
+        result = result.filter { entry in
+            !entry.isDeleted && entry.managedObjectContext != nil
+        }
+        
+        if !searchText.isEmpty {
+            result = result.filter { entry in
+                entry.title.localizedCaseInsensitiveContains(searchText) ||
+                entry.author.localizedCaseInsensitiveContains(searchText)
+            }
+        }
+        
+        return Array(result).sorted { $0.title < $1.title }
+    }
+    
+    private func updateEntries() {
+        cachedEntries = computeEntries()
+    }
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            // 工具列
+            HStack {
+                // 左側：文獻統計
+                HStack(spacing: 12) {
+                    HStack(spacing: 6) {
+                        MaterialIcon(name: "library_books", size: 18, color: EmeraldTheme.primary)
+                        Text("\(cachedEntries.count) 篇文獻")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundColor(EmeraldTheme.textPrimary)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(EmeraldTheme.primary.opacity(0.1))
+                    .cornerRadius(8)
+                }
+                
+                Spacer()
+                
+                // 右側：匯入按鈕群組
+                HStack(spacing: 12) {
+                    // 匯入 BibTeX 按鈕
+                    Button(action: onImportBibTeX) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "doc.text")
+                                .font(.system(size: 13, weight: .semibold))
+                            Text("匯入 BibTeX")
+                                .font(.system(size: 13, weight: .semibold))
+                        }
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 10)
+                        .foregroundColor(EmeraldTheme.textPrimary)
+                        .background(EmeraldTheme.surfaceDark)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(EmeraldTheme.border, lineWidth: 1)
+                        )
+                        .cornerRadius(8)
+                    }
+                    .buttonStyle(.plain)
+                    .help("匯入 .bib 書目檔案")
+                    
+                    // 匯入 PDF 按鈕（主要操作）
+                    Button {
+                        onAddReference()
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "plus")
+                                .font(.system(size: 13, weight: .bold))
+                            Text("匯入 PDF")
+                                .font(.system(size: 13, weight: .bold))
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background(EmeraldTheme.primary)
+                        .foregroundColor(EmeraldTheme.backgroundDark)
+                        .cornerRadius(8)
+                        .shadow(color: EmeraldTheme.primary.opacity(0.3), radius: 8)
+                    }
+                    .buttonStyle(.plain)
+                    .help("匯入 PDF 文獻檔案")
+                }
+                
+                // 批量刪除按鈕
+                if !selectedEntries.isEmpty {
+                    Button {
+                        onBatchDelete?(selectedEntries)
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "trash")
+                                .font(.system(size: 13, weight: .semibold))
+                            Text("刪除 \(selectedEntries.count) 項")
+                                .font(.system(size: 13, weight: .bold))
+                        }
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 10)
+                        .background(Color.red.opacity(0.15))
+                        .foregroundColor(.red)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.red.opacity(0.3), lineWidth: 1)
+                        )
+                        .cornerRadius(8)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 16)
+            .background(EmeraldTheme.backgroundDark)
+            .overlay(
+                Rectangle()
+                    .fill(Color.white.opacity(0.05))
+                    .frame(height: 1),
+                alignment: .bottom
+            )
+            
+            // 表格
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    // 表頭
+                    HStack {
+                        Button {
+                            if isAllSelected {
+                                selectedEntries.removeAll()
+                            } else {
+                                selectedEntries = Set(cachedEntries.map { $0.id })
+                            }
+                        } label: {
+                            CheckboxView(isChecked: isAllSelected)
+                        }
+                        .buttonStyle(.plain)
+                        .frame(width: 40)
+                        
+                        Text("標題")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        Text("作者")
+                            .frame(width: 150, alignment: .leading)
+                        
+                        Text("年份")
+                            .frame(width: 80, alignment: .leading)
+                        
+                        Text("期刊")
+                            .frame(width: 150, alignment: .leading)
+                        
+                        Spacer()
+                            .frame(width: 40)
+                    }
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(EmeraldTheme.textMuted)
+                    .textCase(.uppercase)
+                    .tracking(1)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(EmeraldTheme.surfaceDark)
+                    
+                    // 資料行
+                    ForEach(cachedEntries) { entry in
+                        LibraryEntryTableRow(
+                            entry: entry,
+                            isSelected: isEntrySelected(entry),
+                            onCheckboxTap: { toggleEntrySelection(entry) },
+                            onRowTap: { selectedEntry = entry }
+                        )
+                    }
+                }
+                .background(EmeraldTheme.surfaceDark.opacity(0.5))
+                .cornerRadius(12)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                )
+                .padding(24)
+            }
+        }
+        .background(EmeraldTheme.backgroundDark)
+        .onAppear { updateEntries() }
+        .onChange(of: searchText) { _ in updateEntries() }
+        .onChange(of: smartGroupFilter) { _ in updateEntries() }
+        .onChange(of: allLibraries) { _ in updateEntries() }
+        .onReceive(NotificationCenter.default.publisher(for: .NSManagedObjectContextObjectsDidChange, object: viewContext)) { _ in
+            // 簡單的防抖動或直接更新
+            updateEntries()
+        }
+    }
+}
+
+// MARK: - 工具列按鈕
+
+struct ToolbarButton: View {
+    let icon: String
+    
+    @State private var isHovered = false
+    
+    var body: some View {
+        Button(action: {}) {
+            MaterialIcon(name: icon, size: 22, color: isHovered ? .white : EmeraldTheme.textSecondary)
+                .frame(width: 40, height: 40)
+                .background(isHovered ? EmeraldTheme.surfaceDark : .clear)
+                .cornerRadius(8)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(isHovered ? Color.white.opacity(0.1) : .clear, lineWidth: 1)
+                )
+        }
+        .buttonStyle(.plain)
+        .onHover { hovering in
+            isHovered = hovering
+        }
+    }
+}
+
+// MARK: - Checkbox
+
+struct CheckboxView: View {
+    let isChecked: Bool
+    
+    var body: some View {
+        RoundedRectangle(cornerRadius: 4)
+            .fill(isChecked ? EmeraldTheme.primary : EmeraldTheme.backgroundDark)
+            .frame(width: 16, height: 16)
+            .overlay(
+                RoundedRectangle(cornerRadius: 4)
+                    .stroke(isChecked ? EmeraldTheme.primary : Color.white.opacity(0.2), lineWidth: 1)
+            )
+            .overlay(
+                Image(systemName: "checkmark")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(EmeraldTheme.backgroundDark)
+                    .opacity(isChecked ? 1 : 0)
+            )
+    }
+}
+
+// MARK: - 表格行
+
+struct LibraryEntryTableRow: View {
+    @ObservedObject var entry: Entry
+    let isSelected: Bool
+    var onCheckboxTap: () -> Void
+    var onRowTap: () -> Void
+    
+    @State private var isHovered = false
+    
+    private var rowBackground: Color {
+        if isSelected {
+            return EmeraldTheme.primary.opacity(0.1)
+        } else if isHovered {
+            return EmeraldTheme.surfaceDark.opacity(0.8)
+        }
+        return .clear
+    }
+    
+    private var pdfIconName: String {
+        entry.hasPDF ? "picture_as_pdf" : "article"
+    }
+    
+    private var pdfIconColor: Color {
+        entry.hasPDF ? EmeraldTheme.primary : EmeraldTheme.textMuted
+    }
+    
+    var body: some View {
+        HStack(spacing: 0) {
+            // Checkbox (可獨立點擊)
+            Button(action: onCheckboxTap) {
+                CheckboxView(isChecked: isSelected)
+                    .frame(width: 40, height: 44)
+            }
+            .buttonStyle(.plain)
+            
+            // 行內容 (點擊選取並顯示 Inspector)
+            Button(action: onRowTap) {
+                rowContent
+            }
+            .buttonStyle(.plain)
+        }
+        .onHover { hovering in
+            isHovered = hovering
+        }
+        .overlay(
+            Rectangle()
+                .fill(Color.white.opacity(0.05))
+                .frame(height: 1),
+            alignment: .bottom
+        )
+    }
+    
+    private var rowContent: some View {
+        HStack {
+            Text(entry.title)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundColor(.white)
+                .lineLimit(1)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            
+            Text(entry.author)
+                .font(.system(size: 13))
+                .foregroundColor(EmeraldTheme.textSecondary)
+                .lineLimit(1)
+                .frame(width: 150, alignment: .leading)
+            
+            Text(entry.year)
+                .font(.system(size: 13))
+                .foregroundColor(EmeraldTheme.textSecondary)
+                .frame(width: 80, alignment: .leading)
+            
+            publicationBadge
+            
+            MaterialIcon(name: pdfIconName, size: 18, color: pdfIconColor)
+                .frame(width: 40)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(rowBackground)
+    }
+    
+    @ViewBuilder
+    private var publicationBadge: some View {
+        if !entry.publication.isEmpty {
+            Text(entry.publication)
+                .font(.system(size: 11, weight: .medium))
+                .foregroundColor(EmeraldTheme.textSecondary)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(EmeraldTheme.backgroundDark)
+                .cornerRadius(4)
+                .lineLimit(1)
+                .frame(width: 150, alignment: .leading)
+        } else {
+            Spacer()
+                .frame(width: 150)
+        }
+    }
+}
+
+// MARK: - Inspector 面板
+
+struct LibraryInspector: View {
+    let entry: Entry
+    var onEdit: () -> Void
+    var onDelete: () -> Void
+    var onOpenPDF: () -> Void
+    var onOpenDOI: () -> Void
+    
+    @State private var selectedTab = 0  // 0: 資訊, 1: 筆記, 2: 標籤
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            inspectorHeader
+            inspectorTabs
+            inspectorContent
+        }
+        .background(EmeraldTheme.surfaceDark.opacity(0.3))
+        .background(.ultraThinMaterial)
+        .overlay(
+            Rectangle()
+                .fill(Color.white.opacity(0.05))
+                .frame(width: 1),
+            alignment: .leading
+        )
+    }
+    
+    private var inspectorHeader: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(EmeraldTheme.primary.opacity(0.2))
+                        .frame(width: 40, height: 40)
+                    
+                    MaterialIcon(name: "article", size: 22, color: EmeraldTheme.primary)
+                }
+                
+                Spacer()
+                
+                HStack(spacing: 12) {
+                    Button(action: onEdit) {
+                        MaterialIcon(name: "edit", size: 20, color: EmeraldTheme.textSecondary)
+                    }
+                    .buttonStyle(.plain)
+                    .help("編輯文獻")
+                    
+                    Button(action: onDelete) {
+                        MaterialIcon(name: "delete", size: 20, color: .red.opacity(0.8))
+                    }
+                    .buttonStyle(.plain)
+                    .help("刪除文獻")
+                }
+            }
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(entry.title)
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(.white)
+                    .lineLimit(3)
+                
+                Text("\(entry.author), \(entry.year) • \(entry.publication)")
+                    .font(.system(size: 13))
+                    .foregroundColor(EmeraldTheme.textSecondary)
+            }
+        }
+        .padding(24)
+    }
+    
+    private var inspectorTabs: some View {
+        HStack(spacing: 24) {
+            InspectorTab(title: "資訊", isSelected: selectedTab == 0) {
+                selectedTab = 0
+            }
+            InspectorTab(title: "筆記", isSelected: selectedTab == 1) {
+                selectedTab = 1
+            }
+            InspectorTab(title: "標籤", isSelected: selectedTab == 2) {
+                selectedTab = 2
+            }
+        }
+        .padding(.horizontal, 24)
+        .overlay(
+            Rectangle()
+                .fill(Color.white.opacity(0.05))
+                .frame(height: 1),
+            alignment: .bottom
+        )
+    }
+    
+    @ViewBuilder
+    private var inspectorContent: some View {
+        switch selectedTab {
+        case 0:
+            // 資訊
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    pdfAttachmentView
+                    abstractView
+                    doiView
+                }
+                .padding(24)
+            }
+        case 1:
+            // 筆記
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("筆記")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(EmeraldTheme.textMuted)
+                        .textCase(.uppercase)
+                    
+                    if let notes = entry.fields["notes"], !notes.isEmpty {
+                        Text(notes)
+                            .font(.system(size: 13))
+                            .foregroundColor(EmeraldTheme.textSecondary)
+                            .lineSpacing(4)
+                    } else {
+                        Text("尚無筆記，點擊編輯按鈕新增筆記")
+                            .font(.system(size: 13))
+                            .foregroundColor(EmeraldTheme.textMuted)
+                            .italic()
+                    }
+                }
+                .padding(24)
+            }
+        case 2:
+            // 標籤
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("標籤")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(EmeraldTheme.textMuted)
+                        .textCase(.uppercase)
+                    
+                    if let tagSet = entry.tags as? Set<Tag>, !tagSet.isEmpty {
+                        FlowLayout(spacing: 8) {
+                            ForEach(Array(tagSet), id: \.self) { tag in
+                                Text(tag.name)
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 6)
+                                    .background(EmeraldTheme.primary.opacity(0.3))
+                                    .cornerRadius(6)
+                            }
+                        }
+                    } else {
+                        Text("尚無標籤，點擊編輯按鈕新增標籤")
+                            .font(.system(size: 13))
+                            .foregroundColor(EmeraldTheme.textMuted)
+                            .italic()
+                    }
+                }
+                .padding(24)
+            }
+        default:
+            EmptyView()
+        }
+    }
+    
+    @ViewBuilder
+    private var pdfAttachmentView: some View {
+        if entry.hasPDF {
+            HStack(spacing: 12) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.red.opacity(0.2))
+                        .frame(width: 40, height: 40)
+                    
+                    MaterialIcon(name: "picture_as_pdf", size: 20, color: .red)
+                }
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("\(entry.citationKey).pdf")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                    
+                    Text("PDF 文件")
+                        .font(.system(size: 11))
+                        .foregroundColor(EmeraldTheme.textSecondary)
+                }
+                
+                Spacer()
+                
+                Button(action: onOpenPDF) {
+                    MaterialIcon(name: "launch", size: 18, color: EmeraldTheme.primary)
+                }
+                .buttonStyle(.plain)
+                .help("開啟 PDF")
+            }
+            .padding(12)
+            .background(EmeraldTheme.backgroundDark)
+            .cornerRadius(12)
+        }
+    }
+    
+    @ViewBuilder
+    private var abstractView: some View {
+        let abstractText = entry.fields["abstract"] ?? ""
+        if !abstractText.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("摘要")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(EmeraldTheme.textMuted)
+                    .textCase(.uppercase)
+                
+                Text(abstractText)
+                    .font(.system(size: 13))
+                    .foregroundColor(EmeraldTheme.textSecondary)
+                    .lineSpacing(4)
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var doiView: some View {
+        let doiText = entry.fields["doi"] ?? ""
+        if !doiText.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("DOI")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(EmeraldTheme.textMuted)
+                    .textCase(.uppercase)
+                
+                HStack {
+                    Text(doiText)
+                        .font(.system(size: 12, design: .monospaced))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                    
+                    Spacer()
+                    
+                    Button(action: onOpenDOI) {
+                        MaterialIcon(name: "launch", size: 18, color: EmeraldTheme.primary)
+                    }
+                    .buttonStyle(.plain)
+                    .help("在瀏覽器中開啟 DOI")
+                }
+                .padding(12)
+                .background(EmeraldTheme.surfaceDark)
+                .cornerRadius(8)
+            }
+        }
+    }
+}
+
+// MARK: - Inspector Tab
+
+struct InspectorTab: View {
+    let title: String
+    let isSelected: Bool
+    var action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 0) {
+                Text(title)
+                    .font(.system(size: 13, weight: isSelected ? .bold : .medium))
+                    .foregroundColor(isSelected ? EmeraldTheme.primary : EmeraldTheme.textSecondary)
+                    .padding(.bottom, 12)
+                
+                Rectangle()
+                    .fill(isSelected ? EmeraldTheme.primary : .clear)
+                    .frame(height: 2)
+            }
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - AI 助理側邊欄區塊
+
+@available(macOS 26.0, *)
+struct AgentSidebarSection: View {
+    let libraries: [Library]
+    
+    @ObservedObject private var agent = LiteratureAgent.shared
+    @State private var isExpanded = false
+    
+    private var currentLibrary: Library? {
+        libraries.first
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Button {
+                withAnimation(.spring(response: 0.3)) {
+                    isExpanded.toggle()
+                }
+            } label: {
+                HStack(spacing: 8) {
+                    ZStack {
+                        Circle()
+                            .fill(EmeraldTheme.primary.opacity(0.2))
+                            .frame(width: 28, height: 28)
+                        
+                        Image(systemName: "cpu")
+                            .font(.system(size: 14))
+                            .foregroundColor(EmeraldTheme.primary)
+                    }
+                    
+                    Text("AI 助理")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(EmeraldTheme.primary)
+                    
+                    Spacer()
+                    
+                    if agent.state.isExecuting {
+                        ProgressView()
+                            .scaleEffect(0.5)
+                            .frame(width: 16, height: 16)
+                    } else {
+                        Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                            .font(.system(size: 10))
+                            .foregroundColor(EmeraldTheme.textMuted)
+                    }
+                }
+            }
+            .buttonStyle(.plain)
+            
+            if isExpanded {
+                VStack(spacing: 8) {
+                    AgentQuickButton(
+                        icon: "folder.badge.gearshape",
+                        title: "智慧分類",
+                        isLoading: agent.state == .classifying
+                    ) {
+                        if let library = currentLibrary {
+                            Task {
+                                try? await agent.execute(task: .organizeByTopic(library))
+                            }
+                        }
+                    }
+                    
+                    AgentQuickButton(
+                        icon: "tag.fill",
+                        title: "自動標籤",
+                        isLoading: agent.state == .tagging
+                    ) {
+                        if let library = currentLibrary {
+                            let context = PersistenceController.shared.container.viewContext
+                            let entries = Entry.fetchAll(in: library, context: context)
+                            Task {
+                                try? await agent.execute(task: .autoTagEntries(entries))
+                            }
+                        }
+                    }
+                    
+                    AgentQuickButton(
+                        icon: "doc.on.doc",
+                        title: "尋找重複",
+                        isLoading: agent.state == .analyzing
+                    ) {
+                        if let library = currentLibrary {
+                            Task {
+                                try? await agent.execute(task: .findDuplicates(library))
+                            }
+                        }
+                    }
+                }
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+            
+            if !agent.pendingSuggestions.isEmpty {
+                HStack(spacing: 6) {
+                    Image(systemName: "lightbulb.fill")
+                        .font(.system(size: 10))
+                        .foregroundColor(.orange)
+                    
+                    Text("\(agent.pendingSuggestions.count) 個建議待確認")
+                        .font(.system(size: 11))
+                        .foregroundColor(EmeraldTheme.textSecondary)
+                }
+                .padding(.top, 4)
+            }
+        }
+        .padding(12)
+        .background(
+            LinearGradient(
+                colors: [EmeraldTheme.primary.opacity(0.05), EmeraldTheme.elevated],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(EmeraldTheme.primary.opacity(0.2), lineWidth: 1)
+        )
+        .cornerRadius(12)
+        .padding(.horizontal)
+        .padding(.bottom, 8)
+    }
+}
+
+// MARK: - Agent 快速按鈕
+
+@available(macOS 26.0, *)
+struct AgentQuickButton: View {
+    let icon: String
+    let title: String
+    let isLoading: Bool
+    let action: () -> Void
+    
+    @State private var isHovered = false
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 10) {
+                if isLoading {
+                    ProgressView()
+                        .scaleEffect(0.6)
+                        .frame(width: 18, height: 18)
+                } else {
+                    Image(systemName: icon)
+                        .font(.system(size: 14))
+                        .foregroundColor(EmeraldTheme.textSecondary)
+                        .frame(width: 18)
+                }
+                
+                Text(title)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(isHovered ? .white : EmeraldTheme.textSecondary)
+                
+                Spacer()
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .background(isHovered ? EmeraldTheme.primary.opacity(0.15) : Color.clear)
+            .cornerRadius(6)
+        }
+        .buttonStyle(.plain)
+        .disabled(isLoading)
+        .onHover { hovering in
+            isHovered = hovering
+        }
+    }
+}

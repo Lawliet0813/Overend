@@ -371,7 +371,7 @@ extension RISParser {
         for risEntry in entries {
             // 跳過無效條目
             guard validate(entry: risEntry) else {
-                AppLogger.debug("⚠️ RISParser: 跳過無效條目（缺少標題）")
+                logDebug("⚠️ RISParser: 跳過無效條目（缺少標題）", category: .general)
                 continue
             }
             
@@ -380,7 +380,7 @@ extension RISParser {
             
             // 檢查是否已存在
             if Entry.find(byCitationKey: citationKey, in: context) != nil {
-                AppLogger.debug("⚠️ RISParser: 跳過重複書目: \(citationKey)")
+                logDebug("⚠️ RISParser: 跳過重複書目: \(citationKey)", category: .general)
                 continue
             }
             
@@ -451,7 +451,7 @@ extension RISParser {
             }
         }
         
-        AppLogger.success("✅ RISParser: 成功匯入 \(importedCount) 筆書目")
+        logInfo("✅ RISParser: 成功匯入 \(importedCount) 筆書目", category: .general)
         return importedCount
     }
     
