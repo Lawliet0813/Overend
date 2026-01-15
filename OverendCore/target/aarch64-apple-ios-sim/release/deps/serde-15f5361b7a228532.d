@@ -1,0 +1,14 @@
+/Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-ios-sim/release/deps/serde-15f5361b7a228532.d: /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-ios-sim/release/build/serde-a5906c11a684ca3a/out/private.rs
+
+/Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-ios-sim/release/deps/libserde-15f5361b7a228532.rlib: /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-ios-sim/release/build/serde-a5906c11a684ca3a/out/private.rs
+
+/Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-ios-sim/release/deps/libserde-15f5361b7a228532.rmeta: /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-ios-sim/release/build/serde-a5906c11a684ca3a/out/private.rs
+
+/Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs:
+/Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs:
+/Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs:
+/Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs:
+/Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs:
+/Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-ios-sim/release/build/serde-a5906c11a684ca3a/out/private.rs:
+
+# env-dep:OUT_DIR=/Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-ios-sim/release/build/serde-a5906c11a684ca3a/out

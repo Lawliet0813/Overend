@@ -1,0 +1,14 @@
+/Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-darwin/release/deps/thiserror-20efddaf671a33d1.d: /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/lib.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/aserror.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/display.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/var.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/private.rs /Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-darwin/release/build/thiserror-23de2da767e8efc4/out/private.rs
+
+/Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-darwin/release/deps/libthiserror-20efddaf671a33d1.rlib: /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/lib.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/aserror.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/display.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/var.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/private.rs /Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-darwin/release/build/thiserror-23de2da767e8efc4/out/private.rs
+
+/Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-darwin/release/deps/libthiserror-20efddaf671a33d1.rmeta: /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/lib.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/aserror.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/display.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/var.rs /Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/private.rs /Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-darwin/release/build/thiserror-23de2da767e8efc4/out/private.rs
+
+/Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/lib.rs:
+/Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/aserror.rs:
+/Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/display.rs:
+/Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/var.rs:
+/Users/lawliet/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/private.rs:
+/Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-darwin/release/build/thiserror-23de2da767e8efc4/out/private.rs:
+
+# env-dep:OUT_DIR=/Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-darwin/release/build/thiserror-23de2da767e8efc4/out

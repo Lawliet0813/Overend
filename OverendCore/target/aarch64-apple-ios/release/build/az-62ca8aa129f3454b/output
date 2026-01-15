@@ -1,0 +1,6 @@
+$ mkdir -p "/Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-ios/release/build/az-62ca8aa129f3454b/out/try_track_caller"
+$ cd "/Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-ios/release/build/az-62ca8aa129f3454b/out/try_track_caller"
+$ printf '%s' "// try_tra"... > "/Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-ios/release/build/az-62ca8aa129f3454b/out/try_track_caller/try_track_caller.rs"
+$ cd "/Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-ios/release/build/az-62ca8aa129f3454b/out/try_track_caller" && "/Users/lawliet/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc" "try_track_caller.rs" "--emit=dep-info,metadata" >& /dev/null
+cargo:rustc-cfg=track_caller
+$ rm -r "/Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-ios/release/build/az-62ca8aa129f3454b/out/try_track_caller"

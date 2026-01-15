@@ -1,0 +1,57 @@
+cargo:rustc-check-cfg=cfg(switchable_stack,asm,link_asm)
+OPT_LEVEL = Some(3)
+OUT_DIR = Some(/Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-ios/release/build/psm-f061a56395d9762e/out)
+TARGET = Some(aarch64-apple-ios)
+CARGO_ENCODED_RUSTFLAGS = Some()
+HOST = Some(aarch64-apple-darwin)
+cargo:rerun-if-env-changed=CC_aarch64-apple-ios
+CC_aarch64-apple-ios = None
+cargo:rerun-if-env-changed=CC_aarch64_apple_ios
+CC_aarch64_apple_ios = None
+cargo:rerun-if-env-changed=TARGET_CC
+TARGET_CC = None
+cargo:rerun-if-env-changed=CC
+CC = None
+cargo:rerun-if-env-changed=CC_ENABLE_DEBUG_OUTPUT
+RUSTC_WRAPPER = None
+cargo:rerun-if-env-changed=CRATE_CC_NO_DEFAULTS
+CRATE_CC_NO_DEFAULTS = None
+DEBUG = Some(false)
+cargo:rerun-if-env-changed=IPHONEOS_DEPLOYMENT_TARGET
+IPHONEOS_DEPLOYMENT_TARGET = None
+Detecting "ios" SDK path for iphoneos
+cargo:rerun-if-env-changed=SDKROOT
+SDKROOT = None
+cargo:rerun-if-env-changed=CFLAGS
+CFLAGS = None
+cargo:rerun-if-env-changed=TARGET_CFLAGS
+TARGET_CFLAGS = None
+cargo:rerun-if-env-changed=CFLAGS_aarch64_apple_ios
+CFLAGS_aarch64_apple_ios = None
+cargo:rerun-if-env-changed=CFLAGS_aarch64-apple-ios
+CFLAGS_aarch64-apple-ios = None
+cargo:rustc-cfg=asm
+cargo:rustc-cfg=link_asm
+cargo:rustc-cfg=switchable_stack
+Detecting "ios" SDK path for iphoneos
+cargo:rerun-if-env-changed=AR_aarch64-apple-ios
+AR_aarch64-apple-ios = None
+cargo:rerun-if-env-changed=AR_aarch64_apple_ios
+AR_aarch64_apple_ios = None
+cargo:rerun-if-env-changed=TARGET_AR
+TARGET_AR = None
+cargo:rerun-if-env-changed=AR
+AR = None
+cargo:rerun-if-env-changed=CROSS_COMPILE
+CROSS_COMPILE = None
+RUSTC_LINKER = None
+cargo:rerun-if-env-changed=ARFLAGS
+ARFLAGS = None
+cargo:rerun-if-env-changed=TARGET_ARFLAGS
+TARGET_ARFLAGS = None
+cargo:rerun-if-env-changed=ARFLAGS_aarch64_apple_ios
+ARFLAGS_aarch64_apple_ios = None
+cargo:rerun-if-env-changed=ARFLAGS_aarch64-apple-ios
+ARFLAGS_aarch64-apple-ios = None
+cargo:rustc-link-lib=static=psm_s
+cargo:rustc-link-search=native=/Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-ios/release/build/psm-f061a56395d9762e/out
