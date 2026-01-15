@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 /// Service for Typst document compilation to PDF
 /// Uses the Rust OverendCore for high-performance typesetting
