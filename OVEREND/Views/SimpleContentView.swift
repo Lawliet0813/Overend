@@ -430,7 +430,7 @@ struct SimpleContentView: View {
                     )
                     
                     var pdfText: String? = nil
-                    if let (_, extractedText) = try? PDFService.extractPDFMetadata(from: url) {
+                    if let (_, extractedText) = try? PDFService.shared.extractPDFMetadata(from: url) {
                         pdfText = extractedText
                     }
                     
@@ -453,7 +453,7 @@ struct SimpleContentView: View {
                     
                 } catch {
                     // Agent 失敗，降級使用傳統方法
-                    AppLogger.warning("Agent 提取失敗，使用傳統方法: \(error.localizedDescription)")
+                    AppLogger.shared.warning("Agent 提取失敗，使用傳統方法: \(error.localizedDescription)")
                 }
             }
             
@@ -462,7 +462,7 @@ struct SimpleContentView: View {
             let (metadata, logs) = await PDFMetadataExtractor.extractMetadata(from: url, useGemini: useGemini)
             
             var pdfText: String? = nil
-            if let (_, extractedText) = try? PDFService.extractPDFMetadata(from: url) {
+            if let (_, extractedText) = try? PDFService.shared.extractPDFMetadata(from: url) {
                 pdfText = extractedText
             }
             
@@ -593,7 +593,7 @@ struct SimpleContentView: View {
         
         entry.fields = fields
         entry.bibtexRaw = PDFMetadataExtractor.generateBibTeX(from: metadata, citationKey: entry.citationKey)
-        try PDFService.addPDFAttachment(from: pdfURL, to: entry, context: context)
+        try PDFService.shared.addPDFAttachment(from: pdfURL, to: entry, context: context)
     }
     
     private func generateCitationKey(from metadata: PDFMetadata) -> String {

@@ -220,7 +220,7 @@ struct EmeraldLibraryView: View {
         entry.fields = result.fields
         
         // 附加 PDF（使用 PDFService）
-        try? PDFService.addPDFAttachment(from: pdfURL, to: entry, context: viewContext)
+        try? PDFService.shared.addPDFAttachment(from: pdfURL, to: entry, context: viewContext)
         
         try? viewContext.save()
         ToastManager.shared.showSuccess("已匯入: \(result.title)")
@@ -244,7 +244,7 @@ struct EmeraldLibraryView: View {
         entry.fields = fields
         
         // 附加 PDF（使用 PDFService）
-        try? PDFService.addPDFAttachment(from: pdfURL, to: entry, context: viewContext)
+        try? PDFService.shared.addPDFAttachment(from: pdfURL, to: entry, context: viewContext)
         
         try? viewContext.save()
         ToastManager.shared.showSuccess("已匯入: \(metadata.title)")

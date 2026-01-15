@@ -514,7 +514,7 @@ struct DocumentEditorView: View {
         guard let textView = textViewRef else { return }
         
         // 生成 APA 格式引用
-        let citationText = CitationService.generateAPA(entry: entry)
+        let citationText = CitationService.shared.generateAPA(entry: entry)
         
         // 在游標位置插入
         let insertionPoint = textView.selectedRange().location

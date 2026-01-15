@@ -193,7 +193,7 @@ public class SectionDetector: ObservableObject {
     // MARK: - 初始化
     
     private init() {
-        AppLogger.success("📍 SectionDetector: 初始化完成")
+        AppLogger.shared.notice("📍 SectionDetector: 初始化完成")
     }
     
     // MARK: - 章節偵測

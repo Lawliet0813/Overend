@@ -72,7 +72,7 @@ public class CompanionService: ObservableObject {
         setupIdleTimer()
         showTimeBasedGreeting()
         
-        AppLogger.success("🦉 CompanionService: 初始化完成")
+        AppLogger.shared.notice("🦉 CompanionService: 初始化完成")
     }
     
     // MARK: - 資料持久化
@@ -86,7 +86,7 @@ public class CompanionService: ObservableObject {
                 self.userProgress = saved.progress
                 self.achievementProgress = saved.achievements
             } catch {
-                AppLogger.error("🦉 CompanionService: 載入資料失敗 - \(error)")
+                AppLogger.shared.error("🦉 CompanionService: 載入資料失敗 - \(error)")
             }
         }
         
@@ -109,7 +109,7 @@ public class CompanionService: ObservableObject {
             let data = try JSONEncoder().encode(saved)
             UserDefaults.standard.set(data, forKey: userDefaultsKey)
         } catch {
-            AppLogger.error("🦉 CompanionService: 儲存資料失敗 - \(error)")
+            AppLogger.shared.error("🦉 CompanionService: 儲存資料失敗 - \(error)")
         }
     }
     

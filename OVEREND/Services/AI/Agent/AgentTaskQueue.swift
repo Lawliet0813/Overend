@@ -88,7 +88,7 @@ public class AgentTaskQueue: ObservableObject {
         pendingTasks.append(queuedTask)
         sortPendingTasks()
         
-        AppLogger.debug("📋 TaskQueue: 新增任務 \(task.displayName) (優先級: \(priority))")
+        AppLogger.shared.debug("📋 TaskQueue: 新增任務 \(task.displayName) (優先級: \(priority))")
     }
     
     /// 批次新增任務
@@ -99,7 +99,7 @@ public class AgentTaskQueue: ObservableObject {
         }
         sortPendingTasks()
         
-        AppLogger.debug("📋 TaskQueue: 批次新增 \(tasks.count) 個任務")
+        AppLogger.shared.debug("📋 TaskQueue: 批次新增 \(tasks.count) 個任務")
     }
     
     /// 移除任務
@@ -110,7 +110,7 @@ public class AgentTaskQueue: ObservableObject {
     /// 清空佇列
     public func clear() {
         pendingTasks.removeAll()
-        AppLogger.debug("📋 TaskQueue: 已清空佇列")
+        AppLogger.shared.debug("📋 TaskQueue: 已清空佇列")
     }
     
     /// 開始處理佇列
@@ -143,11 +143,11 @@ public class AgentTaskQueue: ObservableObject {
                         // 重新加入佇列
                         pendingTasks.append(failedTask)
                         sortPendingTasks()
-                        AppLogger.warning("📋 TaskQueue: 任務失敗，將重試 (\(failedTask.retryCount)/\(failedTask.maxRetries))")
+                        AppLogger.shared.warning("📋 TaskQueue: 任務失敗，將重試 (\(failedTask.retryCount)/\(failedTask.maxRetries))")
                     } else {
                         // 加入失敗列表
                         failedTasks.insert(failedTask, at: 0)
-                        AppLogger.error("📋 TaskQueue: 任務永久失敗: \(error.localizedDescription)")
+                        AppLogger.shared.error("📋 TaskQueue: 任務永久失敗: \(error.localizedDescription)")
                     }
                 }
                 
@@ -155,7 +155,7 @@ public class AgentTaskQueue: ObservableObject {
             }
             
             isProcessing = false
-            AppLogger.success("📋 TaskQueue: 佇列處理完成")
+            AppLogger.shared.notice("📋 TaskQueue: 佇列處理完成")
         }
     }
     
@@ -165,7 +165,7 @@ public class AgentTaskQueue: ObservableObject {
         processingTask = nil
         isProcessing = false
         currentTask = nil
-        AppLogger.debug("📋 TaskQueue: 已停止處理")
+        AppLogger.shared.debug("📋 TaskQueue: 已停止處理")
     }
     
     /// 重試失敗任務

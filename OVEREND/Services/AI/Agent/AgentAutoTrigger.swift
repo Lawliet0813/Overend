@@ -92,7 +92,7 @@ public class AgentAutoTrigger: ObservableObject {
         // 監聽匯入通知
         setupNotificationObserver()
         
-        AppLogger.debug("📡 AgentAutoTrigger: 開始監聽匯入事件")
+        AppLogger.shared.debug("📡 AgentAutoTrigger: 開始監聽匯入事件")
     }
     
     // MARK: - 設置監聽
@@ -110,7 +110,7 @@ public class AgentAutoTrigger: ObservableObject {
     
     private func handleImportNotification(_ notification: Notification) {
         guard isAutoAnalysisEnabled else {
-            AppLogger.debug("📡 AgentAutoTrigger: 自動分析已停用，跳過")
+            AppLogger.shared.debug("📡 AgentAutoTrigger: 自動分析已停用，跳過")
             return
         }
         
@@ -121,7 +121,7 @@ public class AgentAutoTrigger: ObservableObject {
         
         let source = userInfo[EntryImportNotificationKeys.source] as? String ?? "unknown"
         
-        AppLogger.aiLog("📡 收到匯入通知: \(entryIDs.count) 篇文獻 (來源: \(source))")
+        AppLogger.shared.info("📡 收到匯入通知: \(entryIDs.count) 篇文獻 (來源: \(source))")
         
         recentImportCount = entryIDs.count
         pendingAnalysisCount += entryIDs.count
@@ -150,7 +150,7 @@ public class AgentAutoTrigger: ObservableObject {
             return
         }
         
-        AppLogger.aiLog("🤖 開始自動分析 \(entries.count) 篇文獻...")
+        AppLogger.shared.info("🤖 開始自動分析 \(entries.count) 篇文獻...")
         
         do {
             // 執行分析任務
@@ -169,11 +169,11 @@ public class AgentAutoTrigger: ObservableObject {
                 ]
             )
             
-            AppLogger.success("🤖 自動分析完成: \(result.suggestions.count) 個建議")
+            AppLogger.shared.notice("🤖 自動分析完成: \(result.suggestions.count) 個建議")
             
         } catch {
             pendingAnalysisCount = 0
-            AppLogger.error("🤖 自動分析失敗: \(error.localizedDescription)")
+            AppLogger.shared.error("🤖 自動分析失敗: \(error.localizedDescription)")
         }
     }
     

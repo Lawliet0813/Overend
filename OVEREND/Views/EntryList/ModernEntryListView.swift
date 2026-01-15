@@ -643,7 +643,7 @@ struct ModernEntryListView: View {
         
         // 删除附件文件
         for attachment in entry.attachmentArray {
-            try? PDFService.deleteAttachment(attachment, context: viewContext)
+            try? PDFService.shared.deleteAttachment(attachment, context: viewContext)
         }
         
         // 删除 Entry
@@ -874,7 +874,7 @@ struct EntryTableRow: View {
             
             // 複製引用
             Button(action: {
-                let citation = CitationService.generateAPA(entry: entry)
+                let citation = CitationService.shared.generateAPA(entry: entry)
                 NSPasteboard.general.clearContents()
                 NSPasteboard.general.setString(citation, forType: .string)
             }) {
@@ -882,7 +882,7 @@ struct EntryTableRow: View {
             }
             
             Button(action: {
-                let citation = CitationService.generateMLA(entry: entry)
+                let citation = CitationService.shared.generateMLA(entry: entry)
                 NSPasteboard.general.clearContents()
                 NSPasteboard.general.setString(citation, forType: .string)
             }) {

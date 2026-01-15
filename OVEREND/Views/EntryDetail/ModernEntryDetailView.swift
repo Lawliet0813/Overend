@@ -1129,12 +1129,12 @@ struct ModernEntryDetailView: View {
                     // 查看模式：使用 entry 資料
                     DetailCitationCard(
                         format: "APA 7th",
-                        citation: CitationService.generateAPA(entry: entry)
+                        citation: CitationService.shared.generateAPA(entry: entry)
                     )
                     
                     DetailCitationCard(
                         format: "MLA 9th",
-                        citation: CitationService.generateMLA(entry: entry)
+                        citation: CitationService.shared.generateMLA(entry: entry)
                     )
                 }
             }
@@ -1267,11 +1267,11 @@ struct ModernEntryDetailView: View {
     // MARK: - 方法
     
     private func importPDF() {
-        PDFService.selectPDFFile { url in
+        PDFService.shared.selectPDFFile { url in
             guard let url = url else { return }
             
             do {
-                try PDFService.addPDFAttachment(from: url, to: entry, context: viewContext)
+                try PDFService.shared.addPDFAttachment(from: url, to: entry, context: viewContext)
             } catch {
                 print("添加 PDF 失敗：\(error)")
             }

@@ -249,11 +249,11 @@ public class LiteratureAgent: ObservableObject {
     // MARK: - 初始化
     
     private init() {
-        AppLogger.success("🤖 LiteratureAgent: 初始化完成")
+        AppLogger.shared.notice("🤖 LiteratureAgent: 初始化完成")
         
         // 檢查是否有可用的 Adapter
         if adapterManager.hasAdapter(.literature) {
-            AppLogger.success("🔌 文獻專用 Adapter 已載入")
+            AppLogger.shared.notice("🔌 文獻專用 Adapter 已載入")
         }
     }
     
@@ -275,7 +275,7 @@ public class LiteratureAgent: ObservableObject {
         currentTask = task
         progress = 0
         
-        AppLogger.aiLog("🤖 Agent 開始任務: \(task.displayName)")
+        AppLogger.shared.info("🤖 Agent 開始任務: \(task.displayName)")
         
         do {
             let result: AgentResult
@@ -327,7 +327,7 @@ public class LiteratureAgent: ObservableObject {
             currentTask = nil
             progress = 1.0
             
-            AppLogger.success("🤖 Agent 完成任務: \(task.displayName) (耗時: \(String(format: "%.1f", duration))s)")
+            AppLogger.shared.notice("🤖 Agent 完成任務: \(task.displayName) (耗時: \(String(format: "%.1f", duration))s)")
             
             return finalResult
             
@@ -335,7 +335,7 @@ public class LiteratureAgent: ObservableObject {
             state = .failed(error.localizedDescription)
             currentTask = nil
             
-            AppLogger.error("🤖 Agent 任務失敗: \(error.localizedDescription)")
+            AppLogger.shared.error("🤖 Agent 任務失敗: \(error.localizedDescription)")
             
             throw error
         }

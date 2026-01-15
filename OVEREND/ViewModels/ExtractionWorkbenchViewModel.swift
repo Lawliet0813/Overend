@@ -191,7 +191,7 @@ class ExtractionWorkbenchViewModel: ObservableObject {
         
         // 附加 PDF
         if let pdfURL = currentPDF {
-            try? PDFService.addPDFAttachment(from: pdfURL, to: entry, context: context)
+            try? PDFService.shared.addPDFAttachment(from: pdfURL, to: entry, context: context)
         }
         
         try? context.save()

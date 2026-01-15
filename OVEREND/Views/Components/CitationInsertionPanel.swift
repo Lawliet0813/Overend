@@ -43,7 +43,7 @@ struct CitationInsertionPanel: View {
     private var citationPreview: String {
         guard !selectedEntries.isEmpty else { return "" }
         
-        let inline = CitationService.generateInlineCitation(
+        let inline = CitationService.shared.generateInlineCitation(
             entries: selectedEntries,
             pageNumber: pageNumber.isEmpty ? nil : pageNumber
         )
@@ -307,7 +307,7 @@ struct CitationInsertionPanel: View {
     }
     
     private func insertCitation() {
-        let inline = CitationService.generateInlineCitation(
+        let inline = CitationService.shared.generateInlineCitation(
             entries: selectedEntries,
             pageNumber: pageNumber.isEmpty ? nil : pageNumber
         )
@@ -342,7 +342,7 @@ struct QuickCitationButton: View {
             Spacer()
             
             Button {
-                let citation = CitationService.generateInlineCitation(
+                let citation = CitationService.shared.generateInlineCitation(
                     entries: [entry],
                     pageNumber: nil
                 )

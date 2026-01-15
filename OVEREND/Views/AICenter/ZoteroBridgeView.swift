@@ -496,7 +496,7 @@ struct ZoteroBridgeView: View {
                 let _ = try await bridge.search(query: searchQuery)
                 selectedItems.removeAll()
             } catch {
-                AppLogger.debug("⚠️ ZoteroBridgeView: 搜尋失敗 - \(error.localizedDescription)")
+                AppLogger.shared.debug("⚠️ ZoteroBridgeView: 搜尋失敗 - \(error.localizedDescription)")
             }
         }
     }
@@ -520,7 +520,7 @@ struct ZoteroBridgeView: View {
                     showImportSuccess = false
                 }
             } catch {
-                AppLogger.debug("⚠️ ZoteroBridgeView: 匯入失敗 - \(error.localizedDescription)")
+                AppLogger.shared.debug("⚠️ ZoteroBridgeView: 匯入失敗 - \(error.localizedDescription)")
             }
             
             isImporting = false

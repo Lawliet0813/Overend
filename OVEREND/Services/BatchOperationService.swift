@@ -99,7 +99,7 @@ class BatchOperationService {
                 // 刪除附件
                 if let attachments = entry.attachments {
                     for attachment in attachments {
-                        try? PDFService.deleteAttachment(attachment, context: context)
+                        try? PDFService.shared.deleteAttachment(attachment, context: context)
                     }
                 }
                 
@@ -331,7 +331,7 @@ class BatchOperationService {
             do {
                 // 提取 PDF 文字
                 let pdfURL = URL(fileURLWithPath: pdfAttachment.filePath)
-                let (_, extractedText) = try PDFService.extractPDFMetadata(from: pdfURL)
+                let (_, extractedText) = try PDFService.shared.extractPDFMetadata(from: pdfURL)
                 
                 guard let pdfText = extractedText, !pdfText.isEmpty else {
                     errors.append("\(entry.title): 無法提取文字")
