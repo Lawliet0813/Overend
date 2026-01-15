@@ -901,3 +901,37 @@ feature/emerald-ui-redesign → main (Fast-forward)
 
 - 編譯通過 (Build Succeeded)
 - Git 提交：29 檔案變更，+8,535 / -155 行
+
+---
+
+### 2026-01-15：Rust Core 整合與學術功能優化
+
+**重點工作：**
+
+1. **Rust Core (OverendCore) 整合**
+   - 成功整合 `OverendCore.xcframework`，引入 Typst 編譯器與 Hayagriva 文獻引擎。
+   - 實作 `OverendCoreBridge` 作為 Swift 與 Rust 之間的溝通橋樑。
+   - 更新 `HayagrivaService` 使用新的 Rust 核心功能。
+
+2. **Emerald UI 修復與優化**
+   - 修復文獻庫「匯入文獻」按鈕失效問題。
+   - 修正 Zotero 整合顯示問題 (Better BibTeX)。
+   - 優化 Emerald Library 的選擇與編輯功能。
+
+3. **OCR 與版面分析**
+   - 實作 XY-Cut 演算法進行文件版面分析。
+   - 整合 Apple Vision 框架提升 OCR 識別能力。
+
+4. **學術功能增強**
+   - 整合中文姓名格式化功能。
+   - 統一版面分析模型。
+
+**技術決策：**
+
+- **Rust Bridge**：採用 UniFFI 建立 Swift bindings，確保跨語言呼叫的型別安全與效能。
+- **版面分析**：結合 XY-Cut 與 Vision OCR，提升對複雜學術文件排版的理解能力。
+
+**專案狀態：**
+
+- 核心引擎升級為 Rust 實作，效能與穩定性提升。
+- Emerald UI 持續優化中。
