@@ -64,6 +64,22 @@ extension FocusedValues {
 struct OVERENDApp: App {
     // Core Data 持久化控制器
     let persistenceController = PersistenceController.shared
+
+    // 初始化時測試 Rust 核心
+    init() {
+        testOverendCore()
+    }
+
+    // 測試 OverendCore 是否正常運作
+    private func testOverendCore() {
+        if #available(macOS 13.0, *) {
+            let bridge = OverendCoreBridge.shared
+            let message = bridge.helloWorld()
+            print("🦀 Rust Core: \(message)")
+        } else {
+            print("⚠️ OverendCore requires macOS 13.0+")
+        }
+    }
     
     @FocusedValue(\.showNewLibrary) var showNewLibrary
     @FocusedValue(\.showNewEntry) var showNewEntry
