@@ -355,4 +355,34 @@ extension DocumentEditorView {
         saveDocument()
         ToastManager.shared.showSuccess("已套用政大論文格式")
     }
+
+    // MARK: - AI Rewrite
+    
+    func applyAIRewrite(_ newText: String) {
+        guard let textView = textViewRef else { return }
+        
+        // 如果有選取文字，替換選取部分；否則替換全文
+        let range = textView.selectedRange()
+        let replaceRange = range.length > 0 ? range : NSRange(location: 0, length: textView.string.count)
+        
+        guard let textStorage = textView.textStorage else { return }
+        
+        // 保持原有格式，只替換文字內容
+        let attributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: NSColor.black,
+            .font: NSFont.systemFont(ofSize: 12)
+        ]
+        
+        let newAttributed = NSAttributedString(string: newText, attributes: attributes)
+        
+        textStorage.beginEditing()
+        textStorage.replaceCharacters(in: replaceRange, with: newAttributed)
+        textStorage.endEditing()
+        
+        attributedText = textView.attributedString()
+        saveDocument()
+        
+        ToastManager.shared.showSuccess("AI 調整完成")
+    }
 }
+
