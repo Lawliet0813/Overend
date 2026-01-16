@@ -23,3 +23,8 @@ __pycache__/
 # IDE
 .vscode/
 .idea/
+
+# Rust
+OverendCore/target/
+*.rlib
+*.rmeta

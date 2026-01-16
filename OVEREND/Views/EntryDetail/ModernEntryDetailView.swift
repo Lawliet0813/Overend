@@ -22,20 +22,20 @@ struct ModernEntryDetailView: View {
     @State private var selectedAttachment: Attachment?
     
     // AI 功能狀態
-    @StateObject private var aiService = UnifiedAIService.shared
-    @State private var aiSummary: String = ""
-    @State private var aiKeywords: [String] = []
-    @State private var isGeneratingSummary = false
-    @State private var isExtractingKeywords = false
+    @StateObject var aiService = UnifiedAIService.shared
+    @State var aiSummary: String = ""
+    @State var aiKeywords: [String] = []
+    @State var isGeneratingSummary = false
+    @State var isExtractingKeywords = false
     
     // 編輯模式狀態
-    @State private var isEditMode: Bool = false
+    @State var isEditMode: Bool = false
     @State var editedFields: [String: String] = [:]
     @State var editedTitle: String = ""
     @State var editedEntryType: String = ""
     @State var hasUnsavedChanges: Bool = false
-    @State private var showUnsavedAlert: Bool = false
-    @State private var isExtractingMetadata: Bool = false
+    @State var showUnsavedAlert: Bool = false
+    @State var isExtractingMetadata: Bool = false
     
     // AI 標籤建議
     @State private var showSmartTagSuggestion = false
@@ -291,7 +291,7 @@ struct ModernEntryDetailView: View {
     // MARK: - 標籤管理區
 
     @State private var isAddingTag = false
-    @State private var newTagSearchText = ""
+    @State var newTagSearchText = ""
 
     private var tagsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
