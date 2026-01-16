@@ -1,0 +1,25 @@
+# Xcode
+*.xcuserstate
+*.xcuserdatad
+xcuserdata/
+DerivedData/
+
+# Build
+build/
+build.log
+*.build/
+
+# macOS
+.DS_Store
+
+# SwiftPM
+.swiftpm/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# IDE
+.vscode/
+.idea/

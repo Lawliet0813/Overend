@@ -1,9 +1,0 @@
-{
-  "name": "overend-beta",
-  "version": "1.0.0",
-  "description": "OVEREND Beta Website - Academic Writing & Reference Management Tool",
-  "scripts": {
-    "dev": "python3 -m http.server 8000",
-    "build": "echo 'Static site - no build required'"
-  }
-}
