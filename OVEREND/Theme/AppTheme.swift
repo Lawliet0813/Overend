@@ -2,19 +2,63 @@
 //  AppTheme.swift
 //  OVEREND
 //
-//  主題系統 - Academic Green 設計規範
-//  基於 macOS 深色模式優化
+//  主題系統 - Scholar's Desk 設計規範
+//  基於 macOS 深色模式優化，營造專業學術書房氛圍
 //
 
 import SwiftUI
 import Combine
 
-/// 應用程式主題（Academic Green 設計系統）
+/// 應用程式主題（Scholar's Desk 設計系統）
 class AppTheme: ObservableObject {
     
-    // MARK: - 主色系 (Academic Green)
+    // MARK: - Scholar's Desk 色彩系統
     
-    /// 學術綠 - 主要強調色
+    // === 主色系 ===
+    /// 墨水藍 - 知識與智慧的象徵
+    static let inkBlue = "#2C4A6E"
+    
+    /// 羊皮紙金 - 學術經典感
+    static let parchmentGold = "#D4A84B"
+    
+    /// 啟發綠 - AI 智能輔助
+    static let insightGreen = "#4ADE80"
+    
+    // === 深色模式背景層次 ===
+    /// 最深背景 - 書房深處
+    static let backgroundDeep = "#0C1015"
+    
+    /// 一般背景 - 桌面
+    static let backgroundBase = "#121820"
+    
+    /// 提升背景 - 卡片/面板
+    static let backgroundElevated = "#1A232D"
+    
+    /// 表面 - 互動元素
+    static let backgroundSurface = "#232F3E"
+    
+    // === 文字層次 ===
+    /// 標題白 - 高對比標題
+    static let textHeading = "#F8FAFC"
+    
+    /// 正文灰 - 主要內容
+    static let textBody = "#CBD5E1"
+    
+    /// 次要灰 - 說明文字
+    static let textMuted = "#64748B"
+    
+    /// 禁用灰 - 不可用元素
+    static let textDisabled = "#475569"
+    
+    // === 功能色 ===
+    static let semanticSuccess = "#22C55E"
+    static let semanticWarning = "#F59E0B"
+    static let semanticError = "#EF4444"
+    static let semanticInfo = "#3B82F6"
+    
+    // MARK: - 向下相容（保留 Academic Green）
+    
+    /// 學術綠 - 主要強調色（向下相容）
     static let academicGreen = "#39D353"
     
     @Published var accentHex: String = academicGreen {
@@ -77,16 +121,30 @@ class AppTheme: ObservableObject {
     /// 主色半透明（卡片背景、Hover）
     var accentTranslucent: Color { Color(hex: Self.academicGreen).opacity(0.1) }
     
-    // MARK: - 背景層次 (Background Layers)
+    // MARK: - Scholar's Desk 背景層次
+    
+    /// 最深背景 - 書房深處
+    var backgroundDeepColor: Color { Color(hex: Self.backgroundDeep) }
+    
+    /// 一般背景 - 桌面
+    var backgroundBaseColor: Color { Color(hex: Self.backgroundBase) }
+    
+    /// 提升背景 - 卡片/面板
+    var backgroundElevatedColor: Color { Color(hex: Self.backgroundElevated) }
+    
+    /// 表面 - 互動元素
+    var backgroundSurfaceColor: Color { Color(hex: Self.backgroundSurface) }
+    
+    // MARK: - 向下相容背景層次 (Background Layers)
     
     /// 底層背景 (Base Background) - 視窗最底層
-    var background: Color { Color(hex: "#0A0A0A") }
+    var background: Color { backgroundBaseColor }
     
     /// 提升層 (Elevated Layer) - 側邊欄、卡片、彈出視窗
-    var elevated: Color { Color(hex: "#141414") }
+    var elevated: Color { backgroundElevatedColor }
     
     /// 功能層 (Functional Layer) - 頂部數據看板
-    var functional: Color { Color(hex: "#111111") }
+    var functional: Color { backgroundSurfaceColor }
     
     /// 側邊欄背景
     var sidebar: Color { elevated }
@@ -100,25 +158,50 @@ class AppTheme: ObservableObject {
     /// 卡片背景
     var card: Color { elevated }
     
-    // MARK: - 文字色 (Typography Colors)
+    // MARK: - Scholar's Desk 主色系
+    
+    /// 墨水藍 - 知識與智慧
+    var inkBlueColor: Color { Color(hex: Self.inkBlue) }
+    
+    /// 羊皮紙金 - 學術經典
+    var parchmentGoldColor: Color { Color(hex: Self.parchmentGold) }
+    
+    /// 啟發綠 - AI 智能
+    var insightGreenColor: Color { Color(hex: Self.insightGreen) }
+    
+    // MARK: - Scholar's Desk 文字層次
+    
+    /// 標題白 - 高對比標題
+    var textHeadingColor: Color { Color(hex: Self.textHeading) }
+    
+    /// 正文灰 - 主要內容
+    var textBodyColor: Color { Color(hex: Self.textBody) }
+    
+    /// 次要灰 - 說明文字
+    var textMutedColor: Color { Color(hex: Self.textMuted) }
+    
+    /// 禁用灰 - 不可用元素
+    var textDisabledColor: Color { Color(hex: Self.textDisabled) }
+    
+    // MARK: - 向下相容文字色 (Typography Colors)
     
     /// 一級文字 - 標題與主要內容 (Gray-100)
-    var textPrimary: Color { Color(hex: "#F3F4F6") }
+    var textPrimary: Color { textHeadingColor }
     
     /// 二級文字 - 說明、標籤、次要資訊 (Gray-400)
-    var textSecondary: Color { Color(hex: "#9CA3AF") }
+    var textSecondary: Color { textBodyColor }
     
     /// 三級文字 - 時間戳、ID、不可點擊元素 (Gray-500)
-    var textTertiary: Color { Color(hex: "#6B7280") }
+    var textTertiary: Color { textMutedColor }
     
     /// 次要文字（別名）
-    var textMuted: Color { textSecondary }
+    var textMuted: Color { textMutedColor }
     
     /// 強調文字（用於主色背景）
     var textOnAccent: Color { .white }
     
     /// 禁用文字色
-    var textDisabled: Color { Color.white.opacity(0.3) }
+    var textDisabled: Color { textDisabledColor }
     
     // MARK: - 邊框色 (Border/Stroke)
     
@@ -147,7 +230,33 @@ class AppTheme: ObservableObject {
 
     // MARK: - 語義化顏色
 
-    var success: Color { Color(hex: "#39D353") }  // 使用學術綠
+    var success: Color { Color(hex: Self.semanticSuccess) }
+    
+    var warning: Color { Color(hex: Self.semanticWarning) }
+    
+    var error: Color { Color(hex: Self.semanticError) }
+    
+    var info: Color { Color(hex: Self.semanticInfo) }
+    
+    // MARK: - Scholar's Desk 特殊漸層
+    
+    /// AI 功能專用漸層
+    var aiGradient: LinearGradient {
+        LinearGradient(
+            colors: [Color(hex: Self.insightGreen), Color(hex: "#22D3EE")],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+    
+    /// 文獻庫專用漸層
+    var libraryGradient: LinearGradient {
+        LinearGradient(
+            colors: [Color(hex: Self.inkBlue), Color(hex: "#1E3A5F")],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
     
     // MARK: - 字體系統 (Typography System)
     
@@ -213,13 +322,10 @@ class AppTheme: ObservableObject {
     var cornerRadiusXL: CGFloat { 16 }
     var successBackground: Color { success.opacity(0.1) }
 
-    var warning: Color { Color(hex: "#FEBC2E") }  // 系統黃
     var warningBackground: Color { warning.opacity(0.1) }
 
-    var error: Color { Color(hex: "#FF5F57") }  // 系統紅
     var errorBackground: Color { error.opacity(0.1) }
 
-    var info: Color { Color(hex: "#007AFF") }  // Apple 藍
     var infoBackground: Color { info.opacity(0.1) }
 
     var destructive: Color { systemRed }
@@ -359,31 +465,51 @@ class AppTheme: ObservableObject {
 
 // MARK: - 預覽
 
-#Preview("Academic Green Theme") {
+#Preview("Scholar's Desk Theme") {
     let theme = AppTheme()
     
     VStack(spacing: 16) {
-        // 主色
-        HStack(spacing: 12) {
-            Circle().fill(theme.accent).frame(width: 32, height: 32)
-            Text("學術綠 #39D353").foregroundStyle(theme.textPrimary)
+        // Scholar's Desk 主色系
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Scholar's Desk 主色系").font(theme.titleFont()).foregroundStyle(theme.textPrimary)
+            
+            HStack(spacing: 12) {
+                Circle().fill(theme.inkBlueColor).frame(width: 32, height: 32)
+                Text("墨水藍 \(Self.inkBlue)").foregroundStyle(theme.textSecondary)
+            }
+            
+            HStack(spacing: 12) {
+                Circle().fill(theme.parchmentGoldColor).frame(width: 32, height: 32)
+                Text("羊皮紙金 \(Self.parchmentGold)").foregroundStyle(theme.textSecondary)
+            }
+            
+            HStack(spacing: 12) {
+                Circle().fill(theme.insightGreenColor).frame(width: 32, height: 32)
+                Text("啟發綠 \(Self.insightGreen)").foregroundStyle(theme.textSecondary)
+            }
         }
         
         Divider().background(theme.border)
         
         // 背景層次
         VStack(spacing: 8) {
+            Text("背景層次").font(theme.titleFont(size: 14)).foregroundStyle(theme.textPrimary)
+            
             HStack {
-                RoundedRectangle(cornerRadius: 8).fill(theme.background).frame(width: 32, height: 32)
-                Text("底層 #0A0A0A").font(theme.captionFont())
+                RoundedRectangle(cornerRadius: 8).fill(theme.backgroundDeepColor).frame(width: 32, height: 32)
+                Text("書房深處 \(Self.backgroundDeep)").font(theme.captionFont())
             }
             HStack {
-                RoundedRectangle(cornerRadius: 8).fill(theme.elevated).frame(width: 32, height: 32)
-                Text("提升層 #141414").font(theme.captionFont())
+                RoundedRectangle(cornerRadius: 8).fill(theme.backgroundBaseColor).frame(width: 32, height: 32)
+                Text("桌面 \(Self.backgroundBase)").font(theme.captionFont())
             }
             HStack {
-                RoundedRectangle(cornerRadius: 8).fill(theme.functional).frame(width: 32, height: 32)
-                Text("功能層 #111111").font(theme.captionFont())
+                RoundedRectangle(cornerRadius: 8).fill(theme.backgroundElevatedColor).frame(width: 32, height: 32)
+                Text("卡片/面板 \(Self.backgroundElevated)").font(theme.captionFont())
+            }
+            HStack {
+                RoundedRectangle(cornerRadius: 8).fill(theme.backgroundSurfaceColor).frame(width: 32, height: 32)
+                Text("互動元素 \(Self.backgroundSurface)").font(theme.captionFont())
             }
         }
         .foregroundStyle(theme.textSecondary)
@@ -391,9 +517,30 @@ class AppTheme: ObservableObject {
         Divider().background(theme.border)
         
         // 文字層次
-        Text("一級文字 Primary").foregroundStyle(theme.textPrimary).font(theme.bodyFont())
-        Text("二級文字 Secondary").foregroundStyle(theme.textSecondary).font(theme.bodyFont())
-        Text("三級文字 Tertiary").foregroundStyle(theme.textTertiary).font(theme.captionFont())
+        VStack(alignment: .leading, spacing: 4) {
+            Text("文字層次").font(theme.titleFont(size: 14)).foregroundStyle(theme.textPrimary)
+            Text("標題白 Heading").foregroundStyle(theme.textHeadingColor).font(theme.bodyFont())
+            Text("正文灰 Body").foregroundStyle(theme.textBodyColor).font(theme.bodyFont())
+            Text("次要灰 Muted").foregroundStyle(theme.textMutedColor).font(theme.captionFont())
+            Text("禁用灰 Disabled").foregroundStyle(theme.textDisabledColor).font(theme.captionFont())
+        }
+        
+        Divider().background(theme.border)
+        
+        // 特殊漸層
+        VStack(spacing: 8) {
+            Text("特殊漸層").font(theme.titleFont(size: 14)).foregroundStyle(theme.textPrimary)
+            
+            RoundedRectangle(cornerRadius: 8)
+                .fill(theme.aiGradient)
+                .frame(height: 32)
+                .overlay(Text("AI 功能漸層").font(theme.captionFont()).foregroundStyle(.white))
+            
+            RoundedRectangle(cornerRadius: 8)
+                .fill(theme.libraryGradient)
+                .frame(height: 32)
+                .overlay(Text("文獻庫漸層").font(theme.captionFont()).foregroundStyle(.white))
+        }
     }
     .padding(24)
     .background(theme.background)
