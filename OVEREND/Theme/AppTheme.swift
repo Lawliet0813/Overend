@@ -194,8 +194,8 @@ class AppTheme: ObservableObject {
     /// 三級文字 - 時間戳、ID、不可點擊元素 (Gray-500)
     var textTertiary: Color { textMutedColor }
     
-    /// 次要文字（別名）
-    var textMuted: Color { textMutedColor }
+    /// 次要文字（別名）- 向下相容
+    var textMuted: Color { textSecondary }
     
     /// 強調文字（用於主色背景）
     var textOnAccent: Color { .white }

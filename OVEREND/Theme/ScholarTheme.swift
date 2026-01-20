@@ -59,12 +59,6 @@ extension AppTheme {
         
         /// AI 邊框色
         var borderColor: Color { theme.insightGreenColor.opacity(0.3) }
-        
-        /// AI 按鈕樣式
-        func buttonStyle() -> some View {
-            EmptyView()
-                .buttonStyle(AIButtonStyle())
-        }
     }
     
     /// 取得 AI 樣式
