@@ -1,33 +1,32 @@
 # OVEREND 專案狀態總覽
 
-**更新日期：** 2026-01-21
-**專案進度：** 約 99%（學術寫作整合完成，開發規範 v2.0 整合中）
+**更新日期：** 2026-01-22
+**專案進度：** 約 99.5%（編輯器核心遷移完成，進入最終測試階段）
 
 ---
 
-## [2026-01-21] 更新
+## [2026-01-22] 更新
 
 ### 完成項目
 
-- [x] 更新專案開發規範 (Skill System v2.0)
-- [x] 整合 UI、Core Data、Service、Testing 四大領域專家規範
-- [x] 統一繁體中文台灣學術用語與標點符號規範
-- [x] 升級開發手冊與百科封面（現代化 CSS 視覺設計）
-- [x] 清理遺留 UI 程式碼與過時報告（移動至 DOCS/reports/）
-- [x] 優化 PDF 元數據提取（標題驗證、智慧回退、作者姓名清理）
+- [x] 編輯器功能完整遷移 (Legacy -> Modern)
+- [x] 實作 PDF/DOCX 雙軌匯出引擎
+- [x] 整合中文排版優化與 NCCU 論文格式
+- [x] 修復 SF Symbols 與 SwiftUI 視圖更新警告
+- [x] 移除舊版編輯器核心代碼 (7 files deleted)
 
 ### 技術細節
 
-- 修改檔案：`.claude/skills/overend-dev/` (SKILL.md, ui-specialist.md, etc.)
-- 變更內容：將開發規範模組化，建立跨模組協作核心
-- 涉及模組：UI / Core Data / Service / Testing
+- **架構優化**：RichTextEditorWrapper 狀態同步機制改進
+- **代碼清理**：移除 DocumentEditorView 及其相依檔案
+- **模組化**：新增 Editor Extension 結構 (`+Export`, `+Insert`)
 
 ### 測試狀態
 
 - [x] 編譯通過
-- [x] 功能驗證
-- [x] 單元測試通過
-- [ ] 待測試項目（無）
+- [x] 功能驗證 (Export, Insert, Formatting)
+- [x] 無重大警告 (Zero SwiftUI State Warnings)
+- [ ] 完整回歸測試
 
 ---
 
