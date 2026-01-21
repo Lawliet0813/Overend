@@ -8,7 +8,7 @@
 import Foundation
 
 /// 統一 AI 服務錯誤
-enum AIServiceError: LocalizedError {
+enum AIServiceError: LocalizedError, Equatable {
     // MARK: - 通用錯誤
     case notAvailable
     case processingFailed(String)

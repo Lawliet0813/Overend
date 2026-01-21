@@ -353,6 +353,11 @@ final class LiteratureAgentTests: XCTestCase {
     override func setUp() async throws {
         agent = LiteratureAgent.shared
         testHelper = CoreDataTestHelper(inMemory: true)
+        
+        // 注入測試用的 Repository
+        let testRepo = EntryRepository(context: testHelper.viewContext)
+        agent.setEntryRepository(testRepo)
+        
         agent.reset()
     }
     

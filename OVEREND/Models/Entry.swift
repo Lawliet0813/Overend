@@ -8,6 +8,10 @@
 import Foundation
 import CoreData
 
+// ⚡ 快取鍵定義（使用 Associated Objects）
+private var cachedFieldsKey: UInt8 = 0
+private var lastFieldsJSONKey: UInt8 = 0
+
 @objc(Entry)
 public class Entry: NSManagedObject, Identifiable {
     @NSManaged public var id: UUID
@@ -28,13 +32,43 @@ public class Entry: NSManagedObject, Identifiable {
 
     // MARK: - 計算屬性
 
-    /// 解析後的 BibTeX 字段
+    /// ⚡ 快取的字段字典（使用 Associated Objects 避免 Core Data 衝突）
+    private var _cachedFields: [String: String]? {
+        get {
+            return objc_getAssociatedObject(self, &cachedFieldsKey) as? [String: String]
+        }
+        set {
+            objc_setAssociatedObject(self, &cachedFieldsKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+
+    private var _lastFieldsJSON: String? {
+        get {
+            return objc_getAssociatedObject(self, &lastFieldsJSONKey) as? String
+        }
+        set {
+            objc_setAssociatedObject(self, &lastFieldsJSONKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+
+    /// 解析後的 BibTeX 字段（帶快取優化）
     var fields: [String: String] {
         get {
+            // 如果 JSON 沒有改變且快取存在，直接返回快取
+            if let cached = _cachedFields, _lastFieldsJSON == fieldsJSON {
+                return cached
+            }
+
+            // 否則重新解碼並更新快取
             guard let data = fieldsJSON.data(using: .utf8),
                   let dict = try? JSONDecoder().decode([String: String].self, from: data) else {
+                _cachedFields = [:]
+                _lastFieldsJSON = fieldsJSON
                 return [:]
             }
+
+            _cachedFields = dict
+            _lastFieldsJSON = fieldsJSON
             return dict
         }
         set {
@@ -42,6 +76,10 @@ public class Entry: NSManagedObject, Identifiable {
                let jsonString = String(data: data, encoding: .utf8) {
                 fieldsJSON = jsonString
                 updatedAt = Date()
+
+                // 更新快取
+                _cachedFields = newValue
+                _lastFieldsJSON = jsonString
             }
         }
     }
@@ -247,6 +285,10 @@ public class Entry: NSManagedObject, Identifiable {
     var attachmentArray: [Attachment] {
         attachments?.sorted { $0.createdAt < $1.createdAt } ?? []
     }
+    
+    var tagsArray: [Tag] {
+        tags?.sorted { $0.name < $1.name } ?? []
+    }
 
     var hasPDF: Bool {
         attachmentArray.contains { $0.mimeType == "application/pdf" }
@@ -260,7 +302,8 @@ extension Entry {
         return NSFetchRequest<Entry>(entityName: "Entry")
     }
 
-    /// 獲取指定庫的所有條目
+    /// 獲取指定庫的所有條目（同步版本 - 已廢棄，請使用 fetchAllAsync）
+    @available(*, deprecated, message: "使用 fetchAllAsync 以避免阻塞 UI")
     static func fetchAll(
         in library: Library,
         sortBy: SortOption = .updated,
@@ -280,7 +323,27 @@ extension Entry {
         }
     }
 
-    /// 搜尋條目
+    /// ⚡ 優化：非同步獲取條目，避免阻塞主執行緒
+    static func fetchAllAsync(
+        in library: Library,
+        sortBy: SortOption = .updated,
+        context: NSManagedObjectContext
+    ) async throws -> [Entry] {
+        // 使用 objectID 避免 Sendable 警告
+        let libraryID = library.objectID
+        return try await context.perform {
+            guard let library = context.object(with: libraryID) as? Library else {
+                throw RepositoryError.notFound("Library not found")
+            }
+            let request = fetchRequest()
+            request.predicate = NSPredicate(format: "library == %@", library)
+            request.sortDescriptors = sortBy.sortDescriptors
+            return try context.fetch(request)
+        }
+    }
+
+    /// 搜尋條目（同步版本 - 已廢棄）
+    @available(*, deprecated, message: "使用 searchAsync 以避免阻塞 UI")
     static func search(
         query: String,
         in library: Library,
@@ -309,6 +372,38 @@ extension Entry {
             print("Failed to search entries: \(error)")
             #endif
             return []
+        }
+    }
+
+    /// ⚡ 優化：非同步搜尋，避免阻塞主執行緒
+    static func searchAsync(
+        query: String,
+        in library: Library,
+        context: NSManagedObjectContext
+    ) async throws -> [Entry] {
+        guard query.count >= Constants.Search.minQueryLength else { return [] }
+
+        // 使用 objectID 避免 Sendable 警告
+        let libraryID = library.objectID
+        return try await context.perform {
+            guard let library = context.object(with: libraryID) as? Library else {
+                throw RepositoryError.notFound("Library not found")
+            }
+            let request = fetchRequest()
+            let libraryPredicate = NSPredicate(format: "library == %@", library)
+            let searchPredicate = NSPredicate(
+                format: "citationKey CONTAINS[cd] %@ OR bibtexRaw CONTAINS[cd] %@ OR userNotes CONTAINS[cd] %@",
+                query, query, query
+            )
+
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                libraryPredicate,
+                searchPredicate
+            ])
+            request.sortDescriptors = [NSSortDescriptor(keyPath: \Entry.updatedAt, ascending: false)]
+            request.fetchLimit = Constants.Search.maxResults
+
+            return try context.fetch(request)
         }
     }
 

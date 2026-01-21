@@ -24,6 +24,8 @@ struct ModernEntryListView: View {
     @Environment(\.managedObjectContext) private var viewContext
     
     @ObservedObject var library: Library
+    var filterMode: SidebarItemType? = nil // 新增：篩選模式
+    
     @State private var selectedEntry: Entry?
     
     // 排序狀態
@@ -47,10 +49,20 @@ struct ModernEntryListView: View {
     
     @FetchRequest private var entries: FetchedResults<Entry>
     
-    init(library: Library) {
+    init(library: Library, filterMode: SidebarItemType? = nil) {
         self.library = library
+        self.filterMode = filterMode
+        
+        // 根據 filterMode 調整預設排序
+        let sortDescriptors: [NSSortDescriptor]
+        if filterMode == .recent {
+            sortDescriptors = [NSSortDescriptor(keyPath: \Entry.updatedAt, ascending: false)]
+        } else {
+            sortDescriptors = [NSSortDescriptor(keyPath: \Entry.createdAt, ascending: false)]
+        }
+        
         _entries = FetchRequest<Entry>(
-            sortDescriptors: [NSSortDescriptor(keyPath: \Entry.createdAt, ascending: false)],
+            sortDescriptors: sortDescriptors,
             predicate: NSPredicate(format: "library == %@", library),
             animation: .default
         )
@@ -58,7 +70,45 @@ struct ModernEntryListView: View {
     
     /// 根據當前排序設定排序結果
     private var sortedEntries: [Entry] {
-        let filtered = filterEntries(Array(entries))
+        var baseEntries = Array(entries)
+        
+        // 1. 應用側邊欄模式篩選
+        if let mode = filterMode {
+            // 先過濾垃圾桶狀態
+            if mode == .trash {
+                baseEntries = baseEntries.filter { $0.fields["_deleted"] == "true" }
+            } else {
+                baseEntries = baseEntries.filter { $0.fields["_deleted"] != "true" }
+            }
+            
+            // 再根據模式篩選
+            switch mode {
+            case .favorites:
+                baseEntries = baseEntries.filter { $0.fields["_starred"] == "true" }
+            case .recent:
+                baseEntries = Array(baseEntries.prefix(50))
+            case .pdf:
+                baseEntries = baseEntries.filter { entry in
+                    entry.attachmentArray.contains { $0.mimeType == "application/pdf" }
+                }
+            case .toRead:
+                baseEntries = baseEntries.filter { $0.fields["_status"] == "unread" || $0.tagsArray.contains { $0.name == "待閱讀" } }
+            case .trash:
+                break // 已在上面處理
+            case .allEntries:
+                break
+            case .drafts:
+                break // 應由 DraftsListView 處理
+            }
+        } else {
+            // 默認排除垃圾桶
+            baseEntries = baseEntries.filter { $0.fields["_deleted"] != "true" }
+        }
+        
+        // 2. 應用列表內篩選 (年份/類型)
+        let filtered = filterEntries(baseEntries)
+        
+        // 3. 排序 (如果使用者手動調整了排序，會覆蓋 Sidebar 的預設排序概念)
         return filtered.sorted { e1, e2 in
             let result: Bool
             switch sortField {
@@ -75,7 +125,7 @@ struct ModernEntryListView: View {
             case .type:
                 result = e1.entryType.localizedCaseInsensitiveCompare(e2.entryType) == .orderedAscending
             case .createdAt:
-                result = (e1.createdAt ?? Date()) < (e2.createdAt ?? Date())
+                result = e1.createdAt < e2.createdAt
             }
             return sortAscending ? result : !result
         }
@@ -135,6 +185,9 @@ struct ModernEntryListView: View {
                                     },
                                     onDelete: {
                                         deleteEntry(entry)
+                                    },
+                                    onRestore: {
+                                        restoreEntry(entry)
                                     },
                                     onHover: { isHovering in
                                         handleEntryHover(entry: entry, isHovering: isHovering)
@@ -210,7 +263,7 @@ struct ModernEntryListView: View {
             if let entry = selectedEntry {
                 Divider()
 
-                if #available(macOS 26.0, *) {
+                if #available(macOS 14.0, *) {
                     ModernEntryDetailView(entry: entry, onClose: {
                         withAnimation(AnimationSystem.Easing.quick) {
                             print("❌ 關閉詳情面板")
@@ -633,27 +686,74 @@ struct ModernEntryListView: View {
         }
     }
     
-    // MARK: - 删除文獨
+    // MARK: - 删除文獻
     
     private func deleteEntry(_ entry: Entry) {
+        let isAlreadyDeleted = entry.fields["_deleted"] == "true"
+        
+        // 如果已經在垃圾桶中，則執行永久刪除
+        if isAlreadyDeleted {
+            permanentDeleteEntry(entry)
+        } else {
+            // 否則執行軟刪除 (移至垃圾桶)
+            softDeleteEntry(entry)
+        }
+    }
+    
+    private func softDeleteEntry(_ entry: Entry) {
+        entry.fields["_deleted"] = "true"
+        entry.updatedAt = Date()
+        
+        // 如果正在選中，取消選中
+        if selectedEntry?.id == entry.id {
+            selectedEntry = nil
+        }
+        
+        try? viewContext.save()
+        ToastManager.shared.showSuccess("已移至垃圾桶")
+    }
+    
+    private func permanentDeleteEntry(_ entry: Entry) {
+        // 先保存所有需要的資料，避免在異步執行時存取已失效的物件
+        let entryObjectID = entry.objectID
+        let entryTitle = entry.title
+        let attachmentPaths = entry.attachmentArray.map { $0.filePath }
+        
         // 如果正在選中，先取消選中
         if selectedEntry?.id == entry.id {
             selectedEntry = nil
         }
         
-        // 删除附件文件
-        for attachment in entry.attachmentArray {
-            try? PDFService.shared.deleteAttachment(attachment, context: viewContext)
-        }
+        // 從批次選取中移除
+        selectedEntryIDs.remove(entry.id)
         
-        // 删除 Entry
-        viewContext.delete(entry)
-        
-        do {
-            try viewContext.save()
-        } catch {
-            print("删除文獨失敗：\(error)")
+        // 延遲刪除，讓 UI 先更新
+        DispatchQueue.main.async {
+            // 刪除附件文件（使用預先提取的路徑）
+            for filePath in attachmentPaths {
+                try? FileManager.default.removeItem(atPath: filePath)
+            }
+            
+            // 使用 objectID 重新獲取 Entry 並刪除
+            do {
+                if let entryToRemove = try? viewContext.existingObject(with: entryObjectID) {
+                    viewContext.delete(entryToRemove)
+                }
+                try viewContext.save()
+                ToastManager.shared.showSuccess("已永久刪除「\(entryTitle)」")
+            } catch {
+                ErrorLogger.shared.log(error, context: "ModernEntryListView.deleteEntry")
+                ToastManager.shared.showError("刪除失敗")
+            }
         }
+    }
+    
+    // 復原邏輯
+    private func restoreEntry(_ entry: Entry) {
+        entry.fields["_deleted"] = nil
+        entry.updatedAt = Date()
+        try? viewContext.save()
+        ToastManager.shared.showSuccess("已復原文獻")
     }
     
     // MARK: - 空狀態
@@ -691,405 +791,10 @@ struct ModernEntryListView: View {
     }
 }
 
-/// 文獻表格列
-struct EntryTableRow: View {
-    @EnvironmentObject var theme: AppTheme
-    @ObservedObject var entry: Entry
-    let isSelected: Bool
-    var isSelectionMode: Bool = false
-    var isChecked: Bool = false
-    let onTap: () -> Void
-    var onToggleSelection: (() -> Void)? = nil
-    let onDelete: () -> Void
-    var onHover: ((Bool) -> Void)? = nil
-    
-    @State private var isHovered = false
-    @State private var showDeleteConfirm = false
-
-    
-    var body: some View {
-        Button(action: onTap) {
-            HStack(spacing: 0) {
-                // 選擇模式下顯示複選框
-                if isSelectionMode {
-                    Button(action: { onToggleSelection?() }) {
-                        Image(systemName: isChecked ? "checkmark.circle.fill" : "circle")
-                            .font(.system(size: 18))
-                            .foregroundColor(isChecked ? theme.accent : theme.textMuted)
-                    }
-                    .buttonStyle(.plain)
-                    .frame(width: 36)
-                } else {
-                    // 選中高亮條
-                    if isSelected {
-                        Rectangle()
-                            .fill(theme.accent)
-                            .frame(width: 3)
-                            .transition(.move(edge: .leading).combined(with: .opacity))
-                    } else {
-                        Color.clear
-                            .frame(width: 3)
-                    }
-                }
-                
-                // 原有的 HStack 內容
-                HStack(spacing: 0) {
-                    // 標題
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(entry.fields["title"] ?? "無標題")
-                            .font(theme.fontBodyLarge)  // 17pt，更大更清晰
-                            .fontWeight(.semibold)
-                            .foregroundColor(isSelected ? theme.accent : theme.textPrimary)
-                            .lineLimit(2)  // 允許兩行顯示
-                            .fixedSize(horizontal: false, vertical: true)
-
-                        // 期刊/來源
-                        if let journal = entry.fields["journal"], !journal.isEmpty {
-                            Text(journal)
-                                .font(theme.fontBodySmall)  // 13pt
-                                .foregroundColor(theme.textSecondary)
-                                .italic()
-                                .lineLimit(1)
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.trailing, theme.spacingMD)
-
-                    // Tags - 優化樣式
-                    if let tags = entry.tags as? Set<Tag>, !tags.isEmpty {
-                        HStack(spacing: 6) {
-                            ForEach(Array(tags).sorted(by: { $0.name < $1.name }).prefix(3)) { tag in
-                                Text(tag.name)
-                                    .font(theme.fontLabel)  // 12pt
-                                    .foregroundColor(.white)
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 4)
-                                    .background(
-                                        Capsule()
-                                            .fill(tag.color.opacity(0.9))
-                                    )
-                                    .shadow(color: tag.color.opacity(0.3), radius: 2, x: 0, y: 1)
-                            }
-                            if tags.count > 3 {
-                                Text("+\(tags.count - 3)")
-                                    .font(theme.fontLabel)
-                                    .foregroundColor(theme.textTertiary)
-                            }
-                        }
-                        .padding(.trailing, theme.spacingMD)
-                    }
-
-                    // 作者 / 年份 - 放大字體
-                    Text(authorYearText)
-                        .font(theme.fontBodyMedium)  // 15pt
-                        .foregroundColor(theme.textSecondary)
-                        .lineLimit(1)
-                        .frame(width: 180, alignment: .leading)
-
-                    // 附件數量 - 更清晰的視覺
-                    HStack(spacing: 4) {
-                        if !entry.attachmentArray.isEmpty {
-                            Image(systemName: "paperclip")
-                                .font(.system(size: 14, weight: .medium))
-                            Text("\(entry.attachmentArray.count)")
-                                .font(theme.fontBodyMedium)
-                        }
-                    }
-                    .foregroundColor(entry.attachmentArray.isEmpty ? theme.textTertiary : theme.accent)
-                    .frame(width: 60)
-
-                    // 類型標籤 - 更精緻
-                    Text(entry.entryType)
-                        .font(theme.fontLabel)
-                        .fontWeight(.semibold)
-                        .foregroundColor(theme.accent)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(
-                            RoundedRectangle(cornerRadius: theme.cornerRadiusSM)
-                                .fill(theme.accentLight)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: theme.cornerRadiusSM)
-                                        .stroke(theme.accent.opacity(0.2), lineWidth: 1)
-                                )
-                        )
-                        .frame(width: 80)
-
-                    // 刪除按鈕（非選擇模式下顯示）- 優化交互
-                    if !isSelectionMode {
-                        Button(action: { showDeleteConfirm = true }) {
-                            Image(systemName: "trash")
-                                .font(.system(size: 15, weight: .medium))
-                                .foregroundColor(isHovered ? theme.destructive : .clear)
-                                .frame(width: 32, height: 32)
-                                .background(
-                                    Circle()
-                                        .fill(isHovered ? theme.destructive.opacity(0.1) : .clear)
-                                )
-                        }
-                        .buttonStyle(.plain)
-                        .frame(width: 44)  // 觸控區域
-                        .opacity(isHovered ? 1 : 0)
-                    } else {
-                        Color.clear.frame(width: 44)
-                    }
-                }
-                .padding(.horizontal, theme.spacingLG)
-                .padding(.vertical, theme.spacingMD)  // 增加內間距
-            }
-            .background(backgroundColor)
-            .overlay(alignment: .bottom) {
-                Rectangle()
-                    .fill(theme.border)
-                    .frame(height: 0.5)
-            }
-        }
-        .buttonStyle(.plain)
-        .scaleEffect(isHovered && !isSelected ? 1.01 : 1.0)  // 微妙的縮放
-        .shadow(
-            color: isSelected ? theme.accent.opacity(0.1) : (isHovered ? .black.opacity(0.08) : .clear),
-            radius: isHovered || isSelected ? 6 : 0,
-            x: 0,
-            y: isHovered || isSelected ? 3 : 0
-        )
-        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: isSelected)
-        .animation(.easeOut(duration: 0.15), value: isHovered)
-        .onHover { hovering in
-            withAnimation(AnimationSystem.Easing.quick) {
-                isHovered = hovering
-            }
-            onHover?(hovering)
-        }
-        // 🎯 新增：右鍵選單
-        .contextMenu {
-            // 編輯書目
-            Button(action: {
-                // TODO: 觸發編輯模式
-                print("編輯書目：\(entry.title)")
-            }) {
-                Label("編輯書目", systemImage: "pencil")
-            }
-            
-            Divider()
-            
-            // 複製引用
-            Button(action: {
-                let citation = CitationService.shared.generateAPA(entry: entry)
-                NSPasteboard.general.clearContents()
-                NSPasteboard.general.setString(citation, forType: .string)
-            }) {
-                Label("複製 APA 引用", systemImage: "doc.on.doc")
-            }
-            
-            Button(action: {
-                let citation = CitationService.shared.generateMLA(entry: entry)
-                NSPasteboard.general.clearContents()
-                NSPasteboard.general.setString(citation, forType: .string)
-            }) {
-                Label("複製 MLA 引用", systemImage: "doc.on.doc")
-            }
-            
-            Button(action: {
-                NSPasteboard.general.clearContents()
-                NSPasteboard.general.setString(entry.citationKey, forType: .string)
-            }) {
-                Label("複製 Citation Key", systemImage: "key")
-            }
-            
-            Divider()
-            
-            // 開啟 PDF
-            if !entry.attachmentArray.isEmpty {
-                Button(action: {
-                    if let firstPDF = entry.attachmentArray.first {
-                        NSWorkspace.shared.open(URL(fileURLWithPath: firstPDF.filePath))
-                    }
-                }) {
-                    Label("開啟 PDF", systemImage: "doc.fill")
-                }
-            }
-            
-            Divider()
-            
-            // 刪除
-            Button(role: .destructive, action: { showDeleteConfirm = true }) {
-                Label("刪除", systemImage: "trash")
-            }
-        }
-        .contextMenu {
-            // MARK: - 開啟操作
-            if !entry.attachmentArray.isEmpty {
-                Button(action: {
-                    if let firstAttachment = entry.attachmentArray.first {
-                        NSWorkspace.shared.open(firstAttachment.fileURL)
-                    }
-                }) {
-                    Label("開啟 PDF", systemImage: "doc.text")
-                }
-            }
-            
-            if let doi = entry.fields["doi"], !doi.isEmpty {
-                Button(action: {
-                    let doiURL = doi.hasPrefix("http") ? doi : "https://doi.org/\(doi)"
-                    if let url = URL(string: doiURL) {
-                        NSWorkspace.shared.open(url)
-                    }
-                }) {
-                    Label("開啟 DOI 連結", systemImage: "link")
-                }
-            }
-            
-            Divider()
-            
-            // MARK: - 複製引用
-            Menu("複製引用") {
-                Button("APA 7th") {
-                    let citation = entry.generateAPACitation()
-                    NSPasteboard.general.clearContents()
-                    NSPasteboard.general.setString(citation, forType: .string)
-                    ToastManager.shared.showSuccess("已複製 APA 引用")
-                }
-                
-                Button("MLA 9th") {
-                    let citation = entry.generateMLACitation()
-                    NSPasteboard.general.clearContents()
-                    NSPasteboard.general.setString(citation, forType: .string)
-                    ToastManager.shared.showSuccess("已複製 MLA 引用")
-                }
-                
-                Divider()
-                
-                Button("BibTeX") {
-                    let bibtex = entry.generateBibTeX()
-                    NSPasteboard.general.clearContents()
-                    NSPasteboard.general.setString(bibtex, forType: .string)
-                    ToastManager.shared.showSuccess("已複製 BibTeX")
-                }
-                
-                Button("引用鍵") {
-                    NSPasteboard.general.clearContents()
-                    NSPasteboard.general.setString(entry.citationKey, forType: .string)
-                    ToastManager.shared.showSuccess("已複製引用鍵")
-                }
-            }
-            
-            Divider()
-            
-            // MARK: - 組織操作
-            Button(action: {
-                entry.isStarred.toggle()
-                try? entry.managedObjectContext?.save()
-                ToastManager.shared.showSuccess(entry.isStarred ? "已加入星號標記" : "已移除星號標記")
-            }) {
-                Label(entry.isStarred ? "取消星號標記" : "加入星號標記", 
-                      systemImage: entry.isStarred ? "star.fill" : "star")
-            }
-            
-            // 開啟多個附件
-            if entry.attachmentArray.count > 1 {
-                Menu("開啟附件") {
-                    ForEach(Array(entry.attachmentArray.enumerated()), id: \.element.id) { index, attachment in
-                        Button(action: {
-                            NSWorkspace.shared.open(attachment.fileURL)
-                        }) {
-                            Label(attachment.fileName, systemImage: "doc.fill")
-                        }
-                    }
-                }
-            }
-            
-            Divider()
-            
-            // MARK: - 編輯與刪除
-            Button(action: {
-                // TODO: 開啟編輯面板
-                ToastManager.shared.showInfo("編輯功能開發中")
-            }) {
-                Label("編輯書目", systemImage: "pencil")
-            }
-            
-            Button(role: .destructive, action: {
-                showDeleteConfirm = true
-            }) {
-                Label("刪除", systemImage: "trash")
-            }
-        }
-        .alert("確定刪除？", isPresented: $showDeleteConfirm) {
-            Button("取消", role: .cancel) {}
-            Button("刪除", role: .destructive) {
-                withAnimation(AnimationSystem.Easing.spring) {
-                    onDelete()
-                }
-            }
-        } message: {
-            Text("此操作將刪除「\(entry.title)」及其所有附件，無法還原。")
-        }
-    }
-
-    // MARK: - 計算屬性
-
-    /// 背景顏色
-    private var backgroundColor: Color {
-        if isSelected {
-            return theme.accentLight
-        } else if isHovered {
-            return theme.tableRowHover
-        } else {
-            return Color.clear
-        }
-    }
-    
-    private var authorYearText: String {
-        let author = entry.fields["author"] ?? "未知作者"
-        let year = entry.fields["year"] ?? ""
-        let shortAuthor = author.components(separatedBy: " and ").first ?? author
-        return year.isEmpty ? shortAuthor : "\(shortAuthor) (\(year))"
-    }
-}
-
-/// 進度條
-struct ProgressBar: View {
-    @EnvironmentObject var theme: AppTheme
-    let progress: Double
-
-    var body: some View {
-        GeometryReader { geometry in
-            ZStack(alignment: .leading) {
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(theme.itemHover)
-                    .frame(height: 4)
-
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(theme.accent)
-                    .frame(width: geometry.size.width * CGFloat(progress), height: 4)
-                    .animation(AnimationSystem.Easing.spring, value: progress)
-            }
-        }
-        .frame(height: 4)
-    }
-}
-
-/// 影響力標籤
-struct ImpactBadge: View {
-    @EnvironmentObject var theme: AppTheme
-    let impact: String
-
-    var body: some View {
-        Text(impact)
-            .font(.system(size: DesignTokens.Typography.body, weight: .bold))
-            .foregroundColor(theme.accent)
-            .padding(.horizontal, DesignTokens.Spacing.xs)
-            .padding(.vertical, DesignTokens.Spacing.xxs)
-            .background(
-                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.small)
-                    .fill(theme.accentLight)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.small)
-                            .stroke(theme.accent.opacity(0.3), lineWidth: 1)
-                    )
-            )
-    }
-}
+/// 文獻表格列 - 已移至 EntryListComponents.swift
+// struct EntryTableRow - 見 EntryListComponents.swift
+// struct ProgressBar - 見 EntryListComponents.swift  
+// struct ImpactBadge - 見 EntryListComponents.swift
 
 #Preview {
     let theme = AppTheme()
@@ -1108,4 +813,3 @@ struct ImpactBadge: View {
         .environment(\.managedObjectContext, context)
         .frame(width: 1000, height: 600)
 }
-

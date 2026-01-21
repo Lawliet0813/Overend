@@ -33,6 +33,11 @@ struct DocumentEditorView: View {
     @State private var canRedo = false
     @State var currentFont: String = "Helvetica"
     
+    // 格式狀態追蹤
+    @State private var isBoldActive = false
+    @State private var isItalicActive = false
+    @State private var isUnderlineActive = false
+    
     // 封面輸入
     @State private var showCoverInputSheet = false
     
@@ -43,7 +48,7 @@ struct DocumentEditorView: View {
     )
     private var libraries: FetchedResults<Library>
     
-    @State private var selectedLibrary: Library?
+    @State var selectedLibrary: Library?
     
     init(document: Document) {
         self.document = document
@@ -81,7 +86,10 @@ struct DocumentEditorView: View {
                 canUndo: $canUndo,
                 canRedo: $canRedo,
                 currentFont: $currentFont,
-                showCitationSidebar: $showCitationSidebar
+                showCitationSidebar: $showCitationSidebar,
+                isBoldActive: $isBoldActive,
+                isItalicActive: $isItalicActive,
+                isUnderlineActive: $isUnderlineActive
             )
             .environmentObject(theme)
             
@@ -153,7 +161,8 @@ struct DocumentEditorView: View {
 
         .confirmationDialog("匯出格式", isPresented: $showExportMenu) {
             Button("匯出 DOCX") { exportDocument(format: .docx) }
-            Button("匯出 PDF") { exportDocument(format: .pdf) }
+            Button("匯出 PDF (標準/WebKit)") { exportDocument(format: .pdf) }
+            Button("匯出 PDF (專業/Typst)") { exportDocument(format: .typstProtocol) }
             Button("取消", role: .cancel) { }
         }
         .overlay {
@@ -252,10 +261,26 @@ struct DocumentEditorView: View {
         canUndo = undoManager.canUndo
         canRedo = undoManager.canRedo
 
-        // 更新當前字體顯示
-        if let textView = textViewRef,
-           let font = textView.typingAttributes[.font] as? NSFont {
-            currentFont = font.fontName
+        // 更新當前字體顯示和格式狀態
+        if let textView = textViewRef {
+            let attributes = textView.typingAttributes
+            
+            // 更新字體
+            if let font = attributes[.font] as? NSFont {
+                currentFont = font.fontName
+                
+                // 檢測粗體
+                let traits = font.fontDescriptor.symbolicTraits
+                isBoldActive = traits.contains(.bold)
+                isItalicActive = traits.contains(.italic)
+            }
+            
+            // 檢測底線
+            if let underlineStyle = attributes[.underlineStyle] as? Int {
+                isUnderlineActive = underlineStyle != 0
+            } else {
+                isUnderlineActive = false
+            }
         }
     }
 

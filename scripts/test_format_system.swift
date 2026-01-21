@@ -37,7 +37,7 @@ print("""
    ✓ HTML + CSS → NSAttributedString
    ✓ CSS 自動生成
 
-4. PDFExporter.swift - PDF 匯出器
+4. WebKitPDFExporter.swift - PDF 匯出器
    ✓ 使用 WKWebView 渲染
    ✓ 支援預覽和匯出
 

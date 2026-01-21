@@ -1,6 +1,7 @@
 import XCTest
 @testable import OVEREND
 
+@MainActor
 class LearningServiceTests: XCTestCase {
     
     var service: LearningService!

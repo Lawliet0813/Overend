@@ -34,7 +34,9 @@ class BibTeXParser {
 
         // 正則表達式匹配 @type{key, ...}
         // 支持嵌套大括號和跨行
-        let pattern = #"@(\w+)\s*\{\s*([^,\s]+)\s*,\s*((?:[^{}]|\{[^}]*\})*)\s*\}"#
+        // 正則表達式匹配 @type{key, ...}
+        // 支持最多 3 層嵌套大括號
+        let pattern = #"@(\w+)\s*\{\s*([^,\s]+)\s*,\s*((?:[^{}]|\{(?:[^{}]|\{(?:[^{}]|\{[^}]*\})*\})*\})*)\s*\}"#
         let regex = try NSRegularExpression(
             pattern: pattern,
             options: [.caseInsensitive, .dotMatchesLineSeparators]

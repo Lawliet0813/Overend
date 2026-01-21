@@ -63,21 +63,66 @@ struct PersistenceController {
         return controller
     }()
 
-    let container: NSPersistentContainer
+    let container: NSPersistentCloudKitContainer
+
+    /// iCloud 同步是否已啟用（從 UserDefaults 讀取）
+    private static var isCloudSyncEnabled: Bool {
+        UserDefaults.standard.bool(forKey: "CloudSyncEnabled")
+    }
 
     init(inMemory: Bool = false) {
         // 創建程式化定義的模型
         let managedObjectModel = PersistenceController.createManagedObjectModel()
-        container = NSPersistentContainer(name: Constants.CoreData.containerName, managedObjectModel: managedObjectModel)
+        container = NSPersistentCloudKitContainer(name: Constants.CoreData.containerName, managedObjectModel: managedObjectModel)
 
         if inMemory {
+            // 預覽模式：使用記憶體儲存
             container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
+        } else {
+            // 生產模式：明確指定本地儲存位置
+            if let description = container.persistentStoreDescriptions.first {
+                // 設定儲存位置在 Application Support
+                let storeURL = FileManager.default
+                    .urls(for: .applicationSupportDirectory, in: .userDomainMask)
+                    .first!
+                    .appendingPathComponent("OVEREND")
+                    .appendingPathComponent("OVEREND.sqlite")
+
+                // 確保目錄存在
+                let storeDirectory = storeURL.deletingLastPathComponent()
+                try? FileManager.default.createDirectory(at: storeDirectory, withIntermediateDirectories: true)
+
+                description.url = storeURL
+
+                #if DEBUG
+                print("📁 Core Data Store: \(storeURL.path)")
+                #endif
+            }
         }
 
-        // 啟用持久化歷史追蹤（用於未來的雲端同步）
-        if let description = container.persistentStoreDescriptions.first {
+        // 設定 CloudKit 選項（只有當使用者啟用時才生效）
+        if let description = container.persistentStoreDescriptions.first, !inMemory {
+            // 啟用持久化歷史追蹤（本地和 CloudKit 都需要）
             description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
             description.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
+
+            if Self.isCloudSyncEnabled {
+                // 使用者啟用 iCloud 同步
+                let cloudKitContainerIdentifier = "iCloud.\(Bundle.main.bundleIdentifier ?? "com.lawliet.OVEREND")"
+                let cloudKitOptions = NSPersistentCloudKitContainerOptions(containerIdentifier: cloudKitContainerIdentifier)
+                description.cloudKitContainerOptions = cloudKitOptions
+
+                #if DEBUG
+                print("☁️ CloudKit 同步已啟用: \(cloudKitContainerIdentifier)")
+                #endif
+            } else {
+                // 本地儲存模式（不啟用 CloudKit）
+                description.cloudKitContainerOptions = nil
+
+                #if DEBUG
+                print("💾 使用本地儲存模式（CloudKit 未啟用）")
+                #endif
+            }
         }
 
         container.loadPersistentStores { storeDescription, error in
@@ -88,8 +133,23 @@ struct PersistenceController {
                  - 數據模型與持久化存儲不兼容
                  - 權限問題
                  - 磁盤空間不足
+                 - CloudKit 權限未設定（當啟用 CloudKit 時）
                  */
+                #if DEBUG
+                print("❌ 無法加載持久化存儲: \(error.localizedDescription)")
+                print("   Store Description: \(storeDescription)")
+                print("   Error Details: \(error.userInfo)")
+                #endif
+
+                // 生產環境應該有更優雅的錯誤處理
+                // 例如：顯示錯誤訊息給使用者，或嘗試重建資料庫
                 fatalError("無法加載持久化存儲: \(error), \(error.userInfo)")
+            } else {
+                #if DEBUG
+                print("✅ Core Data 持久化存儲已成功加載")
+                print("   Store URL: \(storeDescription.url?.path ?? "N/A")")
+                print("   CloudKit: \(Self.isCloudSyncEnabled ? "已啟用" : "未啟用")")
+                #endif
             }
         }
 

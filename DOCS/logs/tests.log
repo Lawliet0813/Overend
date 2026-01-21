@@ -1,0 +1,434 @@
+Command line invocation:
+    /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -scheme OVEREND -destination platform=macOS,arch=arm64
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (3 targets)
+    Target 'OVERENDUITests' in project 'OVEREND'
+        ➜ Explicit dependency on target 'OVEREND' in project 'OVEREND'
+    Target 'OVERENDTests' in project 'OVEREND'
+        ➜ Explicit dependency on target 'OVEREND' in project 'OVEREND'
+    Target 'OVEREND' in project 'OVEREND' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+ExecuteExternalTool /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+Build description signature: e109c66d6fd4ee8756bbd9883179e3f7
+Build description path: /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/XCBuildData/e109c66d6fd4ee8756bbd9883179e3f7.xcbuilddata
+ProcessProductPackaging /Users/lawliet/OVEREND/OVEREND/OVEREND.entitlements /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND.app.xcent (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+    Entitlements:
+    
+    {
+    "com.apple.security.app-sandbox" = 1;
+    "com.apple.security.assets.pictures.read-write" = 1;
+    "com.apple.security.automation.apple-events" = 1;
+    "com.apple.security.files.downloads.read-write" = 1;
+    "com.apple.security.files.user-selected.read-write" = 1;
+    "com.apple.security.get-task-allow" = 1;
+    "com.apple.security.network.client" = 1;
+}
+    
+    builtin-productPackagingUtility /Users/lawliet/OVEREND/OVEREND/OVEREND.entitlements -entitlements -format xml -o /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND.app.xcent
+
+ProcessProductPackagingDER /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND.app.xcent /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND.app.xcent.der (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    /usr/bin/derq query -f xml -i /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND.app.xcent -o /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND.app.xcent.der --raw
+
+ClangStatCache /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk /Users/lawliet/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/macosx26.2-25C57-830dddbfbccebdd7c0a1e2a9282ec48d.sdkstatcache
+    cd /Users/lawliet/OVEREND/OVEREND.xcodeproj
+    /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -o /Users/lawliet/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/macosx26.2-25C57-830dddbfbccebdd7c0a1e2a9282ec48d.sdkstatcache
+
+ProcessProductPackaging "" /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDUITests.build/OVERENDUITests.xctest.xcent (in target 'OVERENDUITests' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+    Entitlements:
+    
+    {
+    "com.apple.application-identifier" = "M74G8Q369T.com.overend.OVERENDUITests.xctrunner";
+    "com.apple.security.app-sandbox" = 1;
+    "com.apple.security.get-task-allow" = 1;
+    "com.apple.security.network.client" = 1;
+    "com.apple.security.temporary-exception.files.absolute-path.read-only" =     (
+        "/"
+    );
+    "com.apple.security.temporary-exception.mach-lookup.global-name" =     (
+        "com.apple.testmanagerd",
+        "com.apple.dt.testmanagerd.runner",
+        "com.apple.coresymbolicationd",
+        "com.apple.coredevice.version",
+        "com.apple.coredevice.service",
+        "com.apple.remoted"
+    );
+    "com.apple.security.temporary-exception.mach-lookup.local-name" =     (
+        "com.apple.axserver"
+    );
+    "com.apple.security.temporary-exception.sbpl" =     (
+        "(allow hid-control)",
+        "(allow signal)"
+    );
+}
+    
+    builtin-productPackagingUtility -entitlements -format xml -o /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDUITests.build/OVERENDUITests.xctest.xcent
+
+SwiftDriver OVERENDTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'OVERENDTests' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    builtin-SwiftDriver -- /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name OVERENDTests -Onone -enforce-exclusivity\=checked @/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests.SwiftFileList -DDEBUG -plugin-path /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-upcoming-feature DisableOutwardActorInference -enable-upcoming-feature InferSendableFromCaptures -enable-upcoming-feature GlobalActorIsolatedTypesUsability -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -target arm64-apple-macos26.1 -g -module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -Isystem /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -F /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/macosx26.2-25C57-830dddbfbccebdd7c0a1e2a9282ec48d.sdkstatcache -output-file-map /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/OVERENDTests-generated-files.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/OVERENDTests-own-target-headers.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/OVERENDTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/OVERENDTests-project-headers.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/include -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/DerivedSources/arm64 -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests-Swift.h -working-directory /Users/lawliet/OVEREND -experimental-emit-module-separately -disable-cmo
+
+ProcessProductPackagingDER /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDUITests.build/OVERENDUITests.xctest.xcent /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDUITests.build/OVERENDUITests.xctest.xcent.der (in target 'OVERENDUITests' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    /usr/bin/derq query -f xml -i /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDUITests.build/OVERENDUITests.xctest.xcent -o /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDUITests.build/OVERENDUITests.xctest.xcent.der --raw
+
+CopySwiftLibs /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    builtin-swiftStdLibTool --copy --verbose --sign 457361E08282B84CE1EAA2C55B66425C93438B52 --scan-executable /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/OVEREND.debug.dylib --scan-folder /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/Frameworks --scan-folder /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/PlugIns --scan-folder /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/Library/SystemExtensions --scan-folder /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/Extensions --platform macosx --toolchain /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/Frameworks --strip-bitcode --strip-bitcode-tool /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+ProcessInfoPlistFile /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/Info.plist /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/empty-OVEREND.plist (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    builtin-infoPlistUtility /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/empty-OVEREND.plist -producttype com.apple.product-type.application -genpkginfo /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/PkgInfo -expandbuildsettings -platform macosx -additionalcontentfile /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/assetcatalog_generated_info.plist -o /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/Info.plist
+
+ProcessInfoPlistFile /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/PlugIns/OVERENDTests.xctest/Contents/Info.plist /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/empty-OVERENDTests.plist (in target 'OVERENDTests' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    builtin-infoPlistUtility /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/empty-OVERENDTests.plist -producttype com.apple.product-type.bundle.unit-test -expandbuildsettings -platform macosx -o /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/PlugIns/OVERENDTests.xctest/Contents/Info.plist
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ OVERENDTests (in target 'OVERENDTests' from project 'OVEREND')
+
+EmitSwiftModule normal arm64 (in target 'OVERENDTests' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 Compiling\ LearningServiceTests.swift /Users/lawliet/OVEREND/OVERENDTests/LearningServiceTests.swift (in target 'OVERENDTests' from project 'OVEREND')
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVERENDTests/LearningServiceTests.swift (in target 'OVERENDTests' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVERENDTests/LearningServiceTests.swift:35:13: warning: initialization of immutable value 'expectation' was never used; consider replacing with assignment to '_' or removing it
+        let expectation = XCTestExpectation(description: "Learning task completed")
+        ~~~~^~~~~~~~~~~
+        _
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for OVERENDTests (in target 'OVERENDTests' from project 'OVEREND')
+
+SwiftDriver\ Compilation\ Requirements OVERENDTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'OVERENDTests' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    builtin-Swift-Compilation-Requirements -- /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name OVERENDTests -Onone -enforce-exclusivity\=checked @/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests.SwiftFileList -DDEBUG -plugin-path /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-upcoming-feature DisableOutwardActorInference -enable-upcoming-feature InferSendableFromCaptures -enable-upcoming-feature GlobalActorIsolatedTypesUsability -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -target arm64-apple-macos26.1 -g -module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -Isystem /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -F /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/macosx26.2-25C57-830dddbfbccebdd7c0a1e2a9282ec48d.sdkstatcache -output-file-map /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/OVERENDTests-generated-files.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/OVERENDTests-own-target-headers.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/OVERENDTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/OVERENDTests-project-headers.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/include -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/DerivedSources/arm64 -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests-Swift.h -working-directory /Users/lawliet/OVEREND -experimental-emit-module-separately -disable-cmo
+
+Copy /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVERENDTests.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests.swiftsourceinfo (in target 'OVERENDTests' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests.swiftsourceinfo /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVERENDTests.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo
+
+Copy /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVERENDTests.swiftmodule/arm64-apple-macos.abi.json /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests.abi.json (in target 'OVERENDTests' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests.abi.json /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVERENDTests.swiftmodule/arm64-apple-macos.abi.json
+
+Copy /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVERENDTests.swiftmodule/arm64-apple-macos.swiftmodule /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests.swiftmodule (in target 'OVERENDTests' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests.swiftmodule /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVERENDTests.swiftmodule/arm64-apple-macos.swiftmodule
+
+SwiftDriverJobDiscovery normal arm64 Compiling LearningServiceTests.swift (in target 'OVERENDTests' from project 'OVEREND')
+
+SwiftDriver\ Compilation OVERENDTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'OVERENDTests' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    builtin-Swift-Compilation -- /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name OVERENDTests -Onone -enforce-exclusivity\=checked @/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests.SwiftFileList -DDEBUG -plugin-path /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-upcoming-feature DisableOutwardActorInference -enable-upcoming-feature InferSendableFromCaptures -enable-upcoming-feature GlobalActorIsolatedTypesUsability -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -target arm64-apple-macos26.1 -g -module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -Isystem /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -F /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/macosx26.2-25C57-830dddbfbccebdd7c0a1e2a9282ec48d.sdkstatcache -output-file-map /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/OVERENDTests-generated-files.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/OVERENDTests-own-target-headers.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/OVERENDTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/OVERENDTests-project-headers.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/include -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/DerivedSources/arm64 -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests-Swift.h -working-directory /Users/lawliet/OVEREND -experimental-emit-module-separately -disable-cmo
+
+Ld /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/PlugIns/OVERENDTests.xctest/Contents/MacOS/OVERENDTests normal (in target 'OVERENDTests' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos26.1 -bundle -isysroot /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -O0 -L/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -L/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -L/Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -F/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -iframework /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -filelist /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests.LinkFileList -Xlinker -rpath -Xlinker @loader_path/../Frameworks -Xlinker -rpath -Xlinker @executable_path/../Frameworks -bundle_loader /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/OVEREND -Xlinker -object_path_lto -Xlinker /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -debug_variant -Xlinker -dependency_info -Xlinker /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests_dependency_info.dat -fobjc-link-runtime -fprofile-instr-generate -L/Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests.swiftmodule @/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests-linker-args.resp -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/OVEREND.debug.dylib -Xlinker -no_adhoc_codesign -o /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/PlugIns/OVERENDTests.xctest/Contents/MacOS/OVERENDTests
+
+CopySwiftLibs /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/PlugIns/OVERENDTests.xctest (in target 'OVERENDTests' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    builtin-swiftStdLibTool --copy --verbose --sign 457361E08282B84CE1EAA2C55B66425C93438B52 --scan-executable /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/PlugIns/OVERENDTests.xctest/Contents/MacOS/OVERENDTests --scan-folder /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/PlugIns/OVERENDTests.xctest/Contents/Frameworks --scan-folder /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/PlugIns/OVERENDTests.xctest/Contents/PlugIns --scan-folder /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/PlugIns/OVERENDTests.xctest/Contents/Library/SystemExtensions --scan-folder /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/PlugIns/OVERENDTests.xctest/Contents/Extensions --platform macosx --toolchain /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/PlugIns/OVERENDTests.xctest/Contents/Frameworks --strip-bitcode --scan-executable /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+ExtractAppIntentsMetadata (in target 'OVERENDTests' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name OVERENDTests --sdk-root /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk --xcode-version 17C52 --platform-family macOS --deployment-target 26.1 --bundle-identifier com.overend.OVERENDTests --output /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/PlugIns/OVERENDTests.xctest/Contents/Resources --target-triple arm64-apple-macos26.1 --binary-file /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/PlugIns/OVERENDTests.xctest/Contents/MacOS/OVERENDTests --dependency-file /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests_dependency_info.dat --stringsdata-file /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests.SwiftFileList --metadata-file-list /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/OVERENDTests.DependencyMetadataFileList --static-metadata-file-list /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/OVERENDTests.DependencyStaticMetadataFileList --swift-const-vals-list /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDTests.build/Objects-normal/arm64/OVERENDTests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-01-20 08:45:24.918 appintentsmetadataprocessor[67791:750603] Starting appintentsmetadataprocessor export
+2026-01-20 08:45:24.998 appintentsmetadataprocessor[67791:750603] Extracted no relevant App Intents symbols, skipping writing output
+
+CodeSign /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/PlugIns/OVERENDTests.xctest (in target 'OVERENDTests' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+    Signing Identity:     "Apple Development: ym90039@gmail.com (RKG6FM4Z66)"
+    
+    /usr/bin/codesign --force --sign 457361E08282B84CE1EAA2C55B66425C93438B52 --timestamp\=none --generate-entitlement-der /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/PlugIns/OVERENDTests.xctest
+
+CodeSign /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/OVEREND.debug.dylib (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+    Signing Identity:     "Apple Development: ym90039@gmail.com (RKG6FM4Z66)"
+    
+    /usr/bin/codesign --force --sign 457361E08282B84CE1EAA2C55B66425C93438B52 -o runtime --timestamp\=none --generate-entitlement-der /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/OVEREND.debug.dylib
+/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/OVEREND.debug.dylib: replacing existing signature
+
+CodeSign /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/__preview.dylib (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+    Signing Identity:     "Apple Development: ym90039@gmail.com (RKG6FM4Z66)"
+    
+    /usr/bin/codesign --force --sign 457361E08282B84CE1EAA2C55B66425C93438B52 -o runtime --timestamp\=none --generate-entitlement-der /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/__preview.dylib
+/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/__preview.dylib: replacing existing signature
+
+CodeSign /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+    Signing Identity:     "Apple Development: ym90039@gmail.com (RKG6FM4Z66)"
+    
+    /usr/bin/codesign --force --sign 457361E08282B84CE1EAA2C55B66425C93438B52 -o runtime --entitlements /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND.app.xcent --timestamp\=none --generate-entitlement-der /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app
+/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app: replacing existing signature
+
+Validate /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    builtin-validationUtility /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app -no-validate-extension -infoplist-subpath Contents/Info.plist
+
+RegisterWithLaunchServices /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    /System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister -f -R -trusted /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app
+
+ProcessInfoPlistFile /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVERENDUITests-Runner.app/Contents/PlugIns/OVERENDUITests.xctest/Contents/Info.plist /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDUITests.build/empty-OVERENDUITests.plist (in target 'OVERENDUITests' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    builtin-infoPlistUtility /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDUITests.build/empty-OVERENDUITests.plist -producttype com.apple.product-type.bundle.ui-testing -expandbuildsettings -platform macosx -additionalcontentfile /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDUITests.build/ProductTypeInfoPlistAdditions.plist -o /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVERENDUITests-Runner.app/Contents/PlugIns/OVERENDUITests.xctest/Contents/Info.plist
+
+CopySwiftLibs /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVERENDUITests-Runner.app/Contents/PlugIns/OVERENDUITests.xctest (in target 'OVERENDUITests' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    builtin-swiftStdLibTool --copy --verbose --sign 457361E08282B84CE1EAA2C55B66425C93438B52 --scan-executable /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVERENDUITests-Runner.app/Contents/PlugIns/OVERENDUITests.xctest/Contents/MacOS/OVERENDUITests --scan-folder /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVERENDUITests-Runner.app/Contents/PlugIns/OVERENDUITests.xctest/Contents/Frameworks --scan-folder /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVERENDUITests-Runner.app/Contents/PlugIns/OVERENDUITests.xctest/Contents/PlugIns --scan-folder /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVERENDUITests-Runner.app/Contents/PlugIns/OVERENDUITests.xctest/Contents/Library/SystemExtensions --scan-folder /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVERENDUITests-Runner.app/Contents/PlugIns/OVERENDUITests.xctest/Contents/Extensions --platform macosx --toolchain /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVERENDUITests-Runner.app/Contents/PlugIns/OVERENDUITests.xctest/Contents/Frameworks --strip-bitcode --scan-executable /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDUITests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+CodeSign /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVERENDUITests-Runner.app/Contents/PlugIns/OVERENDUITests.xctest (in target 'OVERENDUITests' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+    Signing Identity:     "Apple Development: ym90039@gmail.com (RKG6FM4Z66)"
+    
+    /usr/bin/codesign --force --sign 457361E08282B84CE1EAA2C55B66425C93438B52 --entitlements /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDUITests.build/OVERENDUITests.xctest.xcent --timestamp\=none --generate-entitlement-der /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVERENDUITests-Runner.app/Contents/PlugIns/OVERENDUITests.xctest
+/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVERENDUITests-Runner.app/Contents/PlugIns/OVERENDUITests.xctest: replacing existing signature
+
+CodeSign /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVERENDUITests-Runner.app (in target 'OVERENDUITests' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+    Signing Identity:     "Apple Development: ym90039@gmail.com (RKG6FM4Z66)"
+    
+    /usr/bin/codesign --force --sign 457361E08282B84CE1EAA2C55B66425C93438B52 --entitlements /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVERENDUITests.build/OVERENDUITests.xctest.xcent --timestamp\=none --generate-entitlement-der /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVERENDUITests-Runner.app
+/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVERENDUITests-Runner.app: replacing existing signature
+
+Testing started
+Test suite 'PDFMetadataExtractorTests' started on 'My Mac - OVEREND (67801)'
+Test case 'PDFMetadataExtractorTests.testExtractMetadataFromInvalidURL()' passed on 'My Mac - OVEREND (67801)' (0.004 seconds)
+Test suite 'BibTeXParserTests' started on 'My Mac - OVEREND (67804)'
+Test case 'BibTeXParserTests.testCleanLaTeXCommands()' passed on 'My Mac - OVEREND (67804)' (0.002 seconds)
+Test case 'BibTeXParserTests.testParseBookEntry()' passed on 'My Mac - OVEREND (67804)' (0.001 seconds)
+Test case 'BibTeXParserTests.testParseChineseBibTeX()' passed on 'My Mac - OVEREND (67804)' (0.001 seconds)
+Test case 'BibTeXParserTests.testParseContentWithoutValidEntries()' passed on 'My Mac - OVEREND (67804)' (0.002 seconds)
+Test case 'BibTeXParserTests.testParseDOIField()' passed on 'My Mac - OVEREND (67804)' (0.001 seconds)
+Test case 'BibTeXParserTests.testParseEmptyContent()' passed on 'My Mac - OVEREND (67804)' (0.001 seconds)
+Test case 'BibTeXParserTests.testParseFileFromURL()' passed on 'My Mac - OVEREND (67804)' (0.031 seconds)
+Test case 'BibTeXParserTests.testParseMultilineValues()' passed on 'My Mac - OVEREND (67804)' (0.001 seconds)
+Test case 'BibTeXParserTests.testParseMultipleEntries()' passed on 'My Mac - OVEREND (67804)' (0.004 seconds)
+Test case 'BibTeXParserTests.testParseValidBibTeX()' passed on 'My Mac - OVEREND (67804)' (0.001 seconds)
+Test case 'BibTeXParserTests.testParseWhitespaceOnlyContent()' passed on 'My Mac - OVEREND (67804)' (0.001 seconds)
+Test case 'BibTeXParserTests.testParseWithNestedBraces()' passed on 'My Mac - OVEREND (67804)' (0.001 seconds)
+Test case 'BibTeXParserTests.testParseWithQuotedValues()' passed on 'My Mac - OVEREND (67804)' (0.001 seconds)
+Test case 'BibTeXParserTests.testValidateArticleEntry()' passed on 'My Mac - OVEREND (67804)' (0.001 seconds)
+Test case 'BibTeXParserTests.testValidateEntryWithMissingRequiredFields()' passed on 'My Mac - OVEREND (67804)' (0.001 seconds)
+Test case 'BibTeXParserTests.testValidateUnsupportedEntryType()' passed on 'My Mac - OVEREND (67804)' (0.001 seconds)
+Test suite 'LearningServiceTests' started on 'My Mac - OVEREND (67804)'
+Test case 'LearningServiceTests.testInitialState()' passed on 'My Mac - OVEREND (67804)' (0.002 seconds)
+Test case 'LearningServiceTests.testLearnTagging()' passed on 'My Mac - OVEREND (67804)' (1.018 seconds)
+Test suite 'CitationDomainTests' started on 'My Mac - OVEREND (67807)'
+Test suite 'AuthorFormattingTests' started on 'My Mac - OVEREND (67805)'
+Test suite 'DocumentDomainTests' started on 'My Mac - OVEREND (67808)'
+Test case 'AuthorFormattingTests.testSingleAuthorFormatting()' passed on 'My Mac - OVEREND (67805)' (0.025 seconds)
+Test suite 'LiteratureAgentTests' started on 'My Mac - OVEREND (67805)'
+Test suite 'WritingDomainTests' started on 'My Mac - OVEREND (67809)'
+Test suite 'CitationServiceTests' started on 'My Mac - OVEREND (67810)'
+Test case 'CitationServiceTests.testGenerateAPAForArticle()' passed on 'My Mac - OVEREND (67810)' (0.014 seconds)
+Test case 'CitationServiceTests.testGenerateAPAForBook()' passed on 'My Mac - OVEREND (67810)' (0.004 seconds)
+Test case 'LiteratureAgentTests.testClearPendingSuggestions()' passed on 'My Mac - OVEREND (67805)' (0.040 seconds)
+Test case 'CitationServiceTests.testGenerateAPAForChineseArticle()' passed on 'My Mac - OVEREND (67810)' (0.007 seconds)
+Test case 'CitationServiceTests.testGenerateAPAWithDOI()' passed on 'My Mac - OVEREND (67810)' (0.004 seconds)
+Test case 'CitationServiceTests.testGenerateAPAWithMissingFields()' passed on 'My Mac - OVEREND (67810)' (0.004 seconds)
+Test case 'CitationServiceTests.testGenerateAPAWithMultipleAuthors()' passed on 'My Mac - OVEREND (67810)' (0.005 seconds)
+Test case 'CitationServiceTests.testGenerateCitationWithEmptyAuthor()' passed on 'My Mac - OVEREND (67810)' (0.004 seconds)
+Test case 'CitationServiceTests.testGenerateCitationWithSpecialCharacters()' passed on 'My Mac - OVEREND (67810)' (0.004 seconds)
+Test case 'CitationServiceTests.testGenerateMLAForArticle()' passed on 'My Mac - OVEREND (67810)' (0.003 seconds)
+Test case 'LiteratureAgentTests.testFindDuplicatesWithDuplicates()' passed on 'My Mac - OVEREND (67805)' (0.035 seconds)
+Test case 'CitationServiceTests.testGenerateMLAForBook()' passed on 'My Mac - OVEREND (67810)' (0.006 seconds)
+Test case 'CitationDomainTests.testFormatCitation()' passed on 'My Mac - OVEREND (67807)' (0.113 seconds)
+Test suite 'AgentTaskQueueTests' started on 'My Mac - OVEREND (67810)'
+Test case 'LiteratureAgentTests.testFindDuplicatesWithoutDuplicates()' passed on 'My Mac - OVEREND (67805)' (0.015 seconds)
+Test case 'AgentTaskQueueTests.testClearQueue()' passed on 'My Mac - OVEREND (67810)' (0.012 seconds)
+Test case 'DocumentDomainTests.testClassifyDocument()' passed on 'My Mac - OVEREND (67808)' (0.118 seconds)
+Test case 'LiteratureAgentTests.testInitialState()' passed on 'My Mac - OVEREND (67805)' (0.016 seconds)
+Test case 'AgentTaskQueueTests.testEnqueueBatch()' passed on 'My Mac - OVEREND (67810)' (0.016 seconds)
+Test case 'LiteratureAgentTests.testReset()' passed on 'My Mac - OVEREND (67805)' (0.017 seconds)
+Test case 'AgentTaskQueueTests.testEnqueueMultipleTasks()' passed on 'My Mac - OVEREND (67810)' (0.017 seconds)
+Test case 'WritingDomainTests.testCheckGrammar()' passed on 'My Mac - OVEREND (67809)' (0.107 seconds)
+Test case 'LiteratureAgentTests.testSharedInstance()' passed on 'My Mac - OVEREND (67805)' (0.017 seconds)
+Test case 'AgentTaskQueueTests.testEnqueueTask()' passed on 'My Mac - OVEREND (67810)' (0.016 seconds)
+Test suite 'RepositoryTests' started on 'My Mac - OVEREND (67805)'
+Test case 'RepositoryTests.testAddCitation()' passed on 'My Mac - OVEREND (67805)' (0.007 seconds)
+Test case 'AgentTaskQueueTests.testInitialState()' passed on 'My Mac - OVEREND (67810)' (0.016 seconds)
+Test case 'RepositoryTests.testCreateDocument()' passed on 'My Mac - OVEREND (67805)' (0.007 seconds)
+Test case 'AgentTaskQueueTests.testPriorityOrdering()' passed on 'My Mac - OVEREND (67810)' (0.017 seconds)
+Test case 'RepositoryTests.testCreateEntry()' passed on 'My Mac - OVEREND (67805)' (0.018 seconds)
+Test case 'AgentTaskQueueTests.testQueueStats()' passed on 'My Mac - OVEREND (67810)' (0.017 seconds)
+Test case 'RepositoryTests.testCreateGroup()' passed on 'My Mac - OVEREND (67805)' (0.015 seconds)
+Test case 'AgentTaskQueueTests.testRemoveTask()' passed on 'My Mac - OVEREND (67810)' (0.003 seconds)
+Test case 'RepositoryTests.testCreateLibrary()' passed on 'My Mac - OVEREND (67805)' (0.004 seconds)
+Test suite 'WritingAIToolsTests' started on 'My Mac - OVEREND (67810)'
+Test case 'WritingAIToolsTests.testAnalyzeWritingToolProperties()' passed on 'My Mac - OVEREND (67810)' (0.000 seconds)
+Test case 'WritingAIToolsTests.testIssueSeverityLevels()' passed on 'My Mac - OVEREND (67810)' (0.001 seconds)
+Test case 'WritingAIToolsTests.testRewriteStyleValues()' passed on 'My Mac - OVEREND (67810)' (0.001 seconds)
+Test case 'WritingAIToolsTests.testRewriteTextToolProperties()' passed on 'My Mac - OVEREND (67810)' (0.000 seconds)
+Test case 'CitationDomainTests.testGenerateBibliography()' passed on 'My Mac - OVEREND (67807)' (0.122 seconds)
+Test case 'RepositoryTests.testCreateNestedGroup()' passed on 'My Mac - OVEREND (67805)' (0.005 seconds)
+Test suite 'AgentResultTests' started on 'My Mac - OVEREND (67810)'
+Test case 'AgentResultTests.testResultCreation()' passed on 'My Mac - OVEREND (67810)' (0.003 seconds)
+Test case 'RepositoryTests.testDeleteLibrary()' passed on 'My Mac - OVEREND (67805)' (0.004 seconds)
+Test case 'AgentResultTests.testResultWithSuggestions()' passed on 'My Mac - OVEREND (67810)' (0.003 seconds)
+Test suite 'UnifiedAIServiceTests' started on 'My Mac - OVEREND (67810)'
+Test case 'DocumentDomainTests.testCompareDocuments()' passed on 'My Mac - OVEREND (67808)' (0.107 seconds)
+Test case 'RepositoryTests.testFetchAllLibraries()' passed on 'My Mac - OVEREND (67805)' (0.006 seconds)
+Test case 'UnifiedAIServiceTests.testDomainAccessibility()' passed on 'My Mac - OVEREND (67810)' (0.010 seconds)
+Test case 'UnifiedAIServiceTests.testInitialState()' passed on 'My Mac - OVEREND (67810)' (0.000 seconds)
+Test case 'UnifiedAIServiceTests.testSharedInstance()' passed on 'My Mac - OVEREND (67810)' (0.001 seconds)
+Test case 'UnifiedAIServiceTests.testStaticConvenienceProperties()' passed on 'My Mac - OVEREND (67810)' (0.000 seconds)
+Test case 'RepositoryTests.testFetchDefaultLibrary()' passed on 'My Mac - OVEREND (67805)' (0.014 seconds)
+Test suite 'CitationJSBridgeTests' started on 'My Mac - OVEREND (67810)'
+Test case 'CitationJSBridgeTests.testAutoDetectBibTeX()' passed on 'My Mac - OVEREND (67810)' (0.004 seconds)
+Test case 'RepositoryTests.testFetchEntriesInLibrary()' passed on 'My Mac - OVEREND (67805)' (0.005 seconds)
+Test case 'CitationJSBridgeTests.testParseBibTeX()' passed on 'My Mac - OVEREND (67810)' (0.000 seconds)
+Test case 'CitationJSBridgeTests.testParseRIS()' passed on 'My Mac - OVEREND (67810)' (0.001 seconds)
+Test suite 'ExtractPDFMetadataToolTests' started on 'My Mac - OVEREND (67810)'
+Test case 'ExtractPDFMetadataToolTests.testInitialResultIsNil()' passed on 'My Mac - OVEREND (67810)' (0.005 seconds)
+Test case 'RepositoryTests.testFetchRootGroups()' passed on 'My Mac - OVEREND (67805)' (0.009 seconds)
+Test case 'WritingDomainTests.testExpandContent()' passed on 'My Mac - OVEREND (67809)' (0.117 seconds)
+Test case 'RepositoryTests.testMoveGroup()' passed on 'My Mac - OVEREND (67805)' (0.005 seconds)
+Test case 'ExtractPDFMetadataToolTests.testPlaceholderTitlePatterns()' passed on 'My Mac - OVEREND (67810)' (0.016 seconds)
+Test case 'RepositoryTests.testSearchEntries()' passed on 'My Mac - OVEREND (67805)' (0.011 seconds)
+Test case 'RepositoryTests.testUpdateDocumentTitle()' passed on 'My Mac - OVEREND (67805)' (0.004 seconds)
+Test case 'RepositoryTests.testUpdateEntryFields()' passed on 'My Mac - OVEREND (67805)' (0.004 seconds)
+Test case 'RepositoryTests.testUpdateLibrary()' passed on 'My Mac - OVEREND (67805)' (0.003 seconds)
+Test suite 'QueuedTaskTests' started on 'My Mac - OVEREND (67805)'
+Test case 'ExtractPDFMetadataToolTests.testToolNameAndDescription()' passed on 'My Mac - OVEREND (67810)' (0.017 seconds)
+Test case 'ExtractPDFMetadataToolTests.testValidTitlePatterns()' passed on 'My Mac - OVEREND (67810)' (0.016 seconds)
+Test case 'QueuedTaskTests.testQueuedTaskCreation()' passed on 'My Mac - OVEREND (67805)' (0.019 seconds)
+Test suite 'AIFrameworkIntegrationTests' started on 'My Mac - OVEREND (67810)'
+Test case 'QueuedTaskTests.testQueuedTaskDefaultPriority()' passed on 'My Mac - OVEREND (67805)' (0.016 seconds)
+Test case 'AIFrameworkIntegrationTests.testAssertions()' passed on 'My Mac - OVEREND (67810)' (0.015 seconds)
+Test suite 'AgentTaskTests' started on 'My Mac - OVEREND (67805)'
+Test case 'AgentTaskTests.testTaskDisplayNames()' passed on 'My Mac - OVEREND (67805)' (0.003 seconds)
+Test case 'AgentTaskTests.testTaskEquality()' passed on 'My Mac - OVEREND (67805)' (0.002 seconds)
+Test case 'AgentTaskTests.testTaskIcons()' passed on 'My Mac - OVEREND (67805)' (0.002 seconds)
+Test case 'CitationDomainTests.testInTextCitation()' passed on 'My Mac - OVEREND (67807)' (0.113 seconds)
+Test case 'AgentTaskTests.testTaskIdentifiers()' passed on 'My Mac - OVEREND (67805)' (0.003 seconds)
+Test suite 'AIDomainTests' started on 'My Mac - OVEREND (67805)'
+Test case 'AIDomainTests.testCitationDomainExists()' passed on 'My Mac - OVEREND (67805)' (0.001 seconds)
+Test case 'AIDomainTests.testDocumentDomainExists()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test case 'AIDomainTests.testFormulaDomainExists()' passed on 'My Mac - OVEREND (67805)' (0.001 seconds)
+Test case 'AIDomainTests.testStandardsDomainExists()' passed on 'My Mac - OVEREND (67805)' (0.001 seconds)
+Test case 'DocumentDomainTests.testExtractMetadata()' passed on 'My Mac - OVEREND (67808)' (0.121 seconds)
+Test case 'AIDomainTests.testTranslationDomainExists()' passed on 'My Mac - OVEREND (67805)' (0.001 seconds)
+Test case 'AIDomainTests.testWritingDomainExists()' passed on 'My Mac - OVEREND (67805)' (0.001 seconds)
+Test suite 'AgentSuggestionTests' started on 'My Mac - OVEREND (67805)'
+Test case 'AgentSuggestionTests.testDuplicateSuggestion()' passed on 'My Mac - OVEREND (67805)' (0.003 seconds)
+Test case 'AgentSuggestionTests.testGroupSuggestion()' passed on 'My Mac - OVEREND (67805)' (0.003 seconds)
+Test case 'AgentSuggestionTests.testSummarySuggestion()' passed on 'My Mac - OVEREND (67805)' (0.002 seconds)
+Test case 'AgentSuggestionTests.testTagSuggestion()' passed on 'My Mac - OVEREND (67805)' (0.003 seconds)
+Test suite 'ChineseNameFormatterTests' started on 'My Mac - OVEREND (67805)'
+Test case 'ChineseNameFormatterTests.testAPAFormatChinese()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test case 'ChineseNameFormatterTests.testAPAFormatEnglish()' passed on 'My Mac - OVEREND (67805)' (0.001 seconds)
+Test case 'ChineseNameFormatterTests.testCompoundSurnameRecognition()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test case 'ChineseNameFormatterTests.testMultipleChineseAuthors()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test case 'ChineseNameFormatterTests.testMultipleEnglishAuthors()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test case 'ChineseNameFormatterTests.testNeedsDisambiguation()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test case 'ChineseNameFormatterTests.testParseCompoundSurname()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test case 'ChineseNameFormatterTests.testParseEnglishName()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test case 'ChineseNameFormatterTests.testParseEnglishNameWithMiddle()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test case 'ChineseNameFormatterTests.testParseSingleChineseName()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test suite 'AgentStateTests' started on 'My Mac - OVEREND (67805)'
+Test case 'AgentStateTests.testIsExecutingStates()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test case 'AgentStateTests.testStateEquality()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test case 'AgentStateTests.testStatusText()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test suite 'AiritiServiceTests' started on 'My Mac - OVEREND (67805)'
+Test case 'AiritiServiceTests.testHTMLParsing()' passed on 'My Mac - OVEREND (67805)' (0.001 seconds)
+Test suite 'AIServiceErrorTests' started on 'My Mac - OVEREND (67805)'
+Test case 'WritingDomainTests.testGenerateAbstract()' passed on 'My Mac - OVEREND (67809)' (0.121 seconds)
+Test case 'AIServiceErrorTests.testDomainSpecificErrors()' passed on 'My Mac - OVEREND (67805)' (0.001 seconds)
+Test case 'AIServiceErrorTests.testErrorDescriptions()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test case 'AIServiceErrorTests.testNotAvailableError()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test case 'AIServiceErrorTests.testProcessingFailedError()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test suite 'TaskPriorityTests' started on 'My Mac - OVEREND (67805)'
+Test case 'TaskPriorityTests.testPriorityComparison()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test case 'TaskPriorityTests.testPriorityValues()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test suite 'BibTeXEntryTests' started on 'My Mac - OVEREND (67805)'
+Test case 'BibTeXEntryTests.testBibTeXEntryFieldsAreCaseInsensitive()' passed on 'My Mac - OVEREND (67805)' (0.001 seconds)
+Test case 'BibTeXEntryTests.testBibTeXEntryInitialization()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test suite 'AgentErrorTests' started on 'My Mac - OVEREND (67805)'
+Test case 'AgentErrorTests.testErrorDescriptions()' passed on 'My Mac - OVEREND (67805)' (0.001 seconds)
+Test suite 'CitationServiceAdvancedTests' started on 'My Mac - OVEREND (67805)'
+Test case 'CitationServiceAdvancedTests.testFormatAuthorsAdvanced()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test case 'CitationServiceAdvancedTests.testFormatSingleAuthorAdvanced()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test suite 'QueueStatsTests' started on 'My Mac - OVEREND (67805)'
+Test case 'QueueStatsTests.testStatsEmptySuccessRate()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test case 'QueueStatsTests.testStatsSuccessRat2026-01-20 08:51:22.580392+0800 OVERENDUITests-Runner[68713:764140] [Default] Running tests...
+
+
+*** If you believe this error represents a bug, please attach the result bundle at /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Logs/Test/Test-OVEREND-2026.01.20_08-45-20-+0800.xcresult
+
+2026-01-20 08:57:03.714 xcodebuild[67756:750199] [MT] IDETestOperationsObserverDebug: 697.006 elapsed -- Testing started completed.
+2026-01-20 08:57:03.715 xcodebuild[67756:750199] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-01-20 08:57:03.715 xcodebuild[67756:750199] [MT] IDETestOperationsObserverDebug: 697.006 sec, +697.006 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Logs/Test/Test-OVEREND-2026.01.20_08-45-20-+0800.xcresult
+
+Testing failed:
+	OVERENDUITests-Runner (68713) encountered an error (The test runner hung before establishing connection.)
+
+** TEST FAILED **
+
+e()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test case 'QueueStatsTests.testStatsTotal()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test suite 'AcademicDocumentTypeTests' started on 'My Mac - OVEREND (67805)'
+Test case 'AcademicDocumentTypeTests.testDocumentTypeDisplayName()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test case 'AcademicDocumentTypeTests.testDocumentTypeValues()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test suite 'OVERENDTests' started on 'My Mac - OVEREND (67805)'
+Test case 'OVERENDTests/example()' passed on 'My Mac - OVEREND (67805)' (0.000 seconds)
+Test case 'DocumentDomainTests.testExtractSections()' passed on 'My Mac - OVEREND (67808)' (0.113 seconds)
+Test case 'WritingDomainTests.testImproveWriting()' passed on 'My Mac - OVEREND (67809)' (0.116 seconds)
+Test case 'DocumentDomainTests.testSummarizeDocument()' passed on 'My Mac - OVEREND (67808)' (0.115 seconds)
+Test case 'WritingDomainTests.testParaphrase()' passed on 'My Mac - OVEREND (67809)' (0.116 seconds)
+Test case 'WritingDomainTests.testWritingStyleConsistency()' passed on 'My Mac - OVEREND (67809)' (0.115 seconds)
+Test case 'CitationDomainTests.testMultipleCitationStyles()' passed on 'My Mac - OVEREND (67807)' (0.428 seconds)
+Test case 'CitationDomainTests.testValidateCitation()' passed on 'My Mac - OVEREND (67807)' (0.117 seconds)
+Test case 'LearningServiceTests.testPersistence()' passed on 'My Mac - OVEREND (67804)' (1.063 seconds)
+Test case 'AIFrameworkIntegrationTests.testCitationDomainOnly()' failed on 'My Mac - OVEREND (67810)' (0.000 seconds)
+Test case 'AIFrameworkIntegrationTests.testDataGenerator()' passed on 'My Mac - OVEREND (67818)' (0.003 seconds)
+Test case 'LearningServiceTests.testPredictTags()' passed on 'My Mac - OVEREND (67804)' (2.095 seconds)
+Test case 'AIFrameworkIntegrationTests.testDocumentDomainOnly()' failed on 'My Mac - OVEREND (67818)' (0.000 seconds)
+Test case 'AIFrameworkIntegrationTests.testExecutionTimeAssertion()' passed on 'My Mac - OVEREND (67826)' (0.126 seconds)
+Test case 'AIFrameworkIntegrationTests.testJSONReportGeneration()' failed on 'My Mac - OVEREND (67826)' (0.000 seconds)
+Test case 'AIFrameworkIntegrationTests.testMarkdownReportGeneration()' failed on 'My Mac - OVEREND (68301)' (0.000 seconds)
+Test case 'PDFMetadataExtractorTests.testExtractMetadataReturnsValidResult()' passed on 'My Mac - OVEREND (67801)' (13.866 seconds)
+Test case 'PDFMetadataExtractorTests.testMetadataConfidenceComparison()' passed on 'My Mac - OVEREND (67801)' (0.000 seconds)
+Test case 'PDFMetadataExtractorTests.testPDFMetadataConfidenceLabels()' passed on 'My Mac - OVEREND (67801)' (0.000 seconds)
+Test case 'PDFMetadataExtractorTests.testPDFMetadataInitialization()' passed on 'My Mac - OVEREND (67801)' (0.000 seconds)
+Test case 'PDFMetadataExtractorTests.testPlaceholderTitleDetection()' passed on 'My Mac - OVEREND (67801)' (0.000 seconds)
+Test case 'PDFMetadataExtractorTests.testValidTitleNotDetectedAsPlaceholder()' passed on 'My Mac - OVEREND (67801)' (0.000 seconds)

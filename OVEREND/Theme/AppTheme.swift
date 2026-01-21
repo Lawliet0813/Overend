@@ -22,6 +22,23 @@ class AppTheme: ObservableObject {
             UserDefaults.standard.set(accentHex, forKey: "appAccentColor")
         }
     }
+
+    /// 顏色方案（nil = 自動，.dark = 深色，.light = 淺色）
+    @Published var colorScheme: ColorScheme? = .dark {
+        didSet {
+            UserDefaults.standard.set(colorScheme == .light ? "light" : (colorScheme == .dark ? "dark" : "auto"), forKey: "appColorScheme")
+        }
+    }
+
+    /// 是否為淺色模式
+    var isLightMode: Bool {
+        colorScheme == .light
+    }
+
+    /// 是否為深色模式
+    var isDarkMode: Bool {
+        colorScheme == .dark || colorScheme == nil
+    }
     
     /// 預設主題色選項
     static let presetColors: [(name: String, hex: String, isGradient: Bool)] = [
@@ -60,9 +77,36 @@ class AppTheme: ObservableObject {
         )
     }
     
+    // MARK: - Design Tokens Integration
+    typealias Tokens = DesignTokens
+    
+    // MARK: - Legacy Emerald Theme Integration
+    // 這些顏色是從 EmeraldTheme 遷移過來的，統一使用 AppTheme 的調色板
+    
+    var emeraldPrimary: Color { accent }
+    var emeraldBackground: Color { Color(hex: "#10221a") } // 保留深綠背景特色
+    var emeraldSurface: Color { Color(hex: "#1c2e26") }
+    
+    var glassBackground: Color { emeraldBackground.opacity(0.6) }
+    var glassBorder: Color { accent.opacity(0.15) }
+    
     init() {
         if let savedColor = UserDefaults.standard.string(forKey: "appAccentColor") {
             self.accentHex = savedColor
+        }
+
+        // 載入儲存的顏色方案
+        if let savedScheme = UserDefaults.standard.string(forKey: "appColorScheme") {
+            switch savedScheme {
+            case "light":
+                self.colorScheme = .light
+            case "dark":
+                self.colorScheme = .dark
+            case "auto":
+                self.colorScheme = nil
+            default:
+                self.colorScheme = .dark
+            }
         }
     }
     
@@ -78,55 +122,73 @@ class AppTheme: ObservableObject {
     var accentTranslucent: Color { Color(hex: Self.academicGreen).opacity(0.1) }
     
     // MARK: - 背景層次 (Background Layers)
-    
+
     /// 底層背景 (Base Background) - 視窗最底層
-    var background: Color { Color(hex: "#0A0A0A") }
-    
+    var background: Color {
+        isLightMode ? Color(hex: "#FFFFFF") : Color(hex: "#0A0A0A")
+    }
+
     /// 提升層 (Elevated Layer) - 側邊欄、卡片、彈出視窗
-    var elevated: Color { Color(hex: "#141414") }
-    
+    var elevated: Color {
+        isLightMode ? Color(hex: "#F8F9FA") : Color(hex: "#141414")
+    }
+
     /// 功能層 (Functional Layer) - 頂部數據看板
-    var functional: Color { Color(hex: "#111111") }
-    
+    var functional: Color {
+        isLightMode ? Color(hex: "#F3F4F6") : Color(hex: "#111111")
+    }
+
     /// 側邊欄背景
     var sidebar: Color { elevated }
-    
+
     /// 工具列背景
     var toolbar: Color { functional }
-    
+
     /// 頁面背景
     var page: Color { background }
-    
+
     /// 卡片背景
     var card: Color { elevated }
     
     // MARK: - 文字色 (Typography Colors)
     
-    /// 一級文字 - 標題與主要內容 (Gray-100)
-    var textPrimary: Color { Color(hex: "#F3F4F6") }
-    
-    /// 二級文字 - 說明、標籤、次要資訊 (Gray-400)
-    var textSecondary: Color { Color(hex: "#9CA3AF") }
-    
-    /// 三級文字 - 時間戳、ID、不可點擊元素 (Gray-500)
-    var textTertiary: Color { Color(hex: "#6B7280") }
-    
+    /// 一級文字 - 標題與主要內容
+    var textPrimary: Color {
+        isLightMode ? Color(hex: "#1E293B") : Color(hex: "#F3F4F6")
+    }
+
+    /// 二級文字 - 說明、標籤、次要資訊
+    var textSecondary: Color {
+        isLightMode ? Color(hex: "#64748B") : Color(hex: "#9CA3AF")
+    }
+
+    /// 三級文字 - 時間戳、ID、不可點擊元素
+    var textTertiary: Color {
+        isLightMode ? Color(hex: "#94A3B8") : Color(hex: "#8B92A0")
+    }
+
     /// 次要文字（別名）
     var textMuted: Color { textSecondary }
-    
+
     /// 強調文字（用於主色背景）
     var textOnAccent: Color { .white }
-    
+
     /// 禁用文字色
-    var textDisabled: Color { Color.white.opacity(0.3) }
-    
+    var textDisabled: Color {
+        isLightMode ? Color.black.opacity(0.3) : Color.white.opacity(0.5)
+    }
+
     // MARK: - 邊框色 (Border/Stroke)
-    
-    /// 極細微白色半透明邊框
-    var border: Color { Color.white.opacity(0.05) }
-    
+
+    /// 極細微邊框
+    var border: Color {
+        isLightMode ? Color.black.opacity(0.1) : Color.white.opacity(0.08)
+    }
+
     /// 較明顯邊框
-    var borderSubtle: Color { Color.white.opacity(0.08) }
+    var borderSubtle: Color {
+        isLightMode ? Color.black.opacity(0.15) : Color.white.opacity(0.12)
+    }
     
     // MARK: - macOS 系統控制色 (System Controls)
     
@@ -140,9 +202,11 @@ class AppTheme: ObservableObject {
     var systemGreen: Color { Color(hex: "#28C840") }
     
     // MARK: - 互動色
-    
-    var itemHover: Color { Color.white.opacity(0.08) }
-    
+
+    var itemHover: Color {
+        isLightMode ? Color.black.opacity(0.05) : Color.white.opacity(0.08)
+    }
+
     var tableRowHover: Color { accentTranslucent }
 
     // MARK: - 語義化顏色
@@ -299,9 +363,6 @@ class AppTheme: ObservableObject {
     /// 發光色
     var glowColor: Color { accent.opacity(0.4) }
     
-    /// 玻璃邊框
-    var glassBorder: Color { border }
-    
     /// 液態漸層
     var liquidGradient: LinearGradient {
         if isPrideMode {
@@ -352,9 +413,27 @@ class AppTheme: ObservableObject {
     var emeraldSelectedBorder: Color { Color(hex: Self.emeraldPrimary).opacity(0.2) }
     
     // MARK: - 向後兼容
+    // (isDarkMode 已在上方定義，支援淺色/深色模式切換)
     
-    /// 始終為深色模式
-    var isDarkMode: Bool { true }
+    // MARK: - Semantic Colors (Consolidated)
+    
+    var surfaceDark: Color { Color(hex: "#1c2e26") }
+    var toolBackground: Color { Color(hex: "#283932") }
+    var sidebarBackground: Color { Color(hex: "#111815") }
+    var modalBackground: Color { Color(hex: "#182620") }
+    
+    // MARK: - Helper Methods for DesignTokens
+    
+    func shadow(_ level: Int) -> ShadowStyle {
+        switch level {
+        case 1: return DesignTokens.Shadow.level1
+        case 2: return DesignTokens.Shadow.level2
+        case 3: return DesignTokens.Shadow.level3
+        case 4: return DesignTokens.Shadow.level4
+        case 5: return DesignTokens.Shadow.level5
+        default: return DesignTokens.Shadow.level2
+        }
+    }
 }
 
 // MARK: - 預覽

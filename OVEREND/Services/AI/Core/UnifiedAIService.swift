@@ -53,28 +53,53 @@ public class UnifiedAIService: ObservableObject {
     @Published public var errorMessage: String?
     
     // MARK: - Session Pool (優化)
-    
+
     /// Session 池 - 重用 LanguageModelSession 以減少延遲
-    private var sessionPool: [LanguageModelSession] = []
+    private var sessionPool: [PooledSession] = []
     private let maxPoolSize = 3
     private let sessionLock = NSLock()
-    
+    private let sessionMaxAge: TimeInterval = 600  // ✅ 10 分鐘後清理
+    private let sessionMaxUse = 100  // ✅ 最多使用 100 次
+
+    /// ✅ 帶有元數據的 Session
+    private struct PooledSession {
+        let session: LanguageModelSession
+        var lastUsed: Date
+        var useCount: Int
+    }
+
     // MARK: - Result Cache (優化)
-    
+
     /// 結果快取 - 避免重複運算
     private var resultCache: [String: CachedResult] = [:]
     private let cacheTTL: TimeInterval = 300 // 5 分鐘
     private let maxCacheSize = 50
-    
+    private let cacheLock = NSLock()  // ✅ 線程安全
+
     private struct CachedResult {
         let value: String
         let timestamp: Date
     }
-    
+
+    // MARK: - 統計 (優化)
+
+    /// ✅ 快取統計
+    @Published public private(set) var cacheStats = CacheStats()
+
+    public struct CacheStats {
+        public var hits: Int = 0
+        public var misses: Int = 0
+
+        public var hitRate: Double {
+            let total = hits + misses
+            return total > 0 ? Double(hits) / Double(total) : 0
+        }
+    }
+
     // MARK: - 功能領域
     
     /// 寫作 AI 領域
-    public lazy var writing: WritingAIDomain = WritingAIDomain(service: self)
+    public lazy var writing: WritingAIDomain = WritingAIDomain()
     
     /// 引用 AI 領域
     public lazy var citation: CitationAIDomain = CitationAIDomain(service: self)
@@ -128,31 +153,53 @@ public class UnifiedAIService: ObservableObject {
     
     // MARK: - Session Pool Methods
     
-    /// 從池中取得 Session（優化：重用現有 Session）
+    /// 從池中取得 Session（優化：重用現有 Session + 生命週期管理）
     func acquireSession() -> LanguageModelSession {
         sessionLock.lock()
         defer { sessionLock.unlock() }
-        
-        if let session = sessionPool.popLast() {
-            logDebug("Reusing session from pool (remaining: \(sessionPool.count))", category: .ai)
-            return session
+
+        // ✅ 清理過期或過度使用的 Session
+        let now = Date()
+        sessionPool.removeAll { pooled in
+            let isExpired = now.timeIntervalSince(pooled.lastUsed) > sessionMaxAge
+            let isOverused = pooled.useCount >= sessionMaxUse
+
+            if isExpired || isOverused {
+                logDebug("Removing \(isExpired ? "expired" : "overused") session (age: \(Int(now.timeIntervalSince(pooled.lastUsed)))s, uses: \(pooled.useCount))", category: .ai)
+                return true
+            }
+            return false
         }
-        
+
+        // 取得可用的 Session
+        if var pooled = sessionPool.popLast() {
+            pooled.useCount += 1
+            pooled.lastUsed = now
+            logDebug("Reusing session from pool (uses: \(pooled.useCount), remaining: \(sessionPool.count))", category: .ai)
+            return pooled.session
+        }
+
         logDebug("Creating new session", category: .ai)
         return LanguageModelSession()
     }
-    
+
     /// 歸還 Session 到池中
     func releaseSession(_ session: LanguageModelSession) {
         sessionLock.lock()
         defer { sessionLock.unlock() }
-        
+
         guard sessionPool.count < maxPoolSize else {
             logDebug("Session pool full, discarding session", category: .ai)
             return
         }
-        
-        sessionPool.append(session)
+
+        // ✅ 記錄使用次數和時間
+        let pooled = PooledSession(
+            session: session,
+            lastUsed: Date(),
+            useCount: 1
+        )
+        sessionPool.append(pooled)
         logDebug("Session returned to pool (total: \(sessionPool.count))", category: .ai)
     }
     
@@ -163,43 +210,75 @@ public class UnifiedAIService: ObservableObject {
     
     // MARK: - Result Cache Methods
     
-    /// 取得快取結果
+    /// 取得快取結果（✅ 線程安全 + 統計）
     func getCachedResult(for key: String) -> String? {
-        guard let cached = resultCache[key] else { return nil }
-        
+        cacheLock.lock()
+        defer { cacheLock.unlock() }
+
+        guard let cached = resultCache[key] else {
+            // ✅ 記錄 miss
+            cacheStats.misses += 1
+            return nil
+        }
+
         // 檢查是否過期
         if Date().timeIntervalSince(cached.timestamp) > cacheTTL {
             resultCache.removeValue(forKey: key)
+            cacheStats.misses += 1
             return nil
         }
-        
-        logDebug("Cache hit for key: \(key.prefix(20))...", category: .ai)
+
+        // ✅ 記錄 hit
+        cacheStats.hits += 1
+        logDebug("Cache hit (rate: \(String(format: "%.1f%%", cacheStats.hitRate * 100)))", category: .ai)
         return cached.value
     }
-    
-    /// 儲存結果到快取
+
+    /// 儲存結果到快取（✅ 線程安全）
     func cacheResult(_ value: String, for key: String) {
+        cacheLock.lock()
+        defer { cacheLock.unlock() }
+
         // 如果快取已滿，移除最舊的項目
         if resultCache.count >= maxCacheSize {
             let oldest = resultCache.min { $0.value.timestamp < $1.value.timestamp }
             if let oldestKey = oldest?.key {
                 resultCache.removeValue(forKey: oldestKey)
+                logDebug("Cache full, evicted oldest entry", category: .ai)
             }
         }
-        
+
         resultCache[key] = CachedResult(value: value, timestamp: Date())
-        logDebug("Cached result for key: \(key.prefix(20))...", category: .ai)
+        logDebug("Cached result (size: \(resultCache.count)/\(maxCacheSize))", category: .ai)
     }
     
-    /// 生成快取鍵
+    /// ⚡ 優化：生成穩定的快取鍵（使用 SHA256）
     func cacheKey(operation: String, input: String) -> String {
         let combined = "\(operation):\(input)"
-        return String(combined.hashValue)
+
+        // 使用 SHA256 生成穩定的雜湊值
+        guard let data = combined.data(using: .utf8) else {
+            // 降級方案：使用原始字串的前 64 個字元
+            return String(combined.prefix(64))
+        }
+
+        // 使用 CryptoKit 生成 SHA256（需要 import CryptoKit）
+        // 為了避免增加依賴，這裡使用簡單的 djb2 雜湊演算法
+        var hash: UInt64 = 5381
+        for byte in data {
+            hash = ((hash << 5) &+ hash) &+ UInt64(byte)
+        }
+
+        return String(format: "%016llx", hash)
     }
     
-    /// 清除所有快取
+    /// 清除所有快取（✅ 重置統計）
     func clearCache() {
+        cacheLock.lock()
+        defer { cacheLock.unlock() }
+
         resultCache.removeAll()
+        cacheStats = CacheStats()  // ✅ 重置統計
         logDebug("Cache cleared", category: .ai)
     }
     

@@ -30,7 +30,7 @@ struct EmeraldAIAssistantView: View {
             // 輸入區域
             InputBar(text: $inputText, onSend: sendMessage)
         }
-        .background(EmeraldTheme.backgroundDark)
+        .background(theme.emeraldBackground) // Was EmeraldTheme.backgroundDark
     }
     
     private func sendMessage() {
@@ -116,17 +116,21 @@ struct EmeraldChatMessage: Identifiable {
 // MARK: - 標題列
 
 struct HeaderBar: View {
+    @EnvironmentObject var theme: AppTheme
+    var onRefresh: (() -> Void)? = nil
+    var onClose: (() -> Void)? = nil
+    
     var body: some View {
         HStack {
             HStack(spacing: 12) {
                 ZStack {
                     Circle()
-                        .fill(EmeraldTheme.primary.opacity(0.2))
+                        .fill(theme.accent.opacity(0.2))
                         .frame(width: 36, height: 36)
                     
                     Image(systemName: "sparkles")
                         .font(.system(size: 16))
-                        .foregroundColor(EmeraldTheme.primary)
+                        .foregroundColor(theme.accent)
                 }
                 
                 VStack(alignment: .leading, spacing: 2) {
@@ -137,37 +141,39 @@ struct HeaderBar: View {
                     
                     Text("Powered by GPT-4 Turbo")
                         .font(.system(size: 10))
-                        .foregroundColor(EmeraldTheme.textMuted)
+                        .foregroundColor(theme.textMuted)
                 }
             }
             
             Spacer()
             
             HStack(spacing: 8) {
-                Button(action: {}) {
+                Button(action: { onRefresh?() }) {
                     Image(systemName: "arrow.clockwise")
                         .font(.system(size: 14))
-                        .foregroundColor(EmeraldTheme.textSecondary)
+                        .foregroundColor(theme.textSecondary)
                         .frame(width: 32, height: 32)
-                        .background(EmeraldTheme.surfaceDark)
+                        .background(theme.surfaceDark)
                         .cornerRadius(8)
                 }
                 .buttonStyle(.plain)
+                .help("重新整理對話")
                 
-                Button(action: {}) {
+                Button(action: { onClose?() }) {
                     Image(systemName: "xmark")
                         .font(.system(size: 12))
-                        .foregroundColor(EmeraldTheme.textMuted)
+                        .foregroundColor(theme.textMuted)
                         .frame(width: 32, height: 32)
-                        .background(EmeraldTheme.surfaceDark)
+                        .background(theme.surfaceDark)
                         .cornerRadius(8)
                 }
                 .buttonStyle(.plain)
+                .help("關閉 AI 助手")
             }
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
-        .background(EmeraldTheme.surfaceDark.opacity(0.5))
+        .background(theme.surfaceDark.opacity(0.5))
         .background(.ultraThinMaterial)
         .overlay(
             Rectangle()
@@ -181,6 +187,7 @@ struct HeaderBar: View {
 // MARK: - 對話區域
 
 struct ChatArea: View {
+    @EnvironmentObject var theme: AppTheme
     let messages: [EmeraldChatMessage]
     let isTyping: Bool
     
@@ -212,6 +219,7 @@ struct ChatArea: View {
 // MARK: - 訊息氣泡
 
 struct MessageBubble: View {
+    @EnvironmentObject var theme: AppTheme
     let message: EmeraldChatMessage
     
     var body: some View {
@@ -220,12 +228,12 @@ struct MessageBubble: View {
                 // AI 頭像
                 ZStack {
                     Circle()
-                        .fill(EmeraldTheme.surfaceDark)
+                        .fill(theme.surfaceDark)
                         .frame(width: 32, height: 32)
                     
                     Image(systemName: "brain.head.profile")
                         .font(.system(size: 14))
-                        .foregroundColor(EmeraldTheme.primary)
+                        .foregroundColor(theme.accent)
                 }
             }
             
@@ -234,7 +242,7 @@ struct MessageBubble: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(LocalizedStringKey(message.content))
                         .font(.system(size: 14))
-                        .foregroundColor(message.isUser ? .white : EmeraldTheme.textSecondary)
+                        .foregroundColor(message.isUser ? .white : theme.textSecondary)
                         .lineSpacing(4)
                     
                     // 程式碼區塊
@@ -250,14 +258,14 @@ struct MessageBubble: View {
                 .padding(16)
                 .background(
                     message.isUser ?
-                    EmeraldTheme.primary.opacity(0.15) :
-                    EmeraldTheme.surfaceDark.opacity(0.8)
+                    theme.accent.opacity(0.15) :
+                    theme.surfaceDark.opacity(0.8)
                 )
                 .cornerRadius(16)
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
                         .stroke(
-                            message.isUser ? EmeraldTheme.borderAccent : Color.white.opacity(0.05),
+                            message.isUser ? theme.borderSubtle : Color.white.opacity(0.05), // Was borderAccent
                             lineWidth: 1
                         )
                 )
@@ -275,6 +283,7 @@ struct MessageBubble: View {
 // MARK: - 程式碼區塊
 
 struct CodeBlockView: View {
+    @EnvironmentObject var theme: AppTheme
     let code: String
     
     var body: some View {
@@ -282,24 +291,29 @@ struct CodeBlockView: View {
             HStack {
                 Text("swift")
                     .font(.system(size: 10, weight: .medium))
-                    .foregroundColor(EmeraldTheme.textMuted)
+                    .foregroundColor(theme.textMuted)
                 
                 Spacer()
                 
-                Button(action: {}) {
+                Button(action: {
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(code, forType: .string)
+                    ToastManager.shared.showSuccess("已複製程式碼")
+                }) {
                     Image(systemName: "doc.on.doc")
                         .font(.system(size: 12))
-                        .foregroundColor(EmeraldTheme.textMuted)
+                        .foregroundColor(theme.textMuted)
                 }
                 .buttonStyle(.plain)
+                .help("複製程式碼")
             }
             
             Text(code)
                 .font(.system(size: 12, design: .monospaced))
-                .foregroundColor(EmeraldTheme.primary)
+                .foregroundColor(theme.accent)
                 .padding(12)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(EmeraldTheme.backgroundDark)
+                .background(theme.emeraldBackground) // Was backgroundDark
                 .cornerRadius(8)
         }
     }
@@ -308,18 +322,20 @@ struct CodeBlockView: View {
 // MARK: - 建議按鈕
 
 struct SuggestionChips: View {
+    @EnvironmentObject var theme: AppTheme
     let suggestions: [String]
+    var onSelect: ((String) -> Void)? = nil
     
     var body: some View {
         EmeraldFlowLayout(spacing: 8) {
             ForEach(suggestions, id: \.self) { suggestion in
-                Button(action: {}) {
+                Button(action: { onSelect?(suggestion) }) {
                     Text(suggestion)
                         .font(.system(size: 11, weight: .medium))
-                        .foregroundColor(EmeraldTheme.textSecondary)
+                        .foregroundColor(theme.textSecondary)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
-                        .background(EmeraldTheme.backgroundDark)
+                        .background(theme.emeraldBackground)
                         .cornerRadius(999)
                         .overlay(
                             RoundedRectangle(cornerRadius: 999)
@@ -378,23 +394,25 @@ struct EmeraldFlowLayout: Layout {
 // MARK: - 打字中氣泡
 
 struct TypingBubble: View {
+    @EnvironmentObject var theme: AppTheme
+    
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             ZStack {
                 Circle()
-                    .fill(EmeraldTheme.surfaceDark)
+                    .fill(theme.surfaceDark)
                     .frame(width: 32, height: 32)
                 
                 Image(systemName: "brain.head.profile")
                     .font(.system(size: 14))
-                    .foregroundColor(EmeraldTheme.primary)
+                    .foregroundColor(theme.accent)
             }
             
             HStack(spacing: 8) {
                 TypingIndicator()
             }
             .padding(16)
-            .background(EmeraldTheme.surfaceDark.opacity(0.8))
+            .background(theme.surfaceDark.opacity(0.8))
             .cornerRadius(16)
             
             Spacer()
@@ -405,15 +423,26 @@ struct TypingBubble: View {
 // MARK: - 快速操作
 
 struct QuickActions: View {
+    @EnvironmentObject var theme: AppTheme
+    var onSummarize: (() -> Void)? = nil
+    var onTranslate: (() -> Void)? = nil
+    var onProofread: (() -> Void)? = nil
+    
     var body: some View {
         HStack(spacing: 12) {
-            QuickActionButton(icon: "doc.text", title: "Summarize")
-            QuickActionButton(icon: "globe", title: "Translate")
-            QuickActionButton(icon: "checkmark.circle", title: "Proofread")
+            QuickActionButton(icon: "doc.text", title: "Summarize") {
+                onSummarize?()
+            }
+            QuickActionButton(icon: "globe", title: "Translate") {
+                onTranslate?()
+            }
+            QuickActionButton(icon: "checkmark.circle", title: "Proofread") {
+                onProofread?()
+            }
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
-        .background(EmeraldTheme.surfaceDark.opacity(0.3))
+        .background(theme.surfaceDark.opacity(0.3))
         .overlay(
             Rectangle()
                 .fill(Color.white.opacity(0.05))
@@ -424,29 +453,31 @@ struct QuickActions: View {
 }
 
 struct QuickActionButton: View {
+    @EnvironmentObject var theme: AppTheme
     let icon: String
     let title: String
+    var action: (() -> Void)? = nil
     
     @State private var isHovered = false
     
     var body: some View {
-        Button(action: {}) {
+        Button(action: { action?() }) {
             HStack(spacing: 8) {
                 Image(systemName: icon)
                     .font(.system(size: 14))
-                    .foregroundColor(isHovered ? EmeraldTheme.primary : EmeraldTheme.textSecondary)
+                    .foregroundColor(isHovered ? theme.accent : theme.textSecondary)
                 
                 Text(title)
                     .font(.system(size: 13, weight: .medium))
-                    .foregroundColor(isHovered ? EmeraldTheme.primary : EmeraldTheme.textSecondary)
+                    .foregroundColor(isHovered ? theme.accent : theme.textSecondary)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
-            .background(isHovered ? EmeraldTheme.primary.opacity(0.1) : EmeraldTheme.surfaceDark)
+            .background(isHovered ? theme.accent.opacity(0.1) : theme.surfaceDark)
             .cornerRadius(999)
             .overlay(
                 RoundedRectangle(cornerRadius: 999)
-                    .stroke(isHovered ? EmeraldTheme.borderAccent : Color.white.opacity(0.1), lineWidth: 1)
+                    .stroke(isHovered ? theme.borderSubtle : Color.white.opacity(0.1), lineWidth: 1)
             )
         }
         .buttonStyle(.plain)
@@ -461,19 +492,24 @@ struct QuickActionButton: View {
 // MARK: - 輸入區域
 
 struct InputBar: View {
+    @EnvironmentObject var theme: AppTheme
     @Binding var text: String
     let onSend: () -> Void
+    var onAttach: (() -> Void)? = nil
     
     var body: some View {
         HStack(spacing: 12) {
             // 附件按鈕
-            Button(action: {}) {
+            Button(action: {
+                onAttach?()
+            }) {
                 Image(systemName: "paperclip")
                     .font(.system(size: 18))
-                    .foregroundColor(EmeraldTheme.textMuted)
+                    .foregroundColor(theme.textMuted)
                     .frame(width: 40, height: 40)
             }
             .buttonStyle(.plain)
+            .help("附加檔案")
             
             // 輸入框
             TextField("輸入你的問題...", text: $text)
@@ -482,7 +518,7 @@ struct InputBar: View {
                 .foregroundColor(.white)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
-                .background(EmeraldTheme.surfaceDark)
+                .background(theme.surfaceDark)
                 .cornerRadius(999)
                 .overlay(
                     RoundedRectangle(cornerRadius: 999)
@@ -494,10 +530,10 @@ struct InputBar: View {
             Button(action: onSend) {
                 Text("Send")
                     .font(.system(size: 13, weight: .bold))
-                    .foregroundColor(text.isEmpty ? EmeraldTheme.textMuted : EmeraldTheme.backgroundDark)
+                    .foregroundColor(text.isEmpty ? theme.textMuted : theme.emeraldBackground) // Was backgroundDark
                     .padding(.horizontal, 20)
                     .padding(.vertical, 12)
-                    .background(text.isEmpty ? EmeraldTheme.surfaceDark : EmeraldTheme.primary)
+                    .background(text.isEmpty ? theme.surfaceDark : theme.accent)
                     .cornerRadius(999)
             }
             .buttonStyle(.plain)
@@ -505,7 +541,7 @@ struct InputBar: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
-        .background(EmeraldTheme.surfaceDark.opacity(0.5))
+        .background(theme.surfaceDark.opacity(0.5))
         .background(.ultraThinMaterial)
         .overlay(
             Rectangle()

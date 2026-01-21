@@ -4,6 +4,7 @@
 //
 //  Emerald Settings - 設定頁面
 //
+//
 
 import SwiftUI
 
@@ -23,13 +24,14 @@ struct EmeraldSettingsView: View {
             // 右側內容
             SettingsContent(selectedTab: selectedTab)
         }
-        .background(EmeraldTheme.backgroundDark)
+        .background(theme.emeraldBackground) // Was EmeraldTheme.backgroundDark
     }
 }
 
 // MARK: - 側邊欄
 
 struct SettingsSidebar: View {
+    @EnvironmentObject var theme: AppTheme
     @Binding var selectedTab: String
     
     var body: some View {
@@ -87,26 +89,33 @@ struct SettingsSidebar: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Version 2.1.0 (Build 450)")
                     .font(.system(size: 11))
-                    .foregroundColor(EmeraldTheme.textMuted)
+                    .foregroundColor(theme.textMuted)
                 
-                Button(action: {}) {
+                Button(action: {
+                    // 開啟 App Store 更新頁面或觸發更新檢查
+                    if let url = URL(string: "macappstore://showUpdatesPage") {
+                        NSWorkspace.shared.open(url)
+                    }
+                    ToastManager.shared.showInfo("正在檢查更新...")
+                }) {
                     Text("Check for Updates")
                         .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(EmeraldTheme.primary)
+                        .foregroundColor(theme.accent)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
-                        .background(EmeraldTheme.primary.opacity(0.1))
+                        .background(theme.accent.opacity(0.1))
                         .cornerRadius(8)
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
-                                .stroke(EmeraldTheme.borderAccent, lineWidth: 1)
+                                .stroke(theme.borderSubtle, lineWidth: 1)
                         )
                 }
                 .buttonStyle(.plain)
+                .help("檢查軟體更新")
             }
             .padding(24)
         }
-        .background(EmeraldTheme.surfaceDark.opacity(0.5))
+        .background(theme.surfaceDark.opacity(0.5))
         .background(.ultraThinMaterial)
         .overlay(
             Rectangle()
@@ -120,6 +129,7 @@ struct SettingsSidebar: View {
 // MARK: - 設定分類按鈕
 
 struct SettingsTabButton: View {
+    @EnvironmentObject var theme: AppTheme
     let icon: String
     let title: String
     let tab: String
@@ -134,22 +144,22 @@ struct SettingsTabButton: View {
             HStack(spacing: 12) {
                 Image(systemName: icon)
                     .font(.system(size: 16))
-                    .foregroundColor(isSelected ? EmeraldTheme.primary : EmeraldTheme.textSecondary)
+                    .foregroundColor(isSelected ? theme.accent : theme.textSecondary)
                     .frame(width: 24)
                 
                 Text(title)
                     .font(.system(size: 14, weight: isSelected ? .semibold : .medium))
-                    .foregroundColor(isSelected ? .white : EmeraldTheme.textSecondary)
+                    .foregroundColor(isSelected ? .white : theme.textSecondary)
                 
                 Spacer()
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 10)
-            .background(isSelected ? EmeraldTheme.primary.opacity(0.15) : (isHovered ? Color.white.opacity(0.05) : .clear))
+            .background(isSelected ? theme.accent.opacity(0.15) : (isHovered ? Color.white.opacity(0.05) : .clear))
             .cornerRadius(8)
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(isSelected ? EmeraldTheme.borderAccent : .clear, lineWidth: 1)
+                    .stroke(isSelected ? theme.borderSubtle : .clear, lineWidth: 1) // Was borderAccent
             )
         }
         .buttonStyle(.plain)
@@ -191,6 +201,7 @@ struct SettingsContent: View {
 // MARK: - 外觀設定
 
 struct AppearanceSettings: View {
+    @EnvironmentObject var theme: AppTheme
     @State private var interfaceTheme = "system"
     @State private var accentColor = "#25f49d"
     @State private var fontSize: Double = 16
@@ -212,7 +223,7 @@ struct AppearanceSettings: View {
                     HStack {
                         Text("Interface Theme")
                             .font(.system(size: 14))
-                            .foregroundColor(EmeraldTheme.textSecondary)
+                            .foregroundColor(theme.textSecondary)
                         
                         Spacer()
                         
@@ -230,13 +241,13 @@ struct AppearanceSettings: View {
                     HStack {
                         Text("Accent Color")
                             .font(.system(size: 14))
-                            .foregroundColor(EmeraldTheme.textSecondary)
+                            .foregroundColor(theme.textSecondary)
                         
                         Spacer()
                         
                         HStack(spacing: 12) {
                             Circle()
-                                .fill(EmeraldTheme.primary)
+                                .fill(theme.accent)
                                 .frame(width: 24, height: 24)
                                 .overlay(
                                     Circle()
@@ -245,19 +256,19 @@ struct AppearanceSettings: View {
                             
                             Text(accentColor)
                                 .font(.system(size: 13, design: .monospaced))
-                                .foregroundColor(EmeraldTheme.textSecondary)
+                                .foregroundColor(theme.textSecondary)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 6)
-                                .background(EmeraldTheme.backgroundDark)
+                                .background(theme.background) // Was backgroundDark
                                 .cornerRadius(6)
                             
                             Button("Custom") {}
                                 .buttonStyle(.plain)
                                 .font(.system(size: 12, weight: .medium))
-                                .foregroundColor(EmeraldTheme.textSecondary)
+                                .foregroundColor(theme.textSecondary)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 6)
-                                .background(EmeraldTheme.surfaceDark)
+                                .background(theme.surfaceDark)
                                 .cornerRadius(6)
                         }
                     }
@@ -271,13 +282,13 @@ struct AppearanceSettings: View {
                     HStack {
                         Text("Font Size")
                             .font(.system(size: 14))
-                            .foregroundColor(EmeraldTheme.textSecondary)
+                            .foregroundColor(theme.textSecondary)
                         
                         Spacer()
                         
                         HStack(spacing: 12) {
                             Slider(value: $fontSize, in: 12...24, step: 1)
-                                .accentColor(EmeraldTheme.primary)
+                                .accentColor(theme.accent)
                                 .frame(width: 150)
                             
                             Text("\(Int(fontSize)) pt")
@@ -291,7 +302,7 @@ struct AppearanceSettings: View {
                     HStack {
                         Text("Default Font")
                             .font(.system(size: 14))
-                            .foregroundColor(EmeraldTheme.textSecondary)
+                            .foregroundColor(theme.textSecondary)
                         
                         Spacer()
                         
@@ -307,11 +318,11 @@ struct AppearanceSettings: View {
                                 
                                 Image(systemName: "chevron.down")
                                     .font(.system(size: 10))
-                                    .foregroundColor(EmeraldTheme.textMuted)
+                                    .foregroundColor(theme.textMuted)
                             }
                             .padding(.horizontal, 12)
                             .padding(.vertical, 8)
-                            .background(EmeraldTheme.surfaceDark)
+                            .background(theme.surfaceDark)
                             .cornerRadius(6)
                         }
                         .buttonStyle(.plain)
@@ -328,7 +339,7 @@ struct AppearanceSettings: View {
                     HStack {
                         Text("AI Model")
                             .font(.system(size: 14))
-                            .foregroundColor(EmeraldTheme.textSecondary)
+                            .foregroundColor(theme.textSecondary)
                         
                         Spacer()
                         
@@ -344,11 +355,11 @@ struct AppearanceSettings: View {
                                 
                                 Image(systemName: "chevron.down")
                                     .font(.system(size: 10))
-                                    .foregroundColor(EmeraldTheme.textMuted)
+                                    .foregroundColor(theme.textMuted)
                             }
                             .padding(.horizontal, 12)
                             .padding(.vertical, 8)
-                            .background(EmeraldTheme.surfaceDark)
+                            .background(theme.surfaceDark)
                             .cornerRadius(6)
                         }
                         .buttonStyle(.plain)
@@ -356,7 +367,7 @@ struct AppearanceSettings: View {
                     
                     Text("Recommended for research papers")
                         .font(.system(size: 11))
-                        .foregroundColor(EmeraldTheme.textMuted)
+                        .foregroundColor(theme.textMuted)
                         .frame(maxWidth: .infinity, alignment: .trailing)
                     
                     SettingsToggleRow(
@@ -378,12 +389,12 @@ struct AppearanceSettings: View {
                     HStack {
                         Text("Sidebar Width")
                             .font(.system(size: 14))
-                            .foregroundColor(EmeraldTheme.textSecondary)
+                            .foregroundColor(theme.textSecondary)
                         
                         Spacer()
                         
                         Slider(value: $sidebarWidth, in: 200...400, step: 20)
-                            .accentColor(EmeraldTheme.primary)
+                            .accentColor(theme.accent)
                             .frame(width: 150)
                     }
                 }
@@ -395,6 +406,7 @@ struct AppearanceSettings: View {
 // MARK: - 設定卡片
 
 struct SettingsCard<Content: View>: View {
+    @EnvironmentObject var theme: AppTheme
     let title: String
     @ViewBuilder let content: Content
     
@@ -408,7 +420,7 @@ struct SettingsCard<Content: View>: View {
         }
         .padding(24)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(EmeraldTheme.surfaceDark.opacity(0.6))
+        .background(theme.surfaceDark.opacity(0.6))
         .background(.ultraThinMaterial)
         .cornerRadius(16)
         .overlay(
@@ -421,6 +433,7 @@ struct SettingsCard<Content: View>: View {
 // MARK: - 主題切換
 
 struct ThemeToggle: View {
+    @EnvironmentObject var theme: AppTheme
     let label: String
     let isOn: Bool
     let action: () -> Void
@@ -429,16 +442,16 @@ struct ThemeToggle: View {
         Button(action: action) {
             HStack(spacing: 8) {
                 Circle()
-                    .fill(isOn ? EmeraldTheme.primary : Color.white.opacity(0.1))
+                    .fill(isOn ? theme.accent : Color.white.opacity(0.1))
                     .frame(width: 12, height: 12)
                     .overlay(
                         Circle()
-                            .stroke(isOn ? EmeraldTheme.primary : Color.white.opacity(0.3), lineWidth: 1)
+                            .stroke(isOn ? theme.accent : Color.white.opacity(0.3), lineWidth: 1)
                     )
                 
                 Text(label)
                     .font(.system(size: 13))
-                    .foregroundColor(isOn ? .white : EmeraldTheme.textMuted)
+                    .foregroundColor(isOn ? .white : theme.textMuted)
             }
         }
         .buttonStyle(.plain)
@@ -448,6 +461,7 @@ struct ThemeToggle: View {
 // MARK: - Toggle 行
 
 struct SettingsToggleRow: View {
+    @EnvironmentObject var theme: AppTheme
     let title: String
     var subtitle: String? = nil
     @Binding var isOn: Bool
@@ -457,12 +471,12 @@ struct SettingsToggleRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.system(size: 14))
-                    .foregroundColor(EmeraldTheme.textSecondary)
+                    .foregroundColor(theme.textSecondary)
                 
                 if let subtitle = subtitle {
                     Text(subtitle)
                         .font(.system(size: 11))
-                        .foregroundColor(EmeraldTheme.textMuted)
+                        .foregroundColor(theme.textMuted)
                 }
             }
             
@@ -477,29 +491,58 @@ struct SettingsToggleRow: View {
 // MARK: - Toggle 樣式
 
 struct EmeraldToggleStyle: ToggleStyle {
+    @EnvironmentObject var theme: AppTheme // This won't work in ToggleStyle directly easily unless wrapped or passed.
+    // However, ToggleStyle builds a view. We can use EnvironmentObject if we are inside a View that has it.
+    // Wait, ToggleStyle `makeBody` returns `some View`, so we can use `@EnvironmentObject` inside the struct? 
+    // Usually EnvironmentObject works in View structs.
+    // Let's rely on Environment from the context or use AppTheme.academicGreen but we want dynamic.
+    // Let's try adding EnvironmentObject here.
+    
+    // Actually, EnvironmentObject in a Style might be tricky if it's not injected.
+    // But since it's used inside `makeBody` which returns a View, and that View is part of the hierarchy, it *should* work if the View returned captures it.
+    // Or we can just use the colors passed in or global.
+    // BUT, AppTheme is an ObservableObject.
+    
+    // Let's make `EmeraldToggleStyle` a ViewModifier based style or just use standard approach.
+    // To be safe and simple, I will hardcode the accent reference to `AppTheme.academicGreen` OR rely on the fact that `SettingsToggleRow` is the one using it.
+    // Wait, `toggleStyle` takes an instance.
+    
+    // Let's modify `EmeraldToggleStyle` to accept the theme or color.
+    
     func makeBody(configuration: Configuration) -> some View {
-        HStack {
-            configuration.label
-            
-            RoundedRectangle(cornerRadius: 16)
-                .fill(configuration.isOn ? EmeraldTheme.primary : EmeraldTheme.surfaceDark)
-                .frame(width: 44, height: 24)
-                .overlay(
-                    Circle()
-                        .fill(.white)
-                        .frame(width: 18, height: 18)
-                        .offset(x: configuration.isOn ? 10 : -10)
-                        .shadow(color: .black.opacity(0.2), radius: 2)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(configuration.isOn ? EmeraldTheme.primary : Color.white.opacity(0.1), lineWidth: 1)
-                )
-                .onTapGesture {
-                    withAnimation(.spring(response: 0.3)) {
-                        configuration.isOn.toggle()
+        // We can't easily get environment object here without it being a member.
+        // Let's use a wrapper view inside makeBody to get the environment.
+        EmeraldToggleStyleBody(configuration: configuration)
+    }
+    
+    struct EmeraldToggleStyleBody: View {
+        @EnvironmentObject var theme: AppTheme
+        let configuration: Configuration
+        
+        var body: some View {
+            HStack {
+                configuration.label
+                
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(configuration.isOn ? theme.accent : theme.surfaceDark)
+                    .frame(width: 44, height: 24)
+                    .overlay(
+                        Circle()
+                            .fill(.white)
+                            .frame(width: 18, height: 18)
+                            .offset(x: configuration.isOn ? 10 : -10)
+                            .shadow(color: .black.opacity(0.2), radius: 2)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(configuration.isOn ? theme.accent : Color.white.opacity(0.1), lineWidth: 1)
+                    )
+                    .onTapGesture {
+                        withAnimation(.spring(response: 0.3)) {
+                            configuration.isOn.toggle()
+                        }
                     }
-                }
+            }
         }
     }
 }
@@ -522,6 +565,8 @@ struct GeneralSettings: View {
 }
 
 struct AISettings: View {
+    @EnvironmentObject var theme: AppTheme
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 32) {
             Text("AI")
@@ -531,13 +576,15 @@ struct AISettings: View {
             SettingsCard(title: "AI Configuration") {
                 Text("Configure AI models and preferences here.")
                     .font(.system(size: 14))
-                    .foregroundColor(EmeraldTheme.textMuted)
+                    .foregroundColor(theme.textMuted)
             }
         }
     }
 }
 
 struct SyncSettings: View {
+    @EnvironmentObject var theme: AppTheme
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 32) {
             Text("Sync")
@@ -548,11 +595,11 @@ struct SyncSettings: View {
                 HStack {
                     Image(systemName: "checkmark.icloud.fill")
                         .font(.system(size: 24))
-                        .foregroundColor(EmeraldTheme.primary)
+                        .foregroundColor(theme.accent)
                     
                     Text("All changes synced")
                         .font(.system(size: 14))
-                        .foregroundColor(EmeraldTheme.textSecondary)
+                        .foregroundColor(theme.textSecondary)
                 }
             }
         }
@@ -560,6 +607,8 @@ struct SyncSettings: View {
 }
 
 struct AboutSettings: View {
+    @EnvironmentObject var theme: AppTheme
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 32) {
             Text("About")
@@ -574,11 +623,11 @@ struct AboutSettings: View {
                     
                     Text("Version 2.1.0 (Build 450)")
                         .font(.system(size: 13))
-                        .foregroundColor(EmeraldTheme.textMuted)
+                        .foregroundColor(theme.textMuted)
                     
                     Text("© 2026 All rights reserved.")
                         .font(.system(size: 12))
-                        .foregroundColor(EmeraldTheme.textMuted)
+                        .foregroundColor(theme.textMuted)
                 }
             }
         }

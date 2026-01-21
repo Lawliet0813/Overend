@@ -1,1 +1,0 @@
-/Users/lawliet/OVEREND/OverendCore/target/release/uniffi-bindgen: /Users/lawliet/OVEREND/OverendCore/build.rs /Users/lawliet/OVEREND/OverendCore/src/bibliography.rs /Users/lawliet/OVEREND/OverendCore/src/bin/uniffi-bindgen.rs /Users/lawliet/OVEREND/OverendCore/src/errors.rs /Users/lawliet/OVEREND/OverendCore/src/lib.rs /Users/lawliet/OVEREND/OverendCore/src/world.rs

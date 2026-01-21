@@ -1,0 +1,12 @@
+{
+  "MLModelDescriptionKey" : "OVEREND測試用",
+  "MLModelCreatorDefinedKey" : {
+    "com.apple.createml.app.tag" : "175.7",
+    "com.apple.createml.training.finished" : "2026-01-21T08:34:44Z",
+    "com.apple.createml.model.created" : "2026-01-21T08:34:44Z",
+    "com.apple.createml.app.version" : "6.2",
+    "com.apple.coreml.model.preview.type" : "textClassifier",
+    "com.apple.createml.training.started" : "2026-01-21T08:34:39Z"
+  },
+  "MLModelAuthorKey" : "Lawliet"
+}

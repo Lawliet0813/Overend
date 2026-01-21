@@ -39,6 +39,7 @@ impl OverendEngine {
     /// # Arguments
     /// * `source` - Typst markup source code
     /// * `font_data` - Optional font data (e.g., Noto Serif TC)
+    /// * `aux_files` - Optional map of auxiliary files (filename -> content bytes) for images/bibliography
     ///
     /// # Returns
     /// PDF bytes on success, TypstError on failure
@@ -46,8 +47,9 @@ impl OverendEngine {
         &self,
         source: String,
         font_data: Option<Vec<u8>>,
+        aux_files: Option<std::collections::HashMap<String, Vec<u8>>>,
     ) -> Result<Vec<u8>, TypstError> {
-        world::compile_to_pdf(source, font_data)
+        world::compile_to_pdf(source, font_data, aux_files)
     }
 
     /// Parse BibTeX content into structured entries
@@ -118,7 +120,7 @@ mod tests {
     #[test]
     fn test_typst_compilation() {
         let engine = OverendEngine::new();
-        let result = engine.compile_typst("= Hello\n\nWorld".to_string(), None);
+        let result = engine.compile_typst("= Hello\n\nWorld".to_string(), None, None);
         assert!(result.is_ok());
         let pdf = result.unwrap();
         assert!(pdf.starts_with(b"%PDF"));

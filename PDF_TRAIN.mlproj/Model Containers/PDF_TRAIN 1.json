@@ -1,0 +1,1549 @@
+{
+  "activityEntities" : [
+    "trainingStarted",
+    [
+      {
+        "createdDate" : "2026-01-21T05:20:42Z",
+        "event" : "trainingStarted",
+        "id" : "78DDDFF6-ADFF-456F-A9C0-274CC994D900",
+        "subtitle" : "50 iterations",
+        "title" : "Training Started"
+      },
+      {
+        "createdDate" : "2026-01-21T05:26:10Z",
+        "event" : "trainingStarted",
+        "id" : "EEB4C3FE-C999-4CCA-A34C-1E24C0AB00E6",
+        "subtitle" : "50 iterations",
+        "title" : "Training Started"
+      }
+    ],
+    "trainingFinished",
+    [
+      {
+        "createdDate" : "2026-01-21T05:26:15Z",
+        "event" : "trainingFinished",
+        "id" : "9D3BC264-6244-4D09-8F6C-6BFEC9617C1D",
+        "subtitle" : "50 iterations",
+        "title" : "Training Completed"
+      }
+    ],
+    "trainingDataAdded",
+    [
+      {
+        "createdDate" : "2026-01-21T05:26:00Z",
+        "event" : "trainingDataAdded",
+        "id" : "470058C0-BEF3-4A33-A5DC-6FFA885CC169",
+        "subtitle" : "training_data_200.csv",
+        "title" : "Training Data Added"
+      }
+    ],
+    "experimentCreated",
+    [
+      {
+        "createdDate" : "2026-01-20T21:05:56Z",
+        "event" : "experimentCreated",
+        "id" : "9DDB0F48-8208-4508-98F2-6F615B1E4DA5",
+        "subtitle" : "PDF_TRAIN 1",
+        "title" : "Model Source Created"
+      }
+    ]
+  ],
+  "contentDataResult" : {
+    "createdDate" : "2026-01-21T05:17:40Z"
+  },
+  "createdDate" : "2026-01-20T21:05:56Z",
+  "evaluationContainerEntity" : {
+    "createdDate" : "2026-01-21T05:26:15Z",
+    "evaluationEntities" : [
+      {
+        "analysedDataType" : "none",
+        "createdDate" : "2026-01-21T05:26:15Z",
+        "dataResult" : {
+
+        },
+        "id" : "255ce335-337e-4b56-9b72-17f2a8503b4f"
+      }
+    ],
+    "id" : "35c0e737-5a52-4d8f-834e-8ff63322c3af",
+    "modifiedDate" : "2026-01-21T05:26:15Z",
+    "previewType" : "textClassifier",
+    "testingEvaluationEntity" : {
+      "analysedDataType" : "none",
+      "createdDate" : "2026-01-20T21:05:56Z",
+      "dataResult" : {
+        "createdDate" : "2026-01-21T05:17:40Z"
+      },
+      "id" : "8731cf0d-bb5c-4644-92ca-18617895632b"
+    },
+    "trainingEvaluationEntity" : {
+      "analysedDataType" : "none",
+      "createdDate" : "2026-01-20T21:05:56Z",
+      "dataResult" : {
+        "classesCount" : 4,
+        "createdDate" : "2026-01-21T05:17:40Z",
+        "dataAnalysis" : {
+          "classifierAnalysis" : {
+            "labelStats" : {
+              "Book Chapter" : 50,
+              "Conference Paper" : 50,
+              "Journal Article" : 50,
+              "Thesis" : 50
+            }
+          },
+          "issues" : [
+            {
+              "description" : "4 classes found, including Conference Paper, Thesis, Book Chapter",
+              "severity" : "debug"
+            },
+            {
+              "description" : "200 texts found, automatically creating validation set",
+              "severity" : "good"
+            },
+            {
+              "description" : "Smallest class is \"Journal Article\" with 50 texts",
+              "severity" : "debug"
+            },
+            {
+              "description" : "Largest class is \"Conference Paper\" with 50 text",
+              "severity" : "debug"
+            }
+          ],
+          "objectDetectorAnalysis" : {
+            "details" : {
+
+            }
+          },
+          "summary" : {
+            "canUseValidation" : 1,
+            "classCount" : 4,
+            "sampleCount" : 200
+          }
+        },
+        "dataSourceID" : "E58E0A62-4D07-4D18-8E9F-D710AE815166",
+        "dataURL" : "file:///Users/lawliet/Desktop/training_data_200.csv",
+        "itemsCount" : 200
+      },
+      "dataSourceID" : "E58E0A62-4D07-4D18-8E9F-D710AE815166",
+      "evaluationResult" : {
+        "textClassifier" : {
+          "accuracy" : 0.6157894736842106,
+          "confusionMatrix" : [
+            {
+              "actual" : "Book Chapter",
+              "count" : 41,
+              "expected" : "Book Chapter"
+            },
+            {
+              "actual" : "Book Chapter",
+              "count" : 1,
+              "expected" : "Conference Paper"
+            },
+            {
+              "actual" : "Book Chapter",
+              "count" : 5,
+              "expected" : "Journal Article"
+            },
+            {
+              "actual" : "Conference Paper",
+              "count" : 7,
+              "expected" : "Book Chapter"
+            },
+            {
+              "actual" : "Conference Paper",
+              "count" : 40,
+              "expected" : "Conference Paper"
+            },
+            {
+              "actual" : "Conference Paper",
+              "count" : 1,
+              "expected" : "Journal Article"
+            },
+            {
+              "actual" : "Journal Article",
+              "count" : 13,
+              "expected" : "Book Chapter"
+            },
+            {
+              "actual" : "Journal Article",
+              "count" : 7,
+              "expected" : "Conference Paper"
+            },
+            {
+              "actual" : "Journal Article",
+              "count" : 27,
+              "expected" : "Journal Article"
+            },
+            {
+              "actual" : "Thesis",
+              "count" : 19,
+              "expected" : "Book Chapter"
+            },
+            {
+              "actual" : "Thesis",
+              "count" : 10,
+              "expected" : "Conference Paper"
+            },
+            {
+              "actual" : "Thesis",
+              "count" : 10,
+              "expected" : "Journal Article"
+            },
+            {
+              "actual" : "Thesis",
+              "count" : 9,
+              "expected" : "Thesis"
+            }
+          ],
+          "statsByLabel" : {
+            "Book Chapter" : {
+              "count" : 47,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 0.5125,
+                  "recall" : 0.8723404255319149
+                }
+              }
+            },
+            "Conference Paper" : {
+              "count" : 48,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 0.6896551724137931,
+                  "recall" : 0.8333333333333334
+                }
+              }
+            },
+            "Journal Article" : {
+              "count" : 47,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 0.627906976744186,
+                  "recall" : 0.574468085106383
+                }
+              }
+            },
+            "Thesis" : {
+              "count" : 48,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 0.1875
+                }
+              }
+            }
+          }
+        }
+      },
+      "id" : "1213d33b-2db2-49f7-bef8-b5b2f9d383b2"
+    },
+    "validationEvaluationEntity" : {
+      "analysedDataType" : "auto",
+      "createdDate" : "2026-01-20T21:05:56Z",
+      "dataResult" : {
+        "createdDate" : "2026-01-21T05:17:40Z"
+      },
+      "evaluationResult" : {
+        "textClassifier" : {
+          "accuracy" : 0.8,
+          "confusionMatrix" : [
+            {
+              "actual" : "Book Chapter",
+              "count" : 3,
+              "expected" : "Book Chapter"
+            },
+            {
+              "actual" : "Conference Paper",
+              "count" : 2,
+              "expected" : "Conference Paper"
+            },
+            {
+              "actual" : "Journal Article",
+              "count" : 1,
+              "expected" : "Book Chapter"
+            },
+            {
+              "actual" : "Journal Article",
+              "count" : 2,
+              "expected" : "Journal Article"
+            },
+            {
+              "actual" : "Thesis",
+              "count" : 1,
+              "expected" : "Journal Article"
+            },
+            {
+              "actual" : "Thesis",
+              "count" : 1,
+              "expected" : "Thesis"
+            }
+          ],
+          "statsByLabel" : {
+            "Book Chapter" : {
+              "count" : 3,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 0.75,
+                  "recall" : 1
+                }
+              }
+            },
+            "Conference Paper" : {
+              "count" : 2,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 1
+                }
+              }
+            },
+            "Journal Article" : {
+              "count" : 3,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 0.6666666666666666,
+                  "recall" : 0.6666666666666666
+                }
+              }
+            },
+            "Thesis" : {
+              "count" : 2,
+              "precisionRecall" : {
+                "success" : {
+                  "precision" : 1,
+                  "recall" : 0.5
+                }
+              }
+            }
+          }
+        }
+      },
+      "id" : "ae60adea-687c-4817-9d23-a9374ea32aec"
+    }
+  },
+  "evaluationEntity" : {
+    "analysedDataType" : "none",
+    "dataResult" : {
+
+    },
+    "id" : "167153e7-51e2-4175-bf64-913e27dcf672"
+  },
+  "evaluationState" : "uninitialized",
+  "id" : "8F51D82D-5316-458C-A662-798B49A2DE3B",
+  "modelEntity" : {
+    "createdDate" : "2026-01-20T21:05:56Z",
+    "experimentID" : "8F51D82D-5316-458C-A662-798B49A2DE3B",
+    "id" : "31D02613-3E1E-49C8-8737-67FE729077C0",
+    "modelURL" : "Models/PDF_TRAIN%201.mlmodel",
+    "modifiedDate" : "2026-01-20T21:05:56Z",
+    "title" : "",
+    "version" : "1.0"
+  },
+  "modifiedDate" : "2026-01-21T05:26:15Z",
+  "preferredFilename" : "PDF_TRAIN 1",
+  "settingEntity" : {
+    "algorithmType" : "transferLearning",
+    "augmentations" : [
+
+    ],
+    "featureNames" : [
+
+    ],
+    "handActionClassifierAugmentations" : [
+
+    ],
+    "handPoseClassifierAugmentations" : [
+
+    ],
+    "harVideoAugmentations" : 0,
+    "iterationCount" : 50,
+    "seedType" : "default",
+    "styleTransferAlgorithmType" : "image",
+    "taskType" : "textClassifier",
+    "textClassifierArabicLanguage" : "automatic",
+    "textClassifierCJKLanguage" : "automatic",
+    "textClassifierCyrillicLanguage" : "automatic",
+    "textClassifierIndicLanguage" : "automatic",
+    "textClassifierLatin" : "automatic",
+    "textClassifierScript" : "latin",
+    "textClassifierThaiLanguage" : "automatic",
+    "transferLearningEmbeddingType" : "static"
+  },
+  "snapshotRole" : {
+    "withoutSnapshots" : 0
+  },
+  "state" : "trained",
+  "title" : "PDF_TRAIN 1",
+  "trainingEntity" : {
+    "analysedDataType" : "datasource",
+    "checkpointMetrics" : {
+
+    },
+    "dataResult" : {
+      "classesCount" : 4,
+      "createdDate" : "2026-01-21T05:17:40Z",
+      "dataAnalysis" : {
+        "classifierAnalysis" : {
+          "labelStats" : {
+            "Book Chapter" : 50,
+            "Conference Paper" : 50,
+            "Journal Article" : 50,
+            "Thesis" : 50
+          }
+        },
+        "issues" : [
+          {
+            "description" : "4 classes found, including Conference Paper, Thesis, Book Chapter",
+            "severity" : "debug"
+          },
+          {
+            "description" : "200 texts found, automatically creating validation set",
+            "severity" : "good"
+          },
+          {
+            "description" : "Smallest class is \"Journal Article\" with 50 texts",
+            "severity" : "debug"
+          },
+          {
+            "description" : "Largest class is \"Conference Paper\" with 50 text",
+            "severity" : "debug"
+          }
+        ],
+        "objectDetectorAnalysis" : {
+          "details" : {
+
+          }
+        },
+        "summary" : {
+          "canUseValidation" : 1,
+          "classCount" : 4,
+          "sampleCount" : 200
+        }
+      },
+      "dataSourceID" : "E58E0A62-4D07-4D18-8E9F-D710AE815166",
+      "dataURL" : "file:///Users/lawliet/Desktop/training_data_200.csv",
+      "itemsCount" : 200
+    },
+    "dataSourceID" : "E58E0A62-4D07-4D18-8E9F-D710AE815166",
+    "featureExtractionCheckpointMayBeAvailable" : false,
+    "finishTime" : "2026-01-21T05:26:15Z",
+    "progress" : [
+      {
+        "count" : 1,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 50,
+          "trainingAccuracy" : 0.5894736862182617,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 2,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 49,
+          "trainingAccuracy" : 0.6157894897460937,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 3,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 48,
+          "trainingAccuracy" : 0.6157894897460937,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 4,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 47,
+          "trainingAccuracy" : 0.6157894897460937,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 5,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 46,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 6,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 45,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 7,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 44,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 8,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 43,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 9,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 42,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 10,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 41,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 11,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 40,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 12,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 39,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 13,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 38,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 14,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 37,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 15,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 36,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 16,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 35,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 17,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 34,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 18,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 33,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 19,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 32,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 20,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 31,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 21,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 30,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 22,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 29,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 23,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 28,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 24,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 27,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 25,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 26,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 26,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 25,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 27,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 24,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 28,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 23,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 29,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 22,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 30,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 21,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 31,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 20,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 32,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 19,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 33,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 18,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 34,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 17,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 35,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 16,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 36,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 15,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 37,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 14,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 38,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 13,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 39,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 12,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 40,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 11,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 41,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 10,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 42,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 9,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 43,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 8,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 44,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 7,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 45,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 6,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 46,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 5,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 47,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 4,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 48,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 3,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 49,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 2,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 50,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : true,
+        "tableIndex" : 1,
+        "tcTrainingColumnHeader" : {
+          "elapsedTime" : 0,
+          "hasTraining" : true,
+          "hasValidation" : false,
+          "remainingIterationCount" : 1,
+          "trainingAccuracy" : 0.5684210586547852,
+          "validationAccuracy" : 0
+        }
+      },
+      {
+        "count" : 60,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 70,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 80,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 90,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 100,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 110,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 120,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 130,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 140,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 150,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 160,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 170,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 180,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : false,
+        "tableIndex" : 0
+      },
+      {
+        "count" : 190,
+        "currentRowIndex" : 0,
+        "isLast" : false,
+        "percentComplete" : 0,
+        "tableDone" : true,
+        "tableIndex" : 0
+      }
+    ],
+    "snapshottableCheckpoints" : {
+
+    },
+    "startTime" : "2026-01-21T05:26:10Z",
+    "trainingAccuracy" : 0.6157894736842106,
+    "trainingResults" : {
+      "textClassifier" : {
+        "accuracy" : 0.6157894736842106,
+        "confusionMatrix" : [
+          {
+            "actual" : "Book Chapter",
+            "count" : 41,
+            "expected" : "Book Chapter"
+          },
+          {
+            "actual" : "Book Chapter",
+            "count" : 1,
+            "expected" : "Conference Paper"
+          },
+          {
+            "actual" : "Book Chapter",
+            "count" : 5,
+            "expected" : "Journal Article"
+          },
+          {
+            "actual" : "Conference Paper",
+            "count" : 7,
+            "expected" : "Book Chapter"
+          },
+          {
+            "actual" : "Conference Paper",
+            "count" : 40,
+            "expected" : "Conference Paper"
+          },
+          {
+            "actual" : "Conference Paper",
+            "count" : 1,
+            "expected" : "Journal Article"
+          },
+          {
+            "actual" : "Journal Article",
+            "count" : 13,
+            "expected" : "Book Chapter"
+          },
+          {
+            "actual" : "Journal Article",
+            "count" : 7,
+            "expected" : "Conference Paper"
+          },
+          {
+            "actual" : "Journal Article",
+            "count" : 27,
+            "expected" : "Journal Article"
+          },
+          {
+            "actual" : "Thesis",
+            "count" : 19,
+            "expected" : "Book Chapter"
+          },
+          {
+            "actual" : "Thesis",
+            "count" : 10,
+            "expected" : "Conference Paper"
+          },
+          {
+            "actual" : "Thesis",
+            "count" : 10,
+            "expected" : "Journal Article"
+          },
+          {
+            "actual" : "Thesis",
+            "count" : 9,
+            "expected" : "Thesis"
+          }
+        ],
+        "statsByLabel" : {
+          "Book Chapter" : {
+            "count" : 47,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 0.5125,
+                "recall" : 0.8723404255319149
+              }
+            }
+          },
+          "Conference Paper" : {
+            "count" : 48,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 0.6896551724137931,
+                "recall" : 0.8333333333333334
+              }
+            }
+          },
+          "Journal Article" : {
+            "count" : 47,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 0.627906976744186,
+                "recall" : 0.574468085106383
+              }
+            }
+          },
+          "Thesis" : {
+            "count" : 48,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 0.1875
+              }
+            }
+          }
+        }
+      }
+    },
+    "validationAccuracy" : 0.8,
+    "validationResults" : {
+      "textClassifier" : {
+        "accuracy" : 0.8,
+        "confusionMatrix" : [
+          {
+            "actual" : "Book Chapter",
+            "count" : 3,
+            "expected" : "Book Chapter"
+          },
+          {
+            "actual" : "Conference Paper",
+            "count" : 2,
+            "expected" : "Conference Paper"
+          },
+          {
+            "actual" : "Journal Article",
+            "count" : 1,
+            "expected" : "Book Chapter"
+          },
+          {
+            "actual" : "Journal Article",
+            "count" : 2,
+            "expected" : "Journal Article"
+          },
+          {
+            "actual" : "Thesis",
+            "count" : 1,
+            "expected" : "Journal Article"
+          },
+          {
+            "actual" : "Thesis",
+            "count" : 1,
+            "expected" : "Thesis"
+          }
+        ],
+        "statsByLabel" : {
+          "Book Chapter" : {
+            "count" : 3,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 0.75,
+                "recall" : 1
+              }
+            }
+          },
+          "Conference Paper" : {
+            "count" : 2,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 1
+              }
+            }
+          },
+          "Journal Article" : {
+            "count" : 3,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 0.6666666666666666,
+                "recall" : 0.6666666666666666
+              }
+            }
+          },
+          "Thesis" : {
+            "count" : 2,
+            "precisionRecall" : {
+              "success" : {
+                "precision" : 1,
+                "recall" : 0.5
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "validationEntity" : {
+    "analysedDataType" : "auto",
+    "dataResult" : {
+      "createdDate" : "2026-01-21T05:17:40Z"
+    },
+    "splitOptions" : {
+      "strategy" : {
+        "automatic" : {
+
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

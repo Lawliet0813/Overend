@@ -1,0 +1,1745 @@
+Command line invocation:
+    /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project OVEREND.xcodeproj -scheme OVEREND -destination platform=macOS,arch=arm64 build
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (1 target)
+    Target 'OVEREND' in project 'OVEREND' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+ExecuteExternalTool /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+Build description signature: d0d7724c762ba1b2cfe91887d226d28f
+Build description path: /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/XCBuildData/d0d7724c762ba1b2cfe91887d226d28f.xcbuilddata
+note: Removed stale file '/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/EmeraldHomeView.o'
+
+note: Removed stale file '/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/EmeraldHomeView.stringsdata'
+
+note: Removed stale file '/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/EmeraldHomeView.swiftconstvalues'
+
+ClangStatCache /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk /Users/lawliet/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/macosx26.2-25C57-830dddbfbccebdd7c0a1e2a9282ec48d.sdkstatcache
+    cd /Users/lawliet/OVEREND/OVEREND.xcodeproj
+    /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -o /Users/lawliet/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/macosx26.2-25C57-830dddbfbccebdd7c0a1e2a9282ec48d.sdkstatcache
+
+WriteAuxiliaryFile /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.LinkFileList (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    write-file /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.LinkFileList
+
+WriteAuxiliaryFile /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.SwiftFileList (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    write-file /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.SwiftFileList
+
+WriteAuxiliaryFile /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.SwiftConstValuesFileList (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    write-file /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND-OutputFileMap.json (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    write-file /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND-OutputFileMap.json
+
+ProcessProductPackaging /Users/lawliet/OVEREND/OVEREND/OVEREND.entitlements /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND.app.xcent (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+    Entitlements:
+    
+    {
+    "com.apple.security.app-sandbox" = 1;
+    "com.apple.security.assets.pictures.read-write" = 1;
+    "com.apple.security.automation.apple-events" = 1;
+    "com.apple.security.files.downloads.read-write" = 1;
+    "com.apple.security.files.user-selected.read-write" = 1;
+    "com.apple.security.get-task-allow" = 1;
+    "com.apple.security.network.client" = 1;
+}
+    
+    builtin-productPackagingUtility /Users/lawliet/OVEREND/OVEREND/OVEREND.entitlements -entitlements -format xml -o /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND.app.xcent
+
+ProcessProductPackagingDER /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND.app.xcent /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND.app.xcent.der (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    /usr/bin/derq query -f xml -i /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND.app.xcent -o /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND.app.xcent.der --raw
+
+Ld /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/__preview.dylib normal (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos26.1 -dynamiclib -isysroot /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -O0 -L/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -F/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -install_name @rpath/OVEREND.debug.dylib -rdynamic -Xlinker -no_deduplicate -Xlinker -debug_variant -Xlinker -dependency_info -Xlinker /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND_dependency_info.dat -Xlinker -no_adhoc_codesign -o /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/__preview.dylib
+
+SwiftDriver OVEREND normal arm64 com.apple.xcode.tools.swift.compiler (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    builtin-SwiftDriver -- /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name OVEREND -Onone -enforce-exclusivity\=checked @/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.SwiftFileList -DDEBUG -default-isolation\=MainActor -enable-bare-slash-regex -enable-upcoming-feature DisableOutwardActorInference -enable-upcoming-feature InferSendableFromCaptures -enable-upcoming-feature GlobalActorIsolatedTypesUsability -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -target arm64-apple-macos26.1 -g -module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -F /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -emit-localized-strings -emit-localized-strings-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64 -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/macosx26.2-25C57-830dddbfbccebdd7c0a1e2a9282ec48d.sdkstatcache -output-file-map /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND_const_extract_protocols.json -Xcc -iquote -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-generated-files.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-own-target-headers.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-all-target-headers.hmap -Xcc -iquote -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-project-headers.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/include -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/DerivedSources-normal/arm64 -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/DerivedSources/arm64 -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND-Swift.h -working-directory /Users/lawliet/OVEREND -experimental-emit-module-separately -disable-cmo
+
+SwiftCompile normal arm64 Compiling\ NCCUFormatService.swift,\ TaiwanAcademicStandardsService.swift,\ AgentOrchestrator.swift,\ WritingToolsCoordinator.swift,\ AgentAppIntents.swift,\ AgentAutoTrigger.swift,\ AgentTaskQueue.swift,\ AgentTools.swift,\ LiteratureAgent.swift,\ AdapterManager.swift,\ AIServiceError.swift,\ UnifiedAIService.swift,\ CitationAIDomain.swift,\ DocumentAIDomain.swift,\ FormulaAIDomain.swift,\ StandardsAIDomain.swift,\ StandardsSeverity+UI.swift,\ TranslationAIDomain.swift,\ WritingAIDomain.swift,\ AppleAITest.swift,\ GeminiService.swift,\ CitationAITools.swift,\ DocumentAITools.swift /Users/lawliet/OVEREND/OVEREND/Services/Academic/Standards/NCCUFormatService.swift /Users/lawliet/OVEREND/OVEREND/Services/Academic/Standards/TaiwanAcademicStandardsService.swift /Users/lawliet/OVEREND/OVEREND/Services/Agents/AgentOrchestrator.swift /Users/lawliet/OVEREND/OVEREND/Services/Agents/WritingToolsCoordinator.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Agent/AgentAppIntents.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Agent/AgentAutoTrigger.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Agent/AgentTaskQueue.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Agent/AgentTools.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Agent/LiteratureAgent.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Core/AdapterManager.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Core/AIServiceError.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Core/UnifiedAIService.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/CitationAIDomain.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/DocumentAIDomain.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/FormulaAIDomain.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/StandardsAIDomain.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/StandardsSeverity+UI.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/TranslationAIDomain.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/WritingAIDomain.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Providers/AppleAITest.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Providers/GeminiService.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Tools/CitationAITools.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Tools/DocumentAITools.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Academic/Standards/NCCUFormatService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Academic/Standards/TaiwanAcademicStandardsService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Agents/AgentOrchestrator.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Agents/WritingToolsCoordinator.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Agent/AgentAppIntents.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Agent/AgentAutoTrigger.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Agent/AgentTaskQueue.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Agent/AgentTools.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Agent/LiteratureAgent.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Core/AdapterManager.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Core/AIServiceError.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Core/UnifiedAIService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/CitationAIDomain.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/DocumentAIDomain.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/FormulaAIDomain.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/StandardsAIDomain.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/StandardsSeverity+UI.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/TranslationAIDomain.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/WritingAIDomain.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Providers/AppleAITest.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Providers/GeminiService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Tools/CitationAITools.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Tools/DocumentAITools.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 Compiling\ PersistenceController.swift,\ SearchResult.swift,\ Tag.swift,\ ThesisMetadata.swift,\ WritingTemplate.swift,\ iPadContentView.swift,\ FileDialogs_iPad.swift,\ OVERENDApp_iPad.swift,\ FileDialogs_macOS.swift,\ PlatformAbstraction.swift,\ DocumentRepository.swift,\ EntryRepository.swift,\ GroupRepository.swift,\ LibraryRepository.swift,\ RepositoryProtocol.swift,\ BibTeXGenerator.swift,\ BibTeXParser.swift,\ ChineseNameFormatter.swift,\ CitationService.swift,\ RISParser.swift,\ AcademicLanguageService.swift,\ AcademicPhrasebank.swift,\ ChineseOptimizationService.swift,\ TerminologyFirewall.swift /Users/lawliet/OVEREND/OVEREND/Models/PersistenceController.swift /Users/lawliet/OVEREND/OVEREND/Models/SearchResult.swift /Users/lawliet/OVEREND/OVEREND/Models/Tag.swift /Users/lawliet/OVEREND/OVEREND/Models/ThesisMetadata.swift /Users/lawliet/OVEREND/OVEREND/Models/WritingTemplate.swift /Users/lawliet/OVEREND/OVEREND/Platform/iPad/Views/iPadContentView.swift /Users/lawliet/OVEREND/OVEREND/Platform/iPad/FileDialogs_iPad.swift /Users/lawliet/OVEREND/OVEREND/Platform/iPad/OVERENDApp_iPad.swift /Users/lawliet/OVEREND/OVEREND/Platform/macOS/FileDialogs_macOS.swift /Users/lawliet/OVEREND/OVEREND/Platform/Shared/PlatformAbstraction.swift /Users/lawliet/OVEREND/OVEREND/Repositories/DocumentRepository.swift /Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift /Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift /Users/lawliet/OVEREND/OVEREND/Repositories/LibraryRepository.swift /Users/lawliet/OVEREND/OVEREND/Repositories/RepositoryProtocol.swift /Users/lawliet/OVEREND/OVEREND/Services/Academic/Citation/BibTeXGenerator.swift /Users/lawliet/OVEREND/OVEREND/Services/Academic/Citation/BibTeXParser.swift /Users/lawliet/OVEREND/OVEREND/Services/Academic/Citation/ChineseNameFormatter.swift /Users/lawliet/OVEREND/OVEREND/Services/Academic/Citation/CitationService.swift /Users/lawliet/OVEREND/OVEREND/Services/Academic/Citation/RISParser.swift /Users/lawliet/OVEREND/OVEREND/Services/Academic/Language/AcademicLanguageService.swift /Users/lawliet/OVEREND/OVEREND/Services/Academic/Language/AcademicPhrasebank.swift /Users/lawliet/OVEREND/OVEREND/Services/Academic/Language/ChineseOptimizationService.swift /Users/lawliet/OVEREND/OVEREND/Services/Academic/Language/TerminologyFirewall.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Models/PersistenceController.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Models/SearchResult.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Models/Tag.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Models/Tag.swift:27:30: warning: left side of nil coalescing operator '??' has non-optional type 'Color', so the right side is never used
+        Color(hex: colorHex) ?? .blue
+        ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+                            
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Models/ThesisMetadata.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Models/WritingTemplate.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Platform/iPad/Views/iPadContentView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Platform/iPad/FileDialogs_iPad.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Platform/iPad/OVERENDApp_iPad.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Platform/macOS/FileDialogs_macOS.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Platform/Shared/PlatformAbstraction.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Repositories/DocumentRepository.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Repositories/DocumentRepository.swift:76:10: warning: non-Sendable type 'Document' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'create(title:)'; this is an error in the Swift 6 language mode
+    func create(title: String) async throws -> Document {
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Document.swift:15:14: note: class 'Document' does not conform to the 'Sendable' protocol
+public class Document: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/DocumentRepository.swift:50:10: warning: non-Sendable type '[Document]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchAll()'; this is an error in the Swift 6 language mode
+    func fetchAll() async throws -> [Document] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/DocumentRepository.swift:55:10: warning: non-Sendable type 'Document?' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetch(byId:)'; this is an error in the Swift 6 language mode
+    func fetch(byId id: UUID) async throws -> Document? {
+         ^
+Swift.Optional:1:21: note: generic enum 'Optional' does not conform to the 'Sendable' protocol
+@frozen public enum Optional<Wrapped> : ~Copyable, ~Escapable where Wrapped : ~Copyable, Wrapped : ~Escapable {
+                    ^
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:51:10: warning: non-Sendable parameter type 'Library' cannot be sent from caller of protocol requirement 'fetchAll(in:sortBy:)' into main actor-isolated implementation; this is an error in the Swift 6 language mode
+    func fetchAll(in library: Library, sortBy: Entry.SortOption = .updated) async throws -> [Entry] {
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Library.swift:12:14: note: class 'Library' does not conform to the 'Sendable' protocol
+public class Library: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:51:10: warning: non-Sendable type '[Entry]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchAll(in:sortBy:)'; this is an error in the Swift 6 language mode
+    func fetchAll(in library: Library, sortBy: Entry.SortOption = .updated) async throws -> [Entry] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:68:10: warning: non-Sendable parameter type 'Library' cannot be sent from caller of protocol requirement 'search(query:in:)' into main actor-isolated implementation; this is an error in the Swift 6 language mode
+    func search(query: String, in library: Library) async throws -> [Entry] {
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Library.swift:12:14: note: class 'Library' does not conform to the 'Sendable' protocol
+public class Library: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:68:10: warning: non-Sendable type '[Entry]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'search(query:in:)'; this is an error in the Swift 6 language mode
+    func search(query: String, in library: Library) async throws -> [Entry] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:88:10: warning: non-Sendable type 'Entry?' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'find(byCitationKey:)'; this is an error in the Swift 6 language mode
+    func find(byCitationKey key: String) async throws -> Entry? {
+         ^
+Swift.Optional:1:21: note: generic enum 'Optional' does not conform to the 'Sendable' protocol
+@frozen public enum Optional<Wrapped> : ~Copyable, ~Escapable where Wrapped : ~Copyable, Wrapped : ~Escapable {
+                    ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:112:10: warning: non-Sendable parameter type 'Library' cannot be sent from caller of protocol requirement 'create(citationKey:entryType:fields:library:)' into main actor-isolated implementation; this is an error in the Swift 6 language mode
+    func create(
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Library.swift:12:14: note: class 'Library' does not conform to the 'Sendable' protocol
+public class Library: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:112:10: warning: non-Sendable type 'Entry' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'create(citationKey:entryType:fields:library:)'; this is an error in the Swift 6 language mode
+    func create(
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Entry.swift:16:14: note: class 'Entry' does not conform to the 'Sendable' protocol
+public class Entry: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:45:10: warning: non-Sendable type '[Entry]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchAll()'; this is an error in the Swift 6 language mode
+    func fetchAll() async throws -> [Entry] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:59:10: warning: non-Sendable type 'Entry?' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetch(byId:)'; this is an error in the Swift 6 language mode
+    func fetch(byId id: UUID) async throws -> Entry? {
+         ^
+Swift.Optional:1:21: note: generic enum 'Optional' does not conform to the 'Sendable' protocol
+@frozen public enum Optional<Wrapped> : ~Copyable, ~Escapable where Wrapped : ~Copyable, Wrapped : ~Escapable {
+                    ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:124:29: warning: capture of 'library' with non-Sendable type 'Library' in a '@Sendable' closure
+            entry.library = library
+                            ^
+/Users/lawliet/OVEREND/OVEREND/Models/Library.swift:12:14: note: class 'Library' does not conform to the 'Sendable' protocol
+public class Library: NSManagedObject, Identifiable {
+             ^
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:68:10: warning: non-Sendable parameter type 'Library' cannot be sent from caller of protocol requirement 'fetchRootGroups(in:)' into main actor-isolated implementation; this is an error in the Swift 6 language mode
+    func fetchRootGroups(in library: Library) async throws -> [Group] {
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Library.swift:12:14: note: class 'Library' does not conform to the 'Sendable' protocol
+public class Library: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:68:10: warning: non-Sendable type '[Group]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchRootGroups(in:)'; this is an error in the Swift 6 language mode
+    func fetchRootGroups(in library: Library) async throws -> [Group] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:79:10: warning: non-Sendable parameter type 'Group' cannot be sent from caller of protocol requirement 'fetchChildren(of:)' into main actor-isolated implementation; this is an error in the Swift 6 language mode
+    func fetchChildren(of parent: Group) async throws -> [Group] {
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Group.swift:12:14: note: class 'Group' does not conform to the 'Sendable' protocol
+public class Group: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:79:10: warning: non-Sendable type '[Group]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchChildren(of:)'; this is an error in the Swift 6 language mode
+    func fetchChildren(of parent: Group) async throws -> [Group] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:99:10: warning: non-Sendable parameter type 'Library' cannot be sent from caller of protocol requirement 'create(name:library:parent:)' into main actor-isolated implementation; this is an error in the Swift 6 language mode
+    func create(
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Library.swift:12:14: note: class 'Library' does not conform to the 'Sendable' protocol
+public class Library: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:99:10: warning: non-Sendable parameter type 'Group?' cannot be sent from caller of protocol requirement 'create(name:library:parent:)' into main actor-isolated implementation; this is an error in the Swift 6 language mode
+    func create(
+         ^
+Swift.Optional:1:21: note: generic enum 'Optional' does not conform to the 'Sendable' protocol
+@frozen public enum Optional<Wrapped> : ~Copyable, ~Escapable where Wrapped : ~Copyable, Wrapped : ~Escapable {
+                    ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:99:10: warning: non-Sendable type 'Group' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'create(name:library:parent:)'; this is an error in the Swift 6 language mode
+    func create(
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Group.swift:12:14: note: class 'Group' does not conform to the 'Sendable' protocol
+public class Group: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:54:10: warning: non-Sendable type '[Group]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchAll()'; this is an error in the Swift 6 language mode
+    func fetchAll() async throws -> [Group] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:59:10: warning: non-Sendable type 'Group?' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetch(byId:)'; this is an error in the Swift 6 language mode
+    func fetch(byId id: UUID) async throws -> Group? {
+         ^
+Swift.Optional:1:21: note: generic enum 'Optional' does not conform to the 'Sendable' protocol
+@frozen public enum Optional<Wrapped> : ~Copyable, ~Escapable where Wrapped : ~Copyable, Wrapped : ~Escapable {
+                    ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:108:29: warning: capture of 'library' with non-Sendable type 'Library' in a '@Sendable' closure
+            group.library = library
+                            ^
+/Users/lawliet/OVEREND/OVEREND/Models/Library.swift:12:14: note: class 'Library' does not conform to the 'Sendable' protocol
+public class Library: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:109:28: warning: capture of 'parent' with non-Sendable type 'Group?' in a '@Sendable' closure
+            group.parent = parent
+                           ^
+Swift.Optional:1:21: note: generic enum 'Optional' does not conform to the 'Sendable' protocol
+@frozen public enum Optional<Wrapped> : ~Copyable, ~Escapable where Wrapped : ~Copyable, Wrapped : ~Escapable {
+                    ^
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Repositories/LibraryRepository.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Repositories/LibraryRepository.swift:53:10: warning: non-Sendable type 'Library?' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchDefault()'; this is an error in the Swift 6 language mode
+    func fetchDefault() async throws -> Library? {
+         ^
+Swift.Optional:1:21: note: generic enum 'Optional' does not conform to the 'Sendable' protocol
+@frozen public enum Optional<Wrapped> : ~Copyable, ~Escapable where Wrapped : ~Copyable, Wrapped : ~Escapable {
+                    ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/LibraryRepository.swift:89:10: warning: non-Sendable type 'Library' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'getOrCreateDefault()'; this is an error in the Swift 6 language mode
+    func getOrCreateDefault() async throws -> Library {
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Library.swift:12:14: note: class 'Library' does not conform to the 'Sendable' protocol
+public class Library: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/LibraryRepository.swift:75:10: warning: non-Sendable type 'Library' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'create(name:isDefault:)'; this is an error in the Swift 6 language mode
+    func create(name: String, isDefault: Bool = false) async throws -> Library {
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Library.swift:12:14: note: class 'Library' does not conform to the 'Sendable' protocol
+public class Library: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/LibraryRepository.swift:39:10: warning: non-Sendable type '[Library]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchAll()'; this is an error in the Swift 6 language mode
+    func fetchAll() async throws -> [Library] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/LibraryRepository.swift:44:10: warning: non-Sendable type 'Library?' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetch(byId:)'; this is an error in the Swift 6 language mode
+    func fetch(byId id: UUID) async throws -> Library? {
+         ^
+Swift.Optional:1:21: note: generic enum 'Optional' does not conform to the 'Sendable' protocol
+@frozen public enum Optional<Wrapped> : ~Copyable, ~Escapable where Wrapped : ~Copyable, Wrapped : ~Escapable {
+                    ^
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Repositories/RepositoryProtocol.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Repositories/RepositoryProtocol.swift:117:47: warning: capture of 'request' with non-Sendable type 'NSFetchRequest<T>' in a '@Sendable' closure
+                return try self.context.fetch(request)
+                                              ^
+/Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk/System/Library/Frameworks/CoreData.framework/Headers/NSFetchRequest.h:47:12: note: generic class 'NSFetchRequest' does not conform to the 'Sendable' protocol
+@interface NSFetchRequest<__covariant ResultType:id<NSFetchRequestResult>> : NSPersistentStoreRequest <NSCoding, NSCopying> {
+           ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/RepositoryProtocol.swift:10:1: warning: add '@preconcurrency' to suppress 'Sendable'-related warnings from module 'CoreData'
+import CoreData
+^
+@preconcurrency 
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Academic/Citation/BibTeXGenerator.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Services/Academic/Citation/BibTeXGenerator.swift:62:29: warning: 'fetchAll(in:sortBy:context:)' is deprecated: 使用 fetchAllAsync 以避免阻塞 UI
+        let entries = Entry.fetchAll(in: library, context: context)
+                            ^
+/Users/lawliet/OVEREND/OVEREND/Services/Academic/Citation/BibTeXGenerator.swift:92:29: warning: 'fetchAll(in:sortBy:context:)' is deprecated: 使用 fetchAllAsync 以避免阻塞 UI
+        let entries = Entry.fetchAll(in: library, context: context)
+                            ^
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Academic/Citation/BibTeXParser.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Academic/Citation/ChineseNameFormatter.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Academic/Citation/CitationService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Academic/Citation/RISParser.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Academic/Language/AcademicLanguageService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Academic/Language/AcademicPhrasebank.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Academic/Language/ChineseOptimizationService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Services/Academic/Language/ChineseOptimizationService.swift:78:13: warning: initialization of immutable value 'transform' was never used; consider replacing with assignment to '_' or removing it
+        let transform = script == .simplified ? kCFStringTransformMandarinLatin : kCFStringTransformLatinHangul // 這裡只是示意外殼
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Academic/Language/TerminologyFirewall.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 Compiling\ OnlineSearchViewModel.swift,\ AcademicPhrasebankView.swift,\ AcademicStandardsCheckView.swift,\ AcademicTranslationView.swift,\ AgentPanelView.swift,\ AICenterView.swift,\ CitationCheckView.swift,\ CitationRecommendationView.swift,\ ContentImportPicker.swift,\ LiteratureQAView.swift,\ RISImportView.swift,\ StructureAnalysisView.swift,\ TerminologyCheckView.swift,\ WritingAssistantView.swift,\ ZoteroBridgeView.swift,\ AICommandPaletteView.swift,\ CompanionDialogues.swift,\ CompanionGeneratorView.swift,\ CompanionPanelView.swift,\ CompanionView.swift,\ DynamicToolbar.swift,\ EmptyStateView.swift,\ FlowLayout.swift /Users/lawliet/OVEREND/OVEREND/ViewModels/OnlineSearchViewModel.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/AcademicPhrasebankView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/AcademicStandardsCheckView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/AcademicTranslationView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/AgentPanelView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/AICenterView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/CitationCheckView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/CitationRecommendationView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/ContentImportPicker.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/LiteratureQAView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/RISImportView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/StructureAnalysisView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/TerminologyCheckView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/WritingAssistantView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/ZoteroBridgeView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICommand/AICommandPaletteView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICompanion/CompanionDialogues.swift /Users/lawliet/OVEREND/OVEREND/Views/AICompanion/CompanionGeneratorView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICompanion/CompanionPanelView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICompanion/CompanionView.swift /Users/lawliet/OVEREND/OVEREND/Views/Common/DynamicToolbar.swift /Users/lawliet/OVEREND/OVEREND/Views/Common/EmptyStateView.swift /Users/lawliet/OVEREND/OVEREND/Views/Common/FlowLayout.swift (in target 'OVEREND' from project 'OVEREND')
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/ViewModels/OnlineSearchViewModel.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICenter/AcademicPhrasebankView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICenter/AcademicStandardsCheckView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICenter/AcademicTranslationView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICenter/AgentPanelView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICenter/AICenterView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICenter/CitationCheckView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICenter/CitationRecommendationView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICenter/ContentImportPicker.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICenter/LiteratureQAView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICenter/RISImportView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICenter/StructureAnalysisView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICenter/TerminologyCheckView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICenter/WritingAssistantView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICenter/ZoteroBridgeView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICommand/AICommandPaletteView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICompanion/CompanionDialogues.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICompanion/CompanionGeneratorView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICompanion/CompanionPanelView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICompanion/CompanionView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Common/DynamicToolbar.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Common/EmptyStateView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Common/FlowLayout.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 Compiling\ AcademicPhrasebankIntents.swift,\ AppError.swift,\ AppLogger.swift,\ AppService.swift,\ EventBus.swift,\ OverendCoreBridge.swift,\ OverendCoreFFI.swift,\ Companion.swift,\ CompanionAchievement.swift,\ CompanionLevel.swift,\ AdvancedSearchFilter.swift,\ AICommand.swift,\ Attachment.swift,\ BibTeXTypes.swift,\ BlockType.swift,\ CSLModels.swift,\ Document.swift,\ Entry.swift,\ ExtractionLog.swift,\ ExtractionTypes.swift,\ FormatTemplate.swift,\ Group.swift,\ LearningTypes.swift,\ Library.swift /Users/lawliet/OVEREND/OVEREND/App/Intents/AcademicPhrasebankIntents.swift /Users/lawliet/OVEREND/OVEREND/Core/AppError.swift /Users/lawliet/OVEREND/OVEREND/Core/AppLogger.swift /Users/lawliet/OVEREND/OVEREND/Core/AppService.swift /Users/lawliet/OVEREND/OVEREND/Core/EventBus.swift /Users/lawliet/OVEREND/OVEREND/Core/OverendCoreBridge.swift /Users/lawliet/OVEREND/OVEREND/Core/OverendCoreFFI.swift /Users/lawliet/OVEREND/OVEREND/Models/Companion/Companion.swift /Users/lawliet/OVEREND/OVEREND/Models/Companion/CompanionAchievement.swift /Users/lawliet/OVEREND/OVEREND/Models/Companion/CompanionLevel.swift /Users/lawliet/OVEREND/OVEREND/Models/AdvancedSearchFilter.swift /Users/lawliet/OVEREND/OVEREND/Models/AICommand.swift /Users/lawliet/OVEREND/OVEREND/Models/Attachment.swift /Users/lawliet/OVEREND/OVEREND/Models/BibTeXTypes.swift /Users/lawliet/OVEREND/OVEREND/Models/BlockType.swift /Users/lawliet/OVEREND/OVEREND/Models/CSLModels.swift /Users/lawliet/OVEREND/OVEREND/Models/Document.swift /Users/lawliet/OVEREND/OVEREND/Models/Entry.swift /Users/lawliet/OVEREND/OVEREND/Models/ExtractionLog.swift /Users/lawliet/OVEREND/OVEREND/Models/ExtractionTypes.swift /Users/lawliet/OVEREND/OVEREND/Models/FormatTemplate.swift /Users/lawliet/OVEREND/OVEREND/Models/Group.swift /Users/lawliet/OVEREND/OVEREND/Models/LearningTypes.swift /Users/lawliet/OVEREND/OVEREND/Models/Library.swift (in target 'OVEREND' from project 'OVEREND')
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/App/Intents/AcademicPhrasebankIntents.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Core/AppError.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Core/AppLogger.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Core/AppService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Core/EventBus.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Core/OverendCoreBridge.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Core/OverendCoreFFI.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Models/Companion/Companion.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Models/Companion/CompanionAchievement.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Models/Companion/CompanionLevel.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Models/AdvancedSearchFilter.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Models/AICommand.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Models/Attachment.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Models/BibTeXTypes.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Models/BlockType.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Models/CSLModels.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Models/Document.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Models/Entry.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Models/ExtractionLog.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Models/ExtractionTypes.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Models/FormatTemplate.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Models/Group.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Models/LearningTypes.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Models/Library.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 Compiling\ ExtractPDFMetadataTool.swift,\ FormulaAITools.swift,\ StandardsAITools.swift,\ TranslationAITools.swift,\ WritingAITools.swift,\ AICommandExecutor.swift,\ AILayoutFormatter.swift,\ LearningService.swift,\ SectionDetector.swift,\ CitationJSBridge.swift,\ ZoteroBridge.swift,\ CompanionService.swift,\ RelatedLiteratureService.swift,\ BatchOperationService.swift,\ ServiceContainer.swift,\ DocumentExportService.swift,\ PandocService.swift,\ WebKitPDFExporter.swift,\ WordImporter.swift,\ WordImporter+PreserveFormat.swift,\ CoverPageGenerator.swift,\ DocumentFormatter.swift,\ TemplateManager.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Tools/ExtractPDFMetadataTool.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Tools/FormulaAITools.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Tools/StandardsAITools.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Tools/TranslationAITools.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Tools/WritingAITools.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Utilities/AICommandExecutor.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Utilities/AILayoutFormatter.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/LearningService.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/SectionDetector.swift /Users/lawliet/OVEREND/OVEREND/Services/Bibliography/CitationJSBridge.swift /Users/lawliet/OVEREND/OVEREND/Services/Bibliography/ZoteroBridge.swift /Users/lawliet/OVEREND/OVEREND/Services/Companion/CompanionService.swift /Users/lawliet/OVEREND/OVEREND/Services/Companion/RelatedLiteratureService.swift /Users/lawliet/OVEREND/OVEREND/Services/Core/BatchOperationService.swift /Users/lawliet/OVEREND/OVEREND/Services/Core/ServiceContainer.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Export/DocumentExportService.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Export/PandocService.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Export/WebKitPDFExporter.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Export/WordImporter.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Export/WordImporter+PreserveFormat.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Format/CoverPageGenerator.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Format/DocumentFormatter.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Format/TemplateManager.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Tools/ExtractPDFMetadataTool.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Tools/FormulaAITools.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Tools/StandardsAITools.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Tools/TranslationAITools.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Tools/WritingAITools.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Utilities/AICommandExecutor.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/Utilities/AILayoutFormatter.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/LearningService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/AI/SectionDetector.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Bibliography/CitationJSBridge.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Bibliography/ZoteroBridge.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Companion/CompanionService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Companion/RelatedLiteratureService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Core/BatchOperationService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Core/ServiceContainer.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Document/Export/DocumentExportService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Document/Export/PandocService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Document/Export/WebKitPDFExporter.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Document/Export/WordImporter.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Document/Export/WordImporter+PreserveFormat.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Document/Format/CoverPageGenerator.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Document/Format/DocumentFormatter.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Document/Format/TemplateManager.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 Compiling\ PomodoroView.swift,\ SplashScreenView.swift,\ ToastView.swift,\ ButtonCompatibility.swift,\ CustomButton.swift,\ CardView.swift,\ ConfidenceIndicator.swift,\ LoadingIndicator.swift,\ StandardTextField.swift,\ AIMetadataPreviewSheet.swift,\ AdvancedSearchPanel.swift,\ BatchOperationsToolbar.swift,\ CitationInsertionPanel.swift,\ CloudSyncStatusView.swift,\ DuplicateWarningDialog.swift,\ EditableMetadataRow.swift,\ EntryContextMenu.swift,\ ImportOptionsSheet.swift,\ MaterialIcon.swift,\ PDFLayoutAnalysisView.swift,\ SimpleDashboardView.swift,\ DraftsListView.swift,\ AIFormattingPanel.swift /Users/lawliet/OVEREND/OVEREND/Views/Common/PomodoroView.swift /Users/lawliet/OVEREND/OVEREND/Views/Common/SplashScreenView.swift /Users/lawliet/OVEREND/OVEREND/Views/Common/ToastView.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/Buttons/ButtonCompatibility.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/Buttons/CustomButton.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/Cards/CardView.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/ConfidenceIndicator.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/Sheets/AIMetadataPreviewSheet.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/AdvancedSearchPanel.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/BatchOperationsToolbar.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/CitationInsertionPanel.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/CloudSyncStatusView.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/DuplicateWarningDialog.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/EditableMetadataRow.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/EntryContextMenu.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/ImportOptionsSheet.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/MaterialIcon.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/PDFLayoutAnalysisView.swift /Users/lawliet/OVEREND/OVEREND/Views/Dashboard/SimpleDashboardView.swift /Users/lawliet/OVEREND/OVEREND/Views/Drafts/DraftsListView.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/AIFormattingPanel.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Common/PomodoroView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Common/SplashScreenView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Common/ToastView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/Buttons/ButtonCompatibility.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/Buttons/CustomButton.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/Cards/CardView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/ConfidenceIndicator.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/Sheets/AIMetadataPreviewSheet.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/AdvancedSearchPanel.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/BatchOperationsToolbar.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/CitationInsertionPanel.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/CloudSyncStatusView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/DuplicateWarningDialog.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/EditableMetadataRow.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/EntryContextMenu.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/ImportOptionsSheet.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/MaterialIcon.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/PDFLayoutAnalysisView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Dashboard/SimpleDashboardView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Drafts/DraftsListView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Editor/AIFormattingPanel.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 Compiling\ TypstConverter.swift,\ MetadataValidator.swift,\ PDFMetadataExtractor.swift,\ PDFService.swift,\ XYCutLayoutAnalyzer.swift,\ LayoutModels.swift,\ OCRService.swift,\ VerticalTextHandler.swift,\ AiritiService.swift,\ CrossRefService.swift,\ HayagrivaService.swift,\ NotionService.swift,\ TypstService.swift,\ PomodoroTimer.swift,\ EncodingDetector.swift,\ ExtractionAnalytics.swift,\ NetworkService.swift,\ ThumbnailCache.swift,\ DuplicateDetectionService.swift,\ DynamicTagProcessor.swift,\ ToastManager.swift,\ VersionHistoryService.swift,\ LiteratureClassifier.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Format/TypstConverter.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Metadata/MetadataValidator.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Metadata/PDFMetadataExtractor.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Metadata/PDFService.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Metadata/XYCutLayoutAnalyzer.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/OCR/LayoutModels.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/OCR/OCRService.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/OCR/VerticalTextHandler.swift /Users/lawliet/OVEREND/OVEREND/Services/External/AiritiService.swift /Users/lawliet/OVEREND/OVEREND/Services/External/CrossRefService.swift /Users/lawliet/OVEREND/OVEREND/Services/External/HayagrivaService.swift /Users/lawliet/OVEREND/OVEREND/Services/External/NotionService.swift /Users/lawliet/OVEREND/OVEREND/Services/External/TypstService.swift /Users/lawliet/OVEREND/OVEREND/Services/Productivity/PomodoroTimer.swift /Users/lawliet/OVEREND/OVEREND/Services/Shared/EncodingDetector.swift /Users/lawliet/OVEREND/OVEREND/Services/Shared/ExtractionAnalytics.swift /Users/lawliet/OVEREND/OVEREND/Services/Shared/NetworkService.swift /Users/lawliet/OVEREND/OVEREND/Services/Shared/ThumbnailCache.swift /Users/lawliet/OVEREND/OVEREND/Services/Utilities/DuplicateDetectionService.swift /Users/lawliet/OVEREND/OVEREND/Services/Utilities/DynamicTagProcessor.swift /Users/lawliet/OVEREND/OVEREND/Services/Utilities/ToastManager.swift /Users/lawliet/OVEREND/OVEREND/Services/Utilities/VersionHistoryService.swift /Users/lawliet/OVEREND/OVEREND/Services/LiteratureClassifier.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Document/Format/TypstConverter.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Document/Metadata/MetadataValidator.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Document/Metadata/PDFMetadataExtractor.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Document/Metadata/PDFService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Document/Metadata/XYCutLayoutAnalyzer.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Document/OCR/LayoutModels.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Document/OCR/OCRService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Document/OCR/VerticalTextHandler.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/External/AiritiService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/External/CrossRefService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/External/HayagrivaService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/External/NotionService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/External/TypstService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Productivity/PomodoroTimer.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Shared/EncodingDetector.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Shared/ExtractionAnalytics.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Shared/NetworkService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Shared/ThumbnailCache.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Utilities/DuplicateDetectionService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Utilities/DynamicTagProcessor.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Utilities/ToastManager.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/Utilities/VersionHistoryService.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Services/LiteratureClassifier.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 Compiling\ FormatSystemTests.swift,\ AnimationSystem.swift,\ AppTheme.swift,\ DesignTokens.swift,\ LiquidGlassModifiers.swift,\ View+Theme.swift,\ AppIconGenerator.swift,\ Color+Extensions.swift,\ Constants.swift,\ DialogHelper.swift,\ FocusedTextField.swift,\ FocusManager.swift,\ FontSystem.swift,\ KeychainHelper.swift,\ PerformanceOptimizations.swift,\ TextInputDialog.swift,\ UTType+Extensions.swift,\ DocumentViewModel.swift,\ EntryViewModel.swift,\ ExtractionWorkbenchViewModel.swift,\ GroupViewModel.swift,\ LibraryViewModel.swift,\ MainViewState.swift /Users/lawliet/OVEREND/OVEREND/Tests/FormatSystemTests.swift /Users/lawliet/OVEREND/OVEREND/Theme/AnimationSystem.swift /Users/lawliet/OVEREND/OVEREND/Theme/AppTheme.swift /Users/lawliet/OVEREND/OVEREND/Theme/DesignTokens.swift /Users/lawliet/OVEREND/OVEREND/Theme/LiquidGlassModifiers.swift /Users/lawliet/OVEREND/OVEREND/Theme/View+Theme.swift /Users/lawliet/OVEREND/OVEREND/Utilities/AppIconGenerator.swift /Users/lawliet/OVEREND/OVEREND/Utilities/Color+Extensions.swift /Users/lawliet/OVEREND/OVEREND/Utilities/Constants.swift /Users/lawliet/OVEREND/OVEREND/Utilities/DialogHelper.swift /Users/lawliet/OVEREND/OVEREND/Utilities/FocusedTextField.swift /Users/lawliet/OVEREND/OVEREND/Utilities/FocusManager.swift /Users/lawliet/OVEREND/OVEREND/Utilities/FontSystem.swift /Users/lawliet/OVEREND/OVEREND/Utilities/KeychainHelper.swift /Users/lawliet/OVEREND/OVEREND/Utilities/PerformanceOptimizations.swift /Users/lawliet/OVEREND/OVEREND/Utilities/TextInputDialog.swift /Users/lawliet/OVEREND/OVEREND/Utilities/UTType+Extensions.swift /Users/lawliet/OVEREND/OVEREND/ViewModels/DocumentViewModel.swift /Users/lawliet/OVEREND/OVEREND/ViewModels/EntryViewModel.swift /Users/lawliet/OVEREND/OVEREND/ViewModels/ExtractionWorkbenchViewModel.swift /Users/lawliet/OVEREND/OVEREND/ViewModels/GroupViewModel.swift /Users/lawliet/OVEREND/OVEREND/ViewModels/LibraryViewModel.swift /Users/lawliet/OVEREND/OVEREND/ViewModels/MainViewState.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Tests/FormatSystemTests.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Theme/AnimationSystem.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Theme/AppTheme.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText2 = "已輸入文字"
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText2 = "已輸入文字"
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Theme/DesignTokens.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Theme/LiquidGlassModifiers.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Theme/View+Theme.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Utilities/AppIconGenerator.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Utilities/Color+Extensions.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Utilities/Constants.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Utilities/DialogHelper.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Utilities/FocusedTextField.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Utilities/FocusManager.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Utilities/FontSystem.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Utilities/KeychainHelper.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Utilities/PerformanceOptimizations.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Utilities/TextInputDialog.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Utilities/UTType+Extensions.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/ViewModels/DocumentViewModel.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/ViewModels/DocumentViewModel.swift:22:29: warning: use of protocol 'DocumentRepositoryProtocol' as a type must be written 'any DocumentRepositoryProtocol'; this will be an error in a future Swift language mode
+    private let repository: DocumentRepositoryProtocol
+                            ^~~~~~~~~~~~~~~~~~~~~~~~~~
+                            any DocumentRepositoryProtocol
+/Users/lawliet/OVEREND/OVEREND/ViewModels/DocumentViewModel.swift:24:22: warning: use of protocol 'DocumentRepositoryProtocol' as a type must be written 'any DocumentRepositoryProtocol'; this will be an error in a future Swift language mode
+    init(repository: DocumentRepositoryProtocol? = nil) {
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~
+                     (any DocumentRepositoryProtocol)
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/ViewModels/EntryViewModel.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/ViewModels/EntryViewModel.swift:20:29: warning: use of protocol 'EntryRepositoryProtocol' as a type must be written 'any EntryRepositoryProtocol'; this will be an error in a future Swift language mode
+    private let repository: EntryRepositoryProtocol
+                            ^~~~~~~~~~~~~~~~~~~~~~~
+                            any EntryRepositoryProtocol
+/Users/lawliet/OVEREND/OVEREND/ViewModels/EntryViewModel.swift:32:22: warning: use of protocol 'EntryRepositoryProtocol' as a type must be written 'any EntryRepositoryProtocol'; this will be an error in a future Swift language mode
+    init(repository: EntryRepositoryProtocol? = nil) {
+                     ^~~~~~~~~~~~~~~~~~~~~~~
+                     (any EntryRepositoryProtocol)
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/ViewModels/ExtractionWorkbenchViewModel.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/ViewModels/ExtractionWorkbenchViewModel.swift:105:19: warning: value 'extraction' was defined but never used; consider replacing with boolean test
+        guard let extraction = currentExtraction else { return }
+              ~~~~^~~~~~~~~~~~~
+                                                 != nil
+/Users/lawliet/OVEREND/OVEREND/ViewModels/ExtractionWorkbenchViewModel.swift:194:13: warning: result of 'try?' is unused
+            try? PDFService.shared.addPDFAttachment(from: pdfURL, to: entry, context: context)
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/ViewModels/GroupViewModel.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/ViewModels/GroupViewModel.swift:17:29: warning: use of protocol 'GroupRepositoryProtocol' as a type must be written 'any GroupRepositoryProtocol'; this will be an error in a future Swift language mode
+    private let repository: GroupRepositoryProtocol
+                            ^~~~~~~~~~~~~~~~~~~~~~~
+                            any GroupRepositoryProtocol
+/Users/lawliet/OVEREND/OVEREND/ViewModels/GroupViewModel.swift:27:22: warning: use of protocol 'GroupRepositoryProtocol' as a type must be written 'any GroupRepositoryProtocol'; this will be an error in a future Swift language mode
+    init(repository: GroupRepositoryProtocol? = nil) {
+                     ^~~~~~~~~~~~~~~~~~~~~~~
+                     (any GroupRepositoryProtocol)
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/ViewModels/LibraryViewModel.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/ViewModels/LibraryViewModel.swift:19:29: warning: use of protocol 'LibraryRepositoryProtocol' as a type must be written 'any LibraryRepositoryProtocol'; this will be an error in a future Swift language mode
+    private let repository: LibraryRepositoryProtocol
+                            ^~~~~~~~~~~~~~~~~~~~~~~~~
+                            any LibraryRepositoryProtocol
+/Users/lawliet/OVEREND/OVEREND/ViewModels/LibraryViewModel.swift:21:22: warning: use of protocol 'LibraryRepositoryProtocol' as a type must be written 'any LibraryRepositoryProtocol'; this will be an error in a future Swift language mode
+    init(repository: LibraryRepositoryProtocol? = nil) {
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~
+                     (any LibraryRepositoryProtocol)
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/ViewModels/MainViewState.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 Compiling\ CitationSidebar.swift,\ DocumentEditorView.swift,\ DocumentEditorView+Document.swift,\ DocumentEditorView+Formatting.swift,\ EditorComponents.swift,\ EditorToolbar.swift,\ EditorTypes.swift,\ GutterView.swift,\ MacEditorView.swift,\ NCCUCoverInputSheet.swift,\ OverendEditorView.swift,\ RichTextEditor.swift,\ EmeraldAIAssistantView.swift,\ EmeraldComponents.swift,\ EmeraldDashboardView.swift,\ EmeraldLibrarySubviews.swift,\ EmeraldSettingsView.swift,\ EntryEditSheet.swift,\ LibraryAgentComponents.swift,\ LibraryInspector.swift,\ LibrarySidebar.swift,\ LibraryTableComponents.swift,\ EntryDetailSubviews.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/CitationSidebar.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/DocumentEditorView.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/DocumentEditorView+Document.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/DocumentEditorView+Formatting.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/EditorComponents.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/EditorToolbar.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/EditorTypes.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/GutterView.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/MacEditorView.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/NCCUCoverInputSheet.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/OverendEditorView.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/RichTextEditor.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldAIAssistantView.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldComponents.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldDashboardView.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldLibrarySubviews.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldSettingsView.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EntryEditSheet.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/LibraryAgentComponents.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/LibraryInspector.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/LibrarySidebar.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/LibraryTableComponents.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/EntryDetailSubviews.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Editor/CitationSidebar.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Editor/DocumentEditorView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Editor/DocumentEditorView+Document.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Editor/DocumentEditorView+Formatting.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Editor/EditorComponents.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Editor/EditorToolbar.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Editor/EditorTypes.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Editor/GutterView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Editor/MacEditorView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Editor/NCCUCoverInputSheet.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Editor/OverendEditorView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Editor/RichTextEditor.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldAIAssistantView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldComponents.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldDashboardView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldLibrarySubviews.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldSettingsView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EntryEditSheet.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Emerald/LibraryAgentComponents.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Emerald/LibraryInspector.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Emerald/LibrarySidebar.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Emerald/LibraryTableComponents.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/EntryDetailSubviews.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ OVEREND (in target 'OVEREND' from project 'OVEREND')
+Failed frontend command:
+/Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -emit-module -experimental-skip-non-inlinable-function-bodies-without-types /Users/lawliet/OVEREND/OVEREND/App/Intents/AcademicPhrasebankIntents.swift /Users/lawliet/OVEREND/OVEREND/Core/AppError.swift /Users/lawliet/OVEREND/OVEREND/Core/AppLogger.swift /Users/lawliet/OVEREND/OVEREND/Core/AppService.swift /Users/lawliet/OVEREND/OVEREND/Core/EventBus.swift /Users/lawliet/OVEREND/OVEREND/Core/OverendCoreBridge.swift /Users/lawliet/OVEREND/OVEREND/Core/OverendCoreFFI.swift /Users/lawliet/OVEREND/OVEREND/Models/Companion/Companion.swift /Users/lawliet/OVEREND/OVEREND/Models/Companion/CompanionAchievement.swift /Users/lawliet/OVEREND/OVEREND/Models/Companion/CompanionLevel.swift /Users/lawliet/OVEREND/OVEREND/Models/AdvancedSearchFilter.swift /Users/lawliet/OVEREND/OVEREND/Models/AICommand.swift /Users/lawliet/OVEREND/OVEREND/Models/Attachment.swift /Users/lawliet/OVEREND/OVEREND/Models/BibTeXTypes.swift /Users/lawliet/OVEREND/OVEREND/Models/BlockType.swift /Users/lawliet/OVEREND/OVEREND/Models/CSLModels.swift /Users/lawliet/OVEREND/OVEREND/Models/Document.swift /Users/lawliet/OVEREND/OVEREND/Models/Entry.swift /Users/lawliet/OVEREND/OVEREND/Models/ExtractionLog.swift /Users/lawliet/OVEREND/OVEREND/Models/ExtractionTypes.swift /Users/lawliet/OVEREND/OVEREND/Models/FormatTemplate.swift /Users/lawliet/OVEREND/OVEREND/Models/Group.swift /Users/lawliet/OVEREND/OVEREND/Models/LearningTypes.swift /Users/lawliet/OVEREND/OVEREND/Models/Library.swift /Users/lawliet/OVEREND/OVEREND/Models/PersistenceController.swift /Users/lawliet/OVEREND/OVEREND/Models/SearchResult.swift /Users/lawliet/OVEREND/OVEREND/Models/Tag.swift /Users/lawliet/OVEREND/OVEREND/Models/ThesisMetadata.swift /Users/lawliet/OVEREND/OVEREND/Models/WritingTemplate.swift /Users/lawliet/OVEREND/OVEREND/Platform/iPad/Views/iPadContentView.swift /Users/lawliet/OVEREND/OVEREND/Platform/iPad/FileDialogs_iPad.swift /Users/lawliet/OVEREND/OVEREND/Platform/iPad/OVERENDApp_iPad.swift /Users/lawliet/OVEREND/OVEREND/Platform/macOS/FileDialogs_macOS.swift /Users/lawliet/OVEREND/OVEREND/Platform/Shared/PlatformAbstraction.swift /Users/lawliet/OVEREND/OVEREND/Repositories/DocumentRepository.swift /Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift /Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift /Users/lawliet/OVEREND/OVEREND/Repositories/LibraryRepository.swift /Users/lawliet/OVEREND/OVEREND/Repositories/RepositoryProtocol.swift /Users/lawliet/OVEREND/OVEREND/Services/Academic/Citation/BibTeXGenerator.swift /Users/lawliet/OVEREND/OVEREND/Services/Academic/Citation/BibTeXParser.swift /Users/lawliet/OVEREND/OVEREND/Services/Academic/Citation/ChineseNameFormatter.swift /Users/lawliet/OVEREND/OVEREND/Services/Academic/Citation/CitationService.swift /Users/lawliet/OVEREND/OVEREND/Services/Academic/Citation/RISParser.swift /Users/lawliet/OVEREND/OVEREND/Services/Academic/Language/AcademicLanguageService.swift /Users/lawliet/OVEREND/OVEREND/Services/Academic/Language/AcademicPhrasebank.swift /Users/lawliet/OVEREND/OVEREND/Services/Academic/Language/ChineseOptimizationService.swift /Users/lawliet/OVEREND/OVEREND/Services/Academic/Language/TerminologyFirewall.swift /Users/lawliet/OVEREND/OVEREND/Services/Academic/Standards/NCCUFormatService.swift /Users/lawliet/OVEREND/OVEREND/Services/Academic/Standards/TaiwanAcademicStandardsService.swift /Users/lawliet/OVEREND/OVEREND/Services/Agents/AgentOrchestrator.swift /Users/lawliet/OVEREND/OVEREND/Services/Agents/WritingToolsCoordinator.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Agent/AgentAppIntents.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Agent/AgentAutoTrigger.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Agent/AgentTaskQueue.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Agent/AgentTools.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Agent/LiteratureAgent.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Core/AdapterManager.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Core/AIServiceError.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Core/UnifiedAIService.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/CitationAIDomain.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/DocumentAIDomain.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/FormulaAIDomain.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/StandardsAIDomain.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/StandardsSeverity+UI.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/TranslationAIDomain.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/WritingAIDomain.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Providers/AppleAITest.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Providers/GeminiService.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Tools/CitationAITools.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Tools/DocumentAITools.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Tools/ExtractPDFMetadataTool.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Tools/FormulaAITools.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Tools/StandardsAITools.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Tools/TranslationAITools.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Tools/WritingAITools.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Utilities/AICommandExecutor.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/Utilities/AILayoutFormatter.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/LearningService.swift /Users/lawliet/OVEREND/OVEREND/Services/AI/SectionDetector.swift /Users/lawliet/OVEREND/OVEREND/Services/Bibliography/CitationJSBridge.swift /Users/lawliet/OVEREND/OVEREND/Services/Bibliography/ZoteroBridge.swift /Users/lawliet/OVEREND/OVEREND/Services/Companion/CompanionService.swift /Users/lawliet/OVEREND/OVEREND/Services/Companion/RelatedLiteratureService.swift /Users/lawliet/OVEREND/OVEREND/Services/Core/BatchOperationService.swift /Users/lawliet/OVEREND/OVEREND/Services/Core/ServiceContainer.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Export/DocumentExportService.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Export/PandocService.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Export/WebKitPDFExporter.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Export/WordImporter.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Export/WordImporter+PreserveFormat.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Format/CoverPageGenerator.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Format/DocumentFormatter.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Format/TemplateManager.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Format/TypstConverter.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Metadata/MetadataValidator.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Metadata/PDFMetadataExtractor.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Metadata/PDFService.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/Metadata/XYCutLayoutAnalyzer.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/OCR/LayoutModels.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/OCR/OCRService.swift /Users/lawliet/OVEREND/OVEREND/Services/Document/OCR/VerticalTextHandler.swift /Users/lawliet/OVEREND/OVEREND/Services/External/AiritiService.swift /Users/lawliet/OVEREND/OVEREND/Services/External/CrossRefService.swift /Users/lawliet/OVEREND/OVEREND/Services/External/HayagrivaService.swift /Users/lawliet/OVEREND/OVEREND/Services/External/NotionService.swift /Users/lawliet/OVEREND/OVEREND/Services/External/TypstService.swift /Users/lawliet/OVEREND/OVEREND/Services/Productivity/PomodoroTimer.swift /Users/lawliet/OVEREND/OVEREND/Services/Shared/EncodingDetector.swift /Users/lawliet/OVEREND/OVEREND/Services/Shared/ExtractionAnalytics.swift /Users/lawliet/OVEREND/OVEREND/Services/Shared/NetworkService.swift /Users/lawliet/OVEREND/OVEREND/Services/Shared/ThumbnailCache.swift /Users/lawliet/OVEREND/OVEREND/Services/Utilities/DuplicateDetectionService.swift /Users/lawliet/OVEREND/OVEREND/Services/Utilities/DynamicTagProcessor.swift /Users/lawliet/OVEREND/OVEREND/Services/Utilities/ToastManager.swift /Users/lawliet/OVEREND/OVEREND/Services/Utilities/VersionHistoryService.swift /Users/lawliet/OVEREND/OVEREND/Services/LiteratureClassifier.swift /Users/lawliet/OVEREND/OVEREND/Tests/FormatSystemTests.swift /Users/lawliet/OVEREND/OVEREND/Theme/AnimationSystem.swift /Users/lawliet/OVEREND/OVEREND/Theme/AppTheme.swift /Users/lawliet/OVEREND/OVEREND/Theme/DesignTokens.swift /Users/lawliet/OVEREND/OVEREND/Theme/LiquidGlassModifiers.swift /Users/lawliet/OVEREND/OVEREND/Theme/View+Theme.swift /Users/lawliet/OVEREND/OVEREND/Utilities/AppIconGenerator.swift /Users/lawliet/OVEREND/OVEREND/Utilities/Color+Extensions.swift /Users/lawliet/OVEREND/OVEREND/Utilities/Constants.swift /Users/lawliet/OVEREND/OVEREND/Utilities/DialogHelper.swift /Users/lawliet/OVEREND/OVEREND/Utilities/FocusedTextField.swift /Users/lawliet/OVEREND/OVEREND/Utilities/FocusManager.swift /Users/lawliet/OVEREND/OVEREND/Utilities/FontSystem.swift /Users/lawliet/OVEREND/OVEREND/Utilities/KeychainHelper.swift /Users/lawliet/OVEREND/OVEREND/Utilities/PerformanceOptimizations.swift /Users/lawliet/OVEREND/OVEREND/Utilities/TextInputDialog.swift /Users/lawliet/OVEREND/OVEREND/Utilities/UTType+Extensions.swift /Users/lawliet/OVEREND/OVEREND/ViewModels/DocumentViewModel.swift /Users/lawliet/OVEREND/OVEREND/ViewModels/EntryViewModel.swift /Users/lawliet/OVEREND/OVEREND/ViewModels/ExtractionWorkbenchViewModel.swift /Users/lawliet/OVEREND/OVEREND/ViewModels/GroupViewModel.swift /Users/lawliet/OVEREND/OVEREND/ViewModels/LibraryViewModel.swift /Users/lawliet/OVEREND/OVEREND/ViewModels/MainViewState.swift /Users/lawliet/OVEREND/OVEREND/ViewModels/OnlineSearchViewModel.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/AcademicPhrasebankView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/AcademicStandardsCheckView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/AcademicTranslationView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/AgentPanelView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/AICenterView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/CitationCheckView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/CitationRecommendationView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/ContentImportPicker.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/LiteratureQAView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/RISImportView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/StructureAnalysisView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/TerminologyCheckView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/WritingAssistantView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/ZoteroBridgeView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICommand/AICommandPaletteView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICompanion/CompanionDialogues.swift /Users/lawliet/OVEREND/OVEREND/Views/AICompanion/CompanionGeneratorView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICompanion/CompanionPanelView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICompanion/CompanionView.swift /Users/lawliet/OVEREND/OVEREND/Views/Common/DynamicToolbar.swift /Users/lawliet/OVEREND/OVEREND/Views/Common/EmptyStateView.swift /Users/lawliet/OVEREND/OVEREND/Views/Common/FlowLayout.swift /Users/lawliet/OVEREND/OVEREND/Views/Common/PomodoroView.swift /Users/lawliet/OVEREND/OVEREND/Views/Common/SplashScreenView.swift /Users/lawliet/OVEREND/OVEREND/Views/Common/ToastView.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/Buttons/ButtonCompatibility.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/Buttons/CustomButton.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/Cards/CardView.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/ConfidenceIndicator.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/Sheets/AIMetadataPreviewSheet.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/AdvancedSearchPanel.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/BatchOperationsToolbar.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/CitationInsertionPanel.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/CloudSyncStatusView.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/DuplicateWarningDialog.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/EditableMetadataRow.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/EntryContextMenu.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/ImportOptionsSheet.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/MaterialIcon.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/PDFLayoutAnalysisView.swift /Users/lawliet/OVEREND/OVEREND/Views/Dashboard/SimpleDashboardView.swift /Users/lawliet/OVEREND/OVEREND/Views/Drafts/DraftsListView.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/AIFormattingPanel.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/CitationSidebar.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/DocumentEditorView.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/DocumentEditorView+Document.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/DocumentEditorView+Formatting.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/EditorComponents.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/EditorToolbar.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/EditorTypes.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/GutterView.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/MacEditorView.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/NCCUCoverInputSheet.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/OverendEditorView.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/RichTextEditor.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldAIAssistantView.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldComponents.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldDashboardView.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldLibrarySubviews.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldSettingsView.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EntryEditSheet.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/LibraryAgentComponents.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/LibraryInspector.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/LibrarySidebar.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/LibraryTableComponents.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/EntryDetailSubviews.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/ModernEntryDetailView.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/ModernEntryDetailView+Methods.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/ModernEntryDetailView+Sections.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/RelatedLiteratureView.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/SmartTagSuggestionView.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryList/EntryListComponents.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryList/EntryPreviewCard.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryList/ModernEntryListView.swift /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ActionBar.swift /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ExtractionMethodBadge.swift /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ExtractionResultPane.swift /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ExtractionWorkbenchView.swift /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/FieldRow.swift /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ProgressHeader.swift /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/StarRating.swift /Users/lawliet/OVEREND/OVEREND/Views/Metadata/ThesisMetadataEditorView.swift /Users/lawliet/OVEREND/OVEREND/Views/OnlineSearch/OnlineSearchView.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/AccountSection.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/EditorThemeSection.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/GeneralSection.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/IntelligenceSection.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/KeyBindingsSection.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/TypographySection.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/AISettingsView.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/DataManagementView.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/NotionSettingsView.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/ProxySettingsView.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/SettingsComponents.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/SettingsView.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/ThemeSettingsView.swift /Users/lawliet/OVEREND/OVEREND/Views/Sidebar/MainSidebarView.swift /Users/lawliet/OVEREND/OVEREND/Views/Sidebar/NewSidebarView.swift /Users/lawliet/OVEREND/OVEREND/Views/Sidebar/TagSidebarView.swift /Users/lawliet/OVEREND/OVEREND/Views/Utils/AppIconPreview.swift /Users/lawliet/OVEREND/OVEREND/Views/Utils/EdgeBorder.swift /Users/lawliet/OVEREND/OVEREND/Views/Utils/KeyAwareView.swift /Users/lawliet/OVEREND/OVEREND/Views/DataLabelingView.swift /Users/lawliet/OVEREND/OVEREND/Views/MLModelTestView.swift /Users/lawliet/OVEREND/OVEREND/Views/NewContentView.swift /Users/lawliet/OVEREND/OVEREND/Views/NewContentView+Actions.swift /Users/lawliet/OVEREND/OVEREND/Views/OCRTestView.swift /Users/lawliet/OVEREND/OVEREND/Views/SimpleContentView+Import.swift /Users/lawliet/OVEREND/OVEREND/Views/TrainingDataExportView.swift /Users/lawliet/OVEREND/OVEREND/Views/WelcomeView.swift /Users/lawliet/OVEREND/OVEREND/OVERENDApp.swift /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/DerivedSources/GeneratedAssetSymbols.swift -target arm64-apple-macos26.1 -module-can-import-version AppKit 2685.30.107 2685.30.107 -module-can-import-version DeveloperToolsSupport 23.0.4 23.0.4 -module-can-import-version SwiftUI 7.2.5.1 7.2.5 -module-can-import overend_coreFFI -disable-cross-import-overlay-search -swift-module-cross-import AppIntents /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/AppKit.swiftoverlay -swift-module-cross-import AppIntents /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import AppIntents /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/UIKit.swiftoverlay -swift-module-cross-import AppIntents /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/AppKit.swiftoverlay -swift-module-cross-import AppIntents /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import AppIntents /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk/System/Library/Frameworks/AppIntents.framework/Modules/AppIntents.swiftcrossimport/UIKit.swiftoverlay -swift-module-cross-import CoreData /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/CoreData.framework/Modules/CoreData.swiftcrossimport/CloudKit.swiftoverlay -swift-module-cross-import CoreData /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk/System/Library/Frameworks/CoreData.framework/Modules/CoreData.swiftcrossimport/CloudKit.swiftoverlay -swift-module-cross-import SwiftData /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk/System/Library/Frameworks/SwiftData.framework/Modules/SwiftData.swiftcrossimport/CoreData.swiftoverlay -swift-module-cross-import SwiftData /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk/System/Library/Frameworks/SwiftData.framework/Modules/SwiftData.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import WebKit /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Cryptexes/OS/System/Library/Frameworks/WebKit.framework/Modules/WebKit.swiftcrossimport/SwiftUI.swiftoverlay -swift-module-cross-import WebKit /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk/System/Library/Frameworks/WebKit.framework/Modules/WebKit.swiftcrossimport/SwiftUI.swiftoverlay -load-resolved-plugin /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libAppIntentsMacros.dylib\#/Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#AppIntentsMacros -load-resolved-plugin /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libFoundationMacros.dylib\#/Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#FoundationMacros -load-resolved-plugin /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libFoundationModelsMacros.dylib\#/Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#FoundationModelsMacros -load-resolved-plugin /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libObservationMacros.dylib\#/Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#ObservationMacros -load-resolved-plugin /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libPreviewsMacros.dylib\#/Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#PreviewsMacros -load-resolved-plugin /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libSwiftDataMacros.dylib\#/Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#SwiftDataMacros -load-resolved-plugin /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libSwiftMacros.dylib\#/Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#SwiftMacros -load-resolved-plugin /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins/libSwiftUIMacros.dylib\#/Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server\#SwiftUIMacros -disable-implicit-swift-modules -Xcc -fno-implicit-modules -Xcc -fno-implicit-module-maps -explicit-swift-module-map-file /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND-dependencies-1.json -Xllvm -aarch64-use-tbi -enable-objc-interop -stack-check -sdk /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -I /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -F /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -no-color-diagnostics -Xcc -fno-color-diagnostics -enable-testing -g -debug-info-format\=dwarf -dwarf-version\=5 -module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -profile-generate -profile-coverage-mapping -swift-version 5 -enforce-exclusivity\=checked -Onone -D DEBUG -serialize-debugging-options -const-gather-protocols-file /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND_const_extract_protocols.json -enable-upcoming-feature DisableOutwardActorInference -enable-upcoming-feature InferSendableFromCaptures -enable-upcoming-feature GlobalActorIsolatedTypesUsability -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -default-isolation\=MainActor -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/lawliet/OVEREND -enable-anonymous-context-mangled-names -file-compilation-dir /Users/lawliet/OVEREND -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -Xcc -ivfsstatcache -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/macosx26.2-25C57-830dddbfbccebdd7c0a1e2a9282ec48d.sdkstatcache -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/swift-overrides.hmap -Xcc -iquote -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-generated-files.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-own-target-headers.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-all-target-headers.hmap -Xcc -iquote -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-project-headers.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/include -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/DerivedSources-normal/arm64 -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/DerivedSources/arm64 -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/DerivedSources -Xcc -DDEBUG\=1 -no-auto-bridging-header-chaining -module-name OVEREND -frontend-parseable-output -disable-clang-spi -target-sdk-version 26.2 -target-sdk-name macosx26.2 -clang-target arm64-apple-macos26.2 -in-process-plugin-server-path /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -emit-module-doc-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.swiftdoc -emit-module-source-info-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.swiftsourceinfo -emit-objc-header-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND-Swift.h -serialize-diagnostics-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND-primary-emit-module.dia -emit-dependencies-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND-primary-emit-module.d -o /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.swiftmodule -emit-abi-descriptor-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.abi.json
+
+EmitSwiftModule normal arm64 (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Repositories/DocumentRepository.swift:76:10: warning: non-Sendable type 'Document' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'create(title:)'; this is an error in the Swift 6 language mode
+    func create(title: String) async throws -> Document {
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Document.swift:15:14: note: class 'Document' does not conform to the 'Sendable' protocol
+public class Document: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/DocumentRepository.swift:50:10: warning: non-Sendable type '[Document]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchAll()'; this is an error in the Swift 6 language mode
+    func fetchAll() async throws -> [Document] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/DocumentRepository.swift:55:10: warning: non-Sendable type 'Document?' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetch(byId:)'; this is an error in the Swift 6 language mode
+    func fetch(byId id: UUID) async throws -> Document? {
+         ^
+Swift.Optional:1:21: note: generic enum 'Optional' does not conform to the 'Sendable' protocol
+@frozen public enum Optional<Wrapped> : ~Copyable, ~Escapable where Wrapped : ~Copyable, Wrapped : ~Escapable {
+                    ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:51:10: warning: non-Sendable parameter type 'Library' cannot be sent from caller of protocol requirement 'fetchAll(in:sortBy:)' into main actor-isolated implementation; this is an error in the Swift 6 language mode
+    func fetchAll(in library: Library, sortBy: Entry.SortOption = .updated) async throws -> [Entry] {
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Library.swift:12:14: note: class 'Library' does not conform to the 'Sendable' protocol
+public class Library: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:51:10: warning: non-Sendable type '[Entry]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchAll(in:sortBy:)'; this is an error in the Swift 6 language mode
+    func fetchAll(in library: Library, sortBy: Entry.SortOption = .updated) async throws -> [Entry] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:68:10: warning: non-Sendable parameter type 'Library' cannot be sent from caller of protocol requirement 'search(query:in:)' into main actor-isolated implementation; this is an error in the Swift 6 language mode
+    func search(query: String, in library: Library) async throws -> [Entry] {
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Library.swift:12:14: note: class 'Library' does not conform to the 'Sendable' protocol
+public class Library: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:68:10: warning: non-Sendable type '[Entry]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'search(query:in:)'; this is an error in the Swift 6 language mode
+    func search(query: String, in library: Library) async throws -> [Entry] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:88:10: warning: non-Sendable type 'Entry?' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'find(byCitationKey:)'; this is an error in the Swift 6 language mode
+    func find(byCitationKey key: String) async throws -> Entry? {
+         ^
+Swift.Optional:1:21: note: generic enum 'Optional' does not conform to the 'Sendable' protocol
+@frozen public enum Optional<Wrapped> : ~Copyable, ~Escapable where Wrapped : ~Copyable, Wrapped : ~Escapable {
+                    ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:112:10: warning: non-Sendable parameter type 'Library' cannot be sent from caller of protocol requirement 'create(citationKey:entryType:fields:library:)' into main actor-isolated implementation; this is an error in the Swift 6 language mode
+    func create(
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Library.swift:12:14: note: class 'Library' does not conform to the 'Sendable' protocol
+public class Library: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:112:10: warning: non-Sendable type 'Entry' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'create(citationKey:entryType:fields:library:)'; this is an error in the Swift 6 language mode
+    func create(
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Entry.swift:16:14: note: class 'Entry' does not conform to the 'Sendable' protocol
+public class Entry: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:45:10: warning: non-Sendable type '[Entry]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchAll()'; this is an error in the Swift 6 language mode
+    func fetchAll() async throws -> [Entry] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:59:10: warning: non-Sendable type 'Entry?' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetch(byId:)'; this is an error in the Swift 6 language mode
+    func fetch(byId id: UUID) async throws -> Entry? {
+         ^
+Swift.Optional:1:21: note: generic enum 'Optional' does not conform to the 'Sendable' protocol
+@frozen public enum Optional<Wrapped> : ~Copyable, ~Escapable where Wrapped : ~Copyable, Wrapped : ~Escapable {
+                    ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:68:10: warning: non-Sendable parameter type 'Library' cannot be sent from caller of protocol requirement 'fetchRootGroups(in:)' into main actor-isolated implementation; this is an error in the Swift 6 language mode
+    func fetchRootGroups(in library: Library) async throws -> [Group] {
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Library.swift:12:14: note: class 'Library' does not conform to the 'Sendable' protocol
+public class Library: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:68:10: warning: non-Sendable type '[Group]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchRootGroups(in:)'; this is an error in the Swift 6 language mode
+    func fetchRootGroups(in library: Library) async throws -> [Group] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:79:10: warning: non-Sendable parameter type 'Group' cannot be sent from caller of protocol requirement 'fetchChildren(of:)' into main actor-isolated implementation; this is an error in the Swift 6 language mode
+    func fetchChildren(of parent: Group) async throws -> [Group] {
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Group.swift:12:14: note: class 'Group' does not conform to the 'Sendable' protocol
+public class Group: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:79:10: warning: non-Sendable type '[Group]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchChildren(of:)'; this is an error in the Swift 6 language mode
+    func fetchChildren(of parent: Group) async throws -> [Group] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:99:10: warning: non-Sendable parameter type 'Library' cannot be sent from caller of protocol requirement 'create(name:library:parent:)' into main actor-isolated implementation; this is an error in the Swift 6 language mode
+    func create(
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Library.swift:12:14: note: class 'Library' does not conform to the 'Sendable' protocol
+public class Library: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:99:10: warning: non-Sendable parameter type 'Group?' cannot be sent from caller of protocol requirement 'create(name:library:parent:)' into main actor-isolated implementation; this is an error in the Swift 6 language mode
+    func create(
+         ^
+Swift.Optional:1:21: note: generic enum 'Optional' does not conform to the 'Sendable' protocol
+@frozen public enum Optional<Wrapped> : ~Copyable, ~Escapable where Wrapped : ~Copyable, Wrapped : ~Escapable {
+                    ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:99:10: warning: non-Sendable type 'Group' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'create(name:library:parent:)'; this is an error in the Swift 6 language mode
+    func create(
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Group.swift:12:14: note: class 'Group' does not conform to the 'Sendable' protocol
+public class Group: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:54:10: warning: non-Sendable type '[Group]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchAll()'; this is an error in the Swift 6 language mode
+    func fetchAll() async throws -> [Group] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:59:10: warning: non-Sendable type 'Group?' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetch(byId:)'; this is an error in the Swift 6 language mode
+    func fetch(byId id: UUID) async throws -> Group? {
+         ^
+Swift.Optional:1:21: note: generic enum 'Optional' does not conform to the 'Sendable' protocol
+@frozen public enum Optional<Wrapped> : ~Copyable, ~Escapable where Wrapped : ~Copyable, Wrapped : ~Escapable {
+                    ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/LibraryRepository.swift:53:10: warning: non-Sendable type 'Library?' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchDefault()'; this is an error in the Swift 6 language mode
+    func fetchDefault() async throws -> Library? {
+         ^
+Swift.Optional:1:21: note: generic enum 'Optional' does not conform to the 'Sendable' protocol
+@frozen public enum Optional<Wrapped> : ~Copyable, ~Escapable where Wrapped : ~Copyable, Wrapped : ~Escapable {
+                    ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/LibraryRepository.swift:89:10: warning: non-Sendable type 'Library' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'getOrCreateDefault()'; this is an error in the Swift 6 language mode
+    func getOrCreateDefault() async throws -> Library {
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Library.swift:12:14: note: class 'Library' does not conform to the 'Sendable' protocol
+public class Library: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/LibraryRepository.swift:75:10: warning: non-Sendable type 'Library' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'create(name:isDefault:)'; this is an error in the Swift 6 language mode
+    func create(name: String, isDefault: Bool = false) async throws -> Library {
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Library.swift:12:14: note: class 'Library' does not conform to the 'Sendable' protocol
+public class Library: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/LibraryRepository.swift:39:10: warning: non-Sendable type '[Library]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchAll()'; this is an error in the Swift 6 language mode
+    func fetchAll() async throws -> [Library] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/LibraryRepository.swift:44:10: warning: non-Sendable type 'Library?' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetch(byId:)'; this is an error in the Swift 6 language mode
+    func fetch(byId id: UUID) async throws -> Library? {
+         ^
+Swift.Optional:1:21: note: generic enum 'Optional' does not conform to the 'Sendable' protocol
+@frozen public enum Optional<Wrapped> : ~Copyable, ~Escapable where Wrapped : ~Copyable, Wrapped : ~Escapable {
+                    ^
+/Users/lawliet/OVEREND/OVEREND/Services/AI/Agent/LiteratureAgent.swift:242:53: warning: call to main actor-isolated initializer 'init(context:)' in a synchronous nonisolated context
+    init(entryRepository: EntryRepositoryProtocol = EntryRepository()) {
+                                                    ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:37:77: note: calls to initializer 'init(context:)' from outside of its actor context are implicitly asynchronous
+final class EntryRepository: BaseRepository<Entry>, EntryRepositoryProtocol {
+                                                                            ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:37:77: note: main actor isolation inferred from inheritance from generic class 'BaseRepository'
+final class EntryRepository: BaseRepository<Entry>, EntryRepositoryProtocol {
+                                                                            ^
+/Users/lawliet/OVEREND/OVEREND/Services/AI/Agent/LiteratureAgent.swift:240:34: warning: use of protocol 'EntryRepositoryProtocol' as a type must be written 'any EntryRepositoryProtocol'; this will be an error in a future Swift language mode
+    private var entryRepository: EntryRepositoryProtocol
+                                 ^~~~~~~~~~~~~~~~~~~~~~~
+                                 any EntryRepositoryProtocol
+/Users/lawliet/OVEREND/OVEREND/Services/AI/Agent/LiteratureAgent.swift:242:27: warning: use of protocol 'EntryRepositoryProtocol' as a type must be written 'any EntryRepositoryProtocol'; this will be an error in a future Swift language mode
+    init(entryRepository: EntryRepositoryProtocol = EntryRepository()) {
+                          ^~~~~~~~~~~~~~~~~~~~~~~
+                          any EntryRepositoryProtocol
+/Users/lawliet/OVEREND/OVEREND/Services/AI/Agent/LiteratureAgent.swift:247:43: warning: use of protocol 'EntryRepositoryProtocol' as a type must be written 'any EntryRepositoryProtocol'; this will be an error in a future Swift language mode
+    func setEntryRepository(_ repository: EntryRepositoryProtocol) {
+                                          ^~~~~~~~~~~~~~~~~~~~~~~
+                                          any EntryRepositoryProtocol
+/Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/StandardsAIDomain.swift:179:49: warning: call to main actor-isolated initializer 'init()' in a synchronous nonisolated context
+        options: UnifiedStandardsCheckOptions = UnifiedStandardsCheckOptions()
+                                                ^
+/Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/StandardsAIDomain.swift:122:12: note: calls to initializer 'init()' from outside of its actor context are implicitly asynchronous
+    public init() {}
+           ^
+/Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/TranslationAIDomain.swift:136:47: warning: call to main actor-isolated initializer 'init()' in a synchronous nonisolated context
+        options: AcademicTranslationOptions = AcademicTranslationOptions()
+                                              ^
+/Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/TranslationAIDomain.swift:37:12: note: calls to initializer 'init()' from outside of its actor context are implicitly asynchronous
+    public init() {}
+           ^
+/Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/WritingAIDomain.swift:103:76: warning: call to main actor-isolated initializer 'init()' in a synchronous nonisolated context
+    public func getSuggestions(for text: String, options: WritingOptions = WritingOptions()) async throws -> WritingSuggestions {
+                                                                           ^
+/Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/WritingAIDomain.swift:21:12: note: calls to initializer 'init()' from outside of its actor context are implicitly asynchronous
+    public init() {}
+           ^
+/Users/lawliet/OVEREND/OVEREND/Services/Core/ServiceContainer.swift:28:40: warning: main actor-isolated static property 'shared' can not be referenced from a nonisolated context; this is an error in the Swift 6 language mode
+        aiService: UnifiedAIService = .shared
+                                       ^
+/Users/lawliet/OVEREND/OVEREND/Services/AI/Core/UnifiedAIService.swift:42:23: note: static property declared here
+    public static let shared = UnifiedAIService()
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Services/Document/OCR/OCRService.swift:150:52: warning: main actor-isolated static property 'default' can not be referenced on a nonisolated actor instance
+    private var configuration: OCRConfiguration = .default
+                                                   ^
+/Users/lawliet/OVEREND/OVEREND/Services/Document/OCR/OCRService.swift:38:16: note: static property declared here
+    static let `default` = OCRConfiguration()
+               ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText2 = "已輸入文字"
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText2 = "已輸入文字"
+/Users/lawliet/OVEREND/OVEREND/ViewModels/DocumentViewModel.swift:22:29: warning: use of protocol 'DocumentRepositoryProtocol' as a type must be written 'any DocumentRepositoryProtocol'; this will be an error in a future Swift language mode
+    private let repository: DocumentRepositoryProtocol
+                            ^~~~~~~~~~~~~~~~~~~~~~~~~~
+                            any DocumentRepositoryProtocol
+/Users/lawliet/OVEREND/OVEREND/ViewModels/DocumentViewModel.swift:24:22: warning: use of protocol 'DocumentRepositoryProtocol' as a type must be written 'any DocumentRepositoryProtocol'; this will be an error in a future Swift language mode
+    init(repository: DocumentRepositoryProtocol? = nil) {
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~
+                     (any DocumentRepositoryProtocol)
+/Users/lawliet/OVEREND/OVEREND/ViewModels/EntryViewModel.swift:20:29: warning: use of protocol 'EntryRepositoryProtocol' as a type must be written 'any EntryRepositoryProtocol'; this will be an error in a future Swift language mode
+    private let repository: EntryRepositoryProtocol
+                            ^~~~~~~~~~~~~~~~~~~~~~~
+                            any EntryRepositoryProtocol
+/Users/lawliet/OVEREND/OVEREND/ViewModels/EntryViewModel.swift:32:22: warning: use of protocol 'EntryRepositoryProtocol' as a type must be written 'any EntryRepositoryProtocol'; this will be an error in a future Swift language mode
+    init(repository: EntryRepositoryProtocol? = nil) {
+                     ^~~~~~~~~~~~~~~~~~~~~~~
+                     (any EntryRepositoryProtocol)
+/Users/lawliet/OVEREND/OVEREND/ViewModels/GroupViewModel.swift:17:29: warning: use of protocol 'GroupRepositoryProtocol' as a type must be written 'any GroupRepositoryProtocol'; this will be an error in a future Swift language mode
+    private let repository: GroupRepositoryProtocol
+                            ^~~~~~~~~~~~~~~~~~~~~~~
+                            any GroupRepositoryProtocol
+/Users/lawliet/OVEREND/OVEREND/ViewModels/GroupViewModel.swift:27:22: warning: use of protocol 'GroupRepositoryProtocol' as a type must be written 'any GroupRepositoryProtocol'; this will be an error in a future Swift language mode
+    init(repository: GroupRepositoryProtocol? = nil) {
+                     ^~~~~~~~~~~~~~~~~~~~~~~
+                     (any GroupRepositoryProtocol)
+/Users/lawliet/OVEREND/OVEREND/ViewModels/LibraryViewModel.swift:19:29: warning: use of protocol 'LibraryRepositoryProtocol' as a type must be written 'any LibraryRepositoryProtocol'; this will be an error in a future Swift language mode
+    private let repository: LibraryRepositoryProtocol
+                            ^~~~~~~~~~~~~~~~~~~~~~~~~
+                            any LibraryRepositoryProtocol
+/Users/lawliet/OVEREND/OVEREND/ViewModels/LibraryViewModel.swift:21:22: warning: use of protocol 'LibraryRepositoryProtocol' as a type must be written 'any LibraryRepositoryProtocol'; this will be an error in a future Swift language mode
+    init(repository: LibraryRepositoryProtocol? = nil) {
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~
+                     (any LibraryRepositoryProtocol)
+/Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldLibrarySubviews.swift:27:27: error: cannot find type 'EmeraldLibraryView' in scope
+    let smartGroupFilter: EmeraldLibraryView.SmartGroupType
+                          ^~~~~~~~~~~~~~~~~~
+/Users/lawliet/OVEREND/OVEREND/Views/Emerald/LibrarySidebar.swift:20:36: error: cannot find type 'EmeraldLibraryView' in scope
+    @Binding var smartGroupFilter: EmeraldLibraryView.SmartGroupType
+                                   ^~~~~~~~~~~~~~~~~~
+/Users/lawliet/OVEREND/OVEREND/Views/SimpleContentView+Import.swift:14:11: error: cannot find type 'SimpleContentView' in scope
+extension SimpleContentView {
+          ^~~~~~~~~~~~~~~~~
+
+SwiftCompile normal arm64 Compiling\ AISettingsView.swift,\ DataManagementView.swift,\ NotionSettingsView.swift,\ ProxySettingsView.swift,\ SettingsComponents.swift,\ SettingsView.swift,\ ThemeSettingsView.swift,\ MainSidebarView.swift,\ NewSidebarView.swift,\ TagSidebarView.swift,\ AppIconPreview.swift,\ EdgeBorder.swift,\ KeyAwareView.swift,\ DataLabelingView.swift,\ MLModelTestView.swift,\ NewContentView.swift,\ NewContentView+Actions.swift,\ OCRTestView.swift,\ SimpleContentView+Import.swift,\ TrainingDataExportView.swift,\ WelcomeView.swift,\ OVERENDApp.swift,\ GeneratedAssetSymbols.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/AISettingsView.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/DataManagementView.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/NotionSettingsView.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/ProxySettingsView.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/SettingsComponents.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/SettingsView.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/ThemeSettingsView.swift /Users/lawliet/OVEREND/OVEREND/Views/Sidebar/MainSidebarView.swift /Users/lawliet/OVEREND/OVEREND/Views/Sidebar/NewSidebarView.swift /Users/lawliet/OVEREND/OVEREND/Views/Sidebar/TagSidebarView.swift /Users/lawliet/OVEREND/OVEREND/Views/Utils/AppIconPreview.swift /Users/lawliet/OVEREND/OVEREND/Views/Utils/EdgeBorder.swift /Users/lawliet/OVEREND/OVEREND/Views/Utils/KeyAwareView.swift /Users/lawliet/OVEREND/OVEREND/Views/DataLabelingView.swift /Users/lawliet/OVEREND/OVEREND/Views/MLModelTestView.swift /Users/lawliet/OVEREND/OVEREND/Views/NewContentView.swift /Users/lawliet/OVEREND/OVEREND/Views/NewContentView+Actions.swift /Users/lawliet/OVEREND/OVEREND/Views/OCRTestView.swift /Users/lawliet/OVEREND/OVEREND/Views/SimpleContentView+Import.swift /Users/lawliet/OVEREND/OVEREND/Views/TrainingDataExportView.swift /Users/lawliet/OVEREND/OVEREND/Views/WelcomeView.swift /Users/lawliet/OVEREND/OVEREND/OVERENDApp.swift /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Settings/AISettingsView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Settings/DataManagementView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Settings/NotionSettingsView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Settings/ProxySettingsView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Settings/SettingsComponents.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Settings/SettingsView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Settings/ThemeSettingsView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Sidebar/MainSidebarView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Sidebar/NewSidebarView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Sidebar/TagSidebarView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Utils/AppIconPreview.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Utils/EdgeBorder.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Utils/KeyAwareView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/DataLabelingView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/MLModelTestView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/NewContentView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/NewContentView+Actions.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/OCRTestView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/SimpleContentView+Import.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/TrainingDataExportView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/WelcomeView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/OVERENDApp.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling PersistenceController.swift, SearchResult.swift, Tag.swift, ThesisMetadata.swift, WritingTemplate.swift, iPadContentView.swift, FileDialogs_iPad.swift, OVERENDApp_iPad.swift, FileDialogs_macOS.swift, PlatformAbstraction.swift, DocumentRepository.swift, EntryRepository.swift, GroupRepository.swift, LibraryRepository.swift, RepositoryProtocol.swift, BibTeXGenerator.swift, BibTeXParser.swift, ChineseNameFormatter.swift, CitationService.swift, RISParser.swift, AcademicLanguageService.swift, AcademicPhrasebank.swift, ChineseOptimizationService.swift, TerminologyFirewall.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 Compiling\ ModernEntryDetailView.swift,\ ModernEntryDetailView+Methods.swift,\ ModernEntryDetailView+Sections.swift,\ RelatedLiteratureView.swift,\ SmartTagSuggestionView.swift,\ EntryListComponents.swift,\ EntryPreviewCard.swift,\ ModernEntryListView.swift,\ ActionBar.swift,\ ExtractionMethodBadge.swift,\ ExtractionResultPane.swift,\ ExtractionWorkbenchView.swift,\ FieldRow.swift,\ ProgressHeader.swift,\ StarRating.swift,\ ThesisMetadataEditorView.swift,\ OnlineSearchView.swift,\ AccountSection.swift,\ EditorThemeSection.swift,\ GeneralSection.swift,\ IntelligenceSection.swift,\ KeyBindingsSection.swift,\ TypographySection.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/ModernEntryDetailView.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/ModernEntryDetailView+Methods.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/ModernEntryDetailView+Sections.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/RelatedLiteratureView.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/SmartTagSuggestionView.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryList/EntryListComponents.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryList/EntryPreviewCard.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryList/ModernEntryListView.swift /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ActionBar.swift /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ExtractionMethodBadge.swift /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ExtractionResultPane.swift /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ExtractionWorkbenchView.swift /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/FieldRow.swift /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ProgressHeader.swift /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/StarRating.swift /Users/lawliet/OVEREND/OVEREND/Views/Metadata/ThesisMetadataEditorView.swift /Users/lawliet/OVEREND/OVEREND/Views/OnlineSearch/OnlineSearchView.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/AccountSection.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/EditorThemeSection.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/GeneralSection.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/IntelligenceSection.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/KeyBindingsSection.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/TypographySection.swift (in target 'OVEREND' from project 'OVEREND')
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/ModernEntryDetailView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/ModernEntryDetailView+Methods.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/ModernEntryDetailView+Sections.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/RelatedLiteratureView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/SmartTagSuggestionView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/EntryList/EntryListComponents.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/EntryList/EntryPreviewCard.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/EntryList/ModernEntryListView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ActionBar.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ExtractionMethodBadge.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ExtractionResultPane.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ExtractionWorkbenchView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/FieldRow.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ProgressHeader.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/StarRating.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Metadata/ThesisMetadataEditorView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/OnlineSearch/OnlineSearchView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/AccountSection.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/EditorThemeSection.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/GeneralSection.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/IntelligenceSection.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/KeyBindingsSection.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/TypographySection.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling FormatSystemTests.swift, AnimationSystem.swift, AppTheme.swift, DesignTokens.swift, LiquidGlassModifiers.swift, View+Theme.swift, AppIconGenerator.swift, Color+Extensions.swift, Constants.swift, DialogHelper.swift, FocusedTextField.swift, FocusManager.swift, FontSystem.swift, KeychainHelper.swift, PerformanceOptimizations.swift, TextInputDialog.swift, UTType+Extensions.swift, DocumentViewModel.swift, EntryViewModel.swift, ExtractionWorkbenchViewModel.swift, GroupViewModel.swift, LibraryViewModel.swift, MainViewState.swift (in target 'OVEREND' from project 'OVEREND')
+
+note: Removed stale file '/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/EmeraldLibraryView.o'
+
+note: Removed stale file '/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/EmeraldLibraryView.stringsdata'
+
+note: Removed stale file '/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/EmeraldLibraryView.swiftconstvalues'
+
+note: Removed stale file '/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/EmeraldReaderView.o'
+
+note: Removed stale file '/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/EmeraldReaderView.stringsdata'
+
+note: Removed stale file '/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/EmeraldReaderView.swiftconstvalues'
+
+note: Removed stale file '/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/SimpleContentComponents.o'
+
+note: Removed stale file '/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/SimpleContentComponents.stringsdata'
+
+note: Removed stale file '/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/SimpleContentComponents.swiftconstvalues'
+
+note: Removed stale file '/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/SimpleContentView.o'
+
+note: Removed stale file '/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/SimpleContentView.stringsdata'
+
+note: Removed stale file '/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/SimpleContentView.swiftconstvalues'
+
+** BUILD FAILED **
+
+
+The following build commands failed:
+	SwiftEmitModule normal arm64 Emitting\ module\ for\ OVEREND (in target 'OVEREND' from project 'OVEREND')
+	EmitSwiftModule normal arm64 (in target 'OVEREND' from project 'OVEREND')
+	Building project OVEREND with scheme OVEREND
+(3 failures)

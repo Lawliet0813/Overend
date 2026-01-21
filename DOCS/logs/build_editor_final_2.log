@@ -1,0 +1,1500 @@
+Command line invocation:
+    /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project OVEREND.xcodeproj -scheme OVEREND -destination platform=macOS,arch=arm64 build
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (1 target)
+    Target 'OVEREND' in project 'OVEREND' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+ExecuteExternalTool /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+Build description signature: eaa17dba9839fce28e83c68cbe1076b7
+Build description path: /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/XCBuildData/eaa17dba9839fce28e83c68cbe1076b7.xcbuilddata
+ClangStatCache /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk /Users/lawliet/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/macosx26.2-25C57-830dddbfbccebdd7c0a1e2a9282ec48d.sdkstatcache
+    cd /Users/lawliet/OVEREND/OVEREND.xcodeproj
+    /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -o /Users/lawliet/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/macosx26.2-25C57-830dddbfbccebdd7c0a1e2a9282ec48d.sdkstatcache
+
+SwiftDriver OVEREND normal arm64 com.apple.xcode.tools.swift.compiler (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    builtin-SwiftDriver -- /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name OVEREND -Onone -enforce-exclusivity\=checked @/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.SwiftFileList -DDEBUG -default-isolation\=MainActor -enable-bare-slash-regex -enable-upcoming-feature DisableOutwardActorInference -enable-upcoming-feature InferSendableFromCaptures -enable-upcoming-feature GlobalActorIsolatedTypesUsability -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -target arm64-apple-macos26.1 -g -module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -F /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -emit-localized-strings -emit-localized-strings-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64 -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/macosx26.2-25C57-830dddbfbccebdd7c0a1e2a9282ec48d.sdkstatcache -output-file-map /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND_const_extract_protocols.json -Xcc -iquote -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-generated-files.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-own-target-headers.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-all-target-headers.hmap -Xcc -iquote -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-project-headers.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/include -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/DerivedSources-normal/arm64 -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/DerivedSources/arm64 -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND-Swift.h -working-directory /Users/lawliet/OVEREND -experimental-emit-module-separately -disable-cmo
+
+SwiftCompile normal arm64 Compiling\ ModernEntryDetailView.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/ModernEntryDetailView.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/ModernEntryDetailView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText2 = "已輸入文字"
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText2 = "已輸入文字"
+
+SwiftCompile normal arm64 Compiling\ NewContentView.swift /Users/lawliet/OVEREND/OVEREND/Views/NewContentView.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/NewContentView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText2 = "已輸入文字"
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText2 = "已輸入文字"
+
+SwiftCompile normal arm64 Compiling\ DraftsListView.swift /Users/lawliet/OVEREND/OVEREND/Views/Drafts/DraftsListView.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Drafts/DraftsListView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 Compiling\ NewSidebarView.swift /Users/lawliet/OVEREND/OVEREND/Views/Sidebar/NewSidebarView.swift (in target 'OVEREND' from project 'OVEREND')
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Sidebar/NewSidebarView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText2 = "已輸入文字"
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText2 = "已輸入文字"
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ OVEREND (in target 'OVEREND' from project 'OVEREND')
+EmitSwiftModule normal arm64 (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Repositories/DocumentRepository.swift:76:10: warning: non-Sendable type 'Document' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'create(title:)'; this is an error in the Swift 6 language mode
+    func create(title: String) async throws -> Document {
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Document.swift:15:14: note: class 'Document' does not conform to the 'Sendable' protocol
+public class Document: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/DocumentRepository.swift:50:10: warning: non-Sendable type '[Document]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchAll()'; this is an error in the Swift 6 language mode
+    func fetchAll() async throws -> [Document] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/DocumentRepository.swift:55:10: warning: non-Sendable type 'Document?' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetch(byId:)'; this is an error in the Swift 6 language mode
+    func fetch(byId id: UUID) async throws -> Document? {
+         ^
+Swift.Optional:1:21: note: generic enum 'Optional' does not conform to the 'Sendable' protocol
+@frozen public enum Optional<Wrapped> : ~Copyable, ~Escapable where Wrapped : ~Copyable, Wrapped : ~Escapable {
+                    ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:51:10: warning: non-Sendable parameter type 'Library' cannot be sent from caller of protocol requirement 'fetchAll(in:sortBy:)' into main actor-isolated implementation; this is an error in the Swift 6 language mode
+    func fetchAll(in library: Library, sortBy: Entry.SortOption = .updated) async throws -> [Entry] {
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Library.swift:12:14: note: class 'Library' does not conform to the 'Sendable' protocol
+public class Library: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:51:10: warning: non-Sendable type '[Entry]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchAll(in:sortBy:)'; this is an error in the Swift 6 language mode
+    func fetchAll(in library: Library, sortBy: Entry.SortOption = .updated) async throws -> [Entry] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:68:10: warning: non-Sendable parameter type 'Library' cannot be sent from caller of protocol requirement 'search(query:in:)' into main actor-isolated implementation; this is an error in the Swift 6 language mode
+    func search(query: String, in library: Library) async throws -> [Entry] {
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Library.swift:12:14: note: class 'Library' does not conform to the 'Sendable' protocol
+public class Library: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:68:10: warning: non-Sendable type '[Entry]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'search(query:in:)'; this is an error in the Swift 6 language mode
+    func search(query: String, in library: Library) async throws -> [Entry] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:88:10: warning: non-Sendable type 'Entry?' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'find(byCitationKey:)'; this is an error in the Swift 6 language mode
+    func find(byCitationKey key: String) async throws -> Entry? {
+         ^
+Swift.Optional:1:21: note: generic enum 'Optional' does not conform to the 'Sendable' protocol
+@frozen public enum Optional<Wrapped> : ~Copyable, ~Escapable where Wrapped : ~Copyable, Wrapped : ~Escapable {
+                    ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:112:10: warning: non-Sendable parameter type 'Library' cannot be sent from caller of protocol requirement 'create(citationKey:entryType:fields:library:)' into main actor-isolated implementation; this is an error in the Swift 6 language mode
+    func create(
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Library.swift:12:14: note: class 'Library' does not conform to the 'Sendable' protocol
+public class Library: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:112:10: warning: non-Sendable type 'Entry' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'create(citationKey:entryType:fields:library:)'; this is an error in the Swift 6 language mode
+    func create(
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Entry.swift:16:14: note: class 'Entry' does not conform to the 'Sendable' protocol
+public class Entry: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:45:10: warning: non-Sendable type '[Entry]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchAll()'; this is an error in the Swift 6 language mode
+    func fetchAll() async throws -> [Entry] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:59:10: warning: non-Sendable type 'Entry?' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetch(byId:)'; this is an error in the Swift 6 language mode
+    func fetch(byId id: UUID) async throws -> Entry? {
+         ^
+Swift.Optional:1:21: note: generic enum 'Optional' does not conform to the 'Sendable' protocol
+@frozen public enum Optional<Wrapped> : ~Copyable, ~Escapable where Wrapped : ~Copyable, Wrapped : ~Escapable {
+                    ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:68:10: warning: non-Sendable parameter type 'Library' cannot be sent from caller of protocol requirement 'fetchRootGroups(in:)' into main actor-isolated implementation; this is an error in the Swift 6 language mode
+    func fetchRootGroups(in library: Library) async throws -> [Group] {
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Library.swift:12:14: note: class 'Library' does not conform to the 'Sendable' protocol
+public class Library: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:68:10: warning: non-Sendable type '[Group]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchRootGroups(in:)'; this is an error in the Swift 6 language mode
+    func fetchRootGroups(in library: Library) async throws -> [Group] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:79:10: warning: non-Sendable parameter type 'Group' cannot be sent from caller of protocol requirement 'fetchChildren(of:)' into main actor-isolated implementation; this is an error in the Swift 6 language mode
+    func fetchChildren(of parent: Group) async throws -> [Group] {
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Group.swift:12:14: note: class 'Group' does not conform to the 'Sendable' protocol
+public class Group: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:79:10: warning: non-Sendable type '[Group]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchChildren(of:)'; this is an error in the Swift 6 language mode
+    func fetchChildren(of parent: Group) async throws -> [Group] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:99:10: warning: non-Sendable parameter type 'Library' cannot be sent from caller of protocol requirement 'create(name:library:parent:)' into main actor-isolated implementation; this is an error in the Swift 6 language mode
+    func create(
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Library.swift:12:14: note: class 'Library' does not conform to the 'Sendable' protocol
+public class Library: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:99:10: warning: non-Sendable parameter type 'Group?' cannot be sent from caller of protocol requirement 'create(name:library:parent:)' into main actor-isolated implementation; this is an error in the Swift 6 language mode
+    func create(
+         ^
+Swift.Optional:1:21: note: generic enum 'Optional' does not conform to the 'Sendable' protocol
+@frozen public enum Optional<Wrapped> : ~Copyable, ~Escapable where Wrapped : ~Copyable, Wrapped : ~Escapable {
+                    ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:99:10: warning: non-Sendable type 'Group' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'create(name:library:parent:)'; this is an error in the Swift 6 language mode
+    func create(
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Group.swift:12:14: note: class 'Group' does not conform to the 'Sendable' protocol
+public class Group: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:54:10: warning: non-Sendable type '[Group]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchAll()'; this is an error in the Swift 6 language mode
+    func fetchAll() async throws -> [Group] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/GroupRepository.swift:59:10: warning: non-Sendable type 'Group?' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetch(byId:)'; this is an error in the Swift 6 language mode
+    func fetch(byId id: UUID) async throws -> Group? {
+         ^
+Swift.Optional:1:21: note: generic enum 'Optional' does not conform to the 'Sendable' protocol
+@frozen public enum Optional<Wrapped> : ~Copyable, ~Escapable where Wrapped : ~Copyable, Wrapped : ~Escapable {
+                    ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/LibraryRepository.swift:53:10: warning: non-Sendable type 'Library?' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchDefault()'; this is an error in the Swift 6 language mode
+    func fetchDefault() async throws -> Library? {
+         ^
+Swift.Optional:1:21: note: generic enum 'Optional' does not conform to the 'Sendable' protocol
+@frozen public enum Optional<Wrapped> : ~Copyable, ~Escapable where Wrapped : ~Copyable, Wrapped : ~Escapable {
+                    ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/LibraryRepository.swift:89:10: warning: non-Sendable type 'Library' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'getOrCreateDefault()'; this is an error in the Swift 6 language mode
+    func getOrCreateDefault() async throws -> Library {
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Library.swift:12:14: note: class 'Library' does not conform to the 'Sendable' protocol
+public class Library: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/LibraryRepository.swift:75:10: warning: non-Sendable type 'Library' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'create(name:isDefault:)'; this is an error in the Swift 6 language mode
+    func create(name: String, isDefault: Bool = false) async throws -> Library {
+         ^
+/Users/lawliet/OVEREND/OVEREND/Models/Library.swift:12:14: note: class 'Library' does not conform to the 'Sendable' protocol
+public class Library: NSManagedObject, Identifiable {
+             ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/LibraryRepository.swift:39:10: warning: non-Sendable type '[Library]' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetchAll()'; this is an error in the Swift 6 language mode
+    func fetchAll() async throws -> [Library] {
+         ^
+Swift.Array:1:23: note: generic struct 'Array' does not conform to the 'Sendable' protocol
+@frozen public struct Array<Element> : _DestructorSafeContainer {
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/LibraryRepository.swift:44:10: warning: non-Sendable type 'Library?' cannot be returned from main actor-isolated implementation to caller of protocol requirement 'fetch(byId:)'; this is an error in the Swift 6 language mode
+    func fetch(byId id: UUID) async throws -> Library? {
+         ^
+Swift.Optional:1:21: note: generic enum 'Optional' does not conform to the 'Sendable' protocol
+@frozen public enum Optional<Wrapped> : ~Copyable, ~Escapable where Wrapped : ~Copyable, Wrapped : ~Escapable {
+                    ^
+/Users/lawliet/OVEREND/OVEREND/Services/AI/Agent/LiteratureAgent.swift:242:53: warning: call to main actor-isolated initializer 'init(context:)' in a synchronous nonisolated context
+    init(entryRepository: EntryRepositoryProtocol = EntryRepository()) {
+                                                    ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:37:77: note: calls to initializer 'init(context:)' from outside of its actor context are implicitly asynchronous
+final class EntryRepository: BaseRepository<Entry>, EntryRepositoryProtocol {
+                                                                            ^
+/Users/lawliet/OVEREND/OVEREND/Repositories/EntryRepository.swift:37:77: note: main actor isolation inferred from inheritance from generic class 'BaseRepository'
+final class EntryRepository: BaseRepository<Entry>, EntryRepositoryProtocol {
+                                                                            ^
+/Users/lawliet/OVEREND/OVEREND/Services/AI/Agent/LiteratureAgent.swift:240:34: warning: use of protocol 'EntryRepositoryProtocol' as a type must be written 'any EntryRepositoryProtocol'; this will be an error in a future Swift language mode
+    private var entryRepository: EntryRepositoryProtocol
+                                 ^~~~~~~~~~~~~~~~~~~~~~~
+                                 any EntryRepositoryProtocol
+/Users/lawliet/OVEREND/OVEREND/Services/AI/Agent/LiteratureAgent.swift:242:27: warning: use of protocol 'EntryRepositoryProtocol' as a type must be written 'any EntryRepositoryProtocol'; this will be an error in a future Swift language mode
+    init(entryRepository: EntryRepositoryProtocol = EntryRepository()) {
+                          ^~~~~~~~~~~~~~~~~~~~~~~
+                          any EntryRepositoryProtocol
+/Users/lawliet/OVEREND/OVEREND/Services/AI/Agent/LiteratureAgent.swift:247:43: warning: use of protocol 'EntryRepositoryProtocol' as a type must be written 'any EntryRepositoryProtocol'; this will be an error in a future Swift language mode
+    func setEntryRepository(_ repository: EntryRepositoryProtocol) {
+                                          ^~~~~~~~~~~~~~~~~~~~~~~
+                                          any EntryRepositoryProtocol
+/Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/StandardsAIDomain.swift:179:49: warning: call to main actor-isolated initializer 'init()' in a synchronous nonisolated context
+        options: UnifiedStandardsCheckOptions = UnifiedStandardsCheckOptions()
+                                                ^
+/Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/StandardsAIDomain.swift:122:12: note: calls to initializer 'init()' from outside of its actor context are implicitly asynchronous
+    public init() {}
+           ^
+/Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/TranslationAIDomain.swift:136:47: warning: call to main actor-isolated initializer 'init()' in a synchronous nonisolated context
+        options: AcademicTranslationOptions = AcademicTranslationOptions()
+                                              ^
+/Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/TranslationAIDomain.swift:37:12: note: calls to initializer 'init()' from outside of its actor context are implicitly asynchronous
+    public init() {}
+           ^
+/Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/WritingAIDomain.swift:103:76: warning: call to main actor-isolated initializer 'init()' in a synchronous nonisolated context
+    public func getSuggestions(for text: String, options: WritingOptions = WritingOptions()) async throws -> WritingSuggestions {
+                                                                           ^
+/Users/lawliet/OVEREND/OVEREND/Services/AI/Domains/WritingAIDomain.swift:21:12: note: calls to initializer 'init()' from outside of its actor context are implicitly asynchronous
+    public init() {}
+           ^
+/Users/lawliet/OVEREND/OVEREND/Services/Core/ServiceContainer.swift:28:40: warning: main actor-isolated static property 'shared' can not be referenced from a nonisolated context; this is an error in the Swift 6 language mode
+        aiService: UnifiedAIService = .shared
+                                       ^
+/Users/lawliet/OVEREND/OVEREND/Services/AI/Core/UnifiedAIService.swift:42:23: note: static property declared here
+    public static let shared = UnifiedAIService()
+                      ^
+/Users/lawliet/OVEREND/OVEREND/Services/Document/OCR/OCRService.swift:150:52: warning: main actor-isolated static property 'default' can not be referenced on a nonisolated actor instance
+    private var configuration: OCRConfiguration = .default
+                                                   ^
+/Users/lawliet/OVEREND/OVEREND/Services/Document/OCR/OCRService.swift:38:16: note: static property declared here
+    static let `default` = OCRConfiguration()
+               ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText2 = "已輸入文字"
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText2 = "已輸入文字"
+/Users/lawliet/OVEREND/OVEREND/ViewModels/DocumentViewModel.swift:22:29: warning: use of protocol 'DocumentRepositoryProtocol' as a type must be written 'any DocumentRepositoryProtocol'; this will be an error in a future Swift language mode
+    private let repository: DocumentRepositoryProtocol
+                            ^~~~~~~~~~~~~~~~~~~~~~~~~~
+                            any DocumentRepositoryProtocol
+/Users/lawliet/OVEREND/OVEREND/ViewModels/DocumentViewModel.swift:24:22: warning: use of protocol 'DocumentRepositoryProtocol' as a type must be written 'any DocumentRepositoryProtocol'; this will be an error in a future Swift language mode
+    init(repository: DocumentRepositoryProtocol? = nil) {
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~
+                     (any DocumentRepositoryProtocol)
+/Users/lawliet/OVEREND/OVEREND/ViewModels/EntryViewModel.swift:20:29: warning: use of protocol 'EntryRepositoryProtocol' as a type must be written 'any EntryRepositoryProtocol'; this will be an error in a future Swift language mode
+    private let repository: EntryRepositoryProtocol
+                            ^~~~~~~~~~~~~~~~~~~~~~~
+                            any EntryRepositoryProtocol
+/Users/lawliet/OVEREND/OVEREND/ViewModels/EntryViewModel.swift:32:22: warning: use of protocol 'EntryRepositoryProtocol' as a type must be written 'any EntryRepositoryProtocol'; this will be an error in a future Swift language mode
+    init(repository: EntryRepositoryProtocol? = nil) {
+                     ^~~~~~~~~~~~~~~~~~~~~~~
+                     (any EntryRepositoryProtocol)
+/Users/lawliet/OVEREND/OVEREND/ViewModels/GroupViewModel.swift:17:29: warning: use of protocol 'GroupRepositoryProtocol' as a type must be written 'any GroupRepositoryProtocol'; this will be an error in a future Swift language mode
+    private let repository: GroupRepositoryProtocol
+                            ^~~~~~~~~~~~~~~~~~~~~~~
+                            any GroupRepositoryProtocol
+/Users/lawliet/OVEREND/OVEREND/ViewModels/GroupViewModel.swift:27:22: warning: use of protocol 'GroupRepositoryProtocol' as a type must be written 'any GroupRepositoryProtocol'; this will be an error in a future Swift language mode
+    init(repository: GroupRepositoryProtocol? = nil) {
+                     ^~~~~~~~~~~~~~~~~~~~~~~
+                     (any GroupRepositoryProtocol)
+/Users/lawliet/OVEREND/OVEREND/ViewModels/LibraryViewModel.swift:19:29: warning: use of protocol 'LibraryRepositoryProtocol' as a type must be written 'any LibraryRepositoryProtocol'; this will be an error in a future Swift language mode
+    private let repository: LibraryRepositoryProtocol
+                            ^~~~~~~~~~~~~~~~~~~~~~~~~
+                            any LibraryRepositoryProtocol
+/Users/lawliet/OVEREND/OVEREND/ViewModels/LibraryViewModel.swift:21:22: warning: use of protocol 'LibraryRepositoryProtocol' as a type must be written 'any LibraryRepositoryProtocol'; this will be an error in a future Swift language mode
+    init(repository: LibraryRepositoryProtocol? = nil) {
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~
+                     (any LibraryRepositoryProtocol)
+
+SwiftCompile normal arm64 Compiling\ ModernEntryListView.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryList/ModernEntryListView.swift (in target 'OVEREND' from project 'OVEREND')
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/EntryList/ModernEntryListView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText2 = "已輸入文字"
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText2 = "已輸入文字"
+/Users/lawliet/OVEREND/OVEREND/Views/EntryList/ModernEntryListView.swift:539:20: warning: reference to captured var 'success' in concurrently-executing code; this is an error in the Swift 6 language mode
+                if success {
+                   ^
+
+SwiftDriverJobDiscovery normal arm64 Compiling DraftsListView.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftDriverJobDiscovery normal arm64 Compiling NewContentView.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftDriverJobDiscovery normal arm64 Compiling ModernEntryDetailView.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 Compiling\ AppTheme.swift,\ LiquidGlassModifiers.swift,\ AppIconGenerator.swift,\ AcademicPhrasebankView.swift,\ AICenterView.swift,\ CitationRecommendationView.swift,\ RISImportView.swift /Users/lawliet/OVEREND/OVEREND/Theme/AppTheme.swift /Users/lawliet/OVEREND/OVEREND/Theme/LiquidGlassModifiers.swift /Users/lawliet/OVEREND/OVEREND/Utilities/AppIconGenerator.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/AcademicPhrasebankView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/AICenterView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/CitationRecommendationView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/RISImportView.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Theme/AppTheme.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText2 = "已輸入文字"
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText2 = "已輸入文字"
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Theme/LiquidGlassModifiers.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Utilities/AppIconGenerator.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICenter/AcademicPhrasebankView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICenter/AICenterView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICenter/CitationRecommendationView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICenter/RISImportView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 Compiling\ LoadingIndicator.swift,\ StandardTextField.swift,\ AIMetadataPreviewSheet.swift,\ AdvancedSearchPanel.swift,\ BatchOperationsToolbar.swift,\ CitationInsertionPanel.swift,\ CloudSyncStatusView.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/Sheets/AIMetadataPreviewSheet.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/AdvancedSearchPanel.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/BatchOperationsToolbar.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/CitationInsertionPanel.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/CloudSyncStatusView.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress2: Double = 0.7
+        ^
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText2 = "已輸入文字"
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText2 = "已輸入文字"
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:100:10: warning: 'onChange(of:perform:)' was deprecated in macOS 14.0: Use `onChange` with a two or zero parameter action closure instead.
+        .onChange(of: errorMessage) { newValue in
+         ^
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/Sheets/AIMetadataPreviewSheet.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/AdvancedSearchPanel.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/BatchOperationsToolbar.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/Components/BatchOperationsToolbar.swift:503:64: warning: left side of nil coalescing operator '??' has non-optional type 'Color', so the right side is never used
+                                .fill(Color(hex: tag.colorHex) ?? .gray)
+                                      ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+                                                              
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/CitationInsertionPanel.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/CloudSyncStatusView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 Compiling\ AppIconPreview.swift,\ DataLabelingView.swift,\ OCRTestView.swift,\ SimpleContentView.swift,\ TrainingDataExportView.swift,\ WelcomeView.swift /Users/lawliet/OVEREND/OVEREND/Views/Utils/AppIconPreview.swift /Users/lawliet/OVEREND/OVEREND/Views/DataLabelingView.swift /Users/lawliet/OVEREND/OVEREND/Views/OCRTestView.swift /Users/lawliet/OVEREND/OVEREND/Views/SimpleContentView.swift /Users/lawliet/OVEREND/OVEREND/Views/TrainingDataExportView.swift /Users/lawliet/OVEREND/OVEREND/Views/WelcomeView.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Utils/AppIconPreview.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText2 = "已輸入文字"
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText2 = "已輸入文字"
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/DataLabelingView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/OCRTestView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/OCRTestView.swift:83:21: warning: initialization of immutable value 'renderer' was never used; consider replacing with assignment to '_' or removing it
+                let renderer = ImageRenderer(content: Image(nsImage: page.thumbnail(of: pageRect.size, for: .mediaBox)))
+                ~~~~^~~~~~~~
+                _
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/SimpleContentView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/SimpleContentView.swift:254:13: warning: result of call to 'handleDrop(providers:)' is unused
+            handleDrop(providers: providers)
+            ^         ~~~~~~~~~~~~~~~~~~~~~~
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/TrainingDataExportView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/WelcomeView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 Compiling\ DuplicateWarningDialog.swift,\ EditableMetadataRow.swift,\ ImportOptionsSheet.swift,\ MaterialIcon.swift,\ PDFLayoutAnalysisView.swift,\ DocumentEditorView.swift,\ EmeraldAIAssistantView.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/DuplicateWarningDialog.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/EditableMetadataRow.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/ImportOptionsSheet.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/MaterialIcon.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/PDFLayoutAnalysisView.swift /Users/lawliet/OVEREND/OVEREND/Views/Editor/DocumentEditorView.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldAIAssistantView.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/DuplicateWarningDialog.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText2 = "已輸入文字"
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText2 = "已輸入文字"
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/EditableMetadataRow.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/ImportOptionsSheet.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/MaterialIcon.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/PDFLayoutAnalysisView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/Components/PDFLayoutAnalysisView.swift:514:37: warning: main actor-isolated static method 'analyze(page:)' cannot be called from outside of the actor; this is an error in the Swift 6 language mode
+                XYCutLayoutAnalyzer.analyze(page: page)
+                ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+                await 
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Editor/DocumentEditorView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldAIAssistantView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 Compiling\ RelatedLiteratureView.swift,\ EntryPreviewCard.swift,\ ActionBar.swift,\ ExtractionMethodBadge.swift,\ ExtractionResultPane.swift,\ ExtractionWorkbenchView.swift,\ FieldRow.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/RelatedLiteratureView.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryList/EntryPreviewCard.swift /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ActionBar.swift /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ExtractionMethodBadge.swift /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ExtractionResultPane.swift /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ExtractionWorkbenchView.swift /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/FieldRow.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/RelatedLiteratureView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText2 = "已輸入文字"
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText2 = "已輸入文字"
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/EntryList/EntryPreviewCard.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ActionBar.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ExtractionMethodBadge.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ExtractionResultPane.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ExtractionWorkbenchView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/FieldRow.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 Compiling\ ProgressHeader.swift,\ StarRating.swift,\ ThesisMetadataEditorView.swift,\ AccountSection.swift,\ EditorThemeSection.swift,\ GeneralSection.swift,\ IntelligenceSection.swift /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ProgressHeader.swift /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/StarRating.swift /Users/lawliet/OVEREND/OVEREND/Views/Metadata/ThesisMetadataEditorView.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/AccountSection.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/EditorThemeSection.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/GeneralSection.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/IntelligenceSection.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/ProgressHeader.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText2 = "已輸入文字"
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText2 = "已輸入文字"
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/ExtractionWorkbench/StarRating.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Metadata/ThesisMetadataEditorView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/AccountSection.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/EditorThemeSection.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/GeneralSection.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/IntelligenceSection.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 Compiling\ TerminologyCheckView.swift,\ ZoteroBridgeView.swift,\ AICommandPaletteView.swift,\ CompanionGeneratorView.swift,\ CompanionPanelView.swift,\ CompanionView.swift,\ DynamicToolbar.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/TerminologyCheckView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICenter/ZoteroBridgeView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICommand/AICommandPaletteView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICompanion/CompanionGeneratorView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICompanion/CompanionPanelView.swift /Users/lawliet/OVEREND/OVEREND/Views/AICompanion/CompanionView.swift /Users/lawliet/OVEREND/OVEREND/Views/Common/DynamicToolbar.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICenter/TerminologyCheckView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText2 = "已輸入文字"
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText2 = "已輸入文字"
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICenter/ZoteroBridgeView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICommand/AICommandPaletteView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICompanion/CompanionGeneratorView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICompanion/CompanionPanelView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/AICompanion/CompanionView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/AICompanion/CompanionView.swift:216:24: warning: main actor-isolated property 'currentMood' can not be referenced from a Sendable closure
+            if service.currentMood == .idle {
+                       ^
+/Users/lawliet/OVEREND/OVEREND/Services/Companion/CompanionService.swift:46:27: note: property declared here
+    @Published public var currentMood: CompanionMood = .idle
+                          ^
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Common/DynamicToolbar.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 Compiling\ EmeraldHomeView.swift,\ EmeraldLibraryView.swift,\ EmeraldReaderView.swift,\ EmeraldSettingsView.swift,\ EntryEditSheet.swift,\ ModernEntryDetailView+Methods.swift,\ ModernEntryDetailView+Sections.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldHomeView.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldLibraryView.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldReaderView.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldSettingsView.swift /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EntryEditSheet.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/ModernEntryDetailView+Methods.swift /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/ModernEntryDetailView+Sections.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldHomeView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText2 = "已輸入文字"
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText2 = "已輸入文字"
+/Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldHomeView.swift:500:66: warning: left side of nil coalescing operator '??' has non-optional type 'Date', so the right side is never used
+        return formatter.localizedString(for: document.updatedAt ?? Date(), relativeTo: Date())
+                                              ~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+                                                                
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldLibraryView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldLibraryView.swift:243:9: warning: result of 'try?' is unused
+        try? PDFService.shared.addPDFAttachment(from: pdfURL, to: entry, context: viewContext)
+        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldReaderView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldReaderView.swift:80:41: warning: conditional downcast from 'Set<Entry>?' to 'Set<Entry>' does nothing
+        libraries.flatMap { ($0.entries as? Set<Entry>) ?? [] }
+                             ~~~~~~~~~~~^~~~~~~~~~~~~~
+                                       
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EmeraldSettingsView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Emerald/EntryEditSheet.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/ModernEntryDetailView+Methods.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/ModernEntryDetailView+Methods.swift:19:38: warning: conditional downcast from 'Set<Tag>?' to 'Set<Tag>' does nothing
+        var currentTags = entry.tags as? Set<Tag> ?? []
+                          ~~~~~~~~~~~^~~~~~~~~~~~
+                                    
+/Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/ModernEntryDetailView+Methods.swift:30:38: warning: conditional downcast from 'Set<Tag>?' to 'Set<Tag>' does nothing
+        var currentTags = entry.tags as? Set<Tag> ?? []
+                          ~~~~~~~~~~~^~~~~~~~~~~~
+                                    
+/Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/ModernEntryDetailView+Methods.swift:38:38: warning: conditional downcast from 'Set<Tag>?' to 'Set<Tag>' does nothing
+        var currentTags = entry.tags as? Set<Tag> ?? []
+                          ~~~~~~~~~~~^~~~~~~~~~~~
+                                    
+/Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/ModernEntryDetailView+Methods.swift:72:38: warning: conditional downcast from 'Set<Tag>?' to 'Set<Tag>' does nothing
+        var currentTags = entry.tags as? Set<Tag> ?? []
+                          ~~~~~~~~~~~^~~~~~~~~~~~
+                                    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/ModernEntryDetailView+Sections.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/ModernEntryDetailView+Sections.swift:162:38: warning: conditional downcast from 'Set<Tag>?' to 'Set<Tag>' does nothing
+            if let tags = entry.tags as? Set<Tag>, !tags.isEmpty {
+                          ~~~~~~~~~~~^~~~~~~~~~~~
+                                    
+/Users/lawliet/OVEREND/OVEREND/Views/EntryDetail/ModernEntryDetailView+Sections.swift:228:48: warning: conditional downcast from 'Set<Tag>?' to 'Set<Tag>' does nothing
+                                if (entry.tags as? Set<Tag>)?.contains(tag) == true {
+                                    ~~~~~~~~~~~^~~~~~~~~~~~
+                                              
+
+SwiftDriverJobDiscovery normal arm64 Compiling NewSidebarView.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 Compiling\ NewContentView+Actions.swift /Users/lawliet/OVEREND/OVEREND/Views/NewContentView+Actions.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/NewContentView+Actions.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling RelatedLiteratureView.swift, EntryPreviewCard.swift, ActionBar.swift, ExtractionMethodBadge.swift, ExtractionResultPane.swift, ExtractionWorkbenchView.swift, FieldRow.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 Compiling\ OVERENDApp.swift /Users/lawliet/OVEREND/OVEREND/OVERENDApp.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/OVERENDApp.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for OVEREND (in target 'OVEREND' from project 'OVEREND')
+
+SwiftDriver\ Compilation\ Requirements OVEREND normal arm64 com.apple.xcode.tools.swift.compiler (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    builtin-Swift-Compilation-Requirements -- /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name OVEREND -Onone -enforce-exclusivity\=checked @/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.SwiftFileList -DDEBUG -default-isolation\=MainActor -enable-bare-slash-regex -enable-upcoming-feature DisableOutwardActorInference -enable-upcoming-feature InferSendableFromCaptures -enable-upcoming-feature GlobalActorIsolatedTypesUsability -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -target arm64-apple-macos26.1 -g -module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -F /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -emit-localized-strings -emit-localized-strings-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64 -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/macosx26.2-25C57-830dddbfbccebdd7c0a1e2a9282ec48d.sdkstatcache -output-file-map /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND_const_extract_protocols.json -Xcc -iquote -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-generated-files.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-own-target-headers.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-all-target-headers.hmap -Xcc -iquote -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-project-headers.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/include -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/DerivedSources-normal/arm64 -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/DerivedSources/arm64 -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND-Swift.h -working-directory /Users/lawliet/OVEREND -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Compiling NewContentView+Actions.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 Compiling\ EmptyStateView.swift,\ PomodoroView.swift,\ SplashScreenView.swift,\ ToastView.swift,\ CustomButton.swift,\ CardView.swift,\ ConfidenceIndicator.swift /Users/lawliet/OVEREND/OVEREND/Views/Common/EmptyStateView.swift /Users/lawliet/OVEREND/OVEREND/Views/Common/PomodoroView.swift /Users/lawliet/OVEREND/OVEREND/Views/Common/SplashScreenView.swift /Users/lawliet/OVEREND/OVEREND/Views/Common/ToastView.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/Buttons/CustomButton.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/Cards/CardView.swift /Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/ConfidenceIndicator.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Common/EmptyStateView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText2 = "已輸入文字"
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText2 = "已輸入文字"
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Common/PomodoroView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Common/SplashScreenView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Common/ToastView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/Buttons/CustomButton.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/Cards/CardView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/ConfidenceIndicator.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+Copy /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.swiftmodule/arm64-apple-macos.abi.json /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.abi.json (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.abi.json /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.swiftmodule/arm64-apple-macos.abi.json
+
+SwiftDriverJobDiscovery normal arm64 Compiling OVERENDApp.swift (in target 'OVEREND' from project 'OVEREND')
+
+Copy /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.swiftsourceinfo (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.swiftsourceinfo /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo
+
+SwiftCompile normal arm64 Compiling\ KeyBindingsSection.swift,\ TypographySection.swift,\ AISettingsView.swift,\ DataManagementView.swift,\ NotionSettingsView.swift,\ ThemeSettingsView.swift,\ MainSidebarView.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/KeyBindingsSection.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/TypographySection.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/AISettingsView.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/DataManagementView.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/NotionSettingsView.swift /Users/lawliet/OVEREND/OVEREND/Views/Settings/ThemeSettingsView.swift /Users/lawliet/OVEREND/OVEREND/Views/Sidebar/MainSidebarView.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/KeyBindingsSection.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:264:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress1: Double = 0.3
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Feedback/LoadingIndicator.swift:265:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var progress2: Double = 0.7
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:224:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var username = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:225:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var email = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:226:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var password = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:227:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var errorText = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:261:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText1 = ""
+        ^
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: warning: '@State' used inline will not work unless tagged with '@Previewable' (from macro 'Preview')
+        @State var searchText2 = "已輸入文字"
+/Users/lawliet/OVEREND/OVEREND/Views/Components/Inputs/StandardTextField.swift:262:9: note: Move the declaration to root scope and add '@Previewable'
+        @State var searchText2 = "已輸入文字"
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/TypographySection.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/Settings/Sections/TypographySection.swift:81:21: warning: '+' was deprecated in macOS 26.0: Use string interpolation on `Text` instead: `Text("Hello \(name)")`
+                    + Text("[1]")
+                    ^
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Settings/AISettingsView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Settings/DataManagementView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Settings/NotionSettingsView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+/Users/lawliet/OVEREND/OVEREND/Views/Settings/NotionSettingsView.swift:32:22: warning: 'onChange(of:perform:)' was deprecated in macOS 14.0: Use `onChange` with a two or zero parameter action closure instead.
+                    .onChange(of: apiKey) { newValue in
+                     ^
+/Users/lawliet/OVEREND/OVEREND/Views/Settings/NotionSettingsView.swift:39:22: warning: 'onChange(of:perform:)' was deprecated in macOS 14.0: Use `onChange` with a two or zero parameter action closure instead.
+                    .onChange(of: databaseId) { newValue in
+                     ^
+/Users/lawliet/OVEREND/OVEREND/Views/Settings/NotionSettingsView.swift:51:22: warning: 'onChange(of:perform:)' was deprecated in macOS 14.0: Use `onChange` with a two or zero parameter action closure instead.
+                    .onChange(of: isAutoCreateEnabled) { newValue in
+                     ^
+/Users/lawliet/OVEREND/OVEREND/Views/Settings/NotionSettingsView.swift:91:22: warning: 'onChange(of:perform:)' was deprecated in macOS 14.0: Use `onChange` with a two or zero parameter action closure instead.
+                    .onChange(of: diaryPageId) { newValue in
+                     ^
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Settings/ThemeSettingsView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftCompile normal arm64 /Users/lawliet/OVEREND/OVEREND/Views/Sidebar/MainSidebarView.swift (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling ProgressHeader.swift, StarRating.swift, ThesisMetadataEditorView.swift, AccountSection.swift, EditorThemeSection.swift, GeneralSection.swift, IntelligenceSection.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftDriverJobDiscovery normal arm64 Compiling AppTheme.swift, LiquidGlassModifiers.swift, AppIconGenerator.swift, AcademicPhrasebankView.swift, AICenterView.swift, CitationRecommendationView.swift, RISImportView.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftDriverJobDiscovery normal arm64 Compiling AppIconPreview.swift, DataLabelingView.swift, OCRTestView.swift, SimpleContentView.swift, TrainingDataExportView.swift, WelcomeView.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftDriverJobDiscovery normal arm64 Compiling TerminologyCheckView.swift, ZoteroBridgeView.swift, AICommandPaletteView.swift, CompanionGeneratorView.swift, CompanionPanelView.swift, CompanionView.swift, DynamicToolbar.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftDriverJobDiscovery normal arm64 Compiling DuplicateWarningDialog.swift, EditableMetadataRow.swift, ImportOptionsSheet.swift, MaterialIcon.swift, PDFLayoutAnalysisView.swift, DocumentEditorView.swift, EmeraldAIAssistantView.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftDriverJobDiscovery normal arm64 Compiling LoadingIndicator.swift, StandardTextField.swift, AIMetadataPreviewSheet.swift, AdvancedSearchPanel.swift, BatchOperationsToolbar.swift, CitationInsertionPanel.swift, CloudSyncStatusView.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftDriverJobDiscovery normal arm64 Compiling EmptyStateView.swift, PomodoroView.swift, SplashScreenView.swift, ToastView.swift, CustomButton.swift, CardView.swift, ConfidenceIndicator.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftDriverJobDiscovery normal arm64 Compiling EmeraldHomeView.swift, EmeraldLibraryView.swift, EmeraldReaderView.swift, EmeraldSettingsView.swift, EntryEditSheet.swift, ModernEntryDetailView+Methods.swift, ModernEntryDetailView+Sections.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftDriverJobDiscovery normal arm64 Compiling KeyBindingsSection.swift, TypographySection.swift, AISettingsView.swift, DataManagementView.swift, NotionSettingsView.swift, ThemeSettingsView.swift, MainSidebarView.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftDriverJobDiscovery normal arm64 Compiling ModernEntryListView.swift (in target 'OVEREND' from project 'OVEREND')
+
+SwiftDriver\ Compilation OVEREND normal arm64 com.apple.xcode.tools.swift.compiler (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    builtin-Swift-Compilation -- /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name OVEREND -Onone -enforce-exclusivity\=checked @/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.SwiftFileList -DDEBUG -default-isolation\=MainActor -enable-bare-slash-regex -enable-upcoming-feature DisableOutwardActorInference -enable-upcoming-feature InferSendableFromCaptures -enable-upcoming-feature GlobalActorIsolatedTypesUsability -enable-upcoming-feature MemberImportVisibility -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -target arm64-apple-macos26.1 -g -module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -F /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -emit-localized-strings -emit-localized-strings-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64 -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/macosx26.2-25C57-830dddbfbccebdd7c0a1e2a9282ec48d.sdkstatcache -output-file-map /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/lawliet/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND_const_extract_protocols.json -Xcc -iquote -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-generated-files.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-own-target-headers.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-all-target-headers.hmap -Xcc -iquote -Xcc /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-project-headers.hmap -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/include -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/DerivedSources-normal/arm64 -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/DerivedSources/arm64 -Xcc -I/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND-Swift.h -working-directory /Users/lawliet/OVEREND -experimental-emit-module-separately -disable-cmo
+
+Ld /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/OVEREND.debug.dylib normal (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos26.1 -dynamiclib -isysroot /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -O0 -L/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -L/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -F/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -F/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -filelist /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.LinkFileList -install_name @rpath/OVEREND.debug.dylib -Xlinker -rpath -Xlinker @executable_path/../Frameworks -Xlinker -object_path_lto -Xlinker /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -debug_variant -Xlinker -dependency_info -Xlinker /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND_dependency_info.dat -fobjc-link-runtime -fprofile-instr-generate -L/Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.swiftmodule @/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND-linker-args.resp -Xlinker -alias -Xlinker _main -Xlinker ___debug_main_executable_dylib_entry_point -loverend_core -Xlinker -no_adhoc_codesign -o /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/OVEREND.debug.dylib
+ld: warning: object file (/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/liboverend_core.a[487](4f9a91766097c4c5-aarch_aapcs64.o)) was built for newer 'macOS' version (26.2) than being linked (26.1)
+
+ConstructStubExecutorLinkFileList /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-ExecutorLinkFileList-normal-arm64.txt (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    construct-stub-executor-link-file-list /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/OVEREND.debug.dylib /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libPreviewsJITStubExecutor_no_swift_entry_point.a /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libPreviewsJITStubExecutor.a --output /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-ExecutorLinkFileList-normal-arm64.txt
+note: Using stub executor library with Swift entry point. (in target 'OVEREND' from project 'OVEREND')
+
+Ld /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/OVEREND normal (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos26.1 -isysroot /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk -O0 -L/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -F/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug -Xlinker -rpath -Xlinker @executable_path -Xlinker -rpath -Xlinker @executable_path/../Frameworks -rdynamic -Xlinker -no_deduplicate -Xlinker -debug_variant -e ___debug_blank_executor_main -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_dylib -Xlinker /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-DebugDylibPath-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_instlnm -Xlinker /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-DebugDylibInstallName-normal-arm64.txt -Xlinker -filelist -Xlinker /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND-ExecutorLinkFileList-normal-arm64.txt /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/OVEREND.debug.dylib -Xlinker -no_adhoc_codesign -o /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/OVEREND
+
+ExtractAppIntentsMetadata (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name OVEREND --sdk-root /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk --xcode-version 17C52 --platform-family macOS --deployment-target 26.1 --bundle-identifier com.overend.OVEREND --output /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/Resources --target-triple arm64-apple-macos26.1 --binary-file /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/OVEREND --dependency-file /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND_dependency_info.dat --stringsdata-file /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.SwiftFileList --metadata-file-list /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND.DependencyMetadataFileList --static-metadata-file-list /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND.DependencyStaticMetadataFileList --swift-const-vals-list /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/Objects-normal/arm64/OVEREND.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-01-21 13:52:24.606 appintentsmetadataprocessor[39436:693248] Starting appintentsmetadataprocessor export
+2026-01-21 13:52:24.757 appintentsmetadataprocessor[39436:693248] Writing Metadata.appintents
+2026-01-21 13:52:24.757 appintentsmetadataprocessor[39436:693248] Metadata root: /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/Resources/Metadata.appintents
+
+ProcessInfoPlistFile /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/Info.plist /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/empty-OVEREND.plist (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    builtin-infoPlistUtility /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/empty-OVEREND.plist -producttype com.apple.product-type.application -genpkginfo /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/PkgInfo -expandbuildsettings -platform macosx -additionalcontentfile /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/assetcatalog_generated_info.plist -o /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/Info.plist
+
+CopySwiftLibs /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    builtin-swiftStdLibTool --copy --verbose --sign 457361E08282B84CE1EAA2C55B66425C93438B52 --scan-executable /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/OVEREND.debug.dylib --scan-folder /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/Frameworks --scan-folder /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/PlugIns --scan-folder /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/Library/SystemExtensions --scan-folder /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/Extensions --platform macosx --toolchain /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/Frameworks --strip-bitcode --strip-bitcode-tool /Volumes/MacAPPs/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+CodeSign /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/OVEREND.debug.dylib (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+    Signing Identity:     "Apple Development: ym90039@gmail.com (RKG6FM4Z66)"
+    
+    /usr/bin/codesign --force --sign 457361E08282B84CE1EAA2C55B66425C93438B52 -o runtime --timestamp\=none --generate-entitlement-der /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/OVEREND.debug.dylib
+
+CodeSign /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/__preview.dylib (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+    Signing Identity:     "Apple Development: ym90039@gmail.com (RKG6FM4Z66)"
+    
+    /usr/bin/codesign --force --sign 457361E08282B84CE1EAA2C55B66425C93438B52 -o runtime --timestamp\=none --generate-entitlement-der /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/__preview.dylib
+/Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app/Contents/MacOS/__preview.dylib: replacing existing signature
+
+CodeSign /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    
+    Signing Identity:     "Apple Development: ym90039@gmail.com (RKG6FM4Z66)"
+    
+    /usr/bin/codesign --force --sign 457361E08282B84CE1EAA2C55B66425C93438B52 -o runtime --entitlements /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Intermediates.noindex/OVEREND.build/Debug/OVEREND.build/OVEREND.app.xcent --timestamp\=none --generate-entitlement-der /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app
+
+Validate /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    builtin-validationUtility /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app -no-validate-extension -infoplist-subpath Contents/Info.plist
+
+RegisterWithLaunchServices /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app (in target 'OVEREND' from project 'OVEREND')
+    cd /Users/lawliet/OVEREND
+    /System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister -f -R -trusted /Users/lawliet/Library/Developer/Xcode/DerivedData/OVEREND-cndwckokhthjmcbkmovocplyeztc/Build/Products/Debug/OVEREND.app
+
+** BUILD SUCCEEDED **
+

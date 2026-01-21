@@ -13,6 +13,7 @@ import AppKit
 struct EditorToolbar: View {
     @ObservedObject var document: Document
     @EnvironmentObject var theme: AppTheme
+    @Environment(\.managedObjectContext) private var viewContext
     
     let onImport: () -> Void
     let onExport: () -> Void
@@ -48,6 +49,11 @@ struct EditorToolbar: View {
     
     // 側邊欄控制
     @Binding var showCitationSidebar: Bool
+    
+    // 格式狀態（用於顯示當前選取文字的格式）
+    @Binding var isBoldActive: Bool
+    @Binding var isItalicActive: Bool
+    @Binding var isUnderlineActive: Bool
     
     // 狀態
     @State private var showColorPicker = false
@@ -85,13 +91,29 @@ struct EditorToolbar: View {
             VStack(spacing: 0) {
                 // 主工具列 - 放大優化
                 HStack(spacing: 16) {
-                    // 標題 - 放大
-                    Text(document.title)
-                        .font(theme.fontDisplaySmall)  // 20pt
-                        .fontWeight(.semibold)
-                        .foregroundColor(theme.textPrimary)
+                    // 標題 - 可編輯
+                    TextField("文件標題", text: Binding(
+                        get: { document.title },
+                        set: { newValue in
+                            document.title = newValue
+                            document.updatedAt = Date()
+                            // 儲存到 Core Data
+                            try? viewContext.save()
+                        }
+                    ))
+                    .font(theme.fontDisplaySmall)  // 20pt
+                    .fontWeight(.semibold)
+                    .foregroundColor(theme.textPrimary)
+                    .textFieldStyle(.plain)
+                    .frame(maxWidth: 400)
                     
                     Spacer()
+                    
+                    // 番茄鐘計時器
+                    PomodoroToolbarButton()
+                        .environmentObject(theme)
+                    
+                    Divider().frame(height: 20)
                     
                     // 引用側邊欄切換 - 增大
                     Button(action: { showCitationSidebar.toggle() }) {
@@ -176,9 +198,12 @@ struct EditorToolbar: View {
                     
                     // 4. 基本格式 (Bold/Italic/Underline) (Always Visible)
                     HStack(spacing: 4) {
-                        FormatButton(icon: "bold", tooltip: "粗體 (⌘B)", action: onBold)
-                        FormatButton(icon: "italic", tooltip: "斜體 (⌘I)", action: onItalic)
-                        FormatButton(icon: "underline", tooltip: "底線 (⌘U)", action: onUnderline)
+                        FormatButton(icon: "bold", tooltip: "粗體 (⌘B)", isActive: isBoldActive, action: onBold)
+                            .keyboardShortcut("b", modifiers: .command)
+                        FormatButton(icon: "italic", tooltip: "斜體 (⌘I)", isActive: isItalicActive, action: onItalic)
+                            .keyboardShortcut("i", modifiers: .command)
+                        FormatButton(icon: "underline", tooltip: "底線 (⌘U)", isActive: isUnderlineActive, action: onUnderline)
+                            .keyboardShortcut("u", modifiers: .command)
                     }
                     .padding(4)
                     .background(theme.elevated.opacity(0.5))
@@ -326,8 +351,6 @@ struct EditorToolbar: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
                 .background(theme.toolbarGlass)
             }
         }
@@ -469,21 +492,26 @@ struct EditorToolbar: View {
 struct FormatButton: View {
     let icon: String
     let tooltip: String
+    var isActive: Bool = false
     var action: (() -> Void)?
     var disabled: Bool = false
 
     @State private var isHovered = false
+    @EnvironmentObject var theme: AppTheme
 
     var body: some View {
         Button(action: { action?() }) {
             Image(systemName: icon)
                 .font(.system(size: 14, weight: .medium))
                 .frame(width: 28, height: 28)
-                .background(isHovered ? Color.white.opacity(0.1) : Color.clear)
+                .background(
+                    isActive ? theme.accent.opacity(0.3) :
+                    (isHovered ? Color.white.opacity(0.1) : Color.clear)
+                )
                 .cornerRadius(4)
         }
         .buttonStyle(.plain)
-        .foregroundColor(disabled ? .gray : .white)
+        .foregroundColor(disabled ? .gray : (isActive ? theme.accent : .white))
         .help(tooltip)
         .disabled(disabled)
         .onHover { hovering in

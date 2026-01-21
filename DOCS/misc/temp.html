@@ -1,0 +1,168 @@
+<h1 id="overend-開發全手冊-development-omnibus">OVEREND 開發全手冊
+(Development Omnibus)</h1>
+<blockquote>
+<p><strong>版本：</strong> 1.0 (2026-01-21)<br />
+<strong>狀態：</strong> 專案進度 99%+ (Beta / 發布準備階段)<br />
+<strong>核心使命：</strong> 讓研究者專注於研究本質，而非工具操作。</p>
+</blockquote>
+<hr />
+<h2 id="目錄">📖 目錄</h2>
+<ol type="1">
+<li><a href="#1-專案基礎與工程規範">專案基礎與工程規範</a></li>
+<li><a href="#2-技術架構與核心服務">技術架構與核心服務</a></li>
+<li><a href="#3-核心功能設計">核心功能設計</a></li>
+<li><a href="#4-ai-智慧代理人">AI 智慧代理人 (Companion)</a></li>
+<li><a href="#5-uiux-設計與產品質感">UI/UX 設計與產品質感</a></li>
+<li><a href="#6-測試品質與維護">測試、品質與維護</a></li>
+<li><a href="#7-開發里程碑紀錄">開發里程碑紀錄</a></li>
+</ol>
+<hr />
+<h2 id="專案基礎與工程規範">1. 專案基礎與工程規範</h2>
+<h3 id="核心定義">1.1 核心定義</h3>
+<p>OVEREND = 文字編輯器 (Word) + 文獻管理 (EndNote) + AI 輔助。<br />
+這是專為華語研究者設計的原生 macOS/iPadOS 應用程式。</p>
+<h3 id="程式碼規範-參考-coding_rules.md">1.2 程式碼規範 (參考 <a
+href=".claude/CODING_RULES.md">CODING_RULES.md</a>)</h3>
+<ul>
+<li><strong>架構模型</strong>：嚴格遵守 MVVM 模式。</li>
+<li><strong>檔案命名</strong>：
+<ul>
+<li><code>Views/</code> 結尾為 <code>*View.swift</code></li>
+<li><code>ViewModels/</code> 結尾為 <code>*ViewModel.swift</code></li>
+<li><code>Services/</code> 結尾為 <code>*Service.swift</code></li>
+</ul></li>
+<li><strong>代碼維護</strong>：
+<ul>
+<li>單一 View 檔案不超過 <strong>300 行</strong>。超過時需拆分為
+<code>+Subviews.swift</code> 或 <code>+Methods.swift</code>。</li>
+<li>單一函數不超過 <strong>50 行</strong>。</li>
+<li>禁止 Force Unwrap，優先使用 <code>guard let</code>。</li>
+</ul></li>
+</ul>
+<h3 id="工程體系">1.3 工程體系</h3>
+<ul>
+<li><strong>語言</strong>：Swift 6 (SwiftUI)</li>
+<li><strong>資料庫</strong>：Core Data (專用 In-Memory 測試環境)</li>
+<li><strong>渲染引擎</strong>：WebKit (Legacy) / Typst + Rust
+(Modern)</li>
+</ul>
+<hr />
+<h2 id="技術架構與核心服務">2. 技術架構與核心服務</h2>
+<h3 id="分層依賴">2.1 分層依賴</h3>
+<pre class="mermaid"><code>graph TD
+    Views --&gt; ViewModels
+    ViewModels --&gt; Repositories
+    ViewModels --&gt; Services
+    Repositories --&gt; CoreData
+    Services --&gt; ExternalAPIs
+    Services --&gt; RustCore</code></pre>
+<h3 id="核心服務層">2.2 核心服務層</h3>
+<ul>
+<li><strong>UnifiedAIService</strong>: 整合 Apple
+Intelligence，提供寫作建議、翻譯、規範檢查。</li>
+<li><strong>CitationService</strong>: 支援 APA 7th, MLA 9th, BibTeX
+等多種學術格式。</li>
+<li><strong>PDFService</strong>: 高效提取 PDF 元數據，DOI 識別率達
+95%+。</li>
+<li><strong>TypstService</strong>: Rust 核心整合，提供精確的 PDF
+渲染與學術排版。</li>
+</ul>
+<hr />
+<h2 id="核心功能設計">3. 核心功能設計</h2>
+<h3 id="文獻管理-library">3.1 文獻管理 (Library)</h3>
+<ul>
+<li><strong>智慧匯入</strong>：支援 PDF 拖放匯入、BibTeX 批次匯入。</li>
+<li><strong>元數據增強</strong>：自動從 PDF 內容識別
+DOI、標題與作者。</li>
+<li><strong>智能分類</strong>：智慧資料夾與標籤系統。</li>
+</ul>
+<h3 id="專業寫作中心-writing-center">3.2 專業寫作中心 (Writing
+Center)</h3>
+<ul>
+<li><strong>A4 分頁預覽</strong>：模擬真實列印效果。</li>
+<li><strong>@ 快速引用</strong>：編輯器內輸入 <code>@</code>
+即可即時搜尋並插入文獻。</li>
+<li><strong>學術翻譯</strong>：右鍵選單直接進行中英學術詞彙互譯。</li>
+</ul>
+<hr />
+<h2 id="chapter-4-ai-智慧代理人-companion">Chapter 4: AI 智慧代理人
+(Companion)</h2>
+<h3 id="夥伴系統-the-companion">4.1 夥伴系統 (The Companion)</h3>
+<ul>
+<li><strong>預設角色</strong>：小研 (Yen)，翡翠綠貓頭鷹。</li>
+<li><strong>功能</strong>：
+<ul>
+<li>協助寫作優化與摘要。</li>
+<li>根據開發活動提供成長回饋 (Lv.1 -&gt; Lv.50)。</li>
+<li>支援自定義角色生成。</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="uiux-設計與產品質感">5. UI/UX 設計與產品質感</h2>
+<h3 id="翡翠設計語言-emerald-design">5.1 翡翠設計語言 (Emerald
+Design)</h3>
+<ul>
+<li><strong>主色調</strong>：Spring Green (<code>#00D97E</code>)。</li>
+<li><strong>視覺風格</strong>：WWDC25 Liquid Glass
+風格，強調通透感與立體感。</li>
+<li><strong>深色模式</strong>：專為學術研究設計的 Dark Slate Blue
+配色，降低眼部疲勞。</li>
+</ul>
+<h3 id="微互動-micro-interactions">5.2 微互動 (Micro-Interactions)</h3>
+<ul>
+<li>高強度陰影 (5 級陰影系統)。</li>
+<li>懸停浮起效果 (1.02x 縮放)。</li>
+<li>毛玻璃背景 (<code>.ultraThinMaterial</code>) 與漸層邊框。</li>
+</ul>
+<hr />
+<h2 id="測試品質與維護">6. 測試、品質與維護</h2>
+<h3 id="測試矩陣">6.1 測試矩陣</h3>
+<ul>
+<li><strong>單元測試</strong>：覆蓋核心解析器 (PDF, BibTeX) 與 AI
+領域。</li>
+<li><strong>UI 測試</strong>：自動化驗證文獻庫與編輯器的核心流程。</li>
+<li><strong>健全性檢查</strong>：DOI 識別回退機制、Core Data
+線程安全。</li>
+</ul>
+<h3 id="自動化流程">6.2 自動化流程</h3>
+<ul>
+<li>支援透過 <code>/end-of-day</code> 指令自動備份、更新日誌並同步至
+Notion。</li>
+</ul>
+<hr />
+<h2 id="開發里程碑紀錄">7. 開發里程碑紀錄</h2>
+<table>
+<thead>
+<tr>
+<th>日期</th>
+<th>重點事件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2025-12-28</td>
+<td>繁體中文術語全面標準化 (翡翠綠主題確立)</td>
+</tr>
+<tr>
+<td>2025-12-31</td>
+<td>Apple Intelligence 整合完成</td>
+</tr>
+<tr>
+<td>2026-01-03</td>
+<td>統一 AI 服務架構 (Domains) 建立</td>
+</tr>
+<tr>
+<td>2026-01-11</td>
+<td>Emerald UI 2.0 全面整合成型</td>
+</tr>
+<tr>
+<td>2026-01-21</td>
+<td>開發文檔大匯整 (DEVELOPMENT_OMNIBUS.md)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<blockquote>
+<p>[!TIP] 詳盡文檔請參閱 <a href="DOCS/INDEX.md">DOCS/INDEX.md</a>
+獲取完整 130+ 份文件連結。</p>
+</blockquote>

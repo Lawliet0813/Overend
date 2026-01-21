@@ -33,15 +33,18 @@ public struct QueuedTask: Identifiable {
     public let createdAt: Date
     public var retryCount: Int = 0
     public let maxRetries: Int = 3
-    
-    public init(task: AgentTask, priority: TaskPriority = .normal) {
+    public var isCancelled: Bool = false  // ✅ 新增：取消標記
+    public var timeout: TimeInterval = 300  // ✅ 新增：逾時設定（預設 5 分鐘）
+
+    public init(task: AgentTask, priority: TaskPriority = .normal, timeout: TimeInterval = 300) {
         self.task = task
         self.priority = priority
         self.createdAt = Date()
+        self.timeout = timeout
     }
-    
+
     public var canRetry: Bool {
-        retryCount < maxRetries
+        retryCount < maxRetries && !isCancelled
     }
 }
 
@@ -72,13 +75,23 @@ public class AgentTaskQueue: ObservableObject {
     @Published public private(set) var isProcessing: Bool = false
     
     // MARK: - 私有屬性
-    
+
     private var processingTask: Task<Void, Never>?
     private let maxCompletedHistory = 50
-    
+    private let maxFailedHistory = 50  // ✅ 新增：失敗歷史上限
+    private var runningTasks: [UUID: Task<Void, Error>] = [:]  // ✅ 追蹤執行中的任務
+
     // MARK: - 初始化
-    
+
     public init() {}
+
+    deinit {
+        // ✅ 清理所有任務
+        processingTask?.cancel()
+        processingTask = nil
+        runningTasks.values.forEach { $0.cancel() }
+        runningTasks.removeAll()
+    }
     
     // MARK: - 佇列操作
     
@@ -106,7 +119,32 @@ public class AgentTaskQueue: ObservableObject {
     public func remove(_ task: QueuedTask) {
         pendingTasks.removeAll { $0.id == task.id }
     }
-    
+
+    /// ✅ 取消單一任務
+    public func cancel(_ task: QueuedTask) {
+        // 從佇列移除
+        pendingTasks.removeAll { $0.id == task.id }
+
+        // 如果正在執行，取消該任務
+        if let runningTask = runningTasks[task.id] {
+            runningTask.cancel()
+            runningTasks.removeValue(forKey: task.id)
+            AppLogger.shared.debug("📋 TaskQueue: 已取消任務 \(task.task.displayName)")
+        }
+
+        // 標記為已取消
+        var cancelledTask = task
+        cancelledTask.isCancelled = true
+    }
+
+    /// ✅ 取消所有待執行任務
+    public func cancelAll() {
+        pendingTasks.removeAll()
+        runningTasks.values.forEach { $0.cancel() }
+        runningTasks.removeAll()
+        AppLogger.shared.debug("📋 TaskQueue: 已取消所有任務")
+    }
+
     /// 清空佇列
     public func clear() {
         pendingTasks.removeAll()
@@ -116,44 +154,86 @@ public class AgentTaskQueue: ObservableObject {
     /// 開始處理佇列
     public func startProcessing(agent: LiteratureAgent) {
         guard !isProcessing else { return }
-        
+
         isProcessing = true
-        
+
         processingTask = Task {
             while !pendingTasks.isEmpty {
                 guard let nextTask = pendingTasks.first else { break }
-                
+
+                // 檢查是否已取消
+                guard !nextTask.isCancelled else {
+                    pendingTasks.removeFirst()
+                    continue
+                }
+
                 // 移動到執行中
                 pendingTasks.removeFirst()
                 currentTask = nextTask
-                
-                do {
-                    _ = try await agent.execute(task: nextTask.task)
-                    
-                    // 成功：加入已完成
-                    completedTasks.insert(nextTask, at: 0)
-                    trimCompletedHistory()
-                    
-                } catch {
-                    // 失敗：檢查是否重試
-                    var failedTask = nextTask
-                    failedTask.retryCount += 1
-                    
-                    if failedTask.canRetry {
-                        // 重新加入佇列
-                        pendingTasks.append(failedTask)
-                        sortPendingTasks()
-                        AppLogger.shared.warning("📋 TaskQueue: 任務失敗，將重試 (\(failedTask.retryCount)/\(failedTask.maxRetries))")
-                    } else {
-                        // 加入失敗列表
-                        failedTasks.insert(failedTask, at: 0)
-                        AppLogger.shared.error("📋 TaskQueue: 任務永久失敗: \(error.localizedDescription)")
+
+                // ✅ 建立逾時檢查任務
+                let timeoutTask = Task {
+                    try? await Task.sleep(nanoseconds: UInt64(nextTask.timeout * 1_000_000_000))
+                    if !Task.isCancelled {
+                        AppLogger.shared.warning("⏱️ 任務逾時: \(nextTask.task.displayName) (\(nextTask.timeout)秒)")
                     }
                 }
-                
+
+                // ✅ 執行任務並追蹤
+                let executionTask = Task {
+                    do {
+                        _ = try await agent.execute(task: nextTask.task)
+
+                        // 取消逾時檢查
+                        timeoutTask.cancel()
+
+                        // 成功：加入已完成
+                        completedTasks.insert(nextTask, at: 0)
+                        trimCompletedHistory()
+
+                    } catch {
+                        // 取消逾時檢查
+                        timeoutTask.cancel()
+
+                        // 檢查是否為逾時錯誤
+                        let isTimeout = !timeoutTask.isCancelled
+
+                        // 失敗：檢查是否重試
+                        var failedTask = nextTask
+                        failedTask.retryCount += 1
+
+                        if failedTask.canRetry && !isTimeout {
+                            // 重新加入佇列（但不重試逾時任務）
+                            pendingTasks.append(failedTask)
+                            sortPendingTasks()
+                            AppLogger.shared.warning("📋 TaskQueue: 任務失敗，將重試 (\(failedTask.retryCount)/\(failedTask.maxRetries))")
+                        } else {
+                            // 加入失敗列表
+                            failedTasks.insert(failedTask, at: 0)
+                            trimFailedHistory()
+                            let reason = isTimeout ? "逾時" : error.localizedDescription
+                            AppLogger.shared.error("📋 TaskQueue: 任務永久失敗: \(reason)")
+                        }
+
+                        throw error
+                    }
+                }
+
+                // 追蹤執行中的任務
+                runningTasks[nextTask.id] = executionTask
+
+                // 等待完成或失敗
+                do {
+                    try await executionTask.value
+                } catch {
+                    // 已在 catch 塊中處理
+                }
+
+                // 清除追蹤
+                runningTasks.removeValue(forKey: nextTask.id)
                 currentTask = nil
             }
-            
+
             isProcessing = false
             AppLogger.shared.notice("📋 TaskQueue: 佇列處理完成")
         }
@@ -207,6 +287,14 @@ public class AgentTaskQueue: ObservableObject {
     private func trimCompletedHistory() {
         if completedTasks.count > maxCompletedHistory {
             completedTasks = Array(completedTasks.prefix(maxCompletedHistory))
+        }
+    }
+
+    /// ✅ 限制失敗歷史
+    private func trimFailedHistory() {
+        if failedTasks.count > maxFailedHistory {
+            failedTasks = Array(failedTasks.prefix(maxFailedHistory))
+            AppLogger.shared.debug("📋 TaskQueue: 失敗歷史已達上限，移除舊紀錄")
         }
     }
     

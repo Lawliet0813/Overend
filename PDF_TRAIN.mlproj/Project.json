@@ -1,0 +1,29 @@
+{
+  "activityEntities" : [
+    "projectCreated",
+    [
+      {
+        "createdDate" : "2026-01-20T21:05:56Z",
+        "event" : "projectCreated",
+        "id" : "184A375C-60C1-4C57-9259-4592453F7352",
+        "subtitle" : "PDF_TRAIN",
+        "title" : "Project Created"
+      }
+    ]
+  ],
+  "authorName" : "Lawliet",
+  "createdDate" : "2026-01-20T21:05:56Z",
+  "description" : "OVEREND測試用",
+  "id" : "620D6711-181B-4FC2-9CB2-A805DE134238",
+  "license" : "",
+  "location" : "",
+  "modifiedDate" : "2026-01-20T21:05:56Z",
+  "projectName" : "PDF_TRAIN",
+  "settingsEntity" : {
+    "snapshotOnExtendTraining" : true,
+    "snapshotOnResumeTraining" : false
+  },
+  "taskType" : "textClassifier",
+  "title" : "Text Classification",
+  "version" : "1.1"
+}

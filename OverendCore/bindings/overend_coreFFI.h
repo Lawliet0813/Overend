@@ -269,7 +269,7 @@ void*_Nonnull uniffi_overend_core_fn_constructor_overendengine_new(RustCallStatu
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_OVEREND_CORE_FN_METHOD_OVERENDENGINE_COMPILE_TYPST
 #define UNIFFI_FFIDEF_UNIFFI_OVEREND_CORE_FN_METHOD_OVERENDENGINE_COMPILE_TYPST
-RustBuffer uniffi_overend_core_fn_method_overendengine_compile_typst(void*_Nonnull ptr, RustBuffer source, RustBuffer font_data, RustCallStatus *_Nonnull out_status
+RustBuffer uniffi_overend_core_fn_method_overendengine_compile_typst(void*_Nonnull ptr, RustBuffer source, RustBuffer font_data, RustBuffer aux_files, RustCallStatus *_Nonnull out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_OVEREND_CORE_FN_METHOD_OVERENDENGINE_FORMAT_CITATION

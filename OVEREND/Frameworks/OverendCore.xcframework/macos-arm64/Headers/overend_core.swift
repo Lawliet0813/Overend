@@ -469,11 +469,12 @@ public protocol OverendEngineProtocol : AnyObject {
      * # Arguments
      * * `source` - Typst markup source code
      * * `font_data` - Optional font data (e.g., Noto Serif TC)
+     * * `aux_files` - Optional map of auxiliary files (filename -> content bytes) for images/bibliography
      *
      * # Returns
      * PDF bytes on success, TypstError on failure
      */
-    func compileTypst(source: String, fontData: Data?) throws  -> Data
+    func compileTypst(source: String, fontData: Data?, auxFiles: [String: Data]?) throws  -> Data
     
     /**
      * Format citations using a specific style (simplified)
@@ -593,15 +594,17 @@ public convenience init() {
      * # Arguments
      * * `source` - Typst markup source code
      * * `font_data` - Optional font data (e.g., Noto Serif TC)
+     * * `aux_files` - Optional map of auxiliary files (filename -> content bytes) for images/bibliography
      *
      * # Returns
      * PDF bytes on success, TypstError on failure
      */
-open func compileTypst(source: String, fontData: Data?)throws  -> Data {
+open func compileTypst(source: String, fontData: Data?, auxFiles: [String: Data]?)throws  -> Data {
     return try  FfiConverterData.lift(try rustCallWithError(FfiConverterTypeTypstError.lift) {
     uniffi_overend_core_fn_method_overendengine_compile_typst(self.uniffiClonePointer(),
         FfiConverterString.lower(source),
-        FfiConverterOptionData.lower(fontData),$0
+        FfiConverterOptionData.lower(fontData),
+        FfiConverterOptionDictionaryStringData.lower(auxFiles),$0
     )
 })
 }
@@ -1180,6 +1183,30 @@ fileprivate struct FfiConverterOptionData: FfiConverterRustBuffer {
 #if swift(>=5.8)
 @_documentation(visibility: private)
 #endif
+fileprivate struct FfiConverterOptionDictionaryStringData: FfiConverterRustBuffer {
+    typealias SwiftType = [String: Data]?
+
+    public static func write(_ value: SwiftType, into buf: inout [UInt8]) {
+        guard let value = value else {
+            writeInt(&buf, Int8(0))
+            return
+        }
+        writeInt(&buf, Int8(1))
+        FfiConverterDictionaryStringData.write(value, into: &buf)
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
+        switch try readInt(&buf) as Int8 {
+        case 0: return nil
+        case 1: return try FfiConverterDictionaryStringData.read(from: &buf)
+        default: throw UniffiInternalError.unexpectedOptionalTag
+        }
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
 fileprivate struct FfiConverterSequenceString: FfiConverterRustBuffer {
     typealias SwiftType = [String]
 
@@ -1227,6 +1254,32 @@ fileprivate struct FfiConverterSequenceTypeBibEntry: FfiConverterRustBuffer {
     }
 }
 
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+fileprivate struct FfiConverterDictionaryStringData: FfiConverterRustBuffer {
+    public static func write(_ value: [String: Data], into buf: inout [UInt8]) {
+        let len = Int32(value.count)
+        writeInt(&buf, len)
+        for (key, value) in value {
+            FfiConverterString.write(key, into: &buf)
+            FfiConverterData.write(value, into: &buf)
+        }
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> [String: Data] {
+        let len: Int32 = try readInt(&buf)
+        var dict = [String: Data]()
+        dict.reserveCapacity(Int(len))
+        for _ in 0..<len {
+            let key = try FfiConverterString.read(from: &buf)
+            let value = try FfiConverterData.read(from: &buf)
+            dict[key] = value
+        }
+        return dict
+    }
+}
+
 private enum InitializationResult {
     case ok
     case contractVersionMismatch
@@ -1242,7 +1295,7 @@ private var initializationResult: InitializationResult = {
     if bindings_contract_version != scaffolding_contract_version {
         return InitializationResult.contractVersionMismatch
     }
-    if (uniffi_overend_core_checksum_method_overendengine_compile_typst() != 52748) {
+    if (uniffi_overend_core_checksum_method_overendengine_compile_typst() != 46277) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_overend_core_checksum_method_overendengine_format_citation() != 52069) {

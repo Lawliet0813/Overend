@@ -1,0 +1,93 @@
+{
+  "activityEntities" : [
+    "dataSourceTrainingStarted",
+    [
+      {
+        "createdDate" : "2026-01-21T05:20:42Z",
+        "event" : "dataSourceTrainingStarted",
+        "id" : "4B83F5AF-90CC-49AE-8FD6-862D1381BFF8",
+        "subtitle" : "PDF_TRAIN 1",
+        "title" : "Used By"
+      }
+    ],
+    "dataSourceCreated",
+    [
+      {
+        "createdDate" : "2026-01-21T05:17:40Z",
+        "event" : "dataSourceCreated",
+        "id" : "F4726A53-A905-4F9E-93A3-54BBC68D3A87",
+        "subtitle" : "training_data.csv",
+        "title" : "Data Source Created"
+      }
+    ],
+    "dataSourceMetrics",
+    [
+      {
+        "createdDate" : "2026-01-21T05:20:42Z",
+        "event" : "dataSourceMetrics",
+        "id" : "6B54AF0C-EFAE-4241-91DC-98891A1B0B7F",
+        "subtitle" : "4 Classes, 12 Items",
+        "title" : "Data Summary"
+      }
+    ]
+  ],
+  "createdDate" : "2026-01-21T05:17:40Z",
+  "dataPathRelativeToProjectURL" : "../../../../../../Users/lawliet/Desktop/training_data.csv/",
+  "dataResult" : {
+    "classesCount" : 4,
+    "createdDate" : "2026-01-21T05:17:40Z",
+    "dataAnalysis" : {
+      "classifierAnalysis" : {
+        "labelStats" : {
+          "Book Chapter" : 3,
+          "Conference Paper" : 3,
+          "Journal Article" : 3,
+          "Thesis" : 3
+        }
+      },
+      "issues" : [
+        {
+          "description" : "4 classes found, including Book Chapter, Conference Paper, Thesis",
+          "severity" : "debug"
+        },
+        {
+          "description" : "Less than 50 total texts found - add more to improve model validation",
+          "severity" : "warning"
+        },
+        {
+          "description" : "Smallest class is \"Journal Article\" with 3 texts",
+          "severity" : "debug"
+        },
+        {
+          "description" : "Largest class is \"Book Chapter\" with 3 text",
+          "severity" : "debug"
+        }
+      ],
+      "objectDetectorAnalysis" : {
+        "details" : {
+
+        }
+      },
+      "summary" : {
+        "canUseValidation" : 0,
+        "classCount" : 4,
+        "sampleCount" : 12
+      },
+      "warning" : "Less than 50 total texts found - add more to improve model validation"
+    },
+    "dataSourceID" : "B3F4A9C2-4C3D-42E5-B60B-2450BC87AC04",
+    "dataURL" : "file:///Users/lawliet/Desktop/training_data.csv",
+    "itemsCount" : 12,
+    "warning" : "Less than 50 total texts found - add more to improve model validation"
+  },
+  "dataURL" : "file:///Users/lawliet/Desktop/training_data.csv",
+  "experimentIDs" : [
+    "8F51D82D-5316-458C-A662-798B49A2DE3B"
+  ],
+  "id" : "B3F4A9C2-4C3D-42E5-B60B-2450BC87AC04",
+  "modifiedDate" : "2026-01-21T05:21:28Z",
+  "pathType" : 0,
+  "preferredFilename" : "training_data.csv",
+  "title" : "training_data.csv",
+  "version" : "1.0"
+}

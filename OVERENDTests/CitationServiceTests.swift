@@ -64,7 +64,7 @@ final class CitationServiceTests: XCTestCase {
         ])
         
         // When
-        let citation = CitationService.generateAPA(entry: entry)
+        let citation = CitationService.shared.generateAPA(entry: entry)
         
         // Then
         XCTAssertTrue(citation.contains("Smith"), "應包含作者姓氏")
@@ -86,7 +86,7 @@ final class CitationServiceTests: XCTestCase {
         )
         
         // When
-        let citation = CitationService.generateAPA(entry: entry)
+        let citation = CitationService.shared.generateAPA(entry: entry)
         
         // Then
         XCTAssertTrue(citation.contains("Johnson"), "應包含作者姓氏")
@@ -107,7 +107,7 @@ final class CitationServiceTests: XCTestCase {
         ])
         
         // When
-        let citation = CitationService.generateAPA(entry: entry)
+        let citation = CitationService.shared.generateAPA(entry: entry)
         
         // Then
         XCTAssertTrue(citation.contains("王小明") || citation.contains("王"), "應包含中文作者")
@@ -125,7 +125,7 @@ final class CitationServiceTests: XCTestCase {
         ])
         
         // When
-        let citation = CitationService.generateAPA(entry: entry)
+        let citation = CitationService.shared.generateAPA(entry: entry)
         
         // Then
         XCTAssertTrue(citation.contains("Smith"), "應包含第一作者")
@@ -145,7 +145,7 @@ final class CitationServiceTests: XCTestCase {
         ])
         
         // When
-        let citation = CitationService.generateAPA(entry: entry)
+        let citation = CitationService.shared.generateAPA(entry: entry)
         
         // Then
         XCTAssertTrue(citation.contains("doi.org") || citation.contains("10.5678"), 
@@ -160,7 +160,7 @@ final class CitationServiceTests: XCTestCase {
         ])
         
         // When
-        let citation = CitationService.generateAPA(entry: entry)
+        let citation = CitationService.shared.generateAPA(entry: entry)
         
         // Then
         XCTAssertFalse(citation.isEmpty, "即使缺欄位也應產生引用")
@@ -181,7 +181,7 @@ final class CitationServiceTests: XCTestCase {
         ])
         
         // When
-        let citation = CitationService.generateMLA(entry: entry)
+        let citation = CitationService.shared.generateMLA(entry: entry)
         
         // Then
         XCTAssertTrue(citation.contains("Williams"), "應包含作者姓氏")
@@ -204,7 +204,7 @@ final class CitationServiceTests: XCTestCase {
         )
         
         // When
-        let citation = CitationService.generateMLA(entry: entry)
+        let citation = CitationService.shared.generateMLA(entry: entry)
         
         // Then
         XCTAssertTrue(citation.contains("Garcia"), "應包含作者")
@@ -222,7 +222,7 @@ final class CitationServiceTests: XCTestCase {
         ])
         
         // When
-        let citation = CitationService.generateAPA(entry: entry)
+        let citation = CitationService.shared.generateAPA(entry: entry)
         
         // Then
         XCTAssertFalse(citation.isEmpty, "空作者也應產生引用")
@@ -238,7 +238,7 @@ final class CitationServiceTests: XCTestCase {
         ])
         
         // When
-        let citation = CitationService.generateAPA(entry: entry)
+        let citation = CitationService.shared.generateAPA(entry: entry)
         
         // Then
         XCTAssertTrue(citation.contains("O'Brien") || citation.contains("Brien"), 
@@ -280,7 +280,7 @@ final class AuthorFormattingTests: XCTestCase {
         )
         
         // When
-        let citation = CitationService.generateAPA(entry: entry)
+        let citation = CitationService.shared.generateAPA(entry: entry)
         
         // Then
         XCTAssertTrue(citation.contains("Smith"), "應包含姓氏")

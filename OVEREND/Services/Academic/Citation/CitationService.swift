@@ -446,7 +446,22 @@ class CitationService {
             // 中文：完整姓名（已經有空格分隔的保持原樣）
             return trimmed
         } else {
-            // 英文：Last, F. M. 格式
+            // 處理 BibTeX 常見格式 "Last, First"
+            if trimmed.contains(",") {
+                let parts = trimmed.components(separatedBy: ",")
+                if parts.count >= 2 {
+                    let lastName = parts[0].trimmingCharacters(in: .whitespaces)
+                    let firstName = parts[1].trimmingCharacters(in: .whitespaces)
+                    
+                    // 處理名字縮寫
+                    let firstNameParts = firstName.components(separatedBy: " ")
+                    let initials = firstNameParts.map { String($0.prefix(1)) + "." }.joined(separator: " ")
+                    
+                    return "\(lastName), \(initials)"
+                }
+            }
+            
+            // 處理 "First Last" 格式
             let parts = trimmed.components(separatedBy: " ")
             if parts.count >= 2 {
                 let lastName = parts.last ?? ""

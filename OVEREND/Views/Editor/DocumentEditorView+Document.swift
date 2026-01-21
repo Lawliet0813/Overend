@@ -46,11 +46,13 @@ extension DocumentEditorView {
         let insertionPoint = textView.selectedRange().location
         guard let textStorage = textView.textStorage else { return }
         
+        // 使用 citationKey 屬性標記這是引用物件
         let citationAttributed = NSAttributedString(
             string: "(\(entry.author), \(entry.year.isEmpty ? "n.d." : entry.year))",
             attributes: [
                 .foregroundColor: NSColor.black,
-                .font: NSFont.systemFont(ofSize: 12)
+                .font: NSFont.systemFont(ofSize: 12),
+                .citationKey: entry.citationKey // 儲存 Citation Key
             ]
         )
         
@@ -164,36 +166,60 @@ extension DocumentEditorView {
             }
         case .pdf:
             try await exportPDFNative(to: url)
+        case .typstProtocol:
+            // 使用 Typst 引擎匯出
+            try await exportPDFWithTypst(to: url)
         default:
             break
         }
     }
     
+    // WebKit Engine
     func exportPDFNative(to url: URL) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             DispatchQueue.main.async {
-                let textView = NSTextView(frame: NSRect(x: 0, y: 0, width: 595, height: 842))
-                textView.textStorage?.setAttributedString(attributedText)
+                // 使用 WebKit 引擎匯出 PDF
+                let template = FormatTemplate.blank
                 
-                let printInfo = NSPrintInfo.shared.copy() as! NSPrintInfo
-                printInfo.paperSize = NSSize(width: 595, height: 842)
-                printInfo.topMargin = 72
-                printInfo.bottomMargin = 72
-                printInfo.leftMargin = 72
-                printInfo.rightMargin = 72
-                printInfo.jobDisposition = .save
-                printInfo.dictionary()[NSPrintInfo.AttributeKey.jobSavingURL] = url
-                
-                let printOp = NSPrintOperation(view: textView, printInfo: printInfo)
-                printOp.showsPrintPanel = false
-                printOp.showsProgressPanel = false
-                
-                if printOp.run() {
-                    continuation.resume()
-                } else {
-                    continuation.resume(throwing: NSError(domain: "PDF", code: -1))
+                WebKitPDFExporter.export(
+                    document: self.document,
+                    template: template,
+                    to: url
+                ) { result in
+                    switch result {
+                    case .success:
+                        continuation.resume()
+                    case .failure(let error):
+                        continuation.resume(throwing: error)
+                    }
                 }
             }
         }
+    }
+    
+    // Typst Engine
+    func exportPDFWithTypst(to url: URL) async throws {
+        let template = FormatTemplate.nccu // Or selected template
+        
+        // 生成 BibTeX
+        var bibContent: String?
+        
+        // 必須在 MainActor 上存取 Core Data 物件
+        await MainActor.run {
+            if let library = selectedLibrary {
+                bibContent = BibTeXGenerator.exportLibrary(library, in: viewContext)
+                print("📚 Generated bibliography for library: \(library.name ?? "Unknown")")
+            } else {
+                print("⚠️ No library selected for bibliography generation.")
+                // 這裡可以考慮自動抓取所有文獻，或者提示使用者
+            }
+        }
+        
+        _ = try await TypstService.shared.compileFromAttributedString(
+            attributedText,
+            template: template,
+            bibContent: bibContent,
+            to: url
+        )
     }
 }

@@ -19,6 +19,8 @@ struct StandardTextField: View {
     var icon: String? = nil
     var isSecure: Bool = false
     var errorMessage: String? = nil
+    var label: String? = nil  // 無障礙標籤
+    var hint: String? = nil   // 無障礙提示
     var onCommit: (() -> Void)? = nil
 
     // MARK: - 狀態
@@ -26,6 +28,7 @@ struct StandardTextField: View {
     @FocusState private var isFocused: Bool
     @State private var isHovered = false
     @State private var showError = false
+    @Environment(\.accessibilityReduceMotion) var reduceMotion
 
     // MARK: - Body
 
@@ -36,14 +39,17 @@ struct StandardTextField: View {
                     Image(systemName: icon)
                         .font(.system(size: DesignTokens.IconSize.small))
                         .foregroundColor(iconColor)
-                        .animation(AnimationSystem.Easing.quick, value: isFocused)
-                        .animation(AnimationSystem.Easing.quick, value: showError)
+                        .animation(reduceMotion ? nil : AnimationSystem.Easing.quick, value: isFocused)
+                        .animation(reduceMotion ? nil : AnimationSystem.Easing.quick, value: showError)
                 }
 
                 if isSecure {
                     SecureField(placeholder, text: $text)
                         .textFieldStyle(.plain)
                         .focused($isFocused)
+                        .accessibilityLabel(label ?? placeholder)
+                        .accessibilityValue(text.isEmpty ? "空白" : "已填寫")
+                        .accessibilityHint(hint ?? "")
                         .onSubmit {
                             onCommit?()
                         }
@@ -51,6 +57,9 @@ struct StandardTextField: View {
                     TextField(placeholder, text: $text)
                         .textFieldStyle(.plain)
                         .focused($isFocused)
+                        .accessibilityLabel(label ?? placeholder)
+                        .accessibilityValue(text)
+                        .accessibilityHint(hint ?? "")
                         .onSubmit {
                             onCommit?()
                         }
@@ -68,12 +77,12 @@ struct StandardTextField: View {
                 RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.small)
                     .stroke(borderColor, lineWidth: borderWidth)
             )
-            .animation(AnimationSystem.Easing.quick, value: isFocused)
-            .animation(AnimationSystem.Easing.quick, value: isHovered)
-            .animation(AnimationSystem.Easing.quick, value: showError)
+            .animation(reduceMotion ? nil : AnimationSystem.Easing.quick, value: isFocused)
+            .animation(reduceMotion ? nil : AnimationSystem.Easing.quick, value: isHovered)
+            .animation(reduceMotion ? nil : AnimationSystem.Easing.quick, value: showError)
             .onHover { isHovered = $0 }
 
-            // 錯誤訊息
+            // 錯誤訊息（支援螢幕閱讀器公告）
             if let errorMessage = errorMessage, showError {
                 HStack(spacing: DesignTokens.Spacing.xxs) {
                     Image(systemName: "exclamationmark.circle.fill")
@@ -82,12 +91,19 @@ struct StandardTextField: View {
                         .font(.system(size: DesignTokens.Typography.caption))
                 }
                 .foregroundColor(theme.error)
-                .transition(.opacity.combined(with: .move(edge: .top)))
+                .transition(reduceMotion ? .opacity : .opacity.combined(with: .move(edge: .top)))
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("錯誤：\(errorMessage)")
+                .accessibilityAddTraits(.isStaticText)
             }
         }
         .onChange(of: errorMessage) { newValue in
-            withAnimation(AnimationSystem.Easing.spring) {
+            if reduceMotion {
                 showError = newValue != nil
+            } else {
+                withAnimation(AnimationSystem.Easing.spring) {
+                    showError = newValue != nil
+                }
             }
         }
     }
@@ -148,6 +164,7 @@ struct SearchField: View {
 
     @FocusState private var isFocused: Bool
     @State private var isHovered = false
+    @Environment(\.accessibilityReduceMotion) var reduceMotion
 
     // MARK: - Body
 
@@ -160,6 +177,9 @@ struct SearchField: View {
             TextField(placeholder, text: $text)
                 .textFieldStyle(.plain)
                 .focused($isFocused)
+                .accessibilityLabel("搜尋")
+                .accessibilityValue(text)
+                .accessibilityHint("輸入搜尋關鍵字")
                 .onSubmit {
                     onSearch?()
                 }
@@ -173,7 +193,8 @@ struct SearchField: View {
                         .foregroundColor(theme.textMuted)
                 }
                 .buttonStyle(.plain)
-                .transition(.scale.combined(with: .opacity))
+                .accessibilityLabel("清除搜尋")
+                .transition(reduceMotion ? .opacity : .scale.combined(with: .opacity))
             }
         }
         .font(.system(size: DesignTokens.Typography.body))
@@ -188,9 +209,9 @@ struct SearchField: View {
             RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.small)
                 .stroke(isFocused ? theme.focusBorder : theme.border, lineWidth: isFocused ? 2 : 1)
         )
-        .animation(AnimationSystem.Easing.quick, value: isFocused)
-        .animation(AnimationSystem.Easing.quick, value: isHovered)
-        .animation(AnimationSystem.Easing.quick, value: text.isEmpty)
+        .animation(reduceMotion ? nil : AnimationSystem.Easing.quick, value: isFocused)
+        .animation(reduceMotion ? nil : AnimationSystem.Easing.quick, value: isHovered)
+        .animation(reduceMotion ? nil : AnimationSystem.Easing.quick, value: text.isEmpty)
         .onHover { isHovered = $0 }
     }
 }

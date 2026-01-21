@@ -12,7 +12,10 @@ import CoreData
 struct DataManagementView: View {
     @Environment(\.managedObjectContext) private var context
     @EnvironmentObject var theme: AppTheme
-    
+
+    @AppStorage("CloudSyncEnabled") private var isCloudSyncEnabled = false
+    @State private var showCloudSyncAlert = false
+
     @State private var summary: AnalyticsSummary?
     @State private var isExporting = false
     @State private var exportURL: URL?
@@ -21,13 +24,72 @@ struct DataManagementView: View {
     @State private var showClearDataAlert = false
     @State private var showClearConfirmation = false
     @State private var clearDataText = ""
-    
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 // 標題
-                Text("AI 提取資料管理")
+                Text("資料管理")
                     .font(.system(size: DesignTokens.Typography.title2, weight: .bold))
+                    .foregroundColor(theme.textPrimary)
+
+                // iCloud 同步設定
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("iCloud 同步")
+                        .font(.system(size: DesignTokens.Typography.headline, weight: .semibold))
+                        .foregroundColor(theme.textPrimary)
+
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("使用 iCloud 同步資料")
+                                .font(.system(size: DesignTokens.Typography.body, weight: .medium))
+                                .foregroundColor(theme.textPrimary)
+
+                            Text("啟用後可在多個裝置間同步您的文獻庫")
+                                .font(.system(size: DesignTokens.Typography.caption))
+                                .foregroundColor(theme.textMuted)
+                        }
+
+                        Spacer()
+
+                        Toggle("", isOn: $isCloudSyncEnabled)
+                            .labelsHidden()
+                            .onChange(of: isCloudSyncEnabled) { _, newValue in
+                                showCloudSyncAlert = true
+                            }
+                    }
+
+                    if isCloudSyncEnabled {
+                        HStack(spacing: 8) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green)
+                            Text("iCloud 同步已啟用")
+                                .font(.system(size: DesignTokens.Typography.caption))
+                                .foregroundColor(.green)
+                        }
+                        .padding(.top, 4)
+                    } else {
+                        HStack(spacing: 8) {
+                            Image(systemName: "internaldrive.fill")
+                                .foregroundColor(theme.textMuted)
+                            Text("使用本地儲存")
+                                .font(.system(size: DesignTokens.Typography.caption))
+                                .foregroundColor(theme.textMuted)
+                        }
+                        .padding(.top, 4)
+                    }
+                }
+                .padding(16)
+                .background(
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.medium)
+                        .fill(theme.card)
+                )
+
+                Divider()
+
+                // AI 提取資料標題
+                Text("AI 提取資料")
+                    .font(.system(size: DesignTokens.Typography.headline, weight: .semibold))
                     .foregroundColor(theme.textPrimary)
                 
                 // 訓練資料統計
@@ -231,6 +293,14 @@ struct DataManagementView: View {
             Button("確定", role: .cancel) {}
         } message: {
             Text("所有資料已成功清空。應用程式將重新啟動。")
+        }
+        .alert("需要重新啟動", isPresented: $showCloudSyncAlert) {
+            Button("稍後重啟", role: .cancel) {}
+            Button("立即重啟") {
+                NSApplication.shared.terminate(nil)
+            }
+        } message: {
+            Text("變更 iCloud 同步設定需要重新啟動應用程式才能生效。")
         }
     }
     

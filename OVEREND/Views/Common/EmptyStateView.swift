@@ -177,6 +177,7 @@ struct LibraryEmptyState: View {
             }
             .buttonStyle(.plain)
             .shadow(color: theme.accent.opacity(0.4), radius: 12, x: 0, y: 6)
+            .scaleOnHover(1.05) // 新增：懸停放大效果
             
             // 拖曳提示
             HStack(spacing: 6) {
@@ -257,6 +258,7 @@ struct DocumentsEmptyState: View {
             }
             .buttonStyle(.plain)
             .shadow(color: theme.accent.opacity(0.4), radius: 12, x: 0, y: 6)
+            .scaleOnHover(1.05) // 新增：懸停放大效果
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear {

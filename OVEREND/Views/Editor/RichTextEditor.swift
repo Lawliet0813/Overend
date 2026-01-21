@@ -8,7 +8,15 @@
 import SwiftUI
 import AppKit
 
+
+// MARK: - Attribute Keys
+
+extension NSAttributedString.Key {
+    static let citationKey = NSAttributedString.Key("citationKey")
+}
+
 // MARK: - 富文本編輯器（A4 紙張模擬）
+
 
 struct RichTextEditorView: NSViewRepresentable {
     @Binding var attributedText: NSAttributedString
@@ -72,10 +80,20 @@ struct RichTextEditorView: NSViewRepresentable {
             textView.backgroundColor = .clear
             textView.textColor = .white
             textView.insertionPointColor = .white
+            // 設定選取時的樣式，確保文字可見
+            textView.selectedTextAttributes = [
+                .backgroundColor: NSColor.systemBlue.withAlphaComponent(0.5),
+                .foregroundColor: NSColor.white
+            ]
         } else {
             textView.backgroundColor = .white
             textView.textColor = .black
             textView.insertionPointColor = .black
+            // 設定選取時的樣式，確保文字可見
+            textView.selectedTextAttributes = [
+                .backgroundColor: NSColor.selectedTextBackgroundColor,
+                .foregroundColor: NSColor.black
+            ]
         }
         textView.font = .systemFont(ofSize: 12)
         

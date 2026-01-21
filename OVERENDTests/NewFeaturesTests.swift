@@ -163,7 +163,7 @@ final class CitationServiceAdvancedTests: XCTestCase {
     
     func testFormatAuthorsAdvanced() {
         let authorString = "王大明、李小華"
-        let formatted = CitationService.formatAuthorsAdvanced(
+        let formatted = CitationService.shared.formatAuthorsAdvanced(
             authorString,
             fields: [:],
             style: .apa7
@@ -175,7 +175,7 @@ final class CitationServiceAdvancedTests: XCTestCase {
     
     func testFormatSingleAuthorAdvanced() {
         let authorName = "歐陽菲菲"
-        let formatted = CitationService.formatSingleAuthorAdvanced(
+        let formatted = CitationService.shared.formatSingleAuthorAdvanced(
             authorName,
             style: .apa7,
             disambiguate: false

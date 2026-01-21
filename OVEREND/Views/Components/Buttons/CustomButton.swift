@@ -91,10 +91,12 @@ struct CustomButton: View {
     var tooltip: String? = nil
     
     // MARK: - 狀態
-    
+
     @State private var isHovered = false
     @State private var isPressed = false
     @State private var showConfirmation = false
+    @FocusState private var isFocused: Bool
+    @Environment(\.accessibilityReduceMotion) var reduceMotion
     
     // MARK: - 初始化
     
@@ -143,14 +145,36 @@ struct CustomButton: View {
     // MARK: - Body
     
     var body: some View {
+        baseButton
+            .overlay(focusRing)
+            .help(tooltip ?? "")
+            .accessibilityLabel(accessibilityLabel)
+            .accessibilityHint(tooltip ?? "")
+            .accessibilityAddTraits(.isButton)
+            .confirmationDialog(
+                "確認操作",
+                isPresented: $showConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("確認", role: .destructive) {
+                    action()
+                }
+                Button("取消", role: .cancel) {}
+            } message: {
+                Text("此操作無法撤銷")
+            }
+    }
+
+    private var baseButton: some View {
         Button(action: handleAction) {
             buttonContent
         }
         .buttonStyle(.plain)
         .disabled(isDisabled)
+        .focused($isFocused)
         .scaleEffect(scale)
-        .animation(AnimationSystem.Easing.quick, value: isHovered)
-        .animation(AnimationSystem.Easing.instant, value: isPressed)
+        .animation(reduceMotion ? nil : AnimationSystem.Easing.quick, value: isHovered)
+        .animation(reduceMotion ? nil : AnimationSystem.Easing.instant, value: isPressed)
         .onHover { hovering in
             if !isDisabled {
                 isHovered = hovering
@@ -167,19 +191,6 @@ struct CustomButton: View {
                     isPressed = false
                 }
         )
-        .help(tooltip ?? "")
-        .confirmationDialog(
-            "確認操作",
-            isPresented: $showConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button("確認", role: .destructive) {
-                action()
-            }
-            Button("取消", role: .cancel) {}
-        } message: {
-            Text("此操作無法撤銷")
-        }
     }
     
     // MARK: - 按鈕內容
@@ -304,6 +315,10 @@ struct CustomButton: View {
     
     /// 縮放比例
     private var scale: CGFloat {
+        if reduceMotion {
+            return 1.0
+        }
+
         if isPressed {
             if case .icon = style {
                 return 0.92
@@ -318,6 +333,63 @@ struct CustomButton: View {
             }
         } else {
             return 1.0
+        }
+    }
+
+    /// 無障礙標籤
+    private var accessibilityLabel: String {
+        if let title = title {
+            return title
+        } else if let tooltip = tooltip {
+            return tooltip
+        } else if let icon = icon {
+            // 為常見圖標提供預設標籤
+            switch icon {
+            case "xmark", "xmark.circle", "xmark.circle.fill":
+                return "關閉"
+            case "checkmark", "checkmark.circle", "checkmark.circle.fill":
+                return "確認"
+            case "trash", "trash.fill":
+                return "刪除"
+            case "pencil", "pencil.circle", "pencil.circle.fill":
+                return "編輯"
+            case "plus", "plus.circle", "plus.circle.fill":
+                return "新增"
+            case "minus", "minus.circle", "minus.circle.fill":
+                return "移除"
+            case "star", "star.fill":
+                return "收藏"
+            case "heart", "heart.fill":
+                return "喜歡"
+            case "gear", "gearshape", "gearshape.fill":
+                return "設定"
+            case "magnifyingglass":
+                return "搜尋"
+            case "ellipsis", "ellipsis.circle", "ellipsis.circle.fill":
+                return "更多選項"
+            default:
+                return "按鈕"
+            }
+        } else {
+            return "按鈕"
+        }
+    }
+
+    /// 焦點指示圈
+    @ViewBuilder
+    private var focusRing: some View {
+        if isFocused && !isDisabled {
+            if case .icon = style {
+                Circle()
+                    .strokeBorder(theme.accent, lineWidth: 2)
+                    .padding(-2)
+                    .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: isFocused)
+            } else {
+                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.medium)
+                    .strokeBorder(theme.accent, lineWidth: 2)
+                    .padding(-2)
+                    .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: isFocused)
+            }
         }
     }
     

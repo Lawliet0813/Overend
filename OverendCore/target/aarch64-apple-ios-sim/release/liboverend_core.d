@@ -1,1 +1,0 @@
-/Users/lawliet/OVEREND/OverendCore/target/aarch64-apple-ios-sim/release/liboverend_core.a: /Users/lawliet/OVEREND/OverendCore/build.rs /Users/lawliet/OVEREND/OverendCore/src/bibliography.rs /Users/lawliet/OVEREND/OverendCore/src/errors.rs /Users/lawliet/OVEREND/OverendCore/src/lib.rs /Users/lawliet/OVEREND/OverendCore/src/world.rs

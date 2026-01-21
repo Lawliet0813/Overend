@@ -30,7 +30,11 @@ pub struct MemoryWorld {
 
 impl MemoryWorld {
     /// Create a new MemoryWorld with the given source content
-    pub fn new(source: String, font_data: Option<Vec<u8>>) -> Result<Self, TypstError> {
+    pub fn new(
+        source: String, 
+        font_data: Option<Vec<u8>>,
+        aux_files: Option<HashMap<String, Vec<u8>>>
+    ) -> Result<Self, TypstError> {
         let main = Source::detached(source);
         
         // Create font book and load fonts
@@ -38,17 +42,30 @@ impl MemoryWorld {
         let mut fonts = Vec::new();
         
         // Load embedded fonts if provided
-        if let Some(data) = font_data {
-            let font_bytes = Bytes::from(data);
-            for font in Font::iter(font_bytes) {
+        if let Some(font_bytes) = font_data {
+            let buffer = Bytes::from(font_bytes);
+            for font in Font::iter(buffer) {
                 book.push(font.info().clone());
                 fonts.push(font);
             }
         }
         
+        // Initialize files map
+        let mut files = HashMap::new();
+        
+        // Add auxiliary files if provided
+        if let Some(aux) = aux_files {
+            for (path, content) in aux {
+                let vpath = VirtualPath::new(&path);
+                // Creating FileId with None package means it's in the project root
+                let id = FileId::new(None, vpath);
+                files.insert(id, Bytes::from(content));
+            }
+        }
+        
         Ok(Self {
             main,
-            files: HashMap::new(),
+            files,
             book: Prehashed::new(book),
             fonts,
             library: Prehashed::new(Library::default()),
@@ -127,8 +144,12 @@ impl typst::World for MemoryWorld {
 }
 
 /// Compile Typst source to PDF bytes
-pub fn compile_to_pdf(source: String, font_data: Option<Vec<u8>>) -> Result<Vec<u8>, TypstError> {
-    let world = MemoryWorld::new(source, font_data)?;
+pub fn compile_to_pdf(
+    source: String,
+    font_data: Option<Vec<u8>>,
+    aux_files: Option<HashMap<String, Vec<u8>>>
+) -> Result<Vec<u8>, TypstError> {
+    let world = MemoryWorld::new(source, font_data, aux_files)?;
     
     // Compile the document
     let mut tracer = typst::eval::Tracer::new();
@@ -157,7 +178,7 @@ mod tests {
     #[test]
     fn test_simple_compilation() {
         let source = "= Hello World\n\nThis is a test.".to_string();
-        let result = compile_to_pdf(source, None);
+        let result = compile_to_pdf(source, None, None);
         assert!(result.is_ok());
         let pdf = result.unwrap();
         assert!(!pdf.is_empty());
@@ -167,7 +188,7 @@ mod tests {
 
     #[test]
     fn test_memory_world_creation() {
-        let world = MemoryWorld::new("= Test".to_string(), None);
+        let world = MemoryWorld::new("= Test".to_string(), None, None);
         assert!(world.is_ok());
     }
 }

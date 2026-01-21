@@ -2,26 +2,20 @@
 //  WritingAIDomain.swift
 //  OVEREND
 //
-//  寫作 AI 領域 - 整合所有寫作相關的 AI 功能
-//
-//  整合來源：
-//  - AppleAIService.getWritingSuggestions()
-//  - AICommandExecutor 寫作相關指令
-//  - TaiwanAcademicStandardsService.checkStyle()
+//  寫作輔助領域 (演算法版本)
+//  整合 ToneAdjuster, ContentExpander, ContentSimplifier
 //
 
 import Foundation
 import AppKit
-import FoundationModels
 
 // MARK: - 寫作選項
 
-/// 寫作建議選項
 public struct WritingOptions {
-    public var checkGrammar: Bool = true          // 檢查語法
-    public var checkStyle: Bool = true            // 檢查風格
-    public var checkLogic: Bool = true            // 檢查邏輯
-    public var academicMode: Bool = true          // 學術模式
+    public var checkGrammar: Bool = true
+    public var checkStyle: Bool = true
+    public var checkLogic: Bool = true
+    public var academicMode: Bool = true
     public var language: WritingLanguage = .traditionalChinese
     
     public init() {}
@@ -32,13 +26,12 @@ public struct WritingOptions {
     }
 }
 
-/// 改寫風格
 public enum RewriteStyle: String, CaseIterable {
-    case formal = "formal"           // 正式
-    case academic = "academic"       // 學術
-    case concise = "concise"         // 精簡
-    case elaborate = "elaborate"     // 詳細
-    case neutral = "neutral"         // 中立客觀
+    case formal = "formal"
+    case academic = "academic"
+    case concise = "concise"
+    case elaborate = "elaborate"
+    case neutral = "neutral"
     
     var displayName: String {
         switch self {
@@ -49,26 +42,10 @@ public enum RewriteStyle: String, CaseIterable {
         case .neutral: return "中立客觀"
         }
     }
-    
-    var promptInstruction: String {
-        switch self {
-        case .formal:
-            return "使用正式的書面語表達"
-        case .academic:
-            return "使用學術寫作風格，客觀嚴謹"
-        case .concise:
-            return "精簡表達，去除冗贅"
-        case .elaborate:
-            return "詳細闡述，增加說明"
-        case .neutral:
-            return "使用中立客觀的語氣"
-        }
-    }
 }
 
 // MARK: - 寫作建議結果
 
-/// 寫作建議
 public struct WritingSuggestions {
     public let grammarIssues: [GrammarIssue]
     public let styleIssues: [StyleIssue]
@@ -84,7 +61,6 @@ public struct WritingSuggestions {
     }
 }
 
-/// 語法問題
 public struct GrammarIssue: Identifiable {
     public let id = UUID()
     public let original: String
@@ -92,7 +68,6 @@ public struct GrammarIssue: Identifiable {
     public let explanation: String
 }
 
-/// 風格問題
 public struct StyleIssue: Identifiable {
     public let id = UUID()
     public let original: String
@@ -107,457 +82,136 @@ public struct StyleIssue: Identifiable {
     }
 }
 
-/// 邏輯問題
 public struct LogicIssue: Identifiable {
     public let id = UUID()
     public let description: String
     public let suggestion: String
 }
 
-// MARK: - 寫作 AI 領域
+// MARK: - 寫作 AI 領域 (演算法版)
 
-/// 寫作 AI 領域
 @available(macOS 26.0, *)
 @MainActor
 public class WritingAIDomain {
     
-    private weak var service: UnifiedAIService?
+    private let toneAdjuster = ToneAdjuster.shared
+    private let expander = ContentExpander.shared
+    private let simplifier = ContentSimplifier.shared
     
-    init(service: UnifiedAIService) {
-        self.service = service
-    }
+    init() {}
     
-    // MARK: - 寫作建議
-    
-    /// 取得寫作建議（使用 Tool Calling）
-    /// - Parameters:
-    ///   - text: 要檢查的文字
-    ///   - options: 檢查選項
-    /// - Returns: 寫作建議
     public func getSuggestions(for text: String, options: WritingOptions = WritingOptions()) async throws -> WritingSuggestions {
-        guard let service = service else {
-            throw AIServiceError.notAvailable
-        }
-        
-        try service.ensureAvailable()
-        guard !text.isEmpty else {
-            throw AIServiceError.emptyInput
-        }
-        
-        service.startProcessing()
-        defer { service.endProcessing() }
-
-        // Apple Intelligence 上下文窗口較小，限制為 1000 字符
-        let maxLength = 1000
-        let truncatedText = String(text.prefix(maxLength))
-        
-        // 策略 1: Tool Calling
-        do {
-            let tool = AnalyzeWritingTool()
-            let session = AnalyzeWritingTool.createSession(with: tool, academicMode: options.academicMode)
-            
-            let prompt = """
-            請分析以下\(options.academicMode ? "學術" : "")寫作內容：
-            
-            ---
-            \(truncatedText)
-            ---
-            """
-            
-            let _ = try await session.respond(to: prompt)
-            
-            if let result = tool.result {
-                print("✅ Tool Calling 寫作分析成功")
-                
-                // 轉換結果
-                let grammarIssues = result.grammarIssues.map { issue in
-                    GrammarIssue(
-                        original: issue.original,
-                        suggestion: issue.suggestion,
-                        explanation: issue.explanation
-                    )
-                }
-                
-                let styleIssues = result.styleIssues.map { issue in
-                    let severity: StyleIssue.IssueSeverity
-                    switch issue.severity {
-                    case .high: severity = .high
-                    case .low: severity = .low
-                    default: severity = .medium
-                    }
-                    return StyleIssue(
-                        original: issue.original,
-                        suggestion: issue.suggestion,
-                        reason: issue.explanation,
-                        severity: severity
-                    )
-                }
-                
-                let logicIssues = result.logicIssues.map { issue in
-                    LogicIssue(
-                        description: issue.original,
-                        suggestion: issue.suggestion
-                    )
-                }
-                
-                return WritingSuggestions(
-                    grammarIssues: grammarIssues,
-                    styleIssues: styleIssues,
-                    logicIssues: logicIssues,
-                    overallFeedback: result.overallFeedback
-                )
-            }
-        } catch {
-            print("⚠️ Tool Calling 失敗: \(error.localizedDescription)，降級到 Prompt 方式")
-        }
-        
-        // 策略 2: Prompt 方式降級
-        let session = service.acquireSession()
-        defer { service.releaseSession(session) }
-        
-        let prompt = """
-        請審閱以下\(options.academicMode ? "學術" : "")寫作內容，並提供改進建議。
-        
-        ---
-        \(truncatedText)
-        ---
-        
-        請以 JSON 格式回覆（不要包含 markdown 程式碼區塊符號```）：
-        {
-          "grammarIssues": [
-            {"original": "原文", "suggestion": "修正", "explanation": "說明"}
-          ],
-          "styleIssues": [
-            {"original": "原文", "suggestion": "建議", "reason": "原因", "severity": "medium"}
-          ],
-          "logicIssues": [
-            {"description": "問題描述", "suggestion": "建議"}
-          ],
-          "overallFeedback": "整體評價"
-        }
-        
-        檢查項目：
-        \(options.checkGrammar ? "- 語法和標點符號" : "")
-        \(options.checkStyle ? "- 表達風格\(options.academicMode ? "（學術寫作規範）" : "")" : "")
-        \(options.checkLogic ? "- 邏輯連貫性" : "")
-        
-        使用繁體中文回覆。如果沒有問題，相應陣列留空。
-        """
-        
-        do {
-            let response = try await session.respond(to: prompt)
-            return try parseSuggestionsResponse(response.content)
-        } catch let error as AIServiceError {
-            throw error
-        } catch {
-            throw AIServiceError.writingSuggestionFailed(error.localizedDescription)
-        }
-    }
-    
-    // MARK: - 學術風格檢查
-    
-    /// 檢查學術寫作風格
-    /// - Parameter text: 要檢查的文字
-    /// - Returns: 風格問題列表
-    public func checkAcademicStyle(text: String) async throws -> [StyleIssue] {
-        guard let service = service else {
-            throw AIServiceError.notAvailable
-        }
-        
-        try service.ensureAvailable()
-        guard !text.isEmpty else {
-            throw AIServiceError.emptyInput
-        }
-        
-        service.startProcessing()
-        defer { service.endProcessing() }
-
-        let session = service.acquireSession()
-        defer { service.releaseSession(session) }
-        // Apple Intelligence 上下文窗口較小，限制為 1200 字符
-        let maxLength = 1200
-        let truncatedText = String(text.prefix(maxLength))
-        
-        let prompt = """
-        請檢查以下繁體中文學術文本的行文風格問題。
-        
-        文本：
-        ---
-        \(truncatedText)
-        ---
-        
-        請檢查以下項目：
-        1. 第一人稱使用（學術寫作應避免「我」、「我們」）
-        2. 口語化表達（應使用正式書面語）
-        3. 主觀判斷詞彙（如「很好」、「很棒」應改為客觀描述）
-        4. 冗贅表達（可以精簡的句子）
-        5. 學術嚴謹性（避免過度推論、絕對化陳述）
-        
-        建議的學術表達替換：
-        - 我認為 → 本研究認為 / 研究者認為
-        - 我們發現 → 研究發現 / 結果顯示
-        - 很明顯 → 由此可見 / 顯示
-        - 大家都知道 → 普遍認為 / 學界共識
-        
-        請以 JSON 格式回覆（不要包含 markdown 程式碼區塊符號```）：
-        [
-          {
-            "original": "原始文字",
-            "suggestion": "建議修正",
-            "reason": "修正原因",
-            "severity": "medium"
-          }
-        ]
-        
-        severity 可選值：high, medium, low
-        如果沒有問題，回覆空陣列 []
-        """
-        
-        do {
-            let response = try await session.respond(to: prompt)
-            return try parseStyleIssuesResponse(response.content)
-        } catch let error as AIServiceError {
-            throw error
-        } catch {
-            throw AIServiceError.writingSuggestionFailed(error.localizedDescription)
-        }
-    }
-    
-    // MARK: - 改寫文字
-    
-    /// 改寫文字
-    /// - Parameters:
-    ///   - text: 原始文字
-    ///   - style: 改寫風格
-    /// - Returns: 改寫後的文字
-    public func rewrite(text: String, style: RewriteStyle) async throws -> String {
-        guard let service = service else {
-            throw AIServiceError.notAvailable
-        }
-        
-        try service.ensureAvailable()
-        guard !text.isEmpty else {
-            throw AIServiceError.emptyInput
-        }
-        
-        service.startProcessing()
-        defer { service.endProcessing() }
-
-        // 檢查快取
-        let cacheKey = service.cacheKey(operation: "rewrite_\(style.rawValue)", input: text)
-        if let cached = service.getCachedResult(for: cacheKey) {
-            return cached
-        }
-        
-        let session = service.acquireSession()
-        defer { service.releaseSession(session) }
-
-        // Apple Intelligence 上下文窗口較小，限制為 800 字符
-        let maxLength = 800
-        let truncatedText = String(text.prefix(maxLength))
-
-        let prompt = """
-        請改寫以下文字，\(style.promptInstruction)。
-
-        原文：
-        ---
-        \(truncatedText)
-        ---
-        
-        要求：
-        1. 保持原意不變
-        2. \(style.promptInstruction)
-        3. 使用繁體中文
-        4. 保持專業術語
-        
-        只回覆改寫後的文字，不要其他說明。
-        """
-        
-        do {
-            let response = try await session.respond(to: prompt)
-            let result = response.content.trimmingCharacters(in: .whitespacesAndNewlines)
-            service.cacheResult(result, for: cacheKey)
-            return result
-        } catch {
-            throw AIServiceError.writingSuggestionFailed(error.localizedDescription)
-        }
-    }
-    
-    // MARK: - 精簡文字
-    
-    /// 精簡文字
-    /// - Parameters:
-    ///   - text: 原始文字
-    ///   - targetRatio: 目標長度比例（0.5 = 縮短到 50%）
-    /// - Returns: 精簡後的文字
-    public func condense(text: String, targetRatio: Double = 0.7) async throws -> String {
-        guard let service = service else {
-            throw AIServiceError.notAvailable
-        }
-        
-        try service.ensureAvailable()
-        guard !text.isEmpty else {
-            throw AIServiceError.emptyInput
-        }
-        
-        service.startProcessing()
-        defer { service.endProcessing() }
-
-        // 檢查快取
-        let cacheKey = service.cacheKey(operation: "condense_\(targetRatio)", input: text)
-        if let cached = service.getCachedResult(for: cacheKey) {
-            return cached
-        }
-        
-        let session = service.acquireSession()
-        defer { service.releaseSession(session) }
-
-        // Apple Intelligence 上下文窗口較小，限制為 1000 字符
-        let maxLength = 1000
-        let truncatedText = String(text.prefix(maxLength))
-        let targetLength = Int(Double(truncatedText.count) * targetRatio)
-
-        let prompt = """
-        請精簡以下文字，目標長度約 \(targetLength) 字（原文 \(truncatedText.count) 字）。
-
-        原文：
-        ---
-        \(truncatedText)
-        ---
-        
-        要求：
-        1. 保留核心論點和重要資訊
-        2. 刪除冗贅的修飾語和重複內容
-        3. 保持邏輯連貫性
-        4. 使用繁體中文
-        
-        只回覆精簡後的文字，不要其他說明。
-        """
-        
-        do {
-            let response = try await session.respond(to: prompt)
-            let result = response.content.trimmingCharacters(in: .whitespacesAndNewlines)
-            service.cacheResult(result, for: cacheKey)
-            return result
-        } catch {
-            throw AIServiceError.writingSuggestionFailed(error.localizedDescription)
-        }
-    }
-    
-    // MARK: - 私有方法
-    
-    private func parseSuggestionsResponse(_ response: String) throws -> WritingSuggestions {
-        var cleanedResponse = response
-            .replacingOccurrences(of: "```json", with: "")
-            .replacingOccurrences(of: "```", with: "")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-        
-        if let jsonStart = cleanedResponse.firstIndex(of: "{"),
-           let jsonEnd = cleanedResponse.lastIndex(of: "}") {
-            cleanedResponse = String(cleanedResponse[jsonStart...jsonEnd])
-        }
-        
-        guard let data = cleanedResponse.data(using: .utf8),
-              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-            // 返回默認值
-            return WritingSuggestions(
-                grammarIssues: [],
-                styleIssues: [],
-                logicIssues: [],
-                overallFeedback: response
-            )
-        }
-        
-        // 解析語法問題
-        var grammarIssues: [GrammarIssue] = []
-        if let grammarArray = json["grammarIssues"] as? [[String: String]] {
-            grammarIssues = grammarArray.compactMap { dict in
-                guard let original = dict["original"],
-                      let suggestion = dict["suggestion"] else { return nil }
-                return GrammarIssue(
-                    original: original,
-                    suggestion: suggestion,
-                    explanation: dict["explanation"] ?? ""
-                )
-            }
-        }
-        
-        // 解析風格問題
         var styleIssues: [StyleIssue] = []
-        if let styleArray = json["styleIssues"] as? [[String: String]] {
-            styleIssues = styleArray.compactMap { dict in
-                guard let original = dict["original"],
-                      let suggestion = dict["suggestion"] else { return nil }
-                let severityStr = dict["severity"] ?? "medium"
-                let severity: StyleIssue.IssueSeverity
-                switch severityStr {
-                case "high": severity = .high
-                case "low": severity = .low
-                default: severity = .medium
-                }
-                return StyleIssue(
-                    original: original,
-                    suggestion: suggestion,
-                    reason: dict["reason"] ?? "",
-                    severity: severity
-                )
+        var grammarIssues: [GrammarIssue] = []
+        let logicIssues: [LogicIssue] = []
+        
+        if options.checkStyle || options.academicMode {
+            let suggestions = toneAdjuster.checkStyle(text: text)
+            for (_, original, suggestion) in suggestions {
+                styleIssues.append(StyleIssue(original: original, suggestion: suggestion, reason: "非學術慣用語", severity: .medium))
             }
         }
         
-        // 解析邏輯問題
-        var logicIssues: [LogicIssue] = []
-        if let logicArray = json["logicIssues"] as? [[String: String]] {
-            logicIssues = logicArray.compactMap { dict in
-                guard let description = dict["description"] else { return nil }
-                return LogicIssue(
-                    description: description,
-                    suggestion: dict["suggestion"] ?? ""
-                )
-            }
+        if options.checkGrammar && options.language == .traditionalChinese {
+            if text.contains(",") { grammarIssues.append(GrammarIssue(original: ",", suggestion: "，", explanation: "建議使用全形標點")) }
         }
         
-        let overallFeedback = json["overallFeedback"] as? String ?? ""
-        
-        return WritingSuggestions(
-            grammarIssues: grammarIssues,
-            styleIssues: styleIssues,
-            logicIssues: logicIssues,
-            overallFeedback: overallFeedback
-        )
+        let overallFeedback = styleIssues.isEmpty && grammarIssues.isEmpty ? "寫作風格良好" : "建議進行部分修改以符合學術規範"
+        return WritingSuggestions(grammarIssues: grammarIssues, styleIssues: styleIssues, logicIssues: logicIssues, overallFeedback: overallFeedback)
     }
     
-    private func parseStyleIssuesResponse(_ response: String) throws -> [StyleIssue] {
-        var cleanedResponse = response
-            .replacingOccurrences(of: "```json", with: "")
-            .replacingOccurrences(of: "```", with: "")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-        
-        if let jsonStart = cleanedResponse.firstIndex(of: "["),
-           let jsonEnd = cleanedResponse.lastIndex(of: "]") {
-            cleanedResponse = String(cleanedResponse[jsonStart...jsonEnd])
+    public func checkAcademicStyle(text: String) async throws -> [StyleIssue] {
+        let suggestions = toneAdjuster.checkStyle(text: text)
+        return suggestions.map { (_, original, suggestion) in
+            StyleIssue(original: original, suggestion: suggestion, reason: "非學術慣用語", severity: .medium)
         }
-        
-        guard let data = cleanedResponse.data(using: .utf8),
-              let jsonArray = try? JSONSerialization.jsonObject(with: data) as? [[String: String]] else {
-            return []
+    }
+    
+    public func rewrite(text: String, style: RewriteStyle) async throws -> String {
+        switch style {
+        case .academic, .formal: return toneAdjuster.rewriteToAcademic(text: text)
+        case .concise: return simplifier.simplify(text)
+        case .elaborate: return expander.expand(text: text)
+        case .neutral: return toneAdjuster.rewriteToAcademic(text: text)
         }
-        
-        return jsonArray.compactMap { dict in
-            guard let original = dict["original"],
-                  let suggestion = dict["suggestion"] else { return nil }
-            let severityStr = dict["severity"] ?? "medium"
-            let severity: StyleIssue.IssueSeverity
-            switch severityStr {
-            case "high": severity = .high
-            case "low": severity = .low
-            default: severity = .medium
+    }
+    
+    public func condense(text: String, targetRatio: Double = 0.7) async throws -> String {
+        return simplifier.simplify(text)
+    }
+}
+
+// MARK: - Algorithm Services
+
+public class ToneAdjuster {
+    public static let shared = ToneAdjuster()
+    private let colloquialToAcademic: [String: String] = [
+        "我認為": "本研究認為 / 研究者認為", "覺得": "認為", "我們發現": "研究結果顯示", "很明顯": "顯然 / 由此可見", "大家都知道": "眾所周知", "好處": "優勢", "壞處": "劣勢", "差不多": "近似", "越來越多": "日益增加", "非常": "極為", "因為": "由於", "所以": "因此", "但是": "然而"
+    ]
+    
+    public func checkStyle(text: String) -> [(NSRange, String, String)] {
+        var suggestions: [(NSRange, String, String)] = []
+        let nsText = text as NSString
+        for (colloquial, academic) in colloquialToAcademic {
+            var searchRange = NSRange(location: 0, length: nsText.length)
+            while searchRange.location < nsText.length {
+                let range = nsText.range(of: colloquial, options: [], range: searchRange)
+                if range.location == NSNotFound { break }
+                suggestions.append((range, colloquial, academic))
+                searchRange.location = range.location + range.length
+                searchRange.length = nsText.length - searchRange.location
             }
-            return StyleIssue(
-                original: original,
-                suggestion: suggestion,
-                reason: dict["reason"] ?? "",
-                severity: severity
-            )
         }
+        return suggestions.sorted { $0.0.location < $1.0.location }
+    }
+    
+    public func rewriteToAcademic(text: String) -> String {
+        var result = text
+        for (colloquial, academic) in colloquialToAcademic {
+            let preferred = academic.components(separatedBy: " / ").first ?? academic
+            result = result.replacingOccurrences(of: colloquial, with: preferred)
+        }
+        return result
+    }
+}
+
+public class ContentExpander {
+    public static let shared = ContentExpander()
+    public enum SentenceType { case argument, evidence, conclusion, neutral }
+    private let templates: [SentenceType: [String]] = [
+        .argument: ["根據現有研究，XXX。", "本研究認為，XXX。", "值得注意的是，XXX。"],
+        .evidence: ["研究顯示，XXX。", "相關研究指出，XXX。", "正如文獻所述，XXX。"],
+        .conclusion: ["總結來說，XXX。", "因此，XXX。", "綜上所述，XXX。"]
+    ]
+    
+    public func expand(text: String, type: SentenceType? = nil) -> String {
+        let detectedType = type ?? detectType(text)
+        guard detectedType != .neutral, let options = templates[detectedType], !options.isEmpty else { return text }
+        let template = options.first!
+        var cleanText = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        if cleanText.hasSuffix("。") || cleanText.hasSuffix(".") { cleanText = String(cleanText.dropLast()) }
+        return template.replacingOccurrences(of: "XXX", with: cleanText) + "。"
+    }
+    
+    private func detectType(_ text: String) -> SentenceType {
+        if text.contains("因為") || text.contains("數據") { return .evidence }
+        if text.contains("所以") || text.contains("總之") { return .conclusion }
+        if text.contains("認為") || text.contains("主張") { return .argument }
+        return .neutral
+    }
+}
+
+public class ContentSimplifier {
+    public static let shared = ContentSimplifier()
+    private let redundantPhrases: [String: String] = [
+        "非常重要": "重要", "可以說是": "為", "進行研究": "研究", "做出決定": "決定", "涉及到": "涉及", "用來": "以", "之中的": "的", "為了要": "為", "若是以": "若"
+    ]
+    
+    public func simplify(_ text: String) -> String {
+        var result = text
+        for (phrase, replacement) in redundantPhrases {
+           result = result.replacingOccurrences(of: phrase, with: replacement)
+        }
+        return result
     }
 }

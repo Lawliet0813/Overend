@@ -243,70 +243,99 @@ struct AnimationSystem {
 // MARK: - View 擴展
 
 extension View {
-    /// 應用標準懸停縮放效果
-    /// - Parameter isHovered: 是否懸停
-    func hoverScale(isHovered: Bool) -> some View {
-        self.scaleEffect(isHovered ? 1.02 : 1.0)
-            .animation(AnimationSystem.Easing.quick, value: isHovered)
+    /// 應用標準懸停縮放效果（支援減少動態效果）
+    /// - Parameters:
+    ///   - isHovered: 是否懸停
+    ///   - reduceMotion: 是否減少動態效果
+    func hoverScale(isHovered: Bool, reduceMotion: Bool = false) -> some View {
+        self.scaleEffect(isHovered && !reduceMotion ? 1.02 : 1.0)
+            .animation(reduceMotion ? nil : AnimationSystem.Easing.quick, value: isHovered)
     }
 
-    /// 應用標準按壓縮放效果
-    /// - Parameter isPressed: 是否按壓
-    func pressScale(isPressed: Bool) -> some View {
-        self.scaleEffect(isPressed ? 0.96 : 1.0)
-            .animation(AnimationSystem.Easing.instant, value: isPressed)
+    /// 應用標準按壓縮放效果（支援減少動態效果）
+    /// - Parameters:
+    ///   - isPressed: 是否按壓
+    ///   - reduceMotion: 是否減少動態效果
+    func pressScale(isPressed: Bool, reduceMotion: Bool = false) -> some View {
+        self.scaleEffect(isPressed && !reduceMotion ? 0.96 : 1.0)
+            .animation(reduceMotion ? nil : AnimationSystem.Easing.instant, value: isPressed)
     }
 
-    /// 應用懸停與按壓組合效果
+    /// 應用懸停與按壓組合效果（支援減少動態效果）
     /// - Parameters:
     ///   - isHovered: 是否懸停
     ///   - isPressed: 是否按壓
-    func interactiveScale(isHovered: Bool, isPressed: Bool) -> some View {
-        let scale: CGFloat = isPressed ? 0.96 : (isHovered ? 1.02 : 1.0)
+    ///   - reduceMotion: 是否減少動態效果
+    func interactiveScale(isHovered: Bool, isPressed: Bool, reduceMotion: Bool = false) -> some View {
+        let scale: CGFloat
+        if reduceMotion {
+            scale = 1.0
+        } else {
+            scale = isPressed ? 0.96 : (isHovered ? 1.02 : 1.0)
+        }
         return self.scaleEffect(scale)
-            .animation(AnimationSystem.Easing.quick, value: isHovered)
-            .animation(AnimationSystem.Easing.instant, value: isPressed)
+            .animation(reduceMotion ? nil : AnimationSystem.Easing.quick, value: isHovered)
+            .animation(reduceMotion ? nil : AnimationSystem.Easing.instant, value: isPressed)
     }
 
-    /// 應用漸進式顯示（交錯動畫）
-    /// - Parameter index: 元素索引
-    func staggeredAppearance(index: Int) -> some View {
+    /// 應用漸進式顯示（交錯動畫，支援減少動態效果）
+    /// - Parameters:
+    ///   - index: 元素索引
+    ///   - reduceMotion: 是否減少動態效果
+    @ViewBuilder
+    func staggeredAppearance(index: Int, reduceMotion: Bool = false) -> some View {
         let limitedIndex = min(index, AnimationSystem.maxStaggeredItems - 1)
-        return self
-            .transition(.opacity.combined(with: .move(edge: .top)))
-            .animation(
-                AnimationSystem.Easing.spring.delay(
-                    AnimationSystem.staggerDelay(index: limitedIndex)
-                ),
-                value: true
-            )
+
+        if reduceMotion {
+            self.transition(.opacity)
+        } else {
+            self.transition(.opacity.combined(with: .move(edge: .top)))
+                .animation(
+                    AnimationSystem.Easing.spring.delay(
+                        AnimationSystem.staggerDelay(index: limitedIndex)
+                    ),
+                    value: true
+                )
+        }
     }
 
-    /// 應用淡入動畫
-    /// - Parameter delay: 延遲時間（秒）
-    func fadeIn(delay: Double = 0) -> some View {
+    /// 應用淡入動畫（支援減少動態效果）
+    /// - Parameters:
+    ///   - delay: 延遲時間（秒）
+    ///   - reduceMotion: 是否減少動態效果
+    func fadeIn(delay: Double = 0, reduceMotion: Bool = false) -> some View {
         self.transition(.opacity)
             .animation(
-                AnimationSystem.Easing.standard.delay(delay),
+                reduceMotion ? nil : AnimationSystem.Easing.standard.delay(delay),
                 value: true
             )
     }
 
-    /// 應用彈跳效果
-    /// - Parameter trigger: 觸發值
-    func bounce<V: Equatable>(trigger: V) -> some View {
-        self.animation(AnimationSystem.Easing.spring, value: trigger)
+    /// 應用彈跳效果（支援減少動態效果）
+    /// - Parameters:
+    ///   - trigger: 觸發值
+    ///   - reduceMotion: 是否減少動態效果
+    func bounce<V: Equatable>(trigger: V, reduceMotion: Bool = false) -> some View {
+        self.animation(reduceMotion ? nil : AnimationSystem.Easing.spring, value: trigger)
     }
 
-    /// 應用呼吸效果（脈衝動畫）
-    /// - Parameter isAnimating: 是否正在動畫
-    func breathingEffect(isAnimating: Bool) -> some View {
-        self.scaleEffect(isAnimating ? 1.05 : 1.0)
-            .opacity(isAnimating ? 0.8 : 1.0)
-            .animation(
-                Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true),
-                value: isAnimating
-            )
+    /// 應用呼吸效果（脈衝動畫，支援減少動態效果）
+    /// - Parameters:
+    ///   - isAnimating: 是否正在動畫
+    ///   - reduceMotion: 是否減少動態效果
+    @ViewBuilder
+    func breathingEffect(isAnimating: Bool, reduceMotion: Bool = false) -> some View {
+        if reduceMotion {
+            self
+        } else {
+            self
+                .scaleEffect(isAnimating ? 1.05 : 1.0)
+                .opacity(isAnimating ? 0.8 : 1.0)
+                .animation(
+                    Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true),
+                    value: isAnimating
+                )
+        }
     }
 
     /// 應用抖動效果（錯誤提示）

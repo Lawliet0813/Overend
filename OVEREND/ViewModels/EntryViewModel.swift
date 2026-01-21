@@ -63,6 +63,8 @@ class EntryViewModel: ObservableObject {
             entries = try await repository.fetchAll(in: library, sortBy: .updated)
             filteredEntries = entries
         } catch {
+            // ⚡ 優化：使用統一的錯誤處理系統
+            ErrorLogger.shared.log(error, context: "EntryViewModel.fetchEntries")
             errorMessage = "獲取書目失敗: \(error.localizedDescription)"
         }
     }

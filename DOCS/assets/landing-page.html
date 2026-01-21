@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OVEREND - 智慧文獻管理與論文寫作工具</title>
+    <meta name="description" content="專為研究者設計的 macOS 文獻管理工具。BibTeX 管理、富文本編輯、PDF/DOCX 匯出，讓您專注於研究本身。">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Crimson+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        body {
+            font-family: 'Atkinson Hyperlegible', sans-serif;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Crimson Pro', serif;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-primary': '#1A2B3C',
+                        'brand-accent': '#00F5A0',
+                        'brand-bg': '#F4F4F9',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-brand-bg text-slate-900">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-sm border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <svg class="w-8 h-8 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                    <span class="text-xl font-semibold text-brand-primary">OVEREND</span>
+                </div>
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#features" class="text-slate-600 hover:text-brand-primary transition-colors duration-200">功能</a>
+                    <a href="#benefits" class="text-slate-600 hover:text-brand-primary transition-colors duration-200">優勢</a>
+                    <a href="#download" class="px-6 py-2 bg-brand-primary text-white hover:bg-opacity-90 transition-all duration-200 cursor-pointer">立即下載</a>
+                </div>
+                <button class="md:hidden p-2 text-slate-600 hover:text-brand-primary cursor-pointer" aria-label="開啟選單">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="text-center lg:text-left">
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-brand-primary mb-6 leading-tight">
+                        讓研究者專注於<br>研究本身
+                    </h1>
+                    <p class="text-lg sm:text-xl text-slate-600 mb-8 leading-relaxed">
+                        OVEREND 是專為研究者設計的 macOS 文獻管理與論文寫作工具。完整的 BibTeX 支援、富文本編輯器、PDF 管理，一站式解決您的學術寫作需求。
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <a href="#download" class="px-8 py-4 bg-brand-accent text-brand-primary font-semibold hover:bg-opacity-90 transition-all duration-200 cursor-pointer text-center">
+                            免費下載 macOS 版
+                        </a>
+                        <a href="#features" class="px-8 py-4 border-2 border-brand-primary text-brand-primary font-semibold hover:bg-brand-primary hover:text-white transition-all duration-200 cursor-pointer text-center">
+                            了解更多
+                        </a>
+                    </div>
+                    <p class="mt-4 text-sm text-slate-500">
+                        需要 macOS 13.0 (Ventura) 或更高版本
+                    </p>
+                </div>
+                <div class="relative">
+                    <div class="bg-white p-8 border-2 border-slate-200">
+                        <div class="aspect-video bg-gradient-to-br from-brand-primary to-slate-700 flex items-center justify-center">
+                            <svg class="w-24 h-24 text-brand-accent opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <p class="mt-4 text-center text-slate-500 text-sm">應用程式螢幕截圖</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl sm:text-4xl font-bold text-brand-primary mb-4">核心功能</h2>
+                <p class="text-lg text-slate-600">一站式學術寫作解決方案</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="p-6 border-2 border-slate-200 hover:border-brand-accent transition-colors duration-200">
+                    <div class="w-12 h-12 bg-brand-accent/10 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-brand-primary mb-2">BibTeX 管理</h3>
+                    <p class="text-slate-600 leading-relaxed">完整的文獻庫管理，支援 .bib 檔案匯入匯出，所有文獻資料一目了然。</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="p-6 border-2 border-slate-200 hover:border-brand-accent transition-colors duration-200">
+                    <div class="w-12 h-12 bg-brand-accent/10 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-brand-primary mb-2">富文本編輯器</h3>
+                    <p class="text-slate-600 leading-relaxed">Word 級別的編輯體驗，支援格式設定、引用插入，專為學術寫作優化。</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="p-6 border-2 border-slate-200 hover:border-brand-accent transition-colors duration-200">
+                    <div class="w-12 h-12 bg-brand-accent/10 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-brand-primary mb-2">PDF/DOCX 匯出</h3>
+                    <p class="text-slate-600 leading-relaxed">一鍵匯出完整論文，支援 PDF 和 DOCX 格式，符合學術期刊投稿需求。</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="p-6 border-2 border-slate-200 hover:border-brand-accent transition-colors duration-200">
+                    <div class="w-12 h-12 bg-brand-accent/10 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-brand-primary mb-2">PDF 附件管理</h3>
+                    <p class="text-slate-600 leading-relaxed">為每篇文獻附加 PDF 檔案，方便閱讀和註記，所有資料集中管理。</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="p-6 border-2 border-slate-200 hover:border-brand-accent transition-colors duration-200">
+                    <div class="w-12 h-12 bg-brand-accent/10 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-brand-primary mb-2">強大搜尋</h3>
+                    <p class="text-slate-600 leading-relaxed">全文搜索與智慧篩選，快速找到需要的文獻和引用，提升研究效率。</p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="p-6 border-2 border-slate-200 hover:border-brand-accent transition-colors duration-200">
+                    <div class="w-12 h-12 bg-brand-accent/10 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-brand-primary mb-2">組群管理</h3>
+                    <p class="text-slate-600 leading-relaxed">樹狀結構組織文獻，支援自訂分類和標籤，打造個人化的知識庫。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section id="benefits" class="py-16 px-4 sm:px-6 lg:px-8 bg-brand-bg">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl sm:text-4xl font-bold text-brand-primary mb-4">為什麼選擇 OVEREND？</h2>
+                <p class="text-lg text-slate-600">專為研究者設計的貼心功能</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0">
+                        <div class="w-10 h-10 bg-brand-accent flex items-center justify-center">
+                            <svg class="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-brand-primary mb-2">免登入使用</h3>
+                        <p class="text-slate-600">純本地應用，無需帳號註冊，保護您的研究隱私與資料安全。</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0">
+                        <div class="w-10 h-10 bg-brand-accent flex items-center justify-center">
+                            <svg class="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-brand-primary mb-2">原生 macOS 體驗</h3>
+                        <p class="text-slate-600">使用 SwiftUI 開發，完美整合 macOS 生態系統，流暢且高效。</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0">
+                        <div class="w-10 h-10 bg-brand-accent flex items-center justify-center">
+                            <svg class="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-brand-primary mb-2">完整 BibTeX 支援</h3>
+                        <p class="text-slate-600">支援所有標準 BibTeX 格式，與主流學術工具無縫整合。</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0">
+                        <div class="w-10 h-10 bg-brand-accent flex items-center justify-center">
+                            <svg class="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-brand-primary mb-2">持續更新</h3>
+                        <p class="text-slate-600">積極開發中，定期推出新功能和改進，回應使用者需求。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="download" class="py-16 px-4 sm:px-6 lg:px-8 bg-brand-primary text-white">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-4">開始您的高效研究之旅</h2>
+            <p class="text-lg mb-8 text-slate-200">立即下載 OVEREND，讓文獻管理變得簡單高效</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="https://github.com/yourusername/overend-macos/releases" class="px-8 py-4 bg-brand-accent text-brand-primary font-semibold hover:bg-opacity-90 transition-all duration-200 cursor-pointer">
+                    下載 macOS 版本
+                </a>
+                <a href="https://github.com/yourusername/overend-macos" class="px-8 py-4 border-2 border-white text-white font-semibold hover:bg-white hover:text-brand-primary transition-all duration-200 cursor-pointer">
+                    查看原始碼
+                </a>
+            </div>
+            <p class="mt-6 text-sm text-slate-300">
+                需要 macOS 13.0 (Ventura) 或更高版本 | 完全免費開源
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 px-4 sm:px-6 lg:px-8 bg-white border-t border-slate-200">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <svg class="w-6 h-6 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                    <span class="text-brand-primary font-semibold">OVEREND</span>
+                </div>
+                <p class="text-slate-600 text-sm">© 2026 OVEREND Team. 讓研究者專注於研究本身。</p>
+                <div class="flex gap-6">
+                    <a href="https://github.com/yourusername/overend-macos" class="text-slate-600 hover:text-brand-primary transition-colors duration-200 cursor-pointer" aria-label="GitHub">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

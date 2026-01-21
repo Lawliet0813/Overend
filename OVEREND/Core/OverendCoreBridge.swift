@@ -48,7 +48,7 @@ public final class OverendCoreBridge {
     public func compileTypst(source: String, fontData: Data? = nil) async throws -> Data {
         return try await withCheckedThrowingContinuation { continuation in
             do {
-                let pdfData = try engine.compileTypst(source: source, fontData: fontData)
+                let pdfData = try engine.compileTypst(source: source, fontData: fontData, auxFiles: nil)
                 continuation.resume(returning: pdfData)
             } catch {
                 continuation.resume(throwing: error)
@@ -86,7 +86,7 @@ public final class OverendCoreBridge {
     // MARK: - Hayagriva Bibliography
 
     /// 將 Swift CitationStyle 轉換為 Rust CitationStyle
-    private func convertCitationStyle(_ style: String) -> RustCitationStyle {
+    private func convertCitationStyle(_ style: String) -> OverendCitationStyle {
         switch style.lowercased() {
         case "apa6", "apa7", "apa":
             return .apa

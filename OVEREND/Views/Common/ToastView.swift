@@ -12,8 +12,9 @@ struct ToastView: View {
     @EnvironmentObject var theme: AppTheme
     @ObservedObject var manager: ToastManager
     let toast: ToastItem
-    
+
     @State private var isHovered = false
+    @Environment(\.accessibilityReduceMotion) var reduceMotion
     
     var body: some View {
         HStack(spacing: 12) {
@@ -56,9 +57,31 @@ struct ToastView: View {
                 .frame(width: 4)
         }
         .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.1)) {
+            if reduceMotion {
                 isHovered = hovering
+            } else {
+                withAnimation(.easeInOut(duration: 0.1)) {
+                    isHovered = hovering
+                }
             }
+        }
+        // 無障礙支援
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(accessibilityLabel)
+        .accessibilityAddTraits(.isStaticText)
+    }
+
+    /// 無障礙標籤（包含類型前綴）
+    private var accessibilityLabel: String {
+        switch toast.type {
+        case .success:
+            return "成功：\(toast.message)"
+        case .error:
+            return "錯誤：\(toast.message)"
+        case .warning:
+            return "警告：\(toast.message)"
+        case .info:
+            return "訊息：\(toast.message)"
         }
     }
 }
@@ -67,6 +90,7 @@ struct ToastView: View {
 struct LoadingIndicator: View {
     @EnvironmentObject var theme: AppTheme
     @ObservedObject var manager: ToastManager
+    @Environment(\.accessibilityReduceMotion) var reduceMotion
     
     var body: some View {
         if manager.isLoading {
@@ -113,10 +137,16 @@ struct LoadingIndicator: View {
                     .fill(theme.accent)
                     .frame(width: 4)
             }
-            .transition(.asymmetric(
-                insertion: .move(edge: .trailing).combined(with: .opacity),
-                removal: .opacity.combined(with: .scale(scale: 0.9))
-            ))
+            .transition(reduceMotion ?
+                .opacity :
+                .asymmetric(
+                    insertion: .move(edge: .trailing).combined(with: .opacity),
+                    removal: .opacity.combined(with: .scale(scale: 0.9))
+                )
+            )
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("載入中：\(manager.loadingMessage)")
+            .accessibilityAddTraits(.updatesFrequently)
         }
     }
 }
@@ -125,6 +155,7 @@ struct LoadingIndicator: View {
 struct ToastContainer: View {
     @EnvironmentObject var theme: AppTheme
     @StateObject private var manager = ToastManager.shared
+    @Environment(\.accessibilityReduceMotion) var reduceMotion
     
     var body: some View {
         VStack(alignment: .trailing, spacing: 8) {
@@ -138,16 +169,19 @@ struct ToastContainer: View {
                 ToastView(manager: manager, toast: toast)
                     .environmentObject(theme)
                     .frame(maxWidth: 360)
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .trailing).combined(with: .opacity),
-                        removal: .opacity.combined(with: .scale(scale: 0.9))
-                    ))
+                    .transition(reduceMotion ?
+                        .opacity :
+                        .asymmetric(
+                            insertion: .move(edge: .trailing).combined(with: .opacity),
+                            removal: .opacity.combined(with: .scale(scale: 0.9))
+                        )
+                    )
             }
         }
         .padding(.top, 16)
         .padding(.trailing, 16)
-        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: manager.toasts)
-        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: manager.isLoading)
+        .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.7), value: manager.toasts)
+        .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.7), value: manager.isLoading)
     }
 }
 

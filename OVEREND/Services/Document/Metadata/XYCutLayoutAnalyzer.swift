@@ -493,7 +493,7 @@ class XYCutLayoutAnalyzer {
     }
     
     /// 從區域提取文字
-    private static func extractTextFromRegion(page: PDFPage, rect: CGRect) -> String? {
+    static func extractTextFromRegion(page: PDFPage, rect: CGRect) -> String? {
         let selection = page.selection(for: rect)
         return selection?.string
     }

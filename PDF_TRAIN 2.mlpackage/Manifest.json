@@ -1,0 +1,24 @@
+{
+    "fileFormatVersion": "1.0.0",
+    "itemInfoEntries": {
+        "737D7178-0132-4BC9-AB9E-8A8FD1205954": {
+            "author": "com.apple.CoreML",
+            "description": "External Metadata Overlay",
+            "name": "Metadata.json",
+            "path": "com.apple.CoreML/Metadata.json"
+        },
+        "A67C4993-4C5C-4B2A-A74C-5611B238C64F": {
+            "author": "com.apple.CoreML",
+            "description": "CoreML Model Specification",
+            "name": "PDF_TRAIN 2.mlmodel",
+            "path": "com.apple.CoreML/PDF_TRAIN 2.mlmodel"
+        },
+        "CE154D70-FD8A-46A0-82C6-04290833BAFC": {
+            "author": "com.apple.CoreML",
+            "description": "External FeatureDescription Overlay",
+            "name": "FeatureDescriptions.json",
+            "path": "com.apple.CoreML/FeatureDescriptions.json"
+        }
+    },
+    "rootModelIdentifier": "A67C4993-4C5C-4B2A-A74C-5611B238C64F"
+}

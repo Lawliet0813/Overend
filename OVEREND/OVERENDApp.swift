@@ -96,8 +96,7 @@ struct OVERENDApp: App {
     var body: some Scene {
         WindowGroup {
             ZStack {
-                // 主內容 - 使用簡潔版 UI
-                SimpleContentView()
+                NewContentView()
                     .environment(\.managedObjectContext, persistenceController.container.viewContext)
                     .environmentObject(appTheme) // 注入主題
                     .opacity(showSplash ? 0 : 1)
@@ -150,6 +149,60 @@ struct OVERENDApp: App {
                 }
                 .keyboardShortcut("e", modifiers: [.command])
                 .disabled(selectedLibrary == nil)
+            }
+            
+            // 快速操作命令
+            CommandGroup(after: .toolbar) {
+                Button("快速搜尋") {
+                    NotificationCenter.default.post(name: .quickSearch, object: nil)
+                }
+                .keyboardShortcut("k", modifiers: [.command])
+                
+                Button("AI 助手") {
+                    NotificationCenter.default.post(name: .showAIAssistant, object: nil)
+                }
+                .keyboardShortcut("/", modifiers: [.command])
+                
+                Button("切換文獻庫") {
+                    NotificationCenter.default.post(name: .switchToLibrary, object: nil)
+                }
+                .keyboardShortcut("l", modifiers: [.command, .shift])
+                
+                Divider()
+                
+                Button("測試 OCR") {
+                    NSApplication.shared.keyWindow?.contentViewController?.presentAsSheet(
+                        NSHostingController(rootView: OCRTestView())
+                    )
+                }
+                .keyboardShortcut("o", modifiers: [.command, .option])
+                
+                Button("匯出訓練資料") {
+                    let exportView = TrainingDataExportView()
+                        .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                    NSApplication.shared.keyWindow?.contentViewController?.presentAsSheet(
+                        NSHostingController(rootView: exportView)
+                    )
+                }
+                .keyboardShortcut("t", modifiers: [.command, .option])
+                
+                Button("手動標註資料") {
+                    let labelingView = DataLabelingView()
+                        .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                    NSApplication.shared.keyWindow?.contentViewController?.presentAsSheet(
+                        NSHostingController(rootView: labelingView)
+                    )
+                }
+                .keyboardShortcut("l", modifiers: [.command, .option])
+                
+                /*
+                Button("測試 ML 模型") {
+                    NSApplication.shared.keyWindow?.contentViewController?.presentAsSheet(
+                        NSHostingController(rootView: MLModelTestView())
+                    )
+                }
+                .keyboardShortcut("m", modifiers: [.command, .option])
+                */
             }
         }
 

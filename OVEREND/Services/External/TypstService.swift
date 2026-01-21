@@ -8,6 +8,8 @@
 import Foundation
 import Combine
 
+import AppKit
+
 /// Service for Typst document compilation to PDF
 /// Uses the Rust OverendCore for high-performance typesetting
 @MainActor
@@ -38,8 +40,9 @@ class TypstService: ObservableObject {
     /// - Parameters:
     ///   - source: Typst markup source code
     ///   - fontData: Optional font data (e.g., Noto Serif TC for Traditional Chinese)
+    ///   - auxFiles: Optional map of auxiliary files (filename -> data)
     /// - Returns: PDF data on success
-    func compile(source: String, fontData: Data? = nil) async throws -> Data {
+    func compile(source: String, fontData: Data? = nil, auxFiles: [String: Data]? = nil) async throws -> Data {
         isCompiling = true
         lastError = nil
         
@@ -49,7 +52,8 @@ class TypstService: ObservableObject {
             // Call Rust core - UniFFI converts Data automatically
             let pdfData = try engine.compileTypst(
                 source: source,
-                fontData: fontData
+                fontData: fontData,
+                auxFiles: auxFiles
             )
             
             return pdfData
@@ -65,9 +69,70 @@ class TypstService: ObservableObject {
     ///   - source: Typst markup source code
     ///   - outputURL: Destination URL for PDF
     ///   - fontData: Optional font data
-    func compileToFile(source: String, outputURL: URL, fontData: Data? = nil) async throws {
-        let pdfData = try await compile(source: source, fontData: fontData)
+    ///   - auxFiles: Optional map of auxiliary files
+    func compileToFile(source: String, outputURL: URL, fontData: Data? = nil, auxFiles: [String: Data]? = nil) async throws {
+        let pdfData = try await compile(source: source, fontData: fontData, auxFiles: auxFiles)
         try pdfData.write(to: outputURL)
+    }
+
+    /// Compile from NSAttributedString and FormatTemplate
+    /// - Parameters:
+    ///   - attributedString: The content to compile
+    ///   - template: The formatting template
+    ///   - outputURL: Optional destination URL. If provided, writes to file.
+    /// - Returns: PDF Data
+
+    func compileFromAttributedString(
+        _ attributedString: NSAttributedString,
+        template: FormatTemplate,
+        bibContent: String? = nil,
+        to outputURL: URL? = nil
+    ) async throws -> Data {
+        // 1. Convert to Typst markup
+        var typstSource = TypstConverter.toTypst(attributedString, template: template)
+        
+        // 1.5 Prepare Auxiliary Files (Bibliography)
+        var auxFiles: [String: Data]? = nil
+        
+        if let bibContent = bibContent {
+            // Create in-memory file
+            if let bibData = bibContent.data(using: .utf8) {
+                auxFiles = ["references.bib": bibData]
+                
+                // Inject relative path bibliography command
+                typstSource += "\n\n#bibliography(\"references.bib\")"
+                print("📚 Injected in-memory bibliography: references.bib")
+            }
+        }
+        
+        print("📄 Typst Source Generated:\n\(typstSource.prefix(500))...")
+        
+        // 2. Load bundled fonts (prioritize Noto Serif TC for Chinese)
+        var fontData: Data?
+        let fontNames = ["NotoSerifTC-Regular", "NotoSerifTC-Bold", "SourceHanSerifTC-Regular"]
+        
+        for name in fontNames {
+            if let data = loadBundledFont(named: name) {
+                fontData = data
+                print("✅ Loaded font: \(name)")
+                break
+            }
+        }
+        
+        if fontData == nil {
+            print("⚠️ Warning: No bundled CJK font found. Typst rendering might fail for Chinese characters.")
+        }
+        
+        // 3. Compile with auxiliary files
+        // Note: We need to update compile() signature too
+        let pdfData = try await compile(source: typstSource, fontData: fontData, auxFiles: auxFiles)
+        
+        // 4. Write to file if URL provided
+        if let url = outputURL {
+            try pdfData.write(to: url)
+        }
+        
+        return pdfData
     }
     
     /// Load font data from App Bundle

@@ -19,6 +19,7 @@ class PandocService {
         case markdown = "md"
         case html
         case rtf
+        case typstProtocol = "typst" // Pseudo-format for internal routing
         
         var ext: String { rawValue }
         
@@ -29,6 +30,7 @@ class PandocService {
             case .markdown: return "markdown"
             case .html: return "html5"
             case .rtf: return "rtf"
+            case .typstProtocol: return "typst"
             }
         }
     }

@@ -1,0 +1,51 @@
+{
+  "activityEntities" : [
+    "dataSourceCreated",
+    [
+      {
+        "createdDate" : "2026-01-21T05:25:59Z",
+        "event" : "dataSourceCreated",
+        "id" : "CAEA5B32-529E-4ADA-91C4-B04DBDB97F96",
+        "subtitle" : "training_data_200.csv",
+        "title" : "Data Source Created"
+      }
+    ],
+    "dataSourceMetrics",
+    [
+      {
+        "createdDate" : "2026-01-21T05:26:10Z",
+        "event" : "dataSourceMetrics",
+        "id" : "A9D23831-80D3-4F22-A8A1-3526F4DA7423",
+        "subtitle" : "4 Classes, 200 Items",
+        "title" : "Data Summary"
+      }
+    ],
+    "dataSourceTrainingStarted",
+    [
+      {
+        "createdDate" : "2026-01-21T05:26:10Z",
+        "event" : "dataSourceTrainingStarted",
+        "id" : "87D705E7-826B-45A6-937A-F5AC855BF2E1",
+        "subtitle" : "PDF_TRAIN 1",
+        "title" : "Used By"
+      }
+    ]
+  ],
+  "createdDate" : "2026-01-21T05:25:59Z",
+  "dataPathRelativeToProjectURL" : "../../../../../../Users/lawliet/Desktop/training_data_200.csv/",
+  "dataResult" : {
+    "createdDate" : "2026-01-21T05:25:59Z",
+    "dataSourceID" : "E58E0A62-4D07-4D18-8E9F-D710AE815166",
+    "dataURL" : "file:///Users/lawliet/Desktop/training_data_200.csv"
+  },
+  "dataURL" : "file:///Users/lawliet/Desktop/training_data_200.csv",
+  "experimentIDs" : [
+    "8F51D82D-5316-458C-A662-798B49A2DE3B"
+  ],
+  "id" : "E58E0A62-4D07-4D18-8E9F-D710AE815166",
+  "modifiedDate" : "2026-01-21T05:26:10Z",
+  "pathType" : 0,
+  "preferredFilename" : "training_data_200.csv",
+  "title" : "training_data_200.csv",
+  "version" : "1.0"
+}
