@@ -1213,19 +1213,100 @@ struct ModernEntryDetailView: View {
     
     /// 編輯模式下生成引用預覽
     private func generateCitationPreview(format: CitationFormat) -> String {
-        // 創建臨時 Entry 用於預覽
-        let tempEntry = Entry(context: viewContext)
-        tempEntry.id = entry.id
-        tempEntry.citationKey = entry.citationKey
-        tempEntry.entryType = editedEntryType.isEmpty ? entry.entryType : editedEntryType
-        tempEntry.fields = editedFields
+        // 使用編輯中的欄位直接生成預覽，無需創建臨時對象
+        switch format {
+        case .apa7:
+            return generateAPAPreviewDirect()
+        case .mla9:
+            return generateMLAPreviewDirect()
+        case .chicago:
+            return generateChicagoPreviewDirect()
+        case .ieee:
+            return generateIEEEPreviewDirect()
+        case .vancouver:
+            return generateVancouverPreviewDirect()
+        case .harvard:
+            return generateHarvardPreviewDirect()
+        }
+    }
+    
+    // MARK: - 預覽生成輔助方法
+    
+    private func generateAPAPreviewDirect() -> String {
+        let author = editedFields["author"] ?? ""
+        let year = editedFields["year"] ?? "n.d."
+        let title = editedTitle.isEmpty ? "無標題" : editedTitle
         
-        let preview = CitationService.generate(entry: tempEntry, format: format)
+        var citation = ""
+        citation += author.isEmpty ? "Unknown" : author
+        citation += " (\(year)). \(title)."
         
-        // 刪除臨時對象（不保存到上下文）
-        viewContext.delete(tempEntry)
+        if let journal = editedFields["journal"], !journal.isEmpty {
+            citation += " *\(journal)*"
+            if let volume = editedFields["volume"], !volume.isEmpty {
+                citation += ", *\(volume)*"
+            }
+            if let pages = editedFields["pages"], !pages.isEmpty {
+                citation += ", \(pages)"
+            }
+            citation += "."
+        }
         
-        return preview
+        if let doi = editedFields["doi"], !doi.isEmpty {
+            citation += " https://doi.org/\(doi)"
+        }
+        
+        return citation
+    }
+    
+    private func generateMLAPreviewDirect() -> String {
+        let author = editedFields["author"] ?? "Unknown"
+        let title = editedTitle.isEmpty ? "Untitled" : editedTitle
+        let year = editedFields["year"] ?? ""
+        
+        var citation = "\(author). \"\(title).\""
+        
+        if let journal = editedFields["journal"], !journal.isEmpty {
+            citation += " *\(journal)*"
+            if !year.isEmpty {
+                citation += ", \(year)"
+            }
+            citation += "."
+        }
+        
+        return citation
+    }
+    
+    private func generateChicagoPreviewDirect() -> String {
+        let author = editedFields["author"] ?? "Unknown"
+        let title = editedTitle.isEmpty ? "Untitled" : editedTitle
+        let year = editedFields["year"] ?? "n.d."
+        
+        return "\(author). \"\(title).\" \(year)."
+    }
+    
+    private func generateIEEEPreviewDirect() -> String {
+        let author = editedFields["author"] ?? "Unknown"
+        let title = editedTitle.isEmpty ? "Untitled" : editedTitle
+        let year = editedFields["year"] ?? "n.d."
+        
+        return "\(author), \"\(title),\" \(year)."
+    }
+    
+    private func generateVancouverPreviewDirect() -> String {
+        let author = editedFields["author"] ?? "Unknown"
+        let title = editedTitle.isEmpty ? "Untitled" : editedTitle
+        let year = editedFields["year"] ?? "n.d."
+        
+        return "\(author). \(title). \(year)."
+    }
+    
+    private func generateHarvardPreviewDirect() -> String {
+        let author = editedFields["author"] ?? "Unknown"
+        let title = editedTitle.isEmpty ? "Untitled" : editedTitle
+        let year = editedFields["year"] ?? "n.d."
+        
+        return "\(author) (\(year)) *\(title)*."
     }
     
     /// 編輯模式下生成 APA 預覽

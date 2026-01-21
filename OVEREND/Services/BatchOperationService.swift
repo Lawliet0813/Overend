@@ -349,9 +349,10 @@ class BatchOperationService {
         
         // 頁碼
         if let pages = entry.fields["pages"], !pages.isEmpty {
-            ris += "SP  - \(pages.components(separatedBy: "-").first ?? pages)\n"
-            if pages.contains("-") {
-                ris += "EP  - \(pages.components(separatedBy: "-").last ?? "")\n"
+            let pageComponents = pages.components(separatedBy: "-")
+            ris += "SP  - \(pageComponents.first ?? pages)\n"
+            if pageComponents.count > 1 {
+                ris += "EP  - \(pageComponents.last ?? "")\n"
             }
         }
         

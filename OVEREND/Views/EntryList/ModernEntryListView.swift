@@ -1325,7 +1325,7 @@ struct BatchTagPickerView: View {
             // 標籤列表
             ScrollView {
                 VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
-                    ForEach(Array(allTags), id: \.id) { tag in
+                    ForEach(allTags, id: \.id) { tag in
                         TagToggleRow(
                             tag: tag,
                             isSelected: selectedTags.contains(tag),
