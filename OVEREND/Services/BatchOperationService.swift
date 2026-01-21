@@ -254,6 +254,137 @@ class BatchOperationService {
         return BibTeXGenerator.generate(from: entries)
     }
     
+    // MARK: - 批次匯出 RIS
+    
+    /// 批次匯出 RIS
+    static func batchExportRIS(
+        entries: [Entry],
+        to url: URL
+    ) throws -> OperationResult {
+        let risContent = generateRISString(entries: entries)
+        try risContent.write(to: url, atomically: true, encoding: .utf8)
+        
+        return OperationResult(
+            successCount: entries.count,
+            failureCount: 0,
+            errors: [],
+            message: "已匯出 \(entries.count) 篇文獻至 \(url.lastPathComponent)"
+        )
+    }
+    
+    /// 生成 RIS 字串（不寫入檔案）
+    static func generateRISString(entries: [Entry]) -> String {
+        var risContent = ""
+        
+        for entry in entries {
+            risContent += generateRISEntry(entry: entry)
+            risContent += "\n"
+        }
+        
+        return risContent
+    }
+    
+    /// 生成單個 RIS 條目
+    private static func generateRISEntry(entry: Entry) -> String {
+        var ris = ""
+        
+        // 類型對應
+        let risType: String
+        switch entry.entryType.lowercased() {
+        case "article":
+            risType = "JOUR"
+        case "book":
+            risType = "BOOK"
+        case "inproceedings":
+            risType = "CONF"
+        case "phdthesis":
+            risType = "THES"
+        case "mastersthesis":
+            risType = "THES"
+        case "techreport":
+            risType = "RPRT"
+        default:
+            risType = "GEN"
+        }
+        
+        ris += "TY  - \(risType)\n"
+        
+        // 標題
+        if let title = entry.fields["title"], !title.isEmpty {
+            ris += "TI  - \(title)\n"
+        }
+        
+        // 作者
+        if let authors = entry.fields["author"], !authors.isEmpty {
+            let authorList = authors.components(separatedBy: " and ")
+            for author in authorList {
+                let trimmed = author.trimmingCharacters(in: .whitespaces)
+                if !trimmed.isEmpty {
+                    ris += "AU  - \(trimmed)\n"
+                }
+            }
+        }
+        
+        // 年份
+        if let year = entry.fields["year"], !year.isEmpty {
+            ris += "PY  - \(year)\n"
+        }
+        
+        // 期刊/會議/書名
+        if let journal = entry.fields["journal"], !journal.isEmpty {
+            ris += "JO  - \(journal)\n"
+        } else if let booktitle = entry.fields["booktitle"], !booktitle.isEmpty {
+            ris += "JO  - \(booktitle)\n"
+        }
+        
+        // 卷號
+        if let volume = entry.fields["volume"], !volume.isEmpty {
+            ris += "VL  - \(volume)\n"
+        }
+        
+        // 期號
+        if let issue = entry.fields["number"] ?? entry.fields["issue"], !issue.isEmpty {
+            ris += "IS  - \(issue)\n"
+        }
+        
+        // 頁碼
+        if let pages = entry.fields["pages"], !pages.isEmpty {
+            ris += "SP  - \(pages.components(separatedBy: "-").first ?? pages)\n"
+            if pages.contains("-") {
+                ris += "EP  - \(pages.components(separatedBy: "-").last ?? "")\n"
+            }
+        }
+        
+        // 出版商
+        if let publisher = entry.fields["publisher"], !publisher.isEmpty {
+            ris += "PB  - \(publisher)\n"
+        }
+        
+        // DOI
+        if let doi = entry.fields["doi"], !doi.isEmpty {
+            ris += "DO  - \(doi)\n"
+        }
+        
+        // URL
+        if let url = entry.fields["url"], !url.isEmpty {
+            ris += "UR  - \(url)\n"
+        }
+        
+        // 摘要
+        if let abstract = entry.fields["abstract"], !abstract.isEmpty {
+            ris += "AB  - \(abstract)\n"
+        }
+        
+        // 關鍵字
+        if let keywords = entry.fields["keywords"], !keywords.isEmpty {
+            ris += "KW  - \(keywords)\n"
+        }
+        
+        ris += "ER  - \n"
+        
+        return ris
+    }
+    
     // MARK: - 批次驗證完整性
     
     /// 批次驗證書目完整性

@@ -7,8 +7,56 @@
 
 import Foundation
 
+/// 引用格式類型
+enum CitationFormat: String, CaseIterable, Identifiable {
+    case apa7 = "APA 7th Edition"
+    case mla9 = "MLA 9th Edition"
+    case chicago = "Chicago 17th"
+    case ieee = "IEEE"
+    case vancouver = "Vancouver"
+    case harvard = "Harvard"
+    
+    var id: String { rawValue }
+    
+    /// 格式簡稱
+    var shortName: String {
+        switch self {
+        case .apa7: return "APA"
+        case .mla9: return "MLA"
+        case .chicago: return "Chicago"
+        case .ieee: return "IEEE"
+        case .vancouver: return "Vancouver"
+        case .harvard: return "Harvard"
+        }
+    }
+}
+
 /// 引用格式生成器
 class CitationService {
+    
+    // MARK: - 統一生成方法
+    
+    /// 根據指定格式生成引用
+    /// - Parameters:
+    ///   - entry: 書目條目
+    ///   - format: 引用格式
+    /// - Returns: 格式化的引用字符串
+    static func generate(entry: Entry, format: CitationFormat) -> String {
+        switch format {
+        case .apa7:
+            return generateAPA(entry: entry)
+        case .mla9:
+            return generateMLA(entry: entry)
+        case .chicago:
+            return generateChicago(entry: entry)
+        case .ieee:
+            return generateIEEE(entry: entry)
+        case .vancouver:
+            return generateVancouver(entry: entry)
+        case .harvard:
+            return generateHarvard(entry: entry)
+        }
+    }
     
     // MARK: - APA 7th Edition 格式
     
@@ -359,6 +407,277 @@ class CitationService {
         }
     }
     
+    // MARK: - Chicago 17th Edition 格式
+    
+    /// 生成 Chicago 17th Edition 格式引用（Notes and Bibliography）
+    static func generateChicago(entry: Entry) -> String {
+        let fields = entry.fields
+        let authors = formatAuthorsChicago(fields["author"] ?? "Unknown")
+        let title = fields["title"] ?? "Untitled"
+        let year = fields["year"] ?? "n.d."
+        
+        switch entry.entryType {
+        case "article":
+            let journal = fields["journal"] ?? ""
+            let volume = fields["volume"] ?? ""
+            let issue = fields["number"] ?? fields["issue"] ?? ""
+            let pages = fields["pages"] ?? ""
+            
+            var citation = "\(authors). \"\(title).\""
+            if !journal.isEmpty {
+                citation += " *\(journal)*"
+                if !volume.isEmpty {
+                    citation += " \(volume)"
+                    if !issue.isEmpty {
+                        citation += ", no. \(issue)"
+                    }
+                }
+                if !year.isEmpty {
+                    citation += " (\(year))"
+                }
+                if !pages.isEmpty {
+                    citation += ": \(pages)"
+                }
+            }
+            citation += "."
+            return citation
+            
+        case "book":
+            let publisher = fields["publisher"] ?? ""
+            let address = fields["address"] ?? ""
+            
+            var citation = "\(authors). *\(title)*."
+            var pubInfo: [String] = []
+            if !address.isEmpty {
+                pubInfo.append(address)
+            }
+            if !publisher.isEmpty {
+                pubInfo.append(publisher)
+            }
+            if !year.isEmpty {
+                pubInfo.append(year)
+            }
+            if !pubInfo.isEmpty {
+                citation += " \(pubInfo.joined(separator: ": "))."
+            }
+            return citation
+            
+        default:
+            return "\(authors). *\(title)*. \(year)."
+        }
+    }
+    
+    // MARK: - IEEE 格式
+    
+    /// 生成 IEEE 格式引用
+    static func generateIEEE(entry: Entry) -> String {
+        let fields = entry.fields
+        let authors = formatAuthorsIEEE(fields["author"] ?? "Unknown")
+        let title = fields["title"] ?? "Untitled"
+        let year = fields["year"] ?? "n.d."
+        
+        switch entry.entryType {
+        case "article":
+            let journal = fields["journal"] ?? ""
+            let volume = fields["volume"] ?? ""
+            let issue = fields["number"] ?? fields["issue"] ?? ""
+            let pages = fields["pages"] ?? ""
+            
+            var citation = "\(authors), \"\(title),\""
+            if !journal.isEmpty {
+                citation += " *\(journal)*"
+                if !volume.isEmpty {
+                    citation += ", vol. \(volume)"
+                }
+                if !issue.isEmpty {
+                    citation += ", no. \(issue)"
+                }
+                if !pages.isEmpty {
+                    citation += ", pp. \(pages)"
+                }
+                if !year.isEmpty {
+                    citation += ", \(year)"
+                }
+            }
+            citation += "."
+            return citation
+            
+        case "book":
+            let publisher = fields["publisher"] ?? ""
+            let address = fields["address"] ?? ""
+            
+            var citation = "\(authors), *\(title)*"
+            if !address.isEmpty && !publisher.isEmpty {
+                citation += ". \(address): \(publisher)"
+            } else if !publisher.isEmpty {
+                citation += ". \(publisher)"
+            }
+            if !year.isEmpty {
+                citation += ", \(year)"
+            }
+            citation += "."
+            return citation
+            
+        case "inproceedings":
+            let booktitle = fields["booktitle"] ?? ""
+            let pages = fields["pages"] ?? ""
+            
+            var citation = "\(authors), \"\(title),\""
+            if !booktitle.isEmpty {
+                citation += " in *\(booktitle)*"
+                if !year.isEmpty {
+                    citation += ", \(year)"
+                }
+                if !pages.isEmpty {
+                    citation += ", pp. \(pages)"
+                }
+            }
+            citation += "."
+            return citation
+            
+        default:
+            return "\(authors), *\(title)*, \(year)."
+        }
+    }
+    
+    // MARK: - Vancouver 格式
+    
+    /// 生成 Vancouver 格式引用
+    static func generateVancouver(entry: Entry) -> String {
+        let fields = entry.fields
+        let authors = formatAuthorsVancouver(fields["author"] ?? "Unknown")
+        let title = fields["title"] ?? "Untitled"
+        let year = fields["year"] ?? "n.d."
+        
+        switch entry.entryType {
+        case "article":
+            let journal = fields["journal"] ?? ""
+            let volume = fields["volume"] ?? ""
+            let issue = fields["number"] ?? fields["issue"] ?? ""
+            let pages = fields["pages"] ?? ""
+            
+            var citation = "\(authors). \(title)."
+            if !journal.isEmpty {
+                citation += " \(journal)."
+                if !year.isEmpty {
+                    citation += " \(year)"
+                }
+                if !volume.isEmpty {
+                    citation += ";\(volume)"
+                    if !issue.isEmpty {
+                        citation += "(\(issue))"
+                    }
+                }
+                if !pages.isEmpty {
+                    citation += ":\(pages)"
+                }
+                citation += "."
+            }
+            return citation
+            
+        case "book":
+            let publisher = fields["publisher"] ?? ""
+            let address = fields["address"] ?? ""
+            let edition = fields["edition"] ?? ""
+            
+            var citation = "\(authors). \(title)."
+            if !edition.isEmpty {
+                citation += " \(edition) ed."
+            }
+            var pubInfo: [String] = []
+            if !address.isEmpty {
+                pubInfo.append(address)
+            }
+            if !publisher.isEmpty {
+                pubInfo.append(publisher)
+            }
+            if !pubInfo.isEmpty {
+                citation += " \(pubInfo.joined(separator: ": "))"
+            }
+            if !year.isEmpty {
+                citation += "; \(year)"
+            }
+            citation += "."
+            return citation
+            
+        default:
+            return "\(authors). \(title). \(year)."
+        }
+    }
+    
+    // MARK: - Harvard 格式
+    
+    /// 生成 Harvard 格式引用
+    static func generateHarvard(entry: Entry) -> String {
+        let fields = entry.fields
+        let authors = formatAuthorsHarvard(fields["author"] ?? "Unknown")
+        let title = fields["title"] ?? "Untitled"
+        let year = fields["year"] ?? "n.d."
+        
+        switch entry.entryType {
+        case "article":
+            let journal = fields["journal"] ?? ""
+            let volume = fields["volume"] ?? ""
+            let issue = fields["number"] ?? fields["issue"] ?? ""
+            let pages = fields["pages"] ?? ""
+            
+            var citation = "\(authors) (\(year)) '\(title)',"
+            if !journal.isEmpty {
+                citation += " *\(journal)*"
+                if !volume.isEmpty {
+                    citation += ", \(volume)"
+                    if !issue.isEmpty {
+                        citation += "(\(issue))"
+                    }
+                }
+                if !pages.isEmpty {
+                    citation += ", pp. \(pages)"
+                }
+            }
+            citation += "."
+            return citation
+            
+        case "book":
+            let publisher = fields["publisher"] ?? ""
+            let address = fields["address"] ?? ""
+            let edition = fields["edition"] ?? ""
+            
+            var citation = "\(authors) (\(year)) *\(title)*"
+            if !edition.isEmpty {
+                citation += ", \(edition)"
+            }
+            var pubInfo: [String] = []
+            if !address.isEmpty {
+                pubInfo.append(address)
+            }
+            if !publisher.isEmpty {
+                pubInfo.append(publisher)
+            }
+            if !pubInfo.isEmpty {
+                citation += ", \(pubInfo.joined(separator: ": "))"
+            }
+            citation += "."
+            return citation
+            
+        case "inproceedings":
+            let booktitle = fields["booktitle"] ?? ""
+            let pages = fields["pages"] ?? ""
+            
+            var citation = "\(authors) (\(year)) '\(title)'"
+            if !booktitle.isEmpty {
+                citation += ", in *\(booktitle)*"
+                if !pages.isEmpty {
+                    citation += ", pp. \(pages)"
+                }
+            }
+            citation += "."
+            return citation
+            
+        default:
+            return "\(authors) (\(year)) *\(title)*."
+        }
+    }
+    
     // MARK: - APA 作者格式化
     
     /// APA 格式中文作者處理
@@ -501,6 +820,128 @@ class CitationService {
             return "\(lastName), \(firstName)"
         }
         return author.trimmingCharacters(in: .whitespaces)
+    }
+    
+    // MARK: - Chicago 作者格式化
+    
+    /// Chicago 格式作者處理
+    private static func formatAuthorsChicago(_ authorString: String) -> String {
+        let authors = authorString.components(separatedBy: " and ")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+        
+        if authors.isEmpty {
+            return "Unknown"
+        } else if authors.count == 1 {
+            let parts = authors[0].components(separatedBy: " ")
+            if parts.count >= 2 {
+                let lastName = parts.last ?? ""
+                let firstName = parts.dropLast().joined(separator: " ")
+                return "\(lastName), \(firstName)"
+            }
+            return authors[0]
+        } else if authors.count == 2 {
+            let first = formatFirstAuthorMLA(authors[0])
+            let second = authors[1]
+            return "\(first) and \(second)"
+        } else if authors.count == 3 {
+            let first = formatFirstAuthorMLA(authors[0])
+            let second = authors[1]
+            let third = authors[2]
+            return "\(first), \(second), and \(third)"
+        } else {
+            let first = formatFirstAuthorMLA(authors[0])
+            return "\(first) et al."
+        }
+    }
+    
+    // MARK: - IEEE 作者格式化
+    
+    /// IEEE 格式作者處理
+    private static func formatAuthorsIEEE(_ authorString: String) -> String {
+        let authors = authorString.components(separatedBy: " and ")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+        
+        if authors.isEmpty {
+            return "Unknown"
+        }
+        
+        let formatted = authors.map { author -> String in
+            let parts = author.components(separatedBy: " ")
+            if parts.count >= 2 {
+                let firstName = parts.dropLast().map { String($0.prefix(1)) + "." }.joined(separator: " ")
+                let lastName = parts.last ?? ""
+                return "\(firstName) \(lastName)"
+            }
+            return author
+        }
+        
+        if formatted.count <= 6 {
+            return formatted.joined(separator: ", ")
+        } else {
+            let first = formatted.prefix(6).joined(separator: ", ")
+            return "\(first), et al."
+        }
+    }
+    
+    // MARK: - Vancouver 作者格式化
+    
+    /// Vancouver 格式作者處理
+    private static func formatAuthorsVancouver(_ authorString: String) -> String {
+        let authors = authorString.components(separatedBy: " and ")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+        
+        if authors.isEmpty {
+            return "Unknown"
+        }
+        
+        let formatted = authors.map { author -> String in
+            let parts = author.components(separatedBy: " ")
+            if parts.count >= 2 {
+                let lastName = parts.last ?? ""
+                let initials = parts.dropLast().map { String($0.prefix(1)).uppercased() }.joined()
+                return "\(lastName) \(initials)"
+            }
+            return author
+        }
+        
+        if formatted.count <= 6 {
+            return formatted.joined(separator: ", ")
+        } else {
+            let first = formatted.prefix(6).joined(separator: ", ")
+            return "\(first), et al"
+        }
+    }
+    
+    // MARK: - Harvard 作者格式化
+    
+    /// Harvard 格式作者處理
+    private static func formatAuthorsHarvard(_ authorString: String) -> String {
+        let authors = authorString.components(separatedBy: " and ")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+        
+        if authors.isEmpty {
+            return "Unknown"
+        }
+        
+        let formatted = authors.map { author -> String in
+            let parts = author.components(separatedBy: " ")
+            if parts.count >= 2 {
+                let lastName = parts.last ?? ""
+                let initials = parts.dropLast().map { String($0.prefix(1)) + "." }.joined(separator: "")
+                return "\(lastName), \(initials)"
+            }
+            return author
+        }
+        
+        if formatted.count == 1 {
+            return formatted[0]
+        } else if formatted.count == 2 {
+            return "\(formatted[0]) and \(formatted[1])"
+        } else if formatted.count == 3 {
+            return "\(formatted[0]), \(formatted[1]) and \(formatted[2])"
+        } else {
+            return "\(formatted[0]) et al."
+        }
     }
     
     // MARK: - 輔助函數
