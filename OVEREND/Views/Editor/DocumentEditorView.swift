@@ -1368,6 +1368,7 @@ struct RichTextEditorView: NSViewRepresentable {
     // A4 尺寸 (72 DPI: 595 x 842 pt)
     static let a4Width: CGFloat = 595
     static let a4Margin: CGFloat = 72  // 1 inch margin
+    static let textViewIdentifier = "mainEditorTextView"
     
     func makeNSView(context: Context) -> NSScrollView {
         // 創建容器 ScrollView
@@ -1414,7 +1415,7 @@ struct RichTextEditorView: NSViewRepresentable {
         textView.autoresizingMask = []
         textView.maxSize = NSSize(width: Self.a4Width - (Self.a4Margin * 2), height: .greatestFiniteMagnitude)
         textView.minSize = NSSize(width: Self.a4Width - (Self.a4Margin * 2), height: 842 - (Self.a4Margin * 2))
-        textView.identifier = NSUserInterfaceItemIdentifier("mainEditorTextView")
+        textView.identifier = NSUserInterfaceItemIdentifier(Self.textViewIdentifier)
         
         // 紙張樣式 - 根據主題調整
         if theme.isPrideMode {
@@ -1472,11 +1473,16 @@ struct RichTextEditorView: NSViewRepresentable {
     }
     
     func updateNSView(_ nsView: NSScrollView, context: Context) {
-        guard let paperView = nsView.documentView,
-              let textView = paperView.subviews.first(where: { $0.identifier?.rawValue == "mainEditorTextView" }) as? NSTextView else { return }
+        // 使用緩存的 textView 參考以提升性能
+        guard let textView = context.coordinator.cachedTextView ?? {
+            guard let paperView = nsView.documentView,
+                  let tv = paperView.subviews.first(where: { $0.identifier?.rawValue == Self.textViewIdentifier }) as? NSTextView else { return nil }
+            context.coordinator.cachedTextView = tv
+            return tv
+        }() else { return }
 
-        // 使用 hash 進行快速比較以提升性能
-        let newHash = attributedText.string.hashValue ^ attributedText.length
+        // 使用改進的 hash 組合方式進行快速比較以提升性能
+        let newHash = attributedText.string.hashValue &+ (attributedText.length &* 31)
         if context.coordinator.lastContentHash != newHash {
             context.coordinator.lastContentHash = newHash
             
@@ -1523,7 +1529,7 @@ struct RichTextEditorView: NSViewRepresentable {
             }
         }
         
-        if let textView = nsView.documentView?.subviews.first(where: { $0.identifier?.rawValue == "mainEditorTextView" }) as? NSTextView {
+        if let textView = context.coordinator.cachedTextView {
             textView.backgroundColor = theme.isPrideMode ? .clear : .white
             textView.textColor = theme.isPrideMode ? .white : .black
             textView.insertionPointColor = theme.isPrideMode ? .white : .black
@@ -1538,6 +1544,7 @@ struct RichTextEditorView: NSViewRepresentable {
         var parent: RichTextEditorView
         var observers: [NSObjectProtocol] = []
         var lastContentHash: Int = 0
+        weak var cachedTextView: NSTextView?
 
         init(_ parent: RichTextEditorView) {
             self.parent = parent
@@ -1551,6 +1558,9 @@ struct RichTextEditorView: NSViewRepresentable {
         }
         
         func setupObservers(for textView: NSTextView) {
+            // 緩存 textView 參考
+            cachedTextView = textView
+            
             // 監聽 undo manager 通知
             let undoObserver = NotificationCenter.default.addObserver(
                 forName: .NSUndoManagerDidUndoChange,
