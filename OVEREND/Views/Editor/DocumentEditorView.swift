@@ -91,6 +91,8 @@ struct DocumentEditorView: View {
                 RichTextEditorView(
                     attributedText: $attributedText,
                     textViewRef: $textViewRef,
+                    canUndo: $canUndo,
+                    canRedo: $canRedo,
                     onTextChange: saveDocument
                 )
                 .environmentObject(theme)
@@ -1358,19 +1360,21 @@ struct FormatButton: View {
 struct RichTextEditorView: NSViewRepresentable {
     @Binding var attributedText: NSAttributedString
     @Binding var textViewRef: NSTextView?
+    @Binding var canUndo: Bool
+    @Binding var canRedo: Bool
     @EnvironmentObject var theme: AppTheme
     let onTextChange: () -> Void
     
     // A4 尺寸 (72 DPI: 595 x 842 pt)
     static let a4Width: CGFloat = 595
     static let a4Margin: CGFloat = 72  // 1 inch margin
+    static let textViewIdentifier = "mainEditorTextView"
     
     func makeNSView(context: Context) -> NSScrollView {
         // 創建容器 ScrollView
         let scrollView = NSScrollView()
         scrollView.hasVerticalScroller = true
         scrollView.hasHorizontalScroller = true
-        scrollView.autohidesScrollers = true
         scrollView.autohidesScrollers = true
         scrollView.backgroundColor = theme.isPrideMode ? .clear : NSColor.darkGray.withAlphaComponent(0.3)
         scrollView.drawsBackground = true
@@ -1411,6 +1415,7 @@ struct RichTextEditorView: NSViewRepresentable {
         textView.autoresizingMask = []
         textView.maxSize = NSSize(width: Self.a4Width - (Self.a4Margin * 2), height: .greatestFiniteMagnitude)
         textView.minSize = NSSize(width: Self.a4Width - (Self.a4Margin * 2), height: 842 - (Self.a4Margin * 2))
+        textView.identifier = NSUserInterfaceItemIdentifier(Self.textViewIdentifier)
         
         // 紙張樣式 - 根據主題調整
         if theme.isPrideMode {
@@ -1461,34 +1466,27 @@ struct RichTextEditorView: NSViewRepresentable {
             self.textViewRef = textView
         }
 
-        // 監聽 undo manager 通知
-        NotificationCenter.default.addObserver(
-            forName: .NSUndoManagerDidUndoChange,
-            object: textView.undoManager,
-            queue: .main
-        ) { _ in
-            // 觸發文字變更以更新狀態
-        }
-
-        NotificationCenter.default.addObserver(
-            forName: .NSUndoManagerDidRedoChange,
-            object: textView.undoManager,
-            queue: .main
-        ) { _ in
-            // 觸發文字變更以更新狀態
-        }
+        // 設置 undo/redo 觀察者由 Coordinator 管理
+        context.coordinator.setupObservers(for: textView)
         
         return scrollView
     }
     
     func updateNSView(_ nsView: NSScrollView, context: Context) {
-        guard let paperView = nsView.documentView,
-              let textView = paperView.subviews.first as? NSTextView else { return }
+        // 使用緩存的 textView 參考以提升性能
+        guard let textView = context.coordinator.getOrCacheTextView(from: nsView) else { return }
 
-        // 只在內容真正改變時更新
-        if textView.attributedString() != attributedText {
+        // 使用包含屬性的 hash 進行快速比較以偵測格式變更
+        let newHash = context.coordinator.computeContentHash(for: attributedText)
+        
+        if context.coordinator.lastContentHash != newHash {
+            context.coordinator.lastContentHash = newHash
+            
             let selectedRanges = textView.selectedRanges
+            // 使用批次更新來提升性能
+            textView.textStorage?.beginEditing()
             textView.textStorage?.setAttributedString(attributedText)
+            textView.textStorage?.endEditing()
             textView.selectedRanges = selectedRanges
         }
 
@@ -1527,7 +1525,7 @@ struct RichTextEditorView: NSViewRepresentable {
             }
         }
         
-        if let textView = (nsView.documentView?.subviews.first as? NSTextView) {
+        if let textView = context.coordinator.cachedTextView {
             textView.backgroundColor = theme.isPrideMode ? .clear : .white
             textView.textColor = theme.isPrideMode ? .white : .black
             textView.insertionPointColor = theme.isPrideMode ? .white : .black
@@ -1540,15 +1538,127 @@ struct RichTextEditorView: NSViewRepresentable {
 
     class Coordinator: NSObject, NSTextViewDelegate {
         var parent: RichTextEditorView
+        var observers: [NSObjectProtocol] = []
+        var lastContentHash: Int = 0
+        weak var cachedTextView: NSTextView?
 
         init(_ parent: RichTextEditorView) {
             self.parent = parent
+        }
+        
+        deinit {
+            // 移除所有觀察者以防止記憶體洩漏
+            for observer in observers {
+                NotificationCenter.default.removeObserver(observer)
+            }
+        }
+        
+        func setupObservers(for textView: NSTextView) {
+            // 緩存 textView 參考
+            cachedTextView = textView
+            
+            // 計算初始 hash 以避免與 0 衝突，並包含屬性變更
+            lastContentHash = computeContentHash(for: parent.attributedText)
+            
+            // 監聽 undo manager 通知
+            let undoObserver = NotificationCenter.default.addObserver(
+                forName: .NSUndoManagerDidUndoChange,
+                object: textView.undoManager,
+                queue: .main
+            ) { [weak self, weak textView] _ in
+                guard let textView = textView else { return }
+                self?.updateUndoRedoState(for: textView)
+            }
+            observers.append(undoObserver)
+            
+            let redoObserver = NotificationCenter.default.addObserver(
+                forName: .NSUndoManagerDidRedoChange,
+                object: textView.undoManager,
+                queue: .main
+            ) { [weak self, weak textView] _ in
+                guard let textView = textView else { return }
+                self?.updateUndoRedoState(for: textView)
+            }
+            observers.append(redoObserver)
+        }
+        
+        func updateUndoRedoState(for textView: NSTextView) {
+            guard let undoManager = textView.undoManager else { return }
+            // 觀察者已在 main queue 運行，無需額外 dispatch
+            parent.canUndo = undoManager.canUndo
+            parent.canRedo = undoManager.canRedo
+        }
+        
+        func computeContentHash(for attributedString: NSAttributedString) -> Int {
+            var hasher = Hasher()
+            hasher.combine(attributedString.string)
+            hasher.combine(attributedString.length)
+            
+            // 包含屬性變更以偵測格式變化
+            // 對於大型文檔，限制屬性採樣以提升性能
+            let length = attributedString.length
+            let maxSamples = 100 // 最多採樣 100 個屬性範圍
+            var sampleCount = 0
+            
+            attributedString.enumerateAttributes(in: NSRange(location: 0, length: length), options: []) { attributes, range, stop in
+                // 限制採樣數量以提升性能
+                sampleCount += 1
+                if sampleCount > maxSamples {
+                    stop.pointee = true
+                    return
+                }
+                
+                hasher.combine(range.location)
+                hasher.combine(range.length)
+                
+                // 對每個屬性鍵值進行 hash，包含實際值
+                for (key, value) in attributes {
+                    hasher.combine(key.rawValue)
+                    
+                    // 為常見屬性類型提供具體的 hash 處理
+                    switch value {
+                    case let font as NSFont:
+                        hasher.combine(font.fontName)
+                        hasher.combine(font.pointSize)
+                    case let color as NSColor:
+                        hasher.combine(color.redComponent)
+                        hasher.combine(color.greenComponent)
+                        hasher.combine(color.blueComponent)
+                        hasher.combine(color.alphaComponent)
+                    case let paragraphStyle as NSParagraphStyle:
+                        hasher.combine(paragraphStyle.alignment.rawValue)
+                        hasher.combine(paragraphStyle.lineSpacing)
+                        hasher.combine(paragraphStyle.firstLineHeadIndent)
+                        hasher.combine(paragraphStyle.headIndent)
+                    case let number as NSNumber:
+                        hasher.combine(number.intValue)
+                    default:
+                        // 對其他類型使用字串表示
+                        hasher.combine(String(describing: value))
+                    }
+                }
+            }
+            
+            return hasher.finalize()
+        }
+        
+        func getOrCacheTextView(from scrollView: NSScrollView) -> NSTextView? {
+            if let cached = cachedTextView {
+                return cached
+            }
+            guard let paperView = scrollView.documentView,
+                  let textView = paperView.subviews.first(where: { $0.identifier?.rawValue == RichTextEditorView.textViewIdentifier }) as? NSTextView else {
+                return nil
+            }
+            cachedTextView = textView
+            return textView
         }
 
         func textDidChange(_ notification: Notification) {
             guard let textView = notification.object as? NSTextView else { return }
             parent.attributedText = textView.attributedString()
             parent.onTextChange()
+            updateUndoRedoState(for: textView)
         }
 
         // 監聽 undo/redo 狀態變化
