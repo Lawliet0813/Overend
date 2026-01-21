@@ -27,6 +27,26 @@ struct DesignTokens {
         /// 特大圓角 - 用於大區塊 Banner (40px)
         static let xLarge: CGFloat = 40
     }
+    
+    // MARK: - 圓角系統 V2 (Scholar's Desk)
+    
+    /// 新版圓角系統 - 更柔和的設計
+    enum CornerRadiusV2 {
+        /// 超小圓角 - 輸入框、標籤 (6px)
+        static let xs: CGFloat = 6
+        
+        /// 小圓角 - 小按鈕 (8px)
+        static let sm: CGFloat = 8
+        
+        /// 中圓角 - 卡片、列表項 (12px)
+        static let md: CGFloat = 12
+        
+        /// 大圓角 - 面板、Modal (16px)
+        static let lg: CGFloat = 16
+        
+        /// 超大圓角 - 大區塊 (24px)
+        static let xl: CGFloat = 24
+    }
 
     // MARK: - 陰影系統
 
@@ -129,6 +149,35 @@ struct DesignTokens {
         /// 用於：頁面級間距
         static let xxxl: CGFloat = 64
     }
+    
+    // MARK: - 間距系統 V2 (Scholar's Desk)
+    
+    /// 新版間距系統 - 基於 4pt 網格
+    enum SpacingV2 {
+        /// 超超小間距 - 4pt
+        static let xxs: CGFloat = 4
+        
+        /// 超小間距 - 8pt
+        static let xs: CGFloat = 8
+        
+        /// 小間距 - 12pt
+        static let sm: CGFloat = 12
+        
+        /// 中間距 - 16pt
+        static let md: CGFloat = 16
+        
+        /// 大間距 - 24pt
+        static let lg: CGFloat = 24
+        
+        /// 超大間距 - 32pt
+        static let xl: CGFloat = 32
+        
+        /// 超超大間距 - 48pt
+        static let xxl: CGFloat = 48
+        
+        /// 區段間距 - 64pt
+        static let section: CGFloat = 64
+    }
 
     // MARK: - 圖標系統
 
@@ -185,6 +234,29 @@ struct DesignTokens {
         /// 說明文字 - 11pt
         static let caption: CGFloat = 11
     }
+    
+    // MARK: - 字體系統 V2 (Scholar's Desk)
+    
+    /// 新版字體系統 - 完整的字體階層
+    enum TypographyV2 {
+        // 標題
+        static let displayLarge: Font = .system(size: 32, weight: .bold)
+        static let displayMedium: Font = .system(size: 28, weight: .bold)
+        static let titleLarge: Font = .system(size: 22, weight: .semibold)
+        static let titleMedium: Font = .system(size: 18, weight: .semibold)
+        static let titleSmall: Font = .system(size: 16, weight: .semibold)
+        
+        // 正文
+        static let bodyLarge: Font = .system(size: 16, weight: .regular)
+        static let bodyMedium: Font = .system(size: 14, weight: .regular)
+        static let bodySmall: Font = .system(size: 13, weight: .regular)
+        
+        // 標籤
+        static let labelLarge: Font = .system(size: 14, weight: .medium)
+        static let labelMedium: Font = .system(size: 12, weight: .medium)
+        static let labelSmall: Font = .system(size: 11, weight: .medium)
+        static let caption: Font = .system(size: 10, weight: .regular)
+    }
 
     // MARK: - 動畫時長
 
@@ -201,6 +273,23 @@ struct DesignTokens {
 
         /// 慢速強調 - 500ms
         static let slow: Double = 0.5
+    }
+    
+    // MARK: - 動畫系統 V2 (Scholar's Desk)
+    
+    /// 新版動畫曲線 - 更流暢的過渡效果
+    enum AnimationV2 {
+        /// 快速動畫 - 150ms
+        static let quick = Animation.easeOut(duration: 0.15)
+        
+        /// 標準動畫 - 250ms
+        static let normal = Animation.easeInOut(duration: 0.25)
+        
+        /// 流暢動畫 - 350ms
+        static let smooth = Animation.easeInOut(duration: 0.35)
+        
+        /// 彈簧動畫 - 自然的物理效果
+        static let spring = Animation.spring(response: 0.35, dampingFraction: 0.7)
     }
 }
 
