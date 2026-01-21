@@ -10,6 +10,7 @@ import Foundation
 import CoreML
 import NaturalLanguage
 import Combine
+import SwiftUI
 
 /// Core ML 文獻分類服務
 class LiteratureClassifierService: ObservableObject {
@@ -274,7 +275,7 @@ class LiteratureClassifierService: ObservableObject {
                    prediction.confidence > 0.6 {
                     
                     await MainActor.run {
-                        entry.bibtexType = prediction.label
+                        entry.entryType = prediction.label
                         successCount += 1
                     }
                 }
@@ -381,8 +382,6 @@ struct LiteraturePrediction: Identifiable, Equatable {
 }
 
 // MARK: - SwiftUI Extensions
-
-import SwiftUI
 
 /// 預測結果卡片元件
 struct LiteraturePredictionCard: View {

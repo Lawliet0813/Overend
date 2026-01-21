@@ -4,10 +4,4 @@
    <FileRef
       location = "self:">
    </FileRef>
-   <FileRef
-      location = "group:OVEREND.entitlements">
-   </FileRef>
-   <FileRef
-      location = "group:CloudSyncManager.swift">
-   </FileRef>
 </Workspace>

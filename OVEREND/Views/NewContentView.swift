@@ -12,7 +12,7 @@ struct NewContentView: View {
     @Environment(\.managedObjectContext) var viewContext
     @StateObject private var theme = AppTheme()
     @StateObject private var viewState = MainViewState()
-    @StateObject var libraryVM = LibraryViewModel()
+    @StateObject var libraryVM = LibraryViewModel()  // Changed from private to internal
     
     // 側邊欄選擇
     @State private var sidebarSelection: SidebarItemType? = .allEntries

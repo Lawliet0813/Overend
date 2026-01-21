@@ -28,3 +28,4 @@ __pycache__/
 OverendCore/target/
 *.rlib
 *.rmeta
+OVEREND/Frameworks/OverendCore.xcframework/**/liboverend_core.a

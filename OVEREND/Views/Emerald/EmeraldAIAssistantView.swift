@@ -148,7 +148,9 @@ struct HeaderBar: View {
             Spacer()
             
             HStack(spacing: 8) {
-                Button(action: { onRefresh?() }) {
+                Button {
+                    onRefresh?()
+                } label: {
                     Image(systemName: "arrow.clockwise")
                         .font(.system(size: 14))
                         .foregroundColor(theme.textSecondary)
@@ -159,7 +161,9 @@ struct HeaderBar: View {
                 .buttonStyle(.plain)
                 .help("重新整理對話")
                 
-                Button(action: { onClose?() }) {
+                Button {
+                    onClose?()
+                } label: {
                     Image(systemName: "xmark")
                         .font(.system(size: 12))
                         .foregroundColor(theme.textMuted)
@@ -295,11 +299,11 @@ struct CodeBlockView: View {
                 
                 Spacer()
                 
-                Button(action: {
+                Button {
                     NSPasteboard.general.clearContents()
                     NSPasteboard.general.setString(code, forType: .string)
                     ToastManager.shared.showSuccess("已複製程式碼")
-                }) {
+                } label: {
                     Image(systemName: "doc.on.doc")
                         .font(.system(size: 12))
                         .foregroundColor(theme.textMuted)
@@ -329,7 +333,9 @@ struct SuggestionChips: View {
     var body: some View {
         EmeraldFlowLayout(spacing: 8) {
             ForEach(suggestions, id: \.self) { suggestion in
-                Button(action: { onSelect?(suggestion) }) {
+                Button {
+                    onSelect?(suggestion)
+                } label: {
                     Text(suggestion)
                         .font(.system(size: 11, weight: .medium))
                         .foregroundColor(theme.textSecondary)
@@ -461,7 +467,9 @@ struct QuickActionButton: View {
     @State private var isHovered = false
     
     var body: some View {
-        Button(action: { action?() }) {
+        Button {
+            action?()
+        } label: {
             HStack(spacing: 8) {
                 Image(systemName: icon)
                     .font(.system(size: 14))
@@ -500,9 +508,9 @@ struct InputBar: View {
     var body: some View {
         HStack(spacing: 12) {
             // 附件按鈕
-            Button(action: {
+            Button {
                 onAttach?()
-            }) {
+            } label: {
                 Image(systemName: "paperclip")
                     .font(.system(size: 18))
                     .foregroundColor(theme.textMuted)
@@ -527,10 +535,12 @@ struct InputBar: View {
                 .onSubmit(onSend)
             
             // 發送按鈕
-            Button(action: onSend) {
+            Button {
+                onSend()
+            } label: {
                 Text("Send")
                     .font(.system(size: 13, weight: .bold))
-                    .foregroundColor(text.isEmpty ? theme.textMuted : theme.emeraldBackground) // Was backgroundDark
+                    .foregroundColor(text.isEmpty ? theme.textMuted : theme.emeraldBackground)
                     .padding(.horizontal, 20)
                     .padding(.vertical, 12)
                     .background(text.isEmpty ? theme.surfaceDark : theme.accent)

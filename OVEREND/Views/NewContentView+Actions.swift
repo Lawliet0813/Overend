@@ -99,18 +99,18 @@ extension NewContentView {
                 // 1. 使用 LiteratureAgent 智能提取元數據
                 let agentResult = try await LiteratureAgent.shared.extractPDFMetadata(from: url)
                 
-                let metadata = PDFMetadata(
+                var metadata = PDFMetadata(
                     title: agentResult.title,
                     authors: agentResult.authors,
                     year: agentResult.year,
                     doi: agentResult.doi,
                     abstract: agentResult.abstract,
                     journal: agentResult.journal,
-                    volume: nil,
-                    pages: nil,
                     entryType: agentResult.entryType,
                     confidence: agentResult.confidence > 0.7 ? .high : (agentResult.confidence > 0.4 ? .medium : .low)
                 )
+                metadata.volume = nil
+                metadata.pages = nil
                 
                 // 2. 另外提取純文本用於備份或進一步分析
                 let (_, pdfText) = try PDFService.shared.extractPDFMetadata(from: url)

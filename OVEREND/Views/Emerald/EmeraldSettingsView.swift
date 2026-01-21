@@ -91,13 +91,13 @@ struct SettingsSidebar: View {
                     .font(.system(size: 11))
                     .foregroundColor(theme.textMuted)
                 
-                Button(action: {
+                Button {
                     // 開啟 App Store 更新頁面或觸發更新檢查
                     if let url = URL(string: "macappstore://showUpdatesPage") {
                         NSWorkspace.shared.open(url)
                     }
                     ToastManager.shared.showInfo("正在檢查更新...")
-                }) {
+                } label: {
                     Text("Check for Updates")
                         .font(.system(size: 12, weight: .medium))
                         .foregroundColor(theme.accent)
@@ -140,7 +140,9 @@ struct SettingsTabButton: View {
     var isSelected: Bool { selectedTab == tab }
     
     var body: some View {
-        Button(action: { selectedTab = tab }) {
+        Button {
+            selectedTab = tab
+        } label: {
             HStack(spacing: 12) {
                 Image(systemName: icon)
                     .font(.system(size: 16))
@@ -159,7 +161,7 @@ struct SettingsTabButton: View {
             .cornerRadius(8)
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(isSelected ? theme.borderSubtle : .clear, lineWidth: 1) // Was borderAccent
+                    .stroke(isSelected ? theme.borderSubtle : .clear, lineWidth: 1)
             )
         }
         .buttonStyle(.plain)
@@ -439,7 +441,9 @@ struct ThemeToggle: View {
     let action: () -> Void
     
     var body: some View {
-        Button(action: action) {
+        Button {
+            action()
+        } label: {
             HStack(spacing: 8) {
                 Circle()
                     .fill(isOn ? theme.accent : Color.white.opacity(0.1))

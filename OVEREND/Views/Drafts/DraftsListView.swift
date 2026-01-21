@@ -11,75 +11,126 @@ import CoreData
 struct DraftsListView: View {
     @EnvironmentObject var theme: AppTheme
     @Environment(\.managedObjectContext) private var viewContext
-    
+
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Document.updatedAt, ascending: false)],
         animation: .default
     )
     private var documents: FetchedResults<Document>
-    
+
     @State private var selectedDocument: Document?
     @State private var showCreateAlert = false
     @State private var newDocTitle = ""
-    
+    @State private var isSidebarCollapsed = false
+
     var body: some View {
         HStack(spacing: 0) {
-            // 左側：草稿列表
-            VStack(spacing: 0) {
-                // 標題與工具列
-                HStack {
-                    Text("我的草稿")
-                        .font(theme.fontDisplaySmall)
-                        .foregroundColor(theme.textPrimary)
-                    Spacer()
-                    Button(action: { showCreateAlert = true }) {
-                        Image(systemName: "square.and.pencil")
-                            .font(.system(size: 16))
-                            .foregroundColor(theme.accent)
-                    }
-                    .buttonStyle(.plain)
-                    .help("新增草稿")
-                }
-                .padding(theme.spacingMD)
-                .background(theme.background)
-                
-                Divider()
-                
-                List(selection: $selectedDocument) {
-                    ForEach(documents) { doc in
-                        Button(action: { selectedDocument = doc }) {
-                            HStack {
-                                Image(systemName: "doc.text")
-                                    .foregroundColor(theme.accent)
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(doc.title )
-                                        .font(theme.bodyFont())
-                                        .foregroundColor(theme.textPrimary)
-                                    Text(doc.updatedAt.formatted())
-                                        .font(theme.captionFont())
-                                        .foregroundColor(theme.textSecondary)
-                                }
+            // 左側：草稿列表（可收起）
+            if !isSidebarCollapsed {
+                VStack(spacing: 0) {
+                    // 標題與工具列
+                    HStack {
+                        Text("我的草稿")
+                            .font(theme.fontDisplaySmall)
+                            .foregroundColor(theme.textPrimary)
+                        Spacer()
+
+                        // 收起按鈕
+                        Button(action: {
+                            withAnimation(.easeInOut(duration: 0.25)) {
+                                isSidebarCollapsed = true
                             }
-                            .padding(.vertical, 4)
+                        }) {
+                            Image(systemName: "sidebar.left")
+                                .font(.system(size: 14))
+                                .foregroundColor(theme.textSecondary)
                         }
                         .buttonStyle(.plain)
-                        .listRowBackground(selectedDocument == doc ? theme.emeraldSelected : Color.clear)
+                        .help("收起側邊欄")
+
+                        Button(action: { showCreateAlert = true }) {
+                            Image(systemName: "square.and.pencil")
+                                .font(.system(size: 16))
+                                .foregroundColor(theme.accent)
+                        }
+                        .buttonStyle(.plain)
+                        .help("新增草稿")
                     }
-                    .onDelete(perform: deleteDocuments)
+                    .padding(theme.spacingMD)
+                    .background(theme.background)
+
+                    Divider()
+
+                    List(selection: $selectedDocument) {
+                        ForEach(documents) { doc in
+                            Button(action: { selectedDocument = doc }) {
+                                HStack {
+                                    Image(systemName: "doc.text")
+                                        .foregroundColor(theme.accent)
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(doc.title )
+                                            .font(theme.bodyFont())
+                                            .foregroundColor(theme.textPrimary)
+                                        Text(doc.updatedAt.formatted())
+                                            .font(theme.captionFont())
+                                            .foregroundColor(theme.textSecondary)
+                                    }
+                                }
+                                .padding(.vertical, 4)
+                            }
+                            .buttonStyle(.plain)
+                            .listRowBackground(selectedDocument == doc ? theme.emeraldSelected : Color.clear)
+                        }
+                        .onDelete(perform: deleteDocuments)
+                    }
+                    .listStyle(.plain)
                 }
-                .listStyle(.plain)
+                .frame(minWidth: 250, maxWidth: 350)
+                .transition(.move(edge: .leading))
             }
-            .frame(minWidth: 250, maxWidth: 350)
-            
+
+            // 收起狀態的浮動按鈕
+            if isSidebarCollapsed {
+                VStack {
+                    Button(action: {
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            isSidebarCollapsed = false
+                        }
+                    }) {
+                        VStack(spacing: 4) {
+                            Image(systemName: "sidebar.left")
+                                .font(.system(size: 16))
+                                .foregroundColor(theme.accent)
+                            Text("草稿")
+                                .font(.system(size: 10))
+                                .foregroundColor(theme.textSecondary)
+                        }
+                        .padding(8)
+                        .background(theme.card)
+                        .cornerRadius(theme.cornerRadiusMD)
+                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                    }
+                    .buttonStyle(.plain)
+                    .help("展開草稿列表")
+                    .padding(.leading, 8)
+                    .padding(.top, 8)
+
+                    Spacer()
+                }
+                .transition(.opacity)
+            }
+
             Divider()
             
-            // 右側：編輯器
+            // 右側：編輯器（使用新的 AI 寫作助手）
             if let doc = selectedDocument {
-                DocumentEditorView(document: doc)
+                ClaudeWritingAssistantView(document: doc)
+                    .environmentObject(theme)
+                    .environment(\.managedObjectContext, viewContext)
                     .id(doc.id) // 強制刷新編輯器
             } else {
                 VStack(spacing: 16) {
-                    Image(systemName: "doc.text.badge.plus")
+                    Image(systemName: "doc.badge.plus")
                         .font(.system(size: 48))
                         .foregroundColor(theme.textMuted)
                     Text("選擇或建立新草稿")
