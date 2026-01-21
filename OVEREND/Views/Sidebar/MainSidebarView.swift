@@ -15,6 +15,10 @@ struct MainSidebarView: View {
     
     @State private var showNewLibrarySheet = false
     @State private var showThemeSettings = false
+    @State private var showRenameSheet = false
+    @State private var libraryToRename: Library?
+    @State private var showDeleteConfirm = false
+    @State private var libraryToDelete: Library?
     
     var body: some View {
         VStack(spacing: 0) {
@@ -102,6 +106,9 @@ struct MainSidebarView: View {
                             viewState.selectedLibrary = library
                             viewState.showLibrary()
                         }
+                        .contextMenu {
+                            libraryContextMenu(for: library)
+                        }
                     }
                 }
                 .padding(.horizontal, DesignTokens.Spacing.xs)
@@ -162,6 +169,121 @@ struct MainSidebarView: View {
         .sheet(isPresented: $showNewLibrarySheet) {
             NewLibrarySheet(libraryVM: libraryVM)
                 .environmentObject(theme)
+        }
+        .sheet(isPresented: $showRenameSheet) {
+            if let library = libraryToRename {
+                RenameLibrarySheet(library: library, libraryVM: libraryVM)
+                    .environmentObject(theme)
+            }
+        }
+        .alert("確定刪除文獻庫？", isPresented: $showDeleteConfirm, presenting: libraryToDelete) { library in
+            Button("取消", role: .cancel) { }
+            Button("刪除", role: .destructive) {
+                deleteLibrary(library)
+            }
+        } message: { library in
+            Text("文獻庫「\(library.name)」及其中的 \(library.entryCount) 篇文獻將被永久刪除。")
+        }
+    }
+    
+    // MARK: - Context Menu
+    
+    @ViewBuilder
+    private func libraryContextMenu(for library: Library) -> some View {
+        Button(action: {
+            libraryToRename = library
+            showRenameSheet = true
+        }) {
+            Label("重新命名", systemImage: "pencil")
+        }
+        
+        Button(action: {
+            copyLibrary(library)
+        }) {
+            Label("複製文獻庫", systemImage: "doc.on.doc")
+        }
+        
+        Menu {
+            Button(action: {
+                exportLibraryBibTeX(library)
+            }) {
+                Label("匯出 BibTeX", systemImage: "doc.text")
+            }
+            
+            Button(action: {
+                exportLibraryRIS(library)
+            }) {
+                Label("匯出 RIS", systemImage: "doc.badge.gearshape")
+            }
+        } label: {
+            Label("匯出", systemImage: "square.and.arrow.up")
+        }
+        
+        if !library.isDefault {
+            Divider()
+            
+            Button(role: .destructive, action: {
+                libraryToDelete = library
+                showDeleteConfirm = true
+            }) {
+                Label("刪除", systemImage: "trash")
+            }
+        }
+    }
+    
+    // MARK: - Library Actions
+    
+    private func copyLibrary(_ library: Library) {
+        Task {
+            await libraryVM.duplicateLibrary(library)
+            ToastManager.shared.showSuccess("已複製文獻庫「\(library.name)」")
+        }
+    }
+    
+    private func exportLibraryBibTeX(_ library: Library) {
+        let savePanel = NSSavePanel()
+        savePanel.allowedContentTypes = [.init(filenameExtension: "bib")!]
+        savePanel.nameFieldStringValue = "\(library.name).bib"
+        savePanel.title = "匯出文獻庫為 BibTeX"
+        
+        savePanel.begin { response in
+            if response == .OK, let url = savePanel.url {
+                do {
+                    let context = libraryVM.context
+                    let entries = Entry.fetchAll(in: library, context: context)
+                    let result = try BatchOperationService.batchExportBibTeX(entries: entries, to: url)
+                    ToastManager.shared.showSuccess(result.message)
+                } catch {
+                    ToastManager.shared.showError("匯出失敗：\(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    private func exportLibraryRIS(_ library: Library) {
+        let savePanel = NSSavePanel()
+        savePanel.allowedContentTypes = [.init(filenameExtension: "ris")!]
+        savePanel.nameFieldStringValue = "\(library.name).ris"
+        savePanel.title = "匯出文獻庫為 RIS"
+        
+        savePanel.begin { response in
+            if response == .OK, let url = savePanel.url {
+                do {
+                    let context = libraryVM.context
+                    let entries = Entry.fetchAll(in: library, context: context)
+                    let result = try BatchOperationService.batchExportRIS(entries: entries, to: url)
+                    ToastManager.shared.showSuccess(result.message)
+                } catch {
+                    ToastManager.shared.showError("匯出失敗：\(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    private func deleteLibrary(_ library: Library) {
+        Task {
+            await libraryVM.deleteLibrary(library)
+            ToastManager.shared.showSuccess("已刪除文獻庫「\(library.name)」")
         }
     }
     
@@ -387,6 +509,66 @@ struct NewLibrarySheet: View {
         guard !trimmed.isEmpty else { return }
         Task {
             await libraryVM.createLibrary(name: trimmed)
+            dismiss()
+        }
+    }
+}
+
+// MARK: - Rename Library Sheet
+
+/// 重新命名文獻庫 Sheet
+struct RenameLibrarySheet: View {
+    @EnvironmentObject var theme: AppTheme
+    @Environment(\.dismiss) private var dismiss
+    @ObservedObject var libraryVM: LibraryViewModel
+    let library: Library
+    
+    @State private var newName: String
+    
+    init(library: Library, libraryVM: LibraryViewModel) {
+        self.library = library
+        self.libraryVM = libraryVM
+        _newName = State(initialValue: library.name)
+    }
+    
+    var body: some View {
+        VStack(spacing: DesignTokens.Spacing.lg) {
+            Text("重新命名文獻庫")
+                .font(.system(size: DesignTokens.Typography.title2, weight: .bold))
+                .foregroundColor(theme.textPrimary)
+            
+            TextField("文獻庫名稱", text: $newName)
+                .textFieldStyle(.roundedBorder)
+                .frame(width: 250)
+                .onSubmit {
+                    renameLibrary()
+                }
+            
+            HStack(spacing: DesignTokens.Spacing.sm) {
+                SecondaryButton("取消") {
+                    dismiss()
+                }
+                .environmentObject(theme)
+                .keyboardShortcut(.escape)
+                
+                PrimaryButton("確定", size: .medium) {
+                    renameLibrary()
+                }
+                .environmentObject(theme)
+                .disabled(newName.trimmingCharacters(in: .whitespaces).isEmpty || newName == library.name)
+                .keyboardShortcut(.return)
+            }
+        }
+        .padding(DesignTokens.Spacing.xxl)
+    }
+    
+    private func renameLibrary() {
+        let trimmed = newName.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty, trimmed != library.name else { return }
+        
+        Task {
+            await libraryVM.renameLibrary(library, to: trimmed)
+            ToastManager.shared.showSuccess("已重新命名為「\(trimmed)」")
             dismiss()
         }
     }
