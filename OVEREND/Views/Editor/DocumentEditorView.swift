@@ -1597,37 +1597,44 @@ struct RichTextEditorView: NSViewRepresentable {
             // 包含屬性變更以偵測格式變化
             // 對於大型文檔，限制屬性採樣以提升性能
             let length = attributedString.length
-            let sampleInterval = max(1, length / 100) // 每 100 個字元採樣一次
+            let maxSamples = 100 // 最多採樣 100 個屬性範圍
+            var sampleCount = 0
             
             attributedString.enumerateAttributes(in: NSRange(location: 0, length: length), options: []) { attributes, range, stop in
-                // 只在採樣位置計算屬性 hash
-                if range.location % sampleInterval == 0 {
-                    hasher.combine(range.location)
-                    hasher.combine(range.length)
+                // 限制採樣數量以提升性能
+                sampleCount += 1
+                if sampleCount > maxSamples {
+                    stop.pointee = true
+                    return
+                }
+                
+                hasher.combine(range.location)
+                hasher.combine(range.length)
+                
+                // 對每個屬性鍵值進行 hash，包含實際值
+                for (key, value) in attributes {
+                    hasher.combine(key.rawValue)
                     
-                    // 對每個屬性鍵值進行 hash，包含實際值
-                    for (key, value) in attributes {
-                        hasher.combine(key.rawValue)
-                        
-                        // 為常見屬性類型提供具體的 hash 處理
-                        switch value {
-                        case let font as NSFont:
-                            hasher.combine(font.fontName)
-                            hasher.combine(font.pointSize)
-                        case let color as NSColor:
-                            hasher.combine(color.redComponent)
-                            hasher.combine(color.greenComponent)
-                            hasher.combine(color.blueComponent)
-                            hasher.combine(color.alphaComponent)
-                        case let paragraphStyle as NSParagraphStyle:
-                            hasher.combine(paragraphStyle.alignment.rawValue)
-                            hasher.combine(paragraphStyle.lineSpacing)
-                        case let number as NSNumber:
-                            hasher.combine(number.intValue)
-                        default:
-                            // 對其他類型使用字串表示
-                            hasher.combine(String(describing: value))
-                        }
+                    // 為常見屬性類型提供具體的 hash 處理
+                    switch value {
+                    case let font as NSFont:
+                        hasher.combine(font.fontName)
+                        hasher.combine(font.pointSize)
+                    case let color as NSColor:
+                        hasher.combine(color.redComponent)
+                        hasher.combine(color.greenComponent)
+                        hasher.combine(color.blueComponent)
+                        hasher.combine(color.alphaComponent)
+                    case let paragraphStyle as NSParagraphStyle:
+                        hasher.combine(paragraphStyle.alignment.rawValue)
+                        hasher.combine(paragraphStyle.lineSpacing)
+                        hasher.combine(paragraphStyle.firstLineHeadIndent)
+                        hasher.combine(paragraphStyle.headIndent)
+                    case let number as NSNumber:
+                        hasher.combine(number.intValue)
+                    default:
+                        // 對其他類型使用字串表示
+                        hasher.combine(String(describing: value))
                     }
                 }
             }
