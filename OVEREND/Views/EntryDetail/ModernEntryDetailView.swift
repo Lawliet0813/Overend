@@ -10,6 +10,25 @@ import PDFKit
 import Vision
 import CoreData
 
+/// 詳情面板 Tab 類型
+enum DetailTab: String, CaseIterable, Identifiable {
+    case metadata = "書目資訊"
+    case ai = "AI 分析"
+    case attachments = "附件"
+    case citations = "引用格式"
+    
+    var id: String { rawValue }
+    
+    var icon: String {
+        switch self {
+        case .metadata: return "doc.text"
+        case .ai: return "apple.intelligence"
+        case .attachments: return "paperclip"
+        case .citations: return "quote.opening"
+        }
+    }
+}
+
 /// 現代化書目詳情視圖
 @available(macOS 26.0, *)
 struct ModernEntryDetailView: View {
@@ -17,6 +36,9 @@ struct ModernEntryDetailView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @ObservedObject var entry: Entry
     var onClose: (() -> Void)?
+    
+    // Tab 選擇狀態
+    @State private var selectedTab: DetailTab = .metadata
     
     @State private var showPDFViewer = false
     @State private var selectedAttachment: Attachment?
@@ -39,6 +61,9 @@ struct ModernEntryDetailView: View {
     
     // AI 標籤建議
     @State private var showSmartTagSuggestion = false
+    
+    // 引用格式選擇
+    @State private var selectedCitationFormat: CitationFormat = .apa7
     
     var body: some View {
         VStack(spacing: 0) {
@@ -112,37 +137,37 @@ struct ModernEntryDetailView: View {
                     .frame(height: 1)
             }
             
+            // Tab 選擇器
+            Picker("", selection: $selectedTab.animation(AnimationSystem.Easing.spring)) {
+                ForEach(DetailTab.allCases) { tab in
+                    HStack(spacing: 6) {
+                        Image(systemName: tab.icon)
+                            .font(.system(size: 12))
+                        Text(tab.rawValue)
+                            .font(.system(size: 13))
+                    }
+                    .tag(tab)
+                }
+            }
+            .pickerStyle(.segmented)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
+            .background(theme.elevated)
+            
             // 內容
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    // 標題區
-                    headerSection
-                    
-                    Divider()
-                    
-                    // AI 智慧分析（新增）
-                    // AI 智慧分析（新增）
-                    aiSection
-                    
-                    Divider()
-
-                    // 標籤管理（新增）
-                    tagsSection
-
-                    Divider()
-                    
-                    // 書目資訊
-                    metadataSection
-                    
-                    Divider()
-                    
-                    // 引用格式
-                    citationSection
-                    
-                    Divider()
-                    
-                    // PDF 附件（含預覽）
-                    attachmentSection
+                    // 根據選中的 Tab 顯示內容
+                    switch selectedTab {
+                    case .metadata:
+                        metadataTabContent
+                    case .ai:
+                        aiTabContent
+                    case .attachments:
+                        attachmentTabContent
+                    case .citations:
+                        citationTabContent
+                    }
                     
                     Spacer()
                 }
@@ -180,6 +205,40 @@ struct ModernEntryDetailView: View {
             }
         } message: {
             Text("您有尚未儲存的變更，確定要放棄嗎？")
+        }
+    }
+    
+    // MARK: - Tab Content Views
+    
+    /// 書目資訊 Tab 內容
+    private var metadataTabContent: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            headerSection
+            Divider()
+            tagsSection
+            Divider()
+            metadataSection
+        }
+    }
+    
+    /// AI 分析 Tab 內容
+    private var aiTabContent: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            aiSection
+        }
+    }
+    
+    /// 附件 Tab 內容
+    private var attachmentTabContent: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            attachmentSection
+        }
+    }
+    
+    /// 引用格式 Tab 內容
+    private var citationTabContent: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            citationSection
         }
     }
     
@@ -1106,6 +1165,37 @@ struct ModernEntryDetailView: View {
             HStack {
                 DetailSectionHeader(title: "引用格式", icon: "quote.bubble")
                 
+                Spacer()
+                
+                // 格式選擇器
+                Menu {
+                    ForEach(CitationFormat.allCases) { format in
+                        Button(action: { selectedCitationFormat = format }) {
+                            HStack {
+                                Text(format.rawValue)
+                                if selectedCitationFormat == format {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
+                        }
+                    }
+                } label: {
+                    HStack(spacing: 4) {
+                        Text(selectedCitationFormat.shortName)
+                            .font(.system(size: 13, weight: .medium))
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 10))
+                    }
+                    .foregroundColor(theme.accent)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(theme.accentLight)
+                    )
+                }
+                .menuStyle(.borderlessButton)
+                
                 if isEditMode {
                     Text("（預覽）")
                         .font(.system(size: 12))
@@ -1113,32 +1203,29 @@ struct ModernEntryDetailView: View {
                 }
             }
             
-            VStack(spacing: 12) {
-                if isEditMode {
-                    // 編輯模式：使用 editedFields 生成預覽
-                    DetailCitationCard(
-                        format: "APA 7th",
-                        citation: generateAPAPreview()
-                    )
-                    
-                    DetailCitationCard(
-                        format: "MLA 9th",
-                        citation: generateMLAPreview()
-                    )
-                } else {
-                    // 查看模式：使用 entry 資料
-                    DetailCitationCard(
-                        format: "APA 7th",
-                        citation: CitationService.generateAPA(entry: entry)
-                    )
-                    
-                    DetailCitationCard(
-                        format: "MLA 9th",
-                        citation: CitationService.generateMLA(entry: entry)
-                    )
-                }
-            }
+            // 顯示選中格式的引用
+            DetailCitationCard(
+                format: selectedCitationFormat.rawValue,
+                citation: isEditMode ? generateCitationPreview(format: selectedCitationFormat) : CitationService.generate(entry: entry, format: selectedCitationFormat)
+            )
         }
+    }
+    
+    /// 編輯模式下生成引用預覽
+    private func generateCitationPreview(format: CitationFormat) -> String {
+        // 創建臨時 Entry 用於預覽
+        let tempEntry = Entry(context: viewContext)
+        tempEntry.id = entry.id
+        tempEntry.citationKey = entry.citationKey
+        tempEntry.entryType = editedEntryType.isEmpty ? entry.entryType : editedEntryType
+        tempEntry.fields = editedFields
+        
+        let preview = CitationService.generate(entry: tempEntry, format: format)
+        
+        // 刪除臨時對象（不保存到上下文）
+        viewContext.delete(tempEntry)
+        
+        return preview
     }
     
     /// 編輯模式下生成 APA 預覽
