@@ -91,6 +91,8 @@ struct DocumentEditorView: View {
                 RichTextEditorView(
                     attributedText: $attributedText,
                     textViewRef: $textViewRef,
+                    canUndo: $canUndo,
+                    canRedo: $canRedo,
                     onTextChange: saveDocument
                 )
                 .environmentObject(theme)
@@ -1358,6 +1360,8 @@ struct FormatButton: View {
 struct RichTextEditorView: NSViewRepresentable {
     @Binding var attributedText: NSAttributedString
     @Binding var textViewRef: NSTextView?
+    @Binding var canUndo: Bool
+    @Binding var canRedo: Bool
     @EnvironmentObject var theme: AppTheme
     let onTextChange: () -> Void
     
@@ -1370,7 +1374,6 @@ struct RichTextEditorView: NSViewRepresentable {
         let scrollView = NSScrollView()
         scrollView.hasVerticalScroller = true
         scrollView.hasHorizontalScroller = true
-        scrollView.autohidesScrollers = true
         scrollView.autohidesScrollers = true
         scrollView.backgroundColor = theme.isPrideMode ? .clear : NSColor.darkGray.withAlphaComponent(0.3)
         scrollView.drawsBackground = true
@@ -1411,6 +1414,7 @@ struct RichTextEditorView: NSViewRepresentable {
         textView.autoresizingMask = []
         textView.maxSize = NSSize(width: Self.a4Width - (Self.a4Margin * 2), height: .greatestFiniteMagnitude)
         textView.minSize = NSSize(width: Self.a4Width - (Self.a4Margin * 2), height: 842 - (Self.a4Margin * 2))
+        textView.identifier = NSUserInterfaceItemIdentifier("mainEditorTextView")
         
         // 紙張樣式 - 根據主題調整
         if theme.isPrideMode {
@@ -1461,34 +1465,26 @@ struct RichTextEditorView: NSViewRepresentable {
             self.textViewRef = textView
         }
 
-        // 監聽 undo manager 通知
-        NotificationCenter.default.addObserver(
-            forName: .NSUndoManagerDidUndoChange,
-            object: textView.undoManager,
-            queue: .main
-        ) { _ in
-            // 觸發文字變更以更新狀態
-        }
-
-        NotificationCenter.default.addObserver(
-            forName: .NSUndoManagerDidRedoChange,
-            object: textView.undoManager,
-            queue: .main
-        ) { _ in
-            // 觸發文字變更以更新狀態
-        }
+        // 設置 undo/redo 觀察者由 Coordinator 管理
+        context.coordinator.setupObservers(for: textView)
         
         return scrollView
     }
     
     func updateNSView(_ nsView: NSScrollView, context: Context) {
         guard let paperView = nsView.documentView,
-              let textView = paperView.subviews.first as? NSTextView else { return }
+              let textView = paperView.subviews.first(where: { $0.identifier?.rawValue == "mainEditorTextView" }) as? NSTextView else { return }
 
-        // 只在內容真正改變時更新
-        if textView.attributedString() != attributedText {
+        // 使用 hash 進行快速比較以提升性能
+        let newHash = attributedText.string.hashValue ^ attributedText.length
+        if context.coordinator.lastContentHash != newHash {
+            context.coordinator.lastContentHash = newHash
+            
             let selectedRanges = textView.selectedRanges
+            // 使用批次更新來提升性能
+            textView.textStorage?.beginEditing()
             textView.textStorage?.setAttributedString(attributedText)
+            textView.textStorage?.endEditing()
             textView.selectedRanges = selectedRanges
         }
 
@@ -1527,7 +1523,7 @@ struct RichTextEditorView: NSViewRepresentable {
             }
         }
         
-        if let textView = (nsView.documentView?.subviews.first as? NSTextView) {
+        if let textView = nsView.documentView?.subviews.first(where: { $0.identifier?.rawValue == "mainEditorTextView" }) as? NSTextView {
             textView.backgroundColor = theme.isPrideMode ? .clear : .white
             textView.textColor = theme.isPrideMode ? .white : .black
             textView.insertionPointColor = theme.isPrideMode ? .white : .black
@@ -1540,15 +1536,55 @@ struct RichTextEditorView: NSViewRepresentable {
 
     class Coordinator: NSObject, NSTextViewDelegate {
         var parent: RichTextEditorView
+        var observers: [NSObjectProtocol] = []
+        var lastContentHash: Int = 0
 
         init(_ parent: RichTextEditorView) {
             self.parent = parent
+        }
+        
+        deinit {
+            // 移除所有觀察者以防止記憶體洩漏
+            for observer in observers {
+                NotificationCenter.default.removeObserver(observer)
+            }
+        }
+        
+        func setupObservers(for textView: NSTextView) {
+            // 監聽 undo manager 通知
+            let undoObserver = NotificationCenter.default.addObserver(
+                forName: .NSUndoManagerDidUndoChange,
+                object: textView.undoManager,
+                queue: .main
+            ) { [weak self] _ in
+                self?.updateUndoRedoState(for: textView)
+            }
+            observers.append(undoObserver)
+            
+            let redoObserver = NotificationCenter.default.addObserver(
+                forName: .NSUndoManagerDidRedoChange,
+                object: textView.undoManager,
+                queue: .main
+            ) { [weak self] _ in
+                self?.updateUndoRedoState(for: textView)
+            }
+            observers.append(redoObserver)
+        }
+        
+        func updateUndoRedoState(for textView: NSTextView) {
+            guard let undoManager = textView.undoManager else { return }
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                self.parent.canUndo = undoManager.canUndo
+                self.parent.canRedo = undoManager.canRedo
+            }
         }
 
         func textDidChange(_ notification: Notification) {
             guard let textView = notification.object as? NSTextView else { return }
             parent.attributedText = textView.attributedString()
             parent.onTextChange()
+            updateUndoRedoState(for: textView)
         }
 
         // 監聽 undo/redo 狀態變化
