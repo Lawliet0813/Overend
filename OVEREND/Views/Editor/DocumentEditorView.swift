@@ -1476,11 +1476,8 @@ struct RichTextEditorView: NSViewRepresentable {
         // 使用緩存的 textView 參考以提升性能
         guard let textView = context.coordinator.getOrCacheTextView(from: nsView) else { return }
 
-        // 使用 Swift Hasher 進行快速比較以提升性能
-        var hasher = Hasher()
-        hasher.combine(attributedText.string)
-        hasher.combine(attributedText.length)
-        let newHash = hasher.finalize()
+        // 使用包含屬性的 hash 進行快速比較以偵測格式變更
+        let newHash = context.coordinator.computeContentHash(for: attributedText)
         
         if context.coordinator.lastContentHash != newHash {
             context.coordinator.lastContentHash = newHash
@@ -1560,12 +1557,16 @@ struct RichTextEditorView: NSViewRepresentable {
             // 緩存 textView 參考
             cachedTextView = textView
             
+            // 計算初始 hash 以避免與 0 衝突，並包含屬性變更
+            lastContentHash = computeContentHash(for: parent.attributedText)
+            
             // 監聽 undo manager 通知
             let undoObserver = NotificationCenter.default.addObserver(
                 forName: .NSUndoManagerDidUndoChange,
                 object: textView.undoManager,
                 queue: .main
-            ) { [weak self] _ in
+            ) { [weak self, weak textView] _ in
+                guard let textView = textView else { return }
                 self?.updateUndoRedoState(for: textView)
             }
             observers.append(undoObserver)
@@ -1574,7 +1575,8 @@ struct RichTextEditorView: NSViewRepresentable {
                 forName: .NSUndoManagerDidRedoChange,
                 object: textView.undoManager,
                 queue: .main
-            ) { [weak self] _ in
+            ) { [weak self, weak textView] _ in
+                guard let textView = textView else { return }
                 self?.updateUndoRedoState(for: textView)
             }
             observers.append(redoObserver)
@@ -1585,6 +1587,26 @@ struct RichTextEditorView: NSViewRepresentable {
             // 觀察者已在 main queue 運行，無需額外 dispatch
             parent.canUndo = undoManager.canUndo
             parent.canRedo = undoManager.canRedo
+        }
+        
+        func computeContentHash(for attributedString: NSAttributedString) -> Int {
+            var hasher = Hasher()
+            hasher.combine(attributedString.string)
+            hasher.combine(attributedString.length)
+            
+            // 包含屬性變更以偵測格式變化
+            attributedString.enumerateAttributes(in: NSRange(location: 0, length: attributedString.length), options: []) { attributes, range, _ in
+                hasher.combine(range.location)
+                hasher.combine(range.length)
+                // 對每個屬性鍵值進行 hash
+                for (key, value) in attributes {
+                    hasher.combine(key.rawValue)
+                    // 使用物件識別碼而非值本身以提升性能
+                    hasher.combine(ObjectIdentifier(type(of: value)))
+                }
+            }
+            
+            return hasher.finalize()
         }
         
         func getOrCacheTextView(from scrollView: NSScrollView) -> NSTextView? {
