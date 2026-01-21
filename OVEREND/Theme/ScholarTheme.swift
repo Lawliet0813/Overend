@@ -50,11 +50,9 @@ extension AppTheme {
         /// AI 背景漸層
         var backgroundGradient: LinearGradient { theme.aiGradient }
         
-        /// AI 卡片背景
+        /// AI 卡片背景 (使用提升背景色)
         var cardBackground: Color {
-            theme.backgroundElevatedColor.overlay(
-                theme.insightGreenColor.opacity(0.05)
-            )
+            theme.backgroundElevatedColor
         }
         
         /// AI 邊框色
@@ -78,11 +76,9 @@ extension AppTheme {
         /// 文獻庫背景漸層
         var backgroundGradient: LinearGradient { theme.libraryGradient }
         
-        /// 文獻庫卡片背景
+        /// 文獻庫卡片背景 (使用提升背景色)
         var cardBackground: Color {
-            theme.backgroundElevatedColor.overlay(
-                theme.inkBlueColor.opacity(0.05)
-            )
+            theme.backgroundElevatedColor
         }
         
         /// 文獻庫邊框色

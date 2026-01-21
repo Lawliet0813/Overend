@@ -45,10 +45,10 @@ class AppTheme: ObservableObject {
     static let textBody = "#CBD5E1"
     
     /// 次要灰 - 說明文字
-    static let textMuted = "#64748B"
+    static let textMutedHex = "#64748B"
     
     /// 禁用灰 - 不可用元素
-    static let textDisabled = "#475569"
+    static let textDisabledHex = "#475569"
     
     // === 功能色 ===
     static let semanticSuccess = "#22C55E"
@@ -178,10 +178,10 @@ class AppTheme: ObservableObject {
     var textBodyColor: Color { Color(hex: Self.textBody) }
     
     /// 次要灰 - 說明文字
-    var textMutedColor: Color { Color(hex: Self.textMuted) }
+    var textMutedColor: Color { Color(hex: Self.textMutedHex) }
     
     /// 禁用灰 - 不可用元素
-    var textDisabledColor: Color { Color(hex: Self.textDisabled) }
+    var textDisabledColor: Color { Color(hex: Self.textDisabledHex) }
     
     // MARK: - 向下相容文字色 (Typography Colors)
     
@@ -475,17 +475,17 @@ class AppTheme: ObservableObject {
             
             HStack(spacing: 12) {
                 Circle().fill(theme.inkBlueColor).frame(width: 32, height: 32)
-                Text("墨水藍 \(Self.inkBlue)").foregroundStyle(theme.textSecondary)
+                Text("墨水藍 \(AppTheme.inkBlue)").foregroundStyle(theme.textSecondary)
             }
             
             HStack(spacing: 12) {
                 Circle().fill(theme.parchmentGoldColor).frame(width: 32, height: 32)
-                Text("羊皮紙金 \(Self.parchmentGold)").foregroundStyle(theme.textSecondary)
+                Text("羊皮紙金 \(AppTheme.parchmentGold)").foregroundStyle(theme.textSecondary)
             }
             
             HStack(spacing: 12) {
                 Circle().fill(theme.insightGreenColor).frame(width: 32, height: 32)
-                Text("啟發綠 \(Self.insightGreen)").foregroundStyle(theme.textSecondary)
+                Text("啟發綠 \(AppTheme.insightGreen)").foregroundStyle(theme.textSecondary)
             }
         }
         
@@ -497,19 +497,19 @@ class AppTheme: ObservableObject {
             
             HStack {
                 RoundedRectangle(cornerRadius: 8).fill(theme.backgroundDeepColor).frame(width: 32, height: 32)
-                Text("書房深處 \(Self.backgroundDeep)").font(theme.captionFont())
+                Text("書房深處 \(AppTheme.backgroundDeep)").font(theme.captionFont())
             }
             HStack {
                 RoundedRectangle(cornerRadius: 8).fill(theme.backgroundBaseColor).frame(width: 32, height: 32)
-                Text("桌面 \(Self.backgroundBase)").font(theme.captionFont())
+                Text("桌面 \(AppTheme.backgroundBase)").font(theme.captionFont())
             }
             HStack {
                 RoundedRectangle(cornerRadius: 8).fill(theme.backgroundElevatedColor).frame(width: 32, height: 32)
-                Text("卡片/面板 \(Self.backgroundElevated)").font(theme.captionFont())
+                Text("卡片/面板 \(AppTheme.backgroundElevated)").font(theme.captionFont())
             }
             HStack {
                 RoundedRectangle(cornerRadius: 8).fill(theme.backgroundSurfaceColor).frame(width: 32, height: 32)
-                Text("互動元素 \(Self.backgroundSurface)").font(theme.captionFont())
+                Text("互動元素 \(AppTheme.backgroundSurface)").font(theme.captionFont())
             }
         }
         .foregroundStyle(theme.textSecondary)
