@@ -44,6 +44,8 @@ struct ModernEntryListView: View {
     @State private var isSelectionMode: Bool = false
     @State private var selectedEntryIDs: Set<UUID> = []
     @State private var showBatchDeleteConfirm: Bool = false
+    @State private var showExportOptions: Bool = false
+    @State private var showTagPicker: Bool = false
     
     @FetchRequest private var entries: FetchedResults<Entry>
     
@@ -94,6 +96,11 @@ struct ModernEntryListView: View {
         }
         
         return result
+    }
+    
+    /// 選取的文獻陣列
+    private var selectedEntriesArray: [Entry] {
+        sortedEntries.filter { selectedEntryIDs.contains($0.id) }
     }
     
     var body: some View {
@@ -299,6 +306,75 @@ struct ModernEntryListView: View {
                 )
                 
                 Spacer()
+                
+                // 批次操作按鈕區
+                if !selectedEntryIDs.isEmpty {
+                    HStack(spacing: DesignTokens.Spacing.sm) {
+                        // 匯出按鈕
+                        Button(action: { showExportOptions = true }) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "square.and.arrow.up")
+                                    .font(.system(size: 16, weight: .semibold))
+                                Text("匯出")
+                                    .font(theme.fontButton)
+                                    .fontWeight(.medium)
+                            }
+                            .foregroundColor(theme.accent)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 12)
+                            .background(
+                                RoundedRectangle(cornerRadius: theme.cornerRadiusMD)
+                                    .fill(theme.accentLight)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: theme.cornerRadiusMD)
+                                            .stroke(theme.accent.opacity(0.3), lineWidth: 1.5)
+                                    )
+                            )
+                            .shadow(color: theme.accent.opacity(0.2), radius: 6, x: 0, y: 3)
+                        }
+                        .buttonStyle(.plain)
+                        .popover(isPresented: $showExportOptions, arrowEdge: .bottom) {
+                            BatchExportOptionsView(
+                                selectedEntries: selectedEntriesArray,
+                                onDismiss: { showExportOptions = false }
+                            )
+                            .environmentObject(theme)
+                            .environment(\.managedObjectContext, viewContext)
+                        }
+                        
+                        // 加標籤按鈕
+                        Button(action: { showTagPicker = true }) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "tag")
+                                    .font(.system(size: 16, weight: .semibold))
+                                Text("加標籤")
+                                    .font(theme.fontButton)
+                                    .fontWeight(.medium)
+                            }
+                            .foregroundColor(theme.accent)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 12)
+                            .background(
+                                RoundedRectangle(cornerRadius: theme.cornerRadiusMD)
+                                    .fill(theme.accentLight)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: theme.cornerRadiusMD)
+                                            .stroke(theme.accent.opacity(0.3), lineWidth: 1.5)
+                                    )
+                            )
+                            .shadow(color: theme.accent.opacity(0.2), radius: 6, x: 0, y: 3)
+                        }
+                        .buttonStyle(.plain)
+                        .popover(isPresented: $showTagPicker, arrowEdge: .bottom) {
+                            BatchTagPickerView(
+                                selectedEntries: selectedEntriesArray,
+                                onDismiss: { showTagPicker = false }
+                            )
+                            .environmentObject(theme)
+                            .environment(\.managedObjectContext, viewContext)
+                        }
+                    }
+                }
                 
                 // 刪除按鈕 - 更醒目
                 if !selectedEntryIDs.isEmpty {
@@ -1088,6 +1164,293 @@ struct ImpactBadge: View {
                             .stroke(theme.accent.opacity(0.3), lineWidth: 1)
                     )
             )
+    }
+}
+
+// MARK: - Batch Export Options View
+
+/// 批次匯出選項 Popover
+struct BatchExportOptionsView: View {
+    @EnvironmentObject var theme: AppTheme
+    @Environment(\.managedObjectContext) private var viewContext
+    let selectedEntries: [Entry]
+    let onDismiss: () -> Void
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+            Text("匯出選項")
+                .font(.system(size: DesignTokens.Typography.title3, weight: .bold))
+                .foregroundColor(theme.textPrimary)
+                .padding(.bottom, DesignTokens.Spacing.xs)
+            
+            // BibTeX 匯出
+            Button(action: exportBibTeX) {
+                HStack(spacing: DesignTokens.Spacing.sm) {
+                    Image(systemName: "doc.text")
+                        .font(.system(size: 18))
+                        .foregroundColor(theme.accent)
+                        .frame(width: 24)
+                    
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("匯出為 BibTeX")
+                            .font(.system(size: DesignTokens.Typography.body, weight: .medium))
+                            .foregroundColor(theme.textPrimary)
+                        Text("\(selectedEntries.count) 篇文獻")
+                            .font(.system(size: DesignTokens.Typography.caption))
+                            .foregroundColor(theme.textMuted)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12))
+                        .foregroundColor(theme.textTertiary)
+                }
+                .padding(DesignTokens.Spacing.sm)
+                .background(
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.small)
+                        .fill(theme.itemHover)
+                )
+            }
+            .buttonStyle(.plain)
+            
+            // RIS 匯出
+            Button(action: exportRIS) {
+                HStack(spacing: DesignTokens.Spacing.sm) {
+                    Image(systemName: "doc.badge.gearshape")
+                        .font(.system(size: 18))
+                        .foregroundColor(theme.accent)
+                        .frame(width: 24)
+                    
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("匯出為 RIS")
+                            .font(.system(size: DesignTokens.Typography.body, weight: .medium))
+                            .foregroundColor(theme.textPrimary)
+                        Text("通用引用格式")
+                            .font(.system(size: DesignTokens.Typography.caption))
+                            .foregroundColor(theme.textMuted)
+                    }
+                    
+                    Spacer()
+                    
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12))
+                        .foregroundColor(theme.textTertiary)
+                }
+                .padding(DesignTokens.Spacing.sm)
+                .background(
+                    RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.small)
+                        .fill(theme.itemHover)
+                )
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(DesignTokens.Spacing.md)
+        .background(theme.elevated)
+        .cornerRadius(DesignTokens.CornerRadius.large)
+        .shadow(color: .black.opacity(0.2), radius: 20, x: 0, y: 10)
+    }
+    
+    private func exportBibTeX() {
+        let savePanel = NSSavePanel()
+        savePanel.allowedContentTypes = [.init(filenameExtension: "bib")!]
+        savePanel.nameFieldStringValue = "export_\(selectedEntries.count)_entries.bib"
+        savePanel.title = "匯出 BibTeX"
+        savePanel.message = "選擇匯出位置"
+        
+        savePanel.begin { response in
+            if response == .OK, let url = savePanel.url {
+                do {
+                    let result = try BatchOperationService.batchExportBibTeX(entries: selectedEntries, to: url)
+                    ToastManager.shared.showSuccess(result.message)
+                    onDismiss()
+                } catch {
+                    ToastManager.shared.showError("匯出失敗：\(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    private func exportRIS() {
+        let savePanel = NSSavePanel()
+        savePanel.allowedContentTypes = [.init(filenameExtension: "ris")!]
+        savePanel.nameFieldStringValue = "export_\(selectedEntries.count)_entries.ris"
+        savePanel.title = "匯出 RIS"
+        savePanel.message = "選擇匯出位置"
+        
+        savePanel.begin { response in
+            if response == .OK, let url = savePanel.url {
+                do {
+                    let result = try BatchOperationService.batchExportRIS(entries: selectedEntries, to: url)
+                    ToastManager.shared.showSuccess(result.message)
+                    onDismiss()
+                } catch {
+                    ToastManager.shared.showError("匯出失敗：\(error.localizedDescription)")
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Batch Tag Picker View
+
+/// 批次標籤選擇器 Popover
+struct BatchTagPickerView: View {
+    @EnvironmentObject var theme: AppTheme
+    @Environment(\.managedObjectContext) private var viewContext
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \Tag.name, ascending: true)],
+        animation: .default
+    ) private var allTags: FetchedResults<Tag>
+    
+    let selectedEntries: [Entry]
+    let onDismiss: () -> Void
+    
+    @State private var selectedTags: Set<Tag> = []
+    @State private var newTagName = ""
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
+            // 標題
+            Text("為選取的文獻加標籤")
+                .font(.system(size: DesignTokens.Typography.title3, weight: .bold))
+                .foregroundColor(theme.textPrimary)
+            
+            Text("已選取 \(selectedEntries.count) 篇文獻")
+                .font(.system(size: DesignTokens.Typography.body))
+                .foregroundColor(theme.textMuted)
+            
+            Divider()
+            
+            // 標籤列表
+            ScrollView {
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
+                    ForEach(Array(allTags), id: \.id) { tag in
+                        TagToggleRow(
+                            tag: tag,
+                            isSelected: selectedTags.contains(tag),
+                            onToggle: {
+                                if selectedTags.contains(tag) {
+                                    selectedTags.remove(tag)
+                                } else {
+                                    selectedTags.insert(tag)
+                                }
+                            }
+                        )
+                        .environmentObject(theme)
+                    }
+                }
+            }
+            .frame(maxHeight: 300)
+            
+            Divider()
+            
+            // 新增標籤
+            HStack(spacing: DesignTokens.Spacing.sm) {
+                Image(systemName: "plus.circle.fill")
+                    .foregroundColor(theme.accent)
+                
+                TextField("建立新標籤", text: $newTagName)
+                    .textFieldStyle(.roundedBorder)
+                    .onSubmit(createNewTag)
+                
+                if !newTagName.isEmpty {
+                    Button(action: createNewTag) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(.green)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            
+            Divider()
+            
+            // 動作按鈕
+            HStack(spacing: DesignTokens.Spacing.sm) {
+                Button("取消") {
+                    onDismiss()
+                }
+                .keyboardShortcut(.escape)
+                
+                Spacer()
+                
+                Button("套用標籤 (\(selectedTags.count))") {
+                    applyTags()
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(selectedTags.isEmpty)
+                .keyboardShortcut(.return)
+            }
+        }
+        .padding(DesignTokens.Spacing.lg)
+        .frame(width: 400)
+        .background(theme.elevated)
+        .cornerRadius(DesignTokens.CornerRadius.large)
+        .shadow(color: .black.opacity(0.2), radius: 20, x: 0, y: 10)
+    }
+    
+    private func createNewTag() {
+        let trimmed = newTagName.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else { return }
+        
+        let newTag = Tag(context: viewContext)
+        newTag.id = UUID()
+        newTag.name = trimmed
+        newTag.createdAt = Date()
+        
+        do {
+            try viewContext.save()
+            selectedTags.insert(newTag)
+            newTagName = ""
+            ToastManager.shared.showSuccess("已建立標籤：\(trimmed)")
+        } catch {
+            ToastManager.shared.showError("建立標籤失敗：\(error.localizedDescription)")
+        }
+    }
+    
+    private func applyTags() {
+        do {
+            let result = try BatchOperationService.batchAddTags(
+                entries: selectedEntries,
+                tags: Array(selectedTags),
+                context: viewContext
+            )
+            ToastManager.shared.showSuccess(result.message)
+            onDismiss()
+        } catch {
+            ToastManager.shared.showError("套用標籤失敗：\(error.localizedDescription)")
+        }
+    }
+}
+
+/// 標籤切換行
+struct TagToggleRow: View {
+    @EnvironmentObject var theme: AppTheme
+    let tag: Tag
+    let isSelected: Bool
+    let onToggle: () -> Void
+    
+    var body: some View {
+        Button(action: onToggle) {
+            HStack(spacing: DesignTokens.Spacing.sm) {
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .foregroundColor(isSelected ? theme.accent : theme.textTertiary)
+                    .font(.system(size: 18))
+                
+                Text(tag.name)
+                    .font(.system(size: DesignTokens.Typography.body))
+                    .foregroundColor(theme.textPrimary)
+                
+                Spacer()
+            }
+            .padding(.horizontal, DesignTokens.Spacing.sm)
+            .padding(.vertical, DesignTokens.Spacing.xs)
+            .background(
+                RoundedRectangle(cornerRadius: DesignTokens.CornerRadius.small)
+                    .fill(isSelected ? theme.accentLight : Color.clear)
+            )
+        }
+        .buttonStyle(.plain)
     }
 }
 
