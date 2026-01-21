@@ -1474,15 +1474,14 @@ struct RichTextEditorView: NSViewRepresentable {
     
     func updateNSView(_ nsView: NSScrollView, context: Context) {
         // 使用緩存的 textView 參考以提升性能
-        guard let textView = context.coordinator.cachedTextView ?? {
-            guard let paperView = nsView.documentView,
-                  let tv = paperView.subviews.first(where: { $0.identifier?.rawValue == Self.textViewIdentifier }) as? NSTextView else { return nil }
-            context.coordinator.cachedTextView = tv
-            return tv
-        }() else { return }
+        guard let textView = context.coordinator.getOrCacheTextView(from: nsView) else { return }
 
-        // 使用改進的 hash 組合方式進行快速比較以提升性能
-        let newHash = attributedText.string.hashValue &+ (attributedText.length &* 31)
+        // 使用 Swift Hasher 進行快速比較以提升性能
+        var hasher = Hasher()
+        hasher.combine(attributedText.string)
+        hasher.combine(attributedText.length)
+        let newHash = hasher.finalize()
+        
         if context.coordinator.lastContentHash != newHash {
             context.coordinator.lastContentHash = newHash
             
@@ -1583,11 +1582,21 @@ struct RichTextEditorView: NSViewRepresentable {
         
         func updateUndoRedoState(for textView: NSTextView) {
             guard let undoManager = textView.undoManager else { return }
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                self.parent.canUndo = undoManager.canUndo
-                self.parent.canRedo = undoManager.canRedo
+            // 觀察者已在 main queue 運行，無需額外 dispatch
+            parent.canUndo = undoManager.canUndo
+            parent.canRedo = undoManager.canRedo
+        }
+        
+        func getOrCacheTextView(from scrollView: NSScrollView) -> NSTextView? {
+            if let cached = cachedTextView {
+                return cached
             }
+            guard let paperView = scrollView.documentView,
+                  let textView = paperView.subviews.first(where: { $0.identifier?.rawValue == RichTextEditorView.textViewIdentifier }) as? NSTextView else {
+                return nil
+            }
+            cachedTextView = textView
+            return textView
         }
 
         func textDidChange(_ notification: Notification) {
